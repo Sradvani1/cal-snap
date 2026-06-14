@@ -1,0 +1,505 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1B31CEC936B87ADC8D4A5AE0 /* KeychainManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7D1271130B39D7B9A67E609 /* KeychainManagerTests.swift */; };
+		275D45C3B54B6BF8EB0CD975 /* AppContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01A8B7CA8B06CF58A2F7B07E /* AppContainer.swift */; };
+		63A6757CEFC03CD981ACD8E4 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842D3A9622BFDE6C189F8B07 /* RootView.swift */; };
+		6FBA09496E1526AAEA65EBC2 /* CalSnapApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77E2521ABC18A4107C2A866E /* CalSnapApp.swift */; };
+		787D3991B98BFA89F80C941D /* WeighIn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AA38E304E534F513EA56DE4 /* WeighIn.swift */; };
+		884011074BE2C209A9971AED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DA06AE324EEDADDDC6EB6B50 /* Assets.xcassets */; };
+		8E9F0C4DC5BFDCE0172C0967 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 298A8229C48FC85DACE2234B /* Enums.swift */; };
+		9FAB9CA4C4D6BDA01C4B66B0 /* FoodItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8D2B293BBEB60096DA39E3 /* FoodItem.swift */; };
+		A8049099DF60B3369E8D2C25 /* MealEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48914D12FBF26E0081590A8B /* MealEntry.swift */; };
+		B18D8478722A4DC5C6D169D2 /* NutritionCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F453EDE12C11B104F814B4D /* NutritionCalculator.swift */; };
+		BA9F6F8108F9A54F5D77D117 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC2F68877952481FCEDCA5E5 /* Constants.swift */; };
+		CC9C0FC95BB9ADE63B9E0FEB /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18F8DBAE76C7C7B21976685A /* KeychainManager.swift */; };
+		D101E5ADAC2C4C0EBA1B0D2E /* NutritionCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FF607CB3770B2AAE871821 /* NutritionCalculatorTests.swift */; };
+		EF5DDCE6E4C48EFE86A32C10 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8852933F27AA17FD6FDC12B2 /* UserProfile.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		E7A22A33B96823236F57B900 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4289E70DD2BC788EB4814590 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D15E0FFD9C41F6FE4D38B6C6;
+			remoteInfo = CalSnap;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		01A8B7CA8B06CF58A2F7B07E /* AppContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppContainer.swift; sourceTree = "<group>"; };
+		18F8DBAE76C7C7B21976685A /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
+		1AA38E304E534F513EA56DE4 /* WeighIn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeighIn.swift; sourceTree = "<group>"; };
+		1FA56D67A1FDA0564BB1D59A /* CalSnapTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = CalSnapTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		298A8229C48FC85DACE2234B /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
+		48914D12FBF26E0081590A8B /* MealEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealEntry.swift; sourceTree = "<group>"; };
+		49FF607CB3770B2AAE871821 /* NutritionCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionCalculatorTests.swift; sourceTree = "<group>"; };
+		4A203208125EE8A800C80A29 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		5183FB2DE5578C8547093C3A /* CalSnap.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = CalSnap.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		77E2521ABC18A4107C2A866E /* CalSnapApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalSnapApp.swift; sourceTree = "<group>"; };
+		842D3A9622BFDE6C189F8B07 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		8852933F27AA17FD6FDC12B2 /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
+		8F453EDE12C11B104F814B4D /* NutritionCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionCalculator.swift; sourceTree = "<group>"; };
+		B7D1271130B39D7B9A67E609 /* KeychainManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManagerTests.swift; sourceTree = "<group>"; };
+		BD8D2B293BBEB60096DA39E3 /* FoodItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodItem.swift; sourceTree = "<group>"; };
+		DA06AE324EEDADDDC6EB6B50 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		FC2F68877952481FCEDCA5E5 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		07BA7B93AA82E7551DE228CC /* App */ = {
+			isa = PBXGroup;
+			children = (
+				01A8B7CA8B06CF58A2F7B07E /* AppContainer.swift */,
+				77E2521ABC18A4107C2A866E /* CalSnapApp.swift */,
+				842D3A9622BFDE6C189F8B07 /* RootView.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		0BE52B9228D1B2C5EA0A5717 = {
+			isa = PBXGroup;
+			children = (
+				C1B96D112C4CFE03A237556D /* CalSnap */,
+				AD0EF9C36089BF1A5881E264 /* CalSnapTests */,
+				A96C6FC20CB374EED0F51243 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1B3E10E65087B79829954A5C /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				877A2FC088F554B971C7F877 /* Models */,
+				F9ED5680E366C7F07F6207F5 /* Services */,
+				E226EB33E96E8088B825FDD5 /* Utilities */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		877A2FC088F554B971C7F877 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				298A8229C48FC85DACE2234B /* Enums.swift */,
+				BD8D2B293BBEB60096DA39E3 /* FoodItem.swift */,
+				48914D12FBF26E0081590A8B /* MealEntry.swift */,
+				8852933F27AA17FD6FDC12B2 /* UserProfile.swift */,
+				1AA38E304E534F513EA56DE4 /* WeighIn.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		8E94AB61ECE40E4BAC89DE5F /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				DA06AE324EEDADDDC6EB6B50 /* Assets.xcassets */,
+				4A203208125EE8A800C80A29 /* Info.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		A96C6FC20CB374EED0F51243 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5183FB2DE5578C8547093C3A /* CalSnap.app */,
+				1FA56D67A1FDA0564BB1D59A /* CalSnapTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AD0EF9C36089BF1A5881E264 /* CalSnapTests */ = {
+			isa = PBXGroup;
+			children = (
+				B7D1271130B39D7B9A67E609 /* KeychainManagerTests.swift */,
+				49FF607CB3770B2AAE871821 /* NutritionCalculatorTests.swift */,
+			);
+			path = CalSnapTests;
+			sourceTree = "<group>";
+		};
+		C1B96D112C4CFE03A237556D /* CalSnap */ = {
+			isa = PBXGroup;
+			children = (
+				07BA7B93AA82E7551DE228CC /* App */,
+				1B3E10E65087B79829954A5C /* Core */,
+				8E94AB61ECE40E4BAC89DE5F /* Resources */,
+			);
+			path = CalSnap;
+			sourceTree = "<group>";
+		};
+		E226EB33E96E8088B825FDD5 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				FC2F68877952481FCEDCA5E5 /* Constants.swift */,
+				18F8DBAE76C7C7B21976685A /* KeychainManager.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		F9ED5680E366C7F07F6207F5 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				8F453EDE12C11B104F814B4D /* NutritionCalculator.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		28643885527AC94065B8C87D /* CalSnapTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FD5229EB800ECE4CF2F4D16D /* Build configuration list for PBXNativeTarget "CalSnapTests" */;
+			buildPhases = (
+				3833063940A3F80264C508CF /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AA3DC48D9F9690CB96D820DC /* PBXTargetDependency */,
+			);
+			name = CalSnapTests;
+			packageProductDependencies = (
+			);
+			productName = CalSnapTests;
+			productReference = 1FA56D67A1FDA0564BB1D59A /* CalSnapTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		D15E0FFD9C41F6FE4D38B6C6 /* CalSnap */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4084A2BA89ACDE258A0D58B0 /* Build configuration list for PBXNativeTarget "CalSnap" */;
+			buildPhases = (
+				0FC30B2E404D99B4FE70638C /* Sources */,
+				0A5C25C567932E97AD694347 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CalSnap;
+			packageProductDependencies = (
+			);
+			productName = CalSnap;
+			productReference = 5183FB2DE5578C8547093C3A /* CalSnap.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4289E70DD2BC788EB4814590 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					D15E0FFD9C41F6FE4D38B6C6 = {
+						DevelopmentTeam = "";
+					};
+				};
+			};
+			buildConfigurationList = 4379A12B0107935351A60F9F /* Build configuration list for PBXProject "CalSnap" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 0BE52B9228D1B2C5EA0A5717;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D15E0FFD9C41F6FE4D38B6C6 /* CalSnap */,
+				28643885527AC94065B8C87D /* CalSnapTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0A5C25C567932E97AD694347 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				884011074BE2C209A9971AED /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0FC30B2E404D99B4FE70638C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				275D45C3B54B6BF8EB0CD975 /* AppContainer.swift in Sources */,
+				6FBA09496E1526AAEA65EBC2 /* CalSnapApp.swift in Sources */,
+				BA9F6F8108F9A54F5D77D117 /* Constants.swift in Sources */,
+				8E9F0C4DC5BFDCE0172C0967 /* Enums.swift in Sources */,
+				9FAB9CA4C4D6BDA01C4B66B0 /* FoodItem.swift in Sources */,
+				CC9C0FC95BB9ADE63B9E0FEB /* KeychainManager.swift in Sources */,
+				A8049099DF60B3369E8D2C25 /* MealEntry.swift in Sources */,
+				B18D8478722A4DC5C6D169D2 /* NutritionCalculator.swift in Sources */,
+				63A6757CEFC03CD981ACD8E4 /* RootView.swift in Sources */,
+				EF5DDCE6E4C48EFE86A32C10 /* UserProfile.swift in Sources */,
+				787D3991B98BFA89F80C941D /* WeighIn.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3833063940A3F80264C508CF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1B31CEC936B87ADC8D4A5AE0 /* KeychainManagerTests.swift in Sources */,
+				D101E5ADAC2C4C0EBA1B0D2E /* NutritionCalculatorTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AA3DC48D9F9690CB96D820DC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D15E0FFD9C41F6FE4D38B6C6 /* CalSnap */;
+			targetProxy = E7A22A33B96823236F57B900 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0DE2E9BF210AC87200ADEA73 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = CalSnap/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.calsnap.app;
+				PRODUCT_NAME = CalSnap;
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		90AF739913AD9B29138B7795 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.calsnap.app.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CalSnap.app/CalSnap";
+			};
+			name = Release;
+		};
+		B8962925A24BD2263E06EECF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.10;
+			};
+			name = Debug;
+		};
+		BA9236E55C9C0C9060E10225 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = CalSnap/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.calsnap.app;
+				PRODUCT_NAME = CalSnap;
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		BAE9D3C8459146D5BD1A8922 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.calsnap.app.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CalSnap.app/CalSnap";
+			};
+			name = Debug;
+		};
+		BC424ADF4EE7CB6069426C4F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.10;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4084A2BA89ACDE258A0D58B0 /* Build configuration list for PBXNativeTarget "CalSnap" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0DE2E9BF210AC87200ADEA73 /* Debug */,
+				BA9236E55C9C0C9060E10225 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		4379A12B0107935351A60F9F /* Build configuration list for PBXProject "CalSnap" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B8962925A24BD2263E06EECF /* Debug */,
+				BC424ADF4EE7CB6069426C4F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		FD5229EB800ECE4CF2F4D16D /* Build configuration list for PBXNativeTarget "CalSnapTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BAE9D3C8459146D5BD1A8922 /* Debug */,
+				90AF739913AD9B29138B7795 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4289E70DD2BC788EB4814590 /* Project object */;
+}
