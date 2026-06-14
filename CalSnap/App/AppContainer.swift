@@ -1,5 +1,8 @@
 import SwiftUI
 
-// DI root — services and repositories attach here in PR2+
 @Observable
-final class AppContainer {}
+final class AppContainer {
+    let healthKitService = HealthKitService()
+    let geminiService = GeminiService()
+    let userProfileRepository = UserProfileRepository()
+}

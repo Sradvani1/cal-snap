@@ -31,5 +31,9 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>NSHealthShareUsageDescription</key>
+	<string>CalSnap reads your body weight to improve calorie target accuracy.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>CalSnap logs your meals and weight to Apple Health.</string>
 </dict>
 </plist>

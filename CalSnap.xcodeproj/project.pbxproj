@@ -7,6 +7,26 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A1B2C3D401234567890ABCDE /* APIKeyResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C401234567890ABCDE /* APIKeyResolver.swift */; };
+		A1B2C3D402234567890ABCDE /* GeminiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C402234567890ABCDE /* GeminiService.swift */; };
+		A1B2C3D403234567890ABCDE /* HealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C403234567890ABCDE /* HealthKitService.swift */; };
+		A1B2C3D404234567890ABCDE /* UserProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C404234567890ABCDE /* UserProfileRepository.swift */; };
+		A1B2C3D405234567890ABCDE /* UnitFormatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C405234567890ABCDE /* UnitFormatters.swift */; };
+		A1B2C3D406234567890ABCDE /* UserProfile+Display.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C406234567890ABCDE /* UserProfile+Display.swift */; };
+		A1B2C3D407234567890ABCDE /* OnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C407234567890ABCDE /* OnboardingStep.swift */; };
+		A1B2C3D408234567890ABCDE /* ProfileDraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C408234567890ABCDE /* ProfileDraft.swift */; };
+		A1B2C3D409234567890ABCDE /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C409234567890ABCDE /* OnboardingViewModel.swift */; };
+		A1B2C3D40A234567890ABCDE /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C40A234567890ABCDE /* OnboardingView.swift */; };
+		A1B2C3D40B234567890ABCDE /* WelcomeStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C40B234567890ABCDE /* WelcomeStepView.swift */; };
+		A1B2C3D40C234567890ABCDE /* ProfileSetupStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C40C234567890ABCDE /* ProfileSetupStepView.swift */; };
+		A1B2C3D40D234567890ABCDE /* GoalSetupStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C40D234567890ABCDE /* GoalSetupStepView.swift */; };
+		A1B2C3D40E234567890ABCDE /* CalorieTargetPreviewStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C40E234567890ABCDE /* CalorieTargetPreviewStepView.swift */; };
+		A1B2C3D40F234567890ABCDE /* HealthKitPermissionStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C40F234567890ABCDE /* HealthKitPermissionStepView.swift */; };
+		A1B2C3D410234567890ABCDE /* APIKeySetupStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C410234567890ABCDE /* APIKeySetupStepView.swift */; };
+		A1B2C3D411234567890ABCDE /* OnboardingDoneStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C411234567890ABCDE /* OnboardingDoneStepView.swift */; };
+		A1B2C3D412234567890ABCDE /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C412234567890ABCDE /* DashboardView.swift */; };
+		A1B2C3D413234567890ABCDE /* OnboardingViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C413234567890ABCDE /* OnboardingViewModelTests.swift */; };
+		A1B2C3D414234567890ABCDE /* GoogleGenerativeAI in Frameworks */ = {isa = PBXBuildFile; productRef = P2B3C4D5E6F7890123456789A /* GoogleGenerativeAI */; };
 		1B31CEC936B87ADC8D4A5AE0 /* KeychainManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7D1271130B39D7B9A67E609 /* KeychainManagerTests.swift */; };
 		275D45C3B54B6BF8EB0CD975 /* AppContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01A8B7CA8B06CF58A2F7B07E /* AppContainer.swift */; };
 		63A6757CEFC03CD981ACD8E4 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842D3A9622BFDE6C189F8B07 /* RootView.swift */; };
@@ -34,6 +54,26 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F1E2D3C401234567890ABCDE /* APIKeyResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeyResolver.swift; sourceTree = "<group>"; };
+		F1E2D3C402234567890ABCDE /* GeminiService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiService.swift; sourceTree = "<group>"; };
+		F1E2D3C403234567890ABCDE /* HealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitService.swift; sourceTree = "<group>"; };
+		F1E2D3C404234567890ABCDE /* UserProfileRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileRepository.swift; sourceTree = "<group>"; };
+		F1E2D3C405234567890ABCDE /* UnitFormatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitFormatters.swift; sourceTree = "<group>"; };
+		F1E2D3C406234567890ABCDE /* UserProfile+Display.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserProfile+Display.swift"; sourceTree = "<group>"; };
+		F1E2D3C407234567890ABCDE /* OnboardingStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingStep.swift; sourceTree = "<group>"; };
+		F1E2D3C408234567890ABCDE /* ProfileDraft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileDraft.swift; sourceTree = "<group>"; };
+		F1E2D3C409234567890ABCDE /* OnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModel.swift; sourceTree = "<group>"; };
+		F1E2D3C40A234567890ABCDE /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		F1E2D3C40B234567890ABCDE /* WelcomeStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeStepView.swift; sourceTree = "<group>"; };
+		F1E2D3C40C234567890ABCDE /* ProfileSetupStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupStepView.swift; sourceTree = "<group>"; };
+		F1E2D3C40D234567890ABCDE /* GoalSetupStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalSetupStepView.swift; sourceTree = "<group>"; };
+		F1E2D3C40E234567890ABCDE /* CalorieTargetPreviewStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalorieTargetPreviewStepView.swift; sourceTree = "<group>"; };
+		F1E2D3C40F234567890ABCDE /* HealthKitPermissionStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitPermissionStepView.swift; sourceTree = "<group>"; };
+		F1E2D3C410234567890ABCDE /* APIKeySetupStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeySetupStepView.swift; sourceTree = "<group>"; };
+		F1E2D3C411234567890ABCDE /* OnboardingDoneStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingDoneStepView.swift; sourceTree = "<group>"; };
+		F1E2D3C412234567890ABCDE /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		F1E2D3C413234567890ABCDE /* OnboardingViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModelTests.swift; sourceTree = "<group>"; };
+		F1E2D3C415234567890ABCDE /* CalSnap.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CalSnap.entitlements; sourceTree = "<group>"; };
 		01A8B7CA8B06CF58A2F7B07E /* AppContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppContainer.swift; sourceTree = "<group>"; };
 		18F8DBAE76C7C7B21976685A /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
 		1AA38E304E534F513EA56DE4 /* WeighIn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeighIn.swift; sourceTree = "<group>"; };
@@ -77,10 +117,54 @@
 			isa = PBXGroup;
 			children = (
 				877A2FC088F554B971C7F877 /* Models */,
+				C0RE0001234567890ABCDE01 /* Repositories */,
 				F9ED5680E366C7F07F6207F5 /* Services */,
 				E226EB33E96E8088B825FDD5 /* Utilities */,
 			);
 			path = Core;
+			sourceTree = "<group>";
+		};
+		C0RE0001234567890ABCDE01 /* Repositories */ = {
+			isa = PBXGroup;
+			children = (
+				F1E2D3C404234567890ABCDE /* UserProfileRepository.swift */,
+			);
+			path = Repositories;
+			sourceTree = "<group>";
+		};
+		FEAT0001234567890ABCDE01 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				FEAT0002234567890ABCDE02 /* Dashboard */,
+				FEAT0003234567890ABCDE03 /* Onboarding */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		FEAT0002234567890ABCDE02 /* Dashboard */ = {
+			isa = PBXGroup;
+			children = (
+				F1E2D3C412234567890ABCDE /* DashboardView.swift */,
+			);
+			path = Dashboard;
+			sourceTree = "<group>";
+		};
+		FEAT0003234567890ABCDE03 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				F1E2D3C407234567890ABCDE /* OnboardingStep.swift */,
+				F1E2D3C408234567890ABCDE /* ProfileDraft.swift */,
+				F1E2D3C409234567890ABCDE /* OnboardingViewModel.swift */,
+				F1E2D3C40A234567890ABCDE /* OnboardingView.swift */,
+				F1E2D3C40B234567890ABCDE /* WelcomeStepView.swift */,
+				F1E2D3C40C234567890ABCDE /* ProfileSetupStepView.swift */,
+				F1E2D3C40D234567890ABCDE /* GoalSetupStepView.swift */,
+				F1E2D3C40E234567890ABCDE /* CalorieTargetPreviewStepView.swift */,
+				F1E2D3C40F234567890ABCDE /* HealthKitPermissionStepView.swift */,
+				F1E2D3C410234567890ABCDE /* APIKeySetupStepView.swift */,
+				F1E2D3C411234567890ABCDE /* OnboardingDoneStepView.swift */,
+			);
+			path = Onboarding;
 			sourceTree = "<group>";
 		};
 		877A2FC088F554B971C7F877 /* Models */ = {
@@ -90,6 +174,7 @@
 				BD8D2B293BBEB60096DA39E3 /* FoodItem.swift */,
 				48914D12FBF26E0081590A8B /* MealEntry.swift */,
 				8852933F27AA17FD6FDC12B2 /* UserProfile.swift */,
+				F1E2D3C406234567890ABCDE /* UserProfile+Display.swift */,
 				1AA38E304E534F513EA56DE4 /* WeighIn.swift */,
 			);
 			path = Models;
@@ -99,6 +184,7 @@
 			isa = PBXGroup;
 			children = (
 				DA06AE324EEDADDDC6EB6B50 /* Assets.xcassets */,
+				F1E2D3C415234567890ABCDE /* CalSnap.entitlements */,
 				4A203208125EE8A800C80A29 /* Info.plist */,
 			);
 			path = Resources;
@@ -118,6 +204,7 @@
 			children = (
 				B7D1271130B39D7B9A67E609 /* KeychainManagerTests.swift */,
 				49FF607CB3770B2AAE871821 /* NutritionCalculatorTests.swift */,
+				F1E2D3C413234567890ABCDE /* OnboardingViewModelTests.swift */,
 			);
 			path = CalSnapTests;
 			sourceTree = "<group>";
@@ -127,6 +214,7 @@
 			children = (
 				07BA7B93AA82E7551DE228CC /* App */,
 				1B3E10E65087B79829954A5C /* Core */,
+				FEAT0001234567890ABCDE01 /* Features */,
 				8E94AB61ECE40E4BAC89DE5F /* Resources */,
 			);
 			path = CalSnap;
@@ -135,21 +223,44 @@
 		E226EB33E96E8088B825FDD5 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				F1E2D3C401234567890ABCDE /* APIKeyResolver.swift */,
 				FC2F68877952481FCEDCA5E5 /* Constants.swift */,
 				18F8DBAE76C7C7B21976685A /* KeychainManager.swift */,
+				UTIL0001234567890ABCDE01 /* Extensions */,
 			);
 			path = Utilities;
+			sourceTree = "<group>";
+		};
+		UTIL0001234567890ABCDE01 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				F1E2D3C405234567890ABCDE /* UnitFormatters.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		F9ED5680E366C7F07F6207F5 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				F1E2D3C402234567890ABCDE /* GeminiService.swift */,
+				F1E2D3C403234567890ABCDE /* HealthKitService.swift */,
 				8F453EDE12C11B104F814B4D /* NutritionCalculator.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FWBP0001234567890ABCDE01 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1B2C3D414234567890ABCDE /* GoogleGenerativeAI in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXNativeTarget section */
 		28643885527AC94065B8C87D /* CalSnapTests */ = {
@@ -175,6 +286,7 @@
 			buildConfigurationList = 4084A2BA89ACDE258A0D58B0 /* Build configuration list for PBXNativeTarget "CalSnap" */;
 			buildPhases = (
 				0FC30B2E404D99B4FE70638C /* Sources */,
+				FWBP0001234567890ABCDE01 /* Frameworks */,
 				0A5C25C567932E97AD694347 /* Resources */,
 			);
 			buildRules = (
@@ -183,6 +295,7 @@
 			);
 			name = CalSnap;
 			packageProductDependencies = (
+				P2B3C4D5E6F7890123456789A /* GoogleGenerativeAI */,
 			);
 			productName = CalSnap;
 			productReference = 5183FB2DE5578C8547093C3A /* CalSnap.app */;
@@ -212,6 +325,9 @@
 			);
 			mainGroup = 0BE52B9228D1B2C5EA0A5717;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				P1A2C3D4E5F6789012345678A /* XCRemoteSwiftPackageReference "generative-ai-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
@@ -238,16 +354,34 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1B2C3D401234567890ABCDE /* APIKeyResolver.swift in Sources */,
 				275D45C3B54B6BF8EB0CD975 /* AppContainer.swift in Sources */,
+				A1B2C3D410234567890ABCDE /* APIKeySetupStepView.swift in Sources */,
 				6FBA09496E1526AAEA65EBC2 /* CalSnapApp.swift in Sources */,
+				A1B2C3D40E234567890ABCDE /* CalorieTargetPreviewStepView.swift in Sources */,
 				BA9F6F8108F9A54F5D77D117 /* Constants.swift in Sources */,
+				A1B2C3D412234567890ABCDE /* DashboardView.swift in Sources */,
 				8E9F0C4DC5BFDCE0172C0967 /* Enums.swift in Sources */,
 				9FAB9CA4C4D6BDA01C4B66B0 /* FoodItem.swift in Sources */,
+				A1B2C3D402234567890ABCDE /* GeminiService.swift in Sources */,
+				A1B2C3D40D234567890ABCDE /* GoalSetupStepView.swift in Sources */,
+				A1B2C3D403234567890ABCDE /* HealthKitService.swift in Sources */,
+				A1B2C3D40F234567890ABCDE /* HealthKitPermissionStepView.swift in Sources */,
 				CC9C0FC95BB9ADE63B9E0FEB /* KeychainManager.swift in Sources */,
 				A8049099DF60B3369E8D2C25 /* MealEntry.swift in Sources */,
 				B18D8478722A4DC5C6D169D2 /* NutritionCalculator.swift in Sources */,
+				A1B2C3D411234567890ABCDE /* OnboardingDoneStepView.swift in Sources */,
+				A1B2C3D407234567890ABCDE /* OnboardingStep.swift in Sources */,
+				A1B2C3D40A234567890ABCDE /* OnboardingView.swift in Sources */,
+				A1B2C3D409234567890ABCDE /* OnboardingViewModel.swift in Sources */,
+				A1B2C3D408234567890ABCDE /* ProfileDraft.swift in Sources */,
+				A1B2C3D40C234567890ABCDE /* ProfileSetupStepView.swift in Sources */,
 				63A6757CEFC03CD981ACD8E4 /* RootView.swift in Sources */,
+				A1B2C3D405234567890ABCDE /* UnitFormatters.swift in Sources */,
+				A1B2C3D406234567890ABCDE /* UserProfile+Display.swift in Sources */,
 				EF5DDCE6E4C48EFE86A32C10 /* UserProfile.swift in Sources */,
+				A1B2C3D404234567890ABCDE /* UserProfileRepository.swift in Sources */,
+				A1B2C3D40B234567890ABCDE /* WelcomeStepView.swift in Sources */,
 				787D3991B98BFA89F80C941D /* WeighIn.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -258,6 +392,7 @@
 			files = (
 				1B31CEC936B87ADC8D4A5AE0 /* KeychainManagerTests.swift in Sources */,
 				D101E5ADAC2C4C0EBA1B0D2E /* NutritionCalculatorTests.swift in Sources */,
+				A1B2C3D413234567890ABCDE /* OnboardingViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -276,6 +411,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = CalSnap/Resources/CalSnap.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
@@ -378,6 +514,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = CalSnap/Resources/CalSnap.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
@@ -500,6 +637,25 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		P1A2C3D4E5F6789012345678A /* XCRemoteSwiftPackageReference "generative-ai-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/generative-ai-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.5.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		P2B3C4D5E6F7890123456789A /* GoogleGenerativeAI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = P1A2C3D4E5F6789012345678A /* XCRemoteSwiftPackageReference "generative-ai-swift" */;
+			productName = GoogleGenerativeAI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4289E70DD2BC788EB4814590 /* Project object */;
 }

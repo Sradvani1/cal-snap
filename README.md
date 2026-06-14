@@ -25,14 +25,13 @@ CalSnap is an iOS app for simple calorie and macronutrient tracking from meal ph
 Requires Xcode 16.x and iOS 17+ simulator.
 
 ```bash
-# Regenerate Xcode project after editing project.yml
-xcodegen generate
-
-# Build and run tests
-xcodebuild -scheme CalSnap -destination 'platform=iOS Simulator,name=iPhone 16' test
+# Build and run tests (use Xcode.app, not Command Line Tools alone)
+DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -scheme CalSnap -destination 'platform=iOS Simulator,name=iPhone 16' test
 ```
 
-Open `CalSnap.xcodeproj` in Xcode and run on an iPhone simulator to verify the blank `RootView` launches without crash.
+Open `CalSnap.xcodeproj` in Xcode and run on an iPhone simulator.
+
+**Important:** PR2+ changes are maintained directly in `CalSnap.xcodeproj` (SPM packages, entitlements, new sources). Do **not** run `xcodegen generate` until `project.yml` is updated to match—the generator would overwrite PR2 project settings.
 
 ## Build policy
 Do not start coding a PR until its scope section in `docs/technical-spec.md` has been reviewed. Implementation checklists in `docs/implementation/` must not add scope beyond the spec.

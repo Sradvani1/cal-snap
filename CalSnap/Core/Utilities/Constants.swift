@@ -1,3 +1,7 @@
+enum AppStorageKey {
+    static let activeUserId = "activeUserId"
+}
+
 enum AppConstants {
     enum Gemini {
         static let model = "gemini-2.5-flash"
@@ -37,5 +41,13 @@ enum AppConstants {
 
     enum USDA {
         static let baseURL = "https://api.nal.usda.gov/fdc/v1"
+        static let demoAPIKey = "DEMO_KEY"
+    }
+
+    enum Onboarding {
+        static let minAgeYears = 18
+        static let maxAgeYears = 90
+        static let minGoalDaysFromToday = 14
+        static let maxGoalDaysFromToday = 730
     }
 }

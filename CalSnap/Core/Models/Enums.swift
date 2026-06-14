@@ -28,6 +28,16 @@ enum ActivityLevel: String, Codable, CaseIterable {
         case .extraActive: return "Physical job + hard daily exercise"
         }
     }
+
+    var systemImage: String {
+        switch self {
+        case .sedentary: return "figure.seated.side"
+        case .lightlyActive: return "figure.walk"
+        case .moderatelyActive: return "figure.run"
+        case .veryActive: return "figure.strengthtraining.traditional"
+        case .extraActive: return "figure.highintensity.intervaltraining"
+        }
+    }
 }
 
 enum MealType: String, Codable, CaseIterable {
