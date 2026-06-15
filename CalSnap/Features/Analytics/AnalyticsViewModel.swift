@@ -53,7 +53,7 @@ final class AnalyticsViewModel {
     }
 
     var useLbsForDisplay: Bool {
-        Locale.current.measurementSystem != .metric
+        AppStorageKey.useLbsForWeightValue
     }
 
     func load(context: ModelContext, activeUserId: String) {

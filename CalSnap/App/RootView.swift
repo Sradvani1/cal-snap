@@ -4,6 +4,7 @@ import SwiftData
 enum AppTab: Hashable {
     case dashboard
     case analytics
+    case settings
 }
 
 struct RootView: View {
@@ -22,6 +23,11 @@ struct RootView: View {
                     Tab("Analytics", systemImage: "chart.bar.fill", value: .analytics) {
                         NavigationStack {
                             AnalyticsView()
+                        }
+                    }
+                    Tab("Settings", systemImage: "gearshape.fill", value: .settings) {
+                        NavigationStack {
+                            SettingsView()
                         }
                     }
                 }

@@ -12,11 +12,13 @@ enum MealDeletionService {
         let mealId = meal.id
         try mealRepository.delete(id: mealId, context: context)
 
-        Task {
-            do {
-                try await healthKitService.reverseMeal(snapshot)
-            } catch {
-                print("HealthKit meal reversal failed: \(error.localizedDescription)")
+        if AppStorageKey.healthKitWritesEnabledValue {
+            Task {
+                do {
+                    try await healthKitService.reverseMeal(snapshot)
+                } catch {
+                    print("HealthKit meal reversal failed: \(error.localizedDescription)")
+                }
             }
         }
     }

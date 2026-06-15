@@ -5,6 +5,7 @@ struct AnalyticsView: View {
     @Environment(AppContainer.self) private var appContainer
     @Environment(\.modelContext) private var modelContext
     @AppStorage(AppStorageKey.activeUserId) private var activeUserId = ""
+    @AppStorage(AppStorageKey.profileDataRevision) private var profileDataRevision = 0
 
     @State private var viewModel: AnalyticsViewModel?
     @State private var weightProgressViewModel: WeightProgressViewModel?
@@ -130,6 +131,9 @@ struct AnalyticsView: View {
         }
         .onChange(of: selectedRange) { _, _ in
             clearInsight()
+        }
+        .onChange(of: profileDataRevision) { _, _ in
+            reloadAnalytics(bumpWeightReload: true)
         }
         .sheet(isPresented: $showCustomRangeSheet, onDismiss: revertCustomPresetIfNeeded) {
             AnalyticsCustomRangeSheet(

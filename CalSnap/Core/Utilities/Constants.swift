@@ -2,6 +2,29 @@ import Foundation
 
 enum AppStorageKey {
     static let activeUserId = "activeUserId"
+    static let profileDataRevision = "profileDataRevision"
+    static let healthKitWritesEnabled = "healthKitWritesEnabled"
+    static let healthKitWeightReadsEnabled = "healthKitWeightReadsEnabled"
+    static let useLbsForWeight = "useLbsForWeight"
+    static let useImperialForHeight = "useImperialForHeight"
+
+    static func bumpProfileDataRevision() {
+        let current = UserDefaults.standard.integer(forKey: profileDataRevision)
+        UserDefaults.standard.set(current + 1, forKey: profileDataRevision)
+    }
+
+    static var healthKitWritesEnabledValue: Bool {
+        UserDefaults.standard.object(forKey: healthKitWritesEnabled) as? Bool ?? true
+    }
+
+    static var healthKitWeightReadsEnabledValue: Bool {
+        UserDefaults.standard.object(forKey: healthKitWeightReadsEnabled) as? Bool ?? true
+    }
+
+    static var useLbsForWeightValue: Bool {
+        UserDefaults.standard.object(forKey: useLbsForWeight) as? Bool
+            ?? (Locale.current.measurementSystem != .metric)
+    }
 
     static func plateauSnoozeUntil(userId: UUID) -> String {
         "plateauSnoozeUntil_\(userId.uuidString)"

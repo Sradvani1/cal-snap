@@ -5,6 +5,7 @@ struct DashboardView: View {
     @Environment(AppContainer.self) private var appContainer
     @Environment(\.modelContext) private var modelContext
     @AppStorage(AppStorageKey.activeUserId) private var activeUserId = ""
+    @AppStorage(AppStorageKey.profileDataRevision) private var profileDataRevision = 0
     @State private var viewModel: DashboardViewModel?
     @State private var navigationPath: [DashboardRoute] = []
     @State private var suppressActiveUserIdReload = false
@@ -77,6 +78,9 @@ struct DashboardView: View {
             if newCount < oldCount {
                 reloadDashboard()
             }
+        }
+        .onChange(of: profileDataRevision) { _, _ in
+            reloadDashboard()
         }
     }
 

@@ -49,6 +49,12 @@ final class NotificationManager: NSObject {
         return stored ?? AppConstants.Notifications.defaultReminderMinute
     }
 
+    func setReminderSchedule(userId: UUID, weekday: Int, hour: Int, minute: Int) {
+        UserDefaults.standard.set(weekday, forKey: AppStorageKey.weighInReminderWeekday(userId: userId))
+        UserDefaults.standard.set(hour, forKey: AppStorageKey.weighInReminderHour(userId: userId))
+        UserDefaults.standard.set(minute, forKey: AppStorageKey.weighInReminderMinute(userId: userId))
+    }
+
     func scheduleWeighInReminder(userId: UUID, name: String) async {
         guard await requestPermissionIfNeeded() else { return }
 

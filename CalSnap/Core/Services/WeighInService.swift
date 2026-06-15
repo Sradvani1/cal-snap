@@ -67,12 +67,14 @@ enum WeighInService {
 
         try weighInRepository.save(weighIn, context: context)
 
-        let healthKit = healthKitService
-        Task {
-            do {
-                try await healthKit.logBodyMass(kg: newWeightKg, at: date)
-            } catch {
-                weighInLogger.error("HealthKit body mass log failed: \(error.localizedDescription)")
+        if AppStorageKey.healthKitWritesEnabledValue {
+            let healthKit = healthKitService
+            Task {
+                do {
+                    try await healthKit.logBodyMass(kg: newWeightKg, at: date)
+                } catch {
+                    weighInLogger.error("HealthKit body mass log failed: \(error.localizedDescription)")
+                }
             }
         }
 

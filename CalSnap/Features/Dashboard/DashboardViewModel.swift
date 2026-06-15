@@ -156,7 +156,7 @@ final class DashboardViewModel {
     }
 
     var useLbsForDisplay: Bool {
-        Locale.current.measurementSystem != .metric
+        AppStorageKey.useLbsForWeightValue
     }
 
     var hasSecondProfile: Bool {

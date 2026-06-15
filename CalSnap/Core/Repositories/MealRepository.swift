@@ -103,4 +103,15 @@ struct MealRepository {
         context.delete(meal)
         try context.save()
     }
+
+    func fetchAll(for userId: UUID, context: ModelContext) throws -> [MealEntry] {
+        let predicate = #Predicate<MealEntry> { meal in
+            meal.userId == userId
+        }
+        let descriptor = FetchDescriptor<MealEntry>(
+            predicate: predicate,
+            sortBy: [SortDescriptor(\.timestamp)]
+        )
+        return try context.fetch(descriptor)
+    }
 }

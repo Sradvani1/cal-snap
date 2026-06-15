@@ -158,4 +158,28 @@ actor HealthKitService {
         )
         try await store.save(sample)
     }
+
+    func fetchLatestWeight() async throws -> Double? {
+        guard HKHealthStore.isHealthDataAvailable() else { return nil }
+        guard let bodyMassType = HKQuantityType.quantityType(forIdentifier: .bodyMass) else { return nil }
+
+        return try await withCheckedThrowingContinuation { continuation in
+            let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
+            let query = HKSampleQuery(
+                sampleType: bodyMassType,
+                predicate: nil,
+                limit: 1,
+                sortDescriptors: [sortDescriptor]
+            ) { _, samples, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                let kg = (samples?.first as? HKQuantitySample)?
+                    .quantity.doubleValue(for: .gramUnit(with: .kilo))
+                continuation.resume(returning: kg)
+            }
+            store.execute(query)
+        }
+    }
 }

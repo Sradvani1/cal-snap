@@ -112,6 +112,14 @@
 		PR7B00A234567890ABCDEF01 /* AnalyticsInsightCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR7F00A234567890ABCDEF01 /* AnalyticsInsightCard.swift */; };
 		PR7B00B234567890ABCDEF01 /* AnalyticsSectionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR7F00B234567890ABCDEF01 /* AnalyticsSectionCard.swift */; };
 		PR7B00C234567890ABCDEF01 /* AnalyticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR7F00C234567890ABCDEF01 /* AnalyticsTests.swift */; };
+		PR8B001234567890ABCDEF01 /* ProfileUpdateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR8F001234567890ABCDEF01 /* ProfileUpdateService.swift */; };
+		PR8B002234567890ABCDEF01 /* DataExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR8F002234567890ABCDEF01 /* DataExportService.swift */; };
+		PR8B003234567890ABCDEF01 /* UserDataDeletionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR8F003234567890ABCDEF01 /* UserDataDeletionService.swift */; };
+		PR8B004234567890ABCDEF01 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR8F004234567890ABCDEF01 /* ShareSheet.swift */; };
+		PR8B005234567890ABCDEF01 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR8F005234567890ABCDEF01 /* SettingsView.swift */; };
+		PR8B006234567890ABCDEF01 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR8F006234567890ABCDEF01 /* SettingsViewModel.swift */; };
+		PR8B007234567890ABCDEF01 /* AddPartnerFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR8F007234567890ABCDEF01 /* AddPartnerFlowView.swift */; };
+		PR8B008234567890ABCDEF01 /* SettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR8F008234567890ABCDEF01 /* SettingsTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -233,6 +241,14 @@
 		PR7F00A234567890ABCDEF01 /* AnalyticsInsightCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsInsightCard.swift; sourceTree = "<group>"; };
 		PR7F00B234567890ABCDEF01 /* AnalyticsSectionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsSectionCard.swift; sourceTree = "<group>"; };
 		PR7F00C234567890ABCDEF01 /* AnalyticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTests.swift; sourceTree = "<group>"; };
+		PR8F001234567890ABCDEF01 /* ProfileUpdateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileUpdateService.swift; sourceTree = "<group>"; };
+		PR8F002234567890ABCDEF01 /* DataExportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataExportService.swift; sourceTree = "<group>"; };
+		PR8F003234567890ABCDEF01 /* UserDataDeletionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDataDeletionService.swift; sourceTree = "<group>"; };
+		PR8F004234567890ABCDEF01 /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
+		PR8F005234567890ABCDEF01 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		PR8F006234567890ABCDEF01 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		PR8F007234567890ABCDEF01 /* AddPartnerFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPartnerFlowView.swift; sourceTree = "<group>"; };
+		PR8F008234567890ABCDEF01 /* SettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -323,6 +339,7 @@
 				PR5F009234567890ABCDEF01 /* MealLogCRUDTests.swift */,
 				PR6F007234567890ABCDEF01 /* WeighInTests.swift */,
 				PR7F00C234567890ABCDEF01 /* AnalyticsTests.swift */,
+				PR8F008234567890ABCDEF01 /* SettingsTests.swift */,
 				49FF607CB3770B2AAE871821 /* NutritionCalculatorTests.swift */,
 				F1E2D3C413234567890ABCDE /* OnboardingViewModelTests.swift */,
 			);
@@ -359,6 +376,7 @@
 				PR5F00B234567890ABCDEF01 /* InteractivePopGestureDisabler.swift */,
 				PR7F001234567890ABCDEF01 /* AnalyticsTypes.swift */,
 				18F8DBAE76C7C7B21976685A /* KeychainManager.swift */,
+				PR8F004234567890ABCDEF01 /* ShareSheet.swift */,
 				UTIL0001234567890ABCDE01 /* Extensions */,
 			);
 			path = Utilities;
@@ -374,6 +392,9 @@
 				8F453EDE12C11B104F814B4D /* NutritionCalculator.swift */,
 				PR6F001234567890ABCDEF01 /* WeighInService.swift */,
 				PR7F002234567890ABCDEF01 /* AnalyticsAggregator.swift */,
+				PR8F001234567890ABCDEF01 /* ProfileUpdateService.swift */,
+				PR8F002234567890ABCDEF01 /* DataExportService.swift */,
+				PR8F003234567890ABCDEF01 /* UserDataDeletionService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -386,6 +407,7 @@
 				PR3G001234567890ABCDEF01 /* MealScanner */,
 				PR6G001234567890ABCDEF01 /* Progress */,
 				PR7G001234567890ABCDEF01 /* Analytics */,
+				PR8G001234567890ABCDEF01 /* Settings */,
 				FEAT0003234567890ABCDE03 /* Onboarding */,
 			);
 			path = Features;
@@ -456,6 +478,16 @@
 				PR7F00B234567890ABCDEF01 /* AnalyticsSectionCard.swift */,
 			);
 			path = Analytics;
+			sourceTree = "<group>";
+		};
+		PR8G001234567890ABCDEF01 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				PR8F005234567890ABCDEF01 /* SettingsView.swift */,
+				PR8F006234567890ABCDEF01 /* SettingsViewModel.swift */,
+				PR8F007234567890ABCDEF01 /* AddPartnerFlowView.swift */,
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 		PR5G001234567890ABCDEF01 /* MealLog */ = {
@@ -691,6 +723,13 @@
 				PR7B009234567890ABCDEF01 /* PatternsSectionView.swift in Sources */,
 				PR7B00A234567890ABCDEF01 /* AnalyticsInsightCard.swift in Sources */,
 				PR7B00B234567890ABCDEF01 /* AnalyticsSectionCard.swift in Sources */,
+				PR8B001234567890ABCDEF01 /* ProfileUpdateService.swift in Sources */,
+				PR8B002234567890ABCDEF01 /* DataExportService.swift in Sources */,
+				PR8B003234567890ABCDEF01 /* UserDataDeletionService.swift in Sources */,
+				PR8B004234567890ABCDEF01 /* ShareSheet.swift in Sources */,
+				PR8B005234567890ABCDEF01 /* SettingsView.swift in Sources */,
+				PR8B006234567890ABCDEF01 /* SettingsViewModel.swift in Sources */,
+				PR8B007234567890ABCDEF01 /* AddPartnerFlowView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -702,6 +741,7 @@
 				PR5B009234567890ABCDEF01 /* MealLogCRUDTests.swift in Sources */,
 				PR6B007234567890ABCDEF01 /* WeighInTests.swift in Sources */,
 				PR7B00C234567890ABCDEF01 /* AnalyticsTests.swift in Sources */,
+				PR8B008234567890ABCDEF01 /* SettingsTests.swift in Sources */,
 				PR4B00E234567890ABCDEF01 /* MealScannerViewModelTests.swift in Sources */,
 				PR4B015234567890ABCDEF01 /* MealPhotoProcessorTests.swift in Sources */,
 				1B31CEC936B87ADC8D4A5AE0 /* KeychainManagerTests.swift in Sources */,
