@@ -24,6 +24,18 @@ enum MealScannerError: Error {
     case notInEditMode
 }
 
+private struct MealEditBaseline: Equatable {
+    // Tracks meal type, description, macro totals, and items. Photo changes are not editable on the results screen.
+    let mealType: MealType
+    let textDescription: String
+    let totalCalories: Int
+    let totalProteinG: Double
+    let totalCarbsG: Double
+    let totalFatG: Double
+    let totalFiberG: Double
+    let items: [EditableFoodItem]
+}
+
 enum ConfidenceLevel: Equatable {
     case high
     case medium
@@ -46,7 +58,7 @@ final class MealScannerViewModel {
     var textDescription = ""
     var analysisResult: MealAnalysisResponse?
     var editableItems: [EditableFoodItem] = []
-    var mealType: MealType = .suggested(for: Date())
+    var mealType: MealType = .suggested(for: Date.now)
     var scannerError: ScannerError?
     var estimationNotes: String?
     var isManualEntry = false
@@ -58,6 +70,7 @@ final class MealScannerViewModel {
     private var editingTimestamp: Date?
     private var analyzeTask: Task<Void, Never>?
     private var originalItemWeights: [UUID: Double] = [:]
+    private var editBaseline: MealEditBaseline?
     private let userId: UUID
     private let mealAnalyzer: any MealAnalyzerProtocol
     private let healthKitService: HealthKitService
@@ -142,6 +155,26 @@ final class MealScannerViewModel {
         editingMealId != nil
     }
 
+    var hasUnsavedWork: Bool {
+        if isEditing {
+            guard let editBaseline else { return false }
+            return currentEditBaseline != editBaseline
+        }
+        switch phase {
+        case .analyzing:
+            return true
+        case .results:
+            return !editableItems.isEmpty
+        case .manual:
+            return editableItems.contains { item in
+                !item.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item.calories > 0
+            }
+        case .capture, .error:
+            return selectedImage != nil
+                || !textDescription.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        }
+    }
+
     static var isCameraAvailable: Bool {
         UIImagePickerController.isSourceTypeAvailable(.camera)
     }
@@ -193,11 +226,7 @@ final class MealScannerViewModel {
                 handleGeminiError(error)
             } catch {
                 guard !Task.isCancelled else { return }
-                if (error as? URLError)?.code == .notConnectedToInternet {
-                    scannerError = .offline
-                } else {
-                    scannerError = .api(error.localizedDescription)
-                }
+                scannerError = .api(error.localizedDescription)
                 phase = .error
             }
         }
@@ -292,8 +321,9 @@ final class MealScannerViewModel {
         editingItemID = nil
         editingMealId = nil
         editingTimestamp = nil
+        editBaseline = nil
         originalItemWeights = [:]
-        mealType = .suggested(for: Date())
+        mealType = .suggested(for: Date.now)
         phase = .capture
     }
 
@@ -318,6 +348,7 @@ final class MealScannerViewModel {
         originalItemWeights = Dictionary(
             uniqueKeysWithValues: editableItems.map { ($0.id, $0.weightG) }
         )
+        editBaseline = currentEditBaseline
         phase = .results
     }
 
@@ -335,9 +366,10 @@ final class MealScannerViewModel {
         try mealRepository.save(entry, context: context)
 
         let healthKit = healthKitService
+        let snapshot = MealHealthSnapshot(meal: entry)
         Task {
             do {
-                try await healthKit.logMeal(entry)
+                try await healthKit.logMeal(snapshot)
             } catch {
                 print("HealthKit meal log failed: \(error.localizedDescription)")
             }
@@ -359,10 +391,11 @@ final class MealScannerViewModel {
         try mealRepository.update(entry, items: items, context: context)
 
         let healthKit = healthKitService
+        let newSnapshot = MealHealthSnapshot(meal: entry)
         Task {
             do {
                 try await healthKit.reverseMeal(oldSnapshot)
-                try await healthKit.logMeal(entry)
+                try await healthKit.logMeal(newSnapshot)
             } catch {
                 print("HealthKit meal update sync failed: \(error.localizedDescription)")
             }
@@ -376,7 +409,7 @@ final class MealScannerViewModel {
         return MealEntry(
             id: editingMealId ?? UUID(),
             userId: userId,
-            timestamp: editingTimestamp ?? Date(),
+            timestamp: editingTimestamp ?? Date.now,
             mealType: mealType,
             photoData: photoData,
             textDescription: description.isEmpty ? nil : description,
@@ -438,6 +471,11 @@ final class MealScannerViewModel {
         }
     }
 
+    static func resizedForAnalysis(_ image: UIImage) -> UIImage? {
+        guard let encoded = jpegData(from: image) else { return nil }
+        return UIImage(data: encoded.data)
+    }
+
     private func handleGeminiError(_ error: GeminiError) {
         switch error {
         case .apiKeyMissing:
@@ -448,6 +486,12 @@ final class MealScannerViewModel {
             scannerError = .unrecognizable
         case .validationFailed:
             scannerError = .api(error.localizedDescription)
+        case .requestFailed(let message):
+            if message == "No internet connection." {
+                scannerError = .offline
+            } else {
+                scannerError = .api(message)
+            }
         }
         phase = .error
     }
@@ -470,9 +514,22 @@ final class MealScannerViewModel {
             monitor.start(queue: queue)
 
             queue.asyncAfter(deadline: .now() + 2) {
-                resume(false)
+                resume(true)
             }
         }
+    }
+
+    private var currentEditBaseline: MealEditBaseline {
+        MealEditBaseline(
+            mealType: mealType,
+            textDescription: textDescription.trimmingCharacters(in: .whitespacesAndNewlines),
+            totalCalories: totalCalories,
+            totalProteinG: totalProteinG,
+            totalCarbsG: totalCarbsG,
+            totalFatG: totalFatG,
+            totalFiberG: totalFiberG,
+            items: editableItems
+        )
     }
 }
 

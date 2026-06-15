@@ -74,6 +74,11 @@
 		PR4B00C234567890ABCDEF01 /* MealAnalysisResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR4F00C234567890ABCDEF01 /* MealAnalysisResultView.swift */; };
 		PR4B00D234567890ABCDEF01 /* ManualMealEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR4F00D234567890ABCDEF01 /* ManualMealEntryView.swift */; };
 		PR4B00E234567890ABCDEF01 /* MealScannerViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR4F00E234567890ABCDEF01 /* MealScannerViewModelTests.swift */; };
+		PR4H001234567890ABCDEF01 /* CalorieTotalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR4H00F234567890ABCDEF01 /* CalorieTotalView.swift */; };
+		PR4H002234567890ABCDEF01 /* MealScannerCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR4H010234567890ABCDEF01 /* MealScannerCaptureView.swift */; };
+		PR4H003234567890ABCDEF01 /* MealScannerAnalyzingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR4H011234567890ABCDEF01 /* MealScannerAnalyzingView.swift */; };
+		PR4H004234567890ABCDEF01 /* ManualMealItemCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR4H012234567890ABCDEF01 /* ManualMealItemCard.swift */; };
+		PR4H005234567890ABCDEF01 /* EditingFoodItemID.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR4H013234567890ABCDEF01 /* EditingFoodItemID.swift */; };
 		PR5B001234567890ABCDEF01 /* MealHealthSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR5F001234567890ABCDEF01 /* MealHealthSnapshot.swift */; };
 		PR5B002234567890ABCDEF01 /* DashboardRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR5F002234567890ABCDEF01 /* DashboardRoute.swift */; };
 		PR5B003234567890ABCDEF01 /* MealDeletionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR5F003234567890ABCDEF01 /* MealDeletionService.swift */; };
@@ -174,6 +179,11 @@
 		PR4F00C234567890ABCDEF01 /* MealAnalysisResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealAnalysisResultView.swift; sourceTree = "<group>"; };
 		PR4F00D234567890ABCDEF01 /* ManualMealEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManualMealEntryView.swift; sourceTree = "<group>"; };
 		PR4F00E234567890ABCDEF01 /* MealScannerViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealScannerViewModelTests.swift; sourceTree = "<group>"; };
+		PR4H00F234567890ABCDEF01 /* CalorieTotalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalorieTotalView.swift; sourceTree = "<group>"; };
+		PR4H010234567890ABCDEF01 /* MealScannerCaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealScannerCaptureView.swift; sourceTree = "<group>"; };
+		PR4H011234567890ABCDEF01 /* MealScannerAnalyzingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealScannerAnalyzingView.swift; sourceTree = "<group>"; };
+		PR4H012234567890ABCDEF01 /* ManualMealItemCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManualMealItemCard.swift; sourceTree = "<group>"; };
+		PR4H013234567890ABCDEF01 /* EditingFoodItemID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditingFoodItemID.swift; sourceTree = "<group>"; };
 		PR5F001234567890ABCDEF01 /* MealHealthSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealHealthSnapshot.swift; sourceTree = "<group>"; };
 		PR5F002234567890ABCDEF01 /* DashboardRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardRoute.swift; sourceTree = "<group>"; };
 		PR5F003234567890ABCDEF01 /* MealDeletionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealDeletionService.swift; sourceTree = "<group>"; };
@@ -421,6 +431,11 @@
 				PR4F00B234567890ABCDEF01 /* ScannerErrorBanner.swift */,
 				PR4F00C234567890ABCDEF01 /* MealAnalysisResultView.swift */,
 				PR4F00D234567890ABCDEF01 /* ManualMealEntryView.swift */,
+				PR4H00F234567890ABCDEF01 /* CalorieTotalView.swift */,
+				PR4H010234567890ABCDEF01 /* MealScannerCaptureView.swift */,
+				PR4H011234567890ABCDEF01 /* MealScannerAnalyzingView.swift */,
+				PR4H012234567890ABCDEF01 /* ManualMealItemCard.swift */,
+				PR4H013234567890ABCDEF01 /* EditingFoodItemID.swift */,
 				PR3F00A234567890ABCDEF01 /* MealScannerView.swift */,
 			);
 			path = MealScanner;
@@ -557,6 +572,11 @@
 				PR4B00B234567890ABCDEF01 /* ScannerErrorBanner.swift in Sources */,
 				PR4B00C234567890ABCDEF01 /* MealAnalysisResultView.swift in Sources */,
 				PR4B00D234567890ABCDEF01 /* ManualMealEntryView.swift in Sources */,
+				PR4H001234567890ABCDEF01 /* CalorieTotalView.swift in Sources */,
+				PR4H002234567890ABCDEF01 /* MealScannerCaptureView.swift in Sources */,
+				PR4H003234567890ABCDEF01 /* MealScannerAnalyzingView.swift in Sources */,
+				PR4H004234567890ABCDEF01 /* ManualMealItemCard.swift in Sources */,
+				PR4H005234567890ABCDEF01 /* EditingFoodItemID.swift in Sources */,
 				PR1B001234567890ABCDEF01 /* BiologicalSex.swift in Sources */,
 				PR1B002234567890ABCDEF01 /* ActivityLevel.swift in Sources */,
 				PR1B003234567890ABCDEF01 /* MealType.swift in Sources */,

@@ -29,6 +29,7 @@ struct MealDetailView: View {
                                 .frame(height: 200)
                                 .frame(maxWidth: .infinity)
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
+                                .accessibilityLabel("Meal photo")
                         }
 
                         VStack(alignment: .leading, spacing: 4) {
@@ -39,14 +40,7 @@ struct MealDetailView: View {
                                 .foregroundStyle(.secondary)
                         }
 
-                        VStack(spacing: 4) {
-                            Text("\(displayedMeal.totalCalories)")
-                                .font(.system(size: 48, weight: .bold, design: .rounded))
-                            Text("calories")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        }
-                        .frame(maxWidth: .infinity)
+                        CalorieTotalView(calories: displayedMeal.totalCalories)
 
                         MacroSplitBar(
                             proteinG: displayedMeal.totalProteinG,

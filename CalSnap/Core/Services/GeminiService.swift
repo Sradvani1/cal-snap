@@ -38,6 +38,7 @@ enum GeminiError: Error, LocalizedError {
     case emptyResponse
     case validationFailed
     case invalidJSON(String)
+    case requestFailed(String)
 
     var errorDescription: String? {
         switch self {
@@ -49,6 +50,8 @@ enum GeminiError: Error, LocalizedError {
             return "Could not validate Gemini API key."
         case .invalidJSON(let message):
             return "Could not parse Gemini response: \(message)"
+        case .requestFailed(let message):
+            return message
         }
     }
 }
@@ -72,10 +75,18 @@ actor GeminiService {
         }
     }
 
-    func analyzeMeal(_ request: MealAnalysisRequest) async throws -> MealAnalysisResponse {
-        guard let apiKey = try APIKeyResolver.resolvedGeminiAPIKey(),
-              !apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            throw GeminiError.apiKeyMissing
+    func analyzeMeal(_ request: MealAnalysisRequest) async throws(GeminiError) -> MealAnalysisResponse {
+        let apiKey: String
+        do {
+            guard let key = try APIKeyResolver.resolvedGeminiAPIKey(),
+                  !key.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                throw GeminiError.apiKeyMissing
+            }
+            apiKey = key
+        } catch let error as GeminiError {
+            throw error
+        } catch {
+            throw Self.mapRequestError(error)
         }
 
         let model = GenerativeModel(
@@ -90,7 +101,13 @@ actor GeminiService {
         let prompt = Self.buildPrompt(description: request.textDescription)
         let textPart = ModelContent.Part.text(prompt)
         let imagePart = ModelContent.Part.data(mimetype: request.mimeType, request.imageData)
-        let response = try await model.generateContent([textPart, imagePart])
+
+        let response: GenerateContentResponse
+        do {
+            response = try await model.generateContent([textPart, imagePart])
+        } catch {
+            throw Self.mapRequestError(error)
+        }
 
         guard let text = response.text,
               let data = text.data(using: .utf8) else {
@@ -104,6 +121,13 @@ actor GeminiService {
         } catch {
             throw GeminiError.invalidJSON(error.localizedDescription)
         }
+    }
+
+    private static func mapRequestError(_ error: Error) -> GeminiError {
+        if let urlError = error as? URLError, urlError.code == .notConnectedToInternet {
+            return .requestFailed("No internet connection.")
+        }
+        return .requestFailed(error.localizedDescription)
     }
 
     private static func buildPrompt(description: String?) -> String {

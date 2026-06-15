@@ -57,7 +57,7 @@ struct FoodItemEditSheet: View {
                 }
             }
         }
-        .presentationDetents([.medium])
+        .presentationSizing(.form)
     }
 
     private var canSave: Bool {

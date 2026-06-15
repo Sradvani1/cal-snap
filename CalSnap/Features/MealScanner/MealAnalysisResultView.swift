@@ -34,16 +34,10 @@ struct MealAnalysisResultView: View {
                         .frame(height: 120)
                         .frame(maxWidth: .infinity)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .accessibilityLabel("Meal photo")
                 }
 
-                VStack(spacing: 4) {
-                    Text("\(totalCalories)")
-                        .font(.system(size: 48, weight: .bold, design: .rounded))
-                    Text("calories")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-                .frame(maxWidth: .infinity)
+                CalorieTotalView(calories: totalCalories)
 
                 MacroSplitBar(proteinG: proteinG, carbsG: carbsG, fatG: fatG)
 

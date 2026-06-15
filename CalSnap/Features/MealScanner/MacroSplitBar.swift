@@ -9,6 +9,13 @@ struct MacroSplitBar: View {
         proteinG + carbsG + fatG
     }
 
+    private var accessibilitySummary: String {
+        if total > 0 {
+            return "Macros: protein \(Int(proteinG.rounded())) grams, carbs \(Int(carbsG.rounded())) grams, fat \(Int(fatG.rounded())) grams"
+        }
+        return "No macro data"
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             if total > 0 {
@@ -37,6 +44,8 @@ struct MacroSplitBar: View {
                     .foregroundStyle(.secondary)
             }
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(accessibilitySummary)
     }
 
     @ViewBuilder

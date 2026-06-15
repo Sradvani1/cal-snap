@@ -1,7 +1,7 @@
 import Foundation
 
 protocol MealAnalyzerProtocol: Sendable {
-    func analyzeMeal(_ request: MealAnalysisRequest) async throws -> MealAnalysisResponse
+    func analyzeMeal(_ request: MealAnalysisRequest) async throws(GeminiError) -> MealAnalysisResponse
 }
 
 extension GeminiService: MealAnalyzerProtocol {}
@@ -11,7 +11,7 @@ final class MockMealAnalyzer: MealAnalyzerProtocol, @unchecked Sendable {
     var shouldThrow = false
     private(set) var lastRequest: MealAnalysisRequest?
 
-    func analyzeMeal(_ request: MealAnalysisRequest) async throws -> MealAnalysisResponse {
+    func analyzeMeal(_ request: MealAnalysisRequest) async throws(GeminiError) -> MealAnalysisResponse {
         lastRequest = request
         if shouldThrow {
             throw GeminiError.emptyResponse

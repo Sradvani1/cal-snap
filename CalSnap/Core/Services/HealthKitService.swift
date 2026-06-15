@@ -33,15 +33,19 @@ actor HealthKitService {
     }
 
     func logMeal(_ entry: MealEntry) async throws {
+        try await logMeal(MealHealthSnapshot(meal: entry))
+    }
+
+    func logMeal(_ snapshot: MealHealthSnapshot) async throws {
         guard HKHealthStore.isHealthDataAvailable() else { return }
 
-        let timestamp = entry.timestamp
+        let timestamp = snapshot.timestamp
         var samples: [HKSample] = []
 
         if let calorieType = HKQuantityType.quantityType(forIdentifier: .dietaryEnergyConsumed) {
             samples.append(HKQuantitySample(
                 type: calorieType,
-                quantity: HKQuantity(unit: .kilocalorie(), doubleValue: Double(entry.totalCalories)),
+                quantity: HKQuantity(unit: .kilocalorie(), doubleValue: Double(snapshot.totalCalories)),
                 start: timestamp,
                 end: timestamp
             ))
@@ -50,7 +54,7 @@ actor HealthKitService {
         if let proteinType = HKQuantityType.quantityType(forIdentifier: .dietaryProtein) {
             samples.append(HKQuantitySample(
                 type: proteinType,
-                quantity: HKQuantity(unit: .gram(), doubleValue: entry.totalProteinG),
+                quantity: HKQuantity(unit: .gram(), doubleValue: snapshot.totalProteinG),
                 start: timestamp,
                 end: timestamp
             ))
@@ -59,7 +63,7 @@ actor HealthKitService {
         if let carbsType = HKQuantityType.quantityType(forIdentifier: .dietaryCarbohydrates) {
             samples.append(HKQuantitySample(
                 type: carbsType,
-                quantity: HKQuantity(unit: .gram(), doubleValue: entry.totalCarbsG),
+                quantity: HKQuantity(unit: .gram(), doubleValue: snapshot.totalCarbsG),
                 start: timestamp,
                 end: timestamp
             ))
@@ -68,7 +72,7 @@ actor HealthKitService {
         if let fatType = HKQuantityType.quantityType(forIdentifier: .dietaryFatTotal) {
             samples.append(HKQuantitySample(
                 type: fatType,
-                quantity: HKQuantity(unit: .gram(), doubleValue: entry.totalFatG),
+                quantity: HKQuantity(unit: .gram(), doubleValue: snapshot.totalFatG),
                 start: timestamp,
                 end: timestamp
             ))
@@ -77,7 +81,7 @@ actor HealthKitService {
         if let fiberType = HKQuantityType.quantityType(forIdentifier: .dietaryFiber) {
             samples.append(HKQuantitySample(
                 type: fiberType,
-                quantity: HKQuantity(unit: .gram(), doubleValue: entry.totalFiberG),
+                quantity: HKQuantity(unit: .gram(), doubleValue: snapshot.totalFiberG),
                 start: timestamp,
                 end: timestamp
             ))

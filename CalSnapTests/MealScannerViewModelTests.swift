@@ -1,10 +1,12 @@
 import SwiftData
+import UIKit
 import XCTest
 @testable import CalSnap
 
 @MainActor
 final class MealScannerViewModelTests: XCTestCase {
     private var viewModel: MealScannerViewModel!
+    private var mockAnalyzer: MockMealAnalyzer!
     private var userId: UUID!
     private var container: ModelContainer!
     private var context: ModelContext!
@@ -18,12 +20,20 @@ final class MealScannerViewModelTests: XCTestCase {
         )
         context = container.mainContext
         userId = UUID()
+        mockAnalyzer = MockMealAnalyzer()
         viewModel = MealScannerViewModel(
             userId: userId,
-            mealAnalyzer: MockMealAnalyzer(),
+            mealAnalyzer: mockAnalyzer,
             healthKitService: HealthKitService(),
             mealRepository: MealRepository()
         )
+    }
+
+    private func testImage() -> UIImage {
+        UIGraphicsImageRenderer(size: CGSize(width: 10, height: 10)).image { context in
+            UIColor.red.setFill()
+            context.fill(CGRect(x: 0, y: 0, width: 10, height: 10))
+        }
     }
 
     func testEditableFoodItemScaling() {
@@ -113,5 +123,147 @@ final class MealScannerViewModelTests: XCTestCase {
         let savedMeals = try context.fetch(mealDescriptor)
         XCTAssertEqual(savedMeals.count, 1)
         XCTAssertEqual(savedMeals.first?.items.count, 2)
+    }
+
+    func testApplyAnalysisPopulatesResults() {
+        viewModel.applyAnalysis(.testDefault)
+
+        XCTAssertEqual(viewModel.phase, .results)
+        XCTAssertEqual(viewModel.editableItems.count, 2)
+        XCTAssertEqual(viewModel.estimationNotes, MealAnalysisResponse.testDefault.estimationNotes)
+        XCTAssertFalse(viewModel.isManualEntry)
+    }
+
+    func testAnalyzeMissingAPIKey() {
+        viewModel.selectedImage = testImage()
+
+        viewModel.analyze()
+
+        XCTAssertEqual(viewModel.phase, .error)
+        XCTAssertEqual(viewModel.scannerError, .missingAPIKey)
+    }
+
+    func testApplyAnalysisEmptyItemsShowsUnrecognizable() {
+        let emptyResponse = MealAnalysisResponse(
+            items: [],
+            mealTotal: MealAnalysisResponse.MealTotal(
+                calories: 0,
+                proteinG: 0,
+                carbsG: 0,
+                fatG: 0,
+                fiberG: 0
+            ),
+            flaggedItems: [],
+            estimationNotes: ""
+        )
+
+        viewModel.applyAnalysis(emptyResponse)
+
+        XCTAssertEqual(viewModel.phase, .error)
+        XCTAssertEqual(viewModel.scannerError, .unrecognizable)
+        XCTAssertTrue(viewModel.editableItems.isEmpty)
+    }
+
+    func testManualEntryConfidenceSemantics() {
+        viewModel.enterManualEntry()
+        viewModel.editableItems[0].name = "Oatmeal"
+        viewModel.editableItems[0].calories = 300
+        viewModel.finishManualEntry()
+
+        XCTAssertTrue(viewModel.isManualEntry)
+        XCTAssertEqual(viewModel.overallConfidence, 0)
+
+        let entry = viewModel.makeMealEntry()
+        XCTAssertEqual(entry.geminiConfidence, 0)
+        XCTAssertTrue(entry.isManuallyAdjusted)
+        XCTAssertNil(entry.estimationNotes)
+    }
+
+    func testHasAdjustedItemsSetsManuallyAdjusted() {
+        viewModel.applyAnalysis(.testDefault)
+        guard let itemId = viewModel.editableItems.first?.id else {
+            XCTFail("Expected at least one editable item")
+            return
+        }
+
+        viewModel.adjustItem(id: itemId, newWeightG: 300)
+
+        let entry = viewModel.makeMealEntry()
+        XCTAssertTrue(entry.isManuallyAdjusted)
+    }
+
+    func testHasUnsavedWorkCaptureWithImage() {
+        XCTAssertFalse(viewModel.hasUnsavedWork)
+
+        viewModel.selectedImage = testImage()
+
+        XCTAssertTrue(viewModel.hasUnsavedWork)
+    }
+
+    func testHasUnsavedWorkFalseAfterEditLoadWithoutChanges() throws {
+        let foodItem = FoodItem(
+            name: "Chicken",
+            estimatedWeightG: 150,
+            calories: 248,
+            proteinG: 46,
+            carbsG: 0,
+            fatG: 5,
+            fiberG: 0,
+            confidence: 0.9,
+            isFlagged: false
+        )
+        let meal = MealEntry(
+            userId: userId,
+            timestamp: Date.now,
+            mealType: .lunch,
+            totalCalories: 248,
+            totalProteinG: 46,
+            totalCarbsG: 0,
+            totalFatG: 5,
+            totalFiberG: 0,
+            geminiConfidence: 0.9,
+            items: [foodItem]
+        )
+        context.insert(foodItem)
+        context.insert(meal)
+        try context.save()
+
+        viewModel.loadForEditing(meal: meal)
+
+        XCTAssertFalse(viewModel.hasUnsavedWork)
+    }
+
+    func testHasUnsavedWorkTrueAfterEditWeightChange() throws {
+        let foodItem = FoodItem(
+            name: "Chicken",
+            estimatedWeightG: 150,
+            calories: 248,
+            proteinG: 46,
+            carbsG: 0,
+            fatG: 5,
+            fiberG: 0,
+            confidence: 0.9,
+            isFlagged: false
+        )
+        let meal = MealEntry(
+            userId: userId,
+            timestamp: Date.now,
+            mealType: .lunch,
+            totalCalories: 248,
+            totalProteinG: 46,
+            totalCarbsG: 0,
+            totalFatG: 5,
+            totalFiberG: 0,
+            geminiConfidence: 0.9,
+            items: [foodItem]
+        )
+        context.insert(foodItem)
+        context.insert(meal)
+        try context.save()
+
+        viewModel.loadForEditing(meal: meal)
+        viewModel.adjustItem(id: foodItem.id, newWeightG: 200)
+
+        XCTAssertTrue(viewModel.hasUnsavedWork)
     }
 }

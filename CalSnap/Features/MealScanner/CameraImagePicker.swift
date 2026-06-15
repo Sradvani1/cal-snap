@@ -5,10 +5,6 @@ struct CameraImagePicker: UIViewControllerRepresentable {
     @Environment(\.dismiss) private var dismiss
     let onImagePicked: (UIImage) -> Void
 
-    static var isCameraAvailable: Bool {
-        UIImagePickerController.isSourceTypeAvailable(.camera)
-    }
-
     func makeUIViewController(context: Context) -> UIImagePickerController {
         let picker = UIImagePickerController()
         picker.sourceType = .camera

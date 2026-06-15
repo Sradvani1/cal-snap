@@ -46,7 +46,9 @@ struct MealRepository {
     }
 
     func update(_ entry: MealEntry, items: [FoodItem], context: ModelContext) throws {
-        guard let existing = try fetchMeal(id: entry.id, context: context) else { return }
+        guard let existing = try fetchMeal(id: entry.id, context: context) else {
+            throw MealRepositoryError.mealNotFound
+        }
 
         existing.mealType = entry.mealType
         existing.photoData = entry.photoData

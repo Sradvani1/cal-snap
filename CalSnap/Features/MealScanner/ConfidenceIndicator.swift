@@ -5,9 +5,11 @@ struct ConfidenceIndicator: View {
     let score: Double
     let isManualEntry: Bool
 
+    @Environment(\.accessibilityDifferentiateWithoutColor) private var differentiateWithoutColor
+
     var body: some View {
         if isManualEntry {
-            Text("Manual entry")
+            Label("Manual entry", systemImage: "hand.draw")
                 .font(.caption.weight(.semibold))
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
@@ -16,14 +18,32 @@ struct ConfidenceIndicator: View {
                 .clipShape(Capsule())
                 .accessibilityLabel("Manual entry")
         } else {
-            Text("\(level.label) (\(Int((score * 100).rounded()))%)")
-                .font(.caption.weight(.semibold))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(backgroundColor)
-                .foregroundStyle(foregroundColor)
-                .clipShape(Capsule())
-                .accessibilityLabel("\(level.label), \(Int((score * 100).rounded())) percent")
+            Label {
+                Text("\(level.label) (\(Int((score * 100).rounded()))%)")
+            } icon: {
+                Image(systemName: symbolName)
+            }
+            .font(.caption.weight(.semibold))
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(backgroundColor)
+            .foregroundStyle(foregroundColor)
+            .overlay {
+                if differentiateWithoutColor {
+                    Capsule()
+                        .strokeBorder(.primary, lineWidth: 1.5)
+                }
+            }
+            .clipShape(Capsule())
+            .accessibilityLabel("\(level.label), \(Int((score * 100).rounded())) percent")
+        }
+    }
+
+    private var symbolName: String {
+        switch level {
+        case .high: return "checkmark.circle.fill"
+        case .medium: return "questionmark.circle.fill"
+        case .low: return "exclamationmark.triangle.fill"
         }
     }
 

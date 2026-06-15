@@ -82,7 +82,7 @@ Apply relevant skills when reading, writing, or reviewing Swift/SwiftUI code.
 - UIKit bridges are allowed for camera (`PhotosUI`), sharing (`UIActivityViewController`), and widgets.
 - HealthKit background writes may use `try?` and must not block UI or show user-facing errors (log only).
 - `withCheckedThrowingContinuation` is acceptable only when wrapping legacy HealthKit APIs without async equivalents.
-- `NWPathMonitor` requires a `DispatchQueue` for `start(queue:)` — use a private serial queue with a `@Sendable` resume guard (see `MealScannerViewModel.isNetworkAvailable`).
+- `NWPathMonitor` requires a `DispatchQueue` for `start(queue:)` — use a private serial queue with a `@Sendable` resume guard (see `MealScannerViewModel.isNetworkAvailable`). On timeout, proceed with the network request rather than treating the device as offline; let URLSession surface real connectivity failures.
 
 ## Testing
 - Write unit tests for business logic in each PR.

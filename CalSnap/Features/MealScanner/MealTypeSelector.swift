@@ -4,7 +4,7 @@ struct MealTypeSelector: View {
     @Binding var selection: MealType
 
     private var suggested: MealType {
-        MealType.suggested(for: Date())
+        MealType.suggested(for: Date.now)
     }
 
     var body: some View {
