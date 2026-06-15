@@ -74,6 +74,13 @@
 		PR5B007234567890ABCDEF01 /* MealListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR5F007234567890ABCDEF01 /* MealListView.swift */; };
 		PR5B008234567890ABCDEF01 /* DailySummaryFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR5F008234567890ABCDEF01 /* DailySummaryFooterView.swift */; };
 		PR5B009234567890ABCDEF01 /* MealLogCRUDTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR5F009234567890ABCDEF01 /* MealLogCRUDTests.swift */; };
+		PR6B001234567890ABCDEF01 /* WeighInService.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR6F001234567890ABCDEF01 /* WeighInService.swift */; };
+		PR6B002234567890ABCDEF01 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR6F002234567890ABCDEF01 /* NotificationManager.swift */; };
+		PR6B003234567890ABCDEF01 /* WeighInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR6F003234567890ABCDEF01 /* WeighInView.swift */; };
+		PR6B004234567890ABCDEF01 /* WeighInViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR6F004234567890ABCDEF01 /* WeighInViewModel.swift */; };
+		PR6B005234567890ABCDEF01 /* WeightProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR6F005234567890ABCDEF01 /* WeightProgressView.swift */; };
+		PR6B006234567890ABCDEF01 /* WeightProgressViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR6F006234567890ABCDEF01 /* WeightProgressViewModel.swift */; };
+		PR6B007234567890ABCDEF01 /* WeighInTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR6F007234567890ABCDEF01 /* WeighInTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -157,6 +164,13 @@
 		PR5F007234567890ABCDEF01 /* MealListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealListView.swift; sourceTree = "<group>"; };
 		PR5F008234567890ABCDEF01 /* DailySummaryFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailySummaryFooterView.swift; sourceTree = "<group>"; };
 		PR5F009234567890ABCDEF01 /* MealLogCRUDTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealLogCRUDTests.swift; sourceTree = "<group>"; };
+		PR6F001234567890ABCDEF01 /* WeighInService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeighInService.swift; sourceTree = "<group>"; };
+		PR6F002234567890ABCDEF01 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+		PR6F003234567890ABCDEF01 /* WeighInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeighInView.swift; sourceTree = "<group>"; };
+		PR6F004234567890ABCDEF01 /* WeighInViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeighInViewModel.swift; sourceTree = "<group>"; };
+		PR6F005234567890ABCDEF01 /* WeightProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightProgressView.swift; sourceTree = "<group>"; };
+		PR6F006234567890ABCDEF01 /* WeightProgressViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightProgressViewModel.swift; sourceTree = "<group>"; };
+		PR6F007234567890ABCDEF01 /* WeighInTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeighInTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -241,6 +255,7 @@
 				B7D1271130B39D7B9A67E609 /* KeychainManagerTests.swift */,
 				PR4F00E234567890ABCDEF01 /* MealScannerViewModelTests.swift */,
 				PR5F009234567890ABCDEF01 /* MealLogCRUDTests.swift */,
+				PR6F007234567890ABCDEF01 /* WeighInTests.swift */,
 				49FF607CB3770B2AAE871821 /* NutritionCalculatorTests.swift */,
 				F1E2D3C413234567890ABCDE /* OnboardingViewModelTests.swift */,
 			);
@@ -285,7 +300,9 @@
 				F1E2D3C402234567890ABCDE /* GeminiService.swift */,
 				F1E2D3C403234567890ABCDE /* HealthKitService.swift */,
 				PR4F001234567890ABCDEF01 /* MealAnalyzerProtocol.swift */,
+				PR6F002234567890ABCDEF01 /* NotificationManager.swift */,
 				8F453EDE12C11B104F814B4D /* NutritionCalculator.swift */,
+				PR6F001234567890ABCDEF01 /* WeighInService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -296,6 +313,7 @@
 				FEAT0002234567890ABCDE02 /* Dashboard */,
 				PR5G001234567890ABCDEF01 /* MealLog */,
 				PR3G001234567890ABCDEF01 /* MealScanner */,
+				PR6G001234567890ABCDEF01 /* Progress */,
 				FEAT0003234567890ABCDE03 /* Onboarding */,
 			);
 			path = Features;
@@ -332,6 +350,17 @@
 				F1E2D3C411234567890ABCDE /* OnboardingDoneStepView.swift */,
 			);
 			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		PR6G001234567890ABCDEF01 /* Progress */ = {
+			isa = PBXGroup;
+			children = (
+				PR6F003234567890ABCDEF01 /* WeighInView.swift */,
+				PR6F004234567890ABCDEF01 /* WeighInViewModel.swift */,
+				PR6F005234567890ABCDEF01 /* WeightProgressView.swift */,
+				PR6F006234567890ABCDEF01 /* WeightProgressViewModel.swift */,
+			);
+			path = Progress;
 			sourceTree = "<group>";
 		};
 		PR5G001234567890ABCDEF01 /* MealLog */ = {
@@ -501,6 +530,7 @@
 				A1B2C3D402234567890ABCDE /* GeminiService.swift in Sources */,
 				A1B2C3D40D234567890ABCDE /* GoalSetupStepView.swift in Sources */,
 				A1B2C3D403234567890ABCDE /* HealthKitService.swift in Sources */,
+				PR6B002234567890ABCDEF01 /* NotificationManager.swift in Sources */,
 				A1B2C3D40F234567890ABCDE /* HealthKitPermissionStepView.swift in Sources */,
 				CC9C0FC95BB9ADE63B9E0FEB /* KeychainManager.swift in Sources */,
 				A8049099DF60B3369E8D2C25 /* MealEntry.swift in Sources */,
@@ -527,6 +557,11 @@
 				A1B2C3D40B234567890ABCDE /* WelcomeStepView.swift in Sources */,
 				787D3991B98BFA89F80C941D /* WeighIn.swift in Sources */,
 				PR3B002234567890ABCDEF01 /* WeighInRepository.swift in Sources */,
+				PR6B001234567890ABCDEF01 /* WeighInService.swift in Sources */,
+				PR6B003234567890ABCDEF01 /* WeighInView.swift in Sources */,
+				PR6B004234567890ABCDEF01 /* WeighInViewModel.swift in Sources */,
+				PR6B005234567890ABCDEF01 /* WeightProgressView.swift in Sources */,
+				PR6B006234567890ABCDEF01 /* WeightProgressViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -536,6 +571,7 @@
 			files = (
 				PR3B00B234567890ABCDEF01 /* DashboardViewModelTests.swift in Sources */,
 				PR5B009234567890ABCDEF01 /* MealLogCRUDTests.swift in Sources */,
+				PR6B007234567890ABCDEF01 /* WeighInTests.swift in Sources */,
 				PR4B00E234567890ABCDEF01 /* MealScannerViewModelTests.swift in Sources */,
 				1B31CEC936B87ADC8D4A5AE0 /* KeychainManagerTests.swift in Sources */,
 				D101E5ADAC2C4C0EBA1B0D2E /* NutritionCalculatorTests.swift in Sources */,
@@ -646,7 +682,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -655,7 +691,8 @@
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.10;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
 		};
@@ -745,7 +782,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -753,7 +790,8 @@
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 5.10;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Release;
 		};

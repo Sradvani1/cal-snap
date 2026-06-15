@@ -3,6 +3,7 @@ import Foundation
 enum DashboardRoute: Hashable {
     case mealDetail(MealEntry)
     case mealScanner(MealScannerRoute)
+    case weightProgress
 }
 
 enum MealScannerRoute: Hashable {

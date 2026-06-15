@@ -1,6 +1,13 @@
 import SwiftUI
 import SwiftData
 
+private struct WeighInSheetContext: Identifiable {
+    let id: UUID
+    let profile: UserProfile
+    let currentWeightKg: Double
+    let useLbs: Bool
+}
+
 struct DashboardView: View {
     @Environment(AppContainer.self) private var appContainer
     @Environment(\.modelContext) private var modelContext
@@ -10,6 +17,7 @@ struct DashboardView: View {
     @State private var suppressActiveUserIdReload = false
     @State private var mealPendingDelete: MealEntry?
     @State private var showDeleteConfirmation = false
+    @State private var weighInSheetContext: WeighInSheetContext?
 
     var body: some View {
         Group {
@@ -28,6 +36,14 @@ struct DashboardView: View {
                 )
             }
             reloadDashboard()
+            scheduleReminderIfNeeded()
+            guard let vm = viewModel else { return }
+            appContainer.notificationManager.onWeighInReminderTapped = {
+                presentWeighInSheet(using: vm)
+            }
+            if appContainer.notificationManager.consumePendingWeighInSheet() {
+                presentWeighInSheet(using: vm)
+            }
         }
         .onChange(of: activeUserId) { _, _ in
             guard !suppressActiveUserIdReload else {
@@ -36,6 +52,7 @@ struct DashboardView: View {
             }
             navigationPath = []
             reloadDashboard()
+            scheduleReminderIfNeeded()
         }
         .onChange(of: navigationPath.count) { oldCount, newCount in
             if newCount < oldCount {
@@ -113,7 +130,13 @@ struct DashboardView: View {
                         WeightTrendMiniChart(
                             weighIns: viewModel.chartWeighIns,
                             startingWeightKg: viewModel.activeProfile?.startingWeightKg ?? 0,
-                            useLbs: viewModel.useLbsForDisplay
+                            useLbs: viewModel.useLbsForDisplay,
+                            onTap: {
+                                navigationPath.append(.weightProgress)
+                            },
+                            onLogWeighIn: {
+                                presentWeighInSheet(using: viewModel)
+                            }
                         )
                     }
                     .padding()
@@ -148,6 +171,19 @@ struct DashboardView: View {
                         route: scannerRoute,
                         onMealSaved: { reloadDashboard() }
                     )
+                case .weightProgress:
+                    if let profile = viewModel.activeProfile {
+                        WeightProgressView(
+                            viewModel: WeightProgressViewModel(
+                                profile: profile,
+                                useLbs: viewModel.useLbsForDisplay,
+                                weighInRepository: appContainer.weighInRepository
+                            ),
+                            showWeighInSheet: weighInSheetBinding(for: viewModel)
+                        )
+                    } else {
+                        ContentUnavailableView("No profile", systemImage: "person.crop.circle")
+                    }
                 }
             }
             .toolbar {
@@ -172,6 +208,26 @@ struct DashboardView: View {
                     onDismiss: {
                         viewModel.dismissPlateauAlert()
                     }
+                )
+            }
+            .sheet(item: $weighInSheetContext) { context in
+                WeighInView(
+                    viewModel: WeighInViewModel(
+                        profile: context.profile,
+                        currentWeightKg: context.currentWeightKg,
+                        useLbs: context.useLbs,
+                        weighInRepository: appContainer.weighInRepository,
+                        healthKitService: appContainer.healthKitService
+                    ),
+                    notificationManager: appContainer.notificationManager,
+                    onSaved: { result in
+                        reloadDashboard()
+                        scheduleReminderIfNeeded()
+                        if result.didTriggerPlateau {
+                            viewModel.checkForPlateau()
+                        }
+                    },
+                    onSkipped: {}
                 )
             }
             .alert("Delete this meal?", isPresented: $showDeleteConfirmation) {
@@ -205,9 +261,45 @@ struct DashboardView: View {
         }
     }
 
+    private func weighInSheetBinding(for viewModel: DashboardViewModel) -> Binding<Bool> {
+        Binding(
+            get: { weighInSheetContext != nil },
+            set: { isPresented in
+                if isPresented {
+                    presentWeighInSheet(using: viewModel)
+                } else {
+                    weighInSheetContext = nil
+                }
+            }
+        )
+    }
+
+    private func presentWeighInSheet(using viewModel: DashboardViewModel) {
+        guard let profile = viewModel.activeProfile else { return }
+        let currentWeight = viewModel.latestWeighInKg ?? profile.startingWeightKg
+        weighInSheetContext = WeighInSheetContext(
+            id: profile.id,
+            profile: profile,
+            currentWeightKg: currentWeight,
+            useLbs: viewModel.useLbsForDisplay
+        )
+    }
+
     private func reloadDashboard() {
         viewModel?.loadToday(context: modelContext, activeUserId: activeUserId)
         syncActiveUserIdIfNeeded()
+    }
+
+    private func scheduleReminderIfNeeded() {
+        guard let profiles = viewModel?.profiles, !profiles.isEmpty else { return }
+        Task {
+            for profile in profiles {
+                await appContainer.notificationManager.scheduleWeighInReminder(
+                    userId: profile.id,
+                    name: profile.name
+                )
+            }
+        }
     }
 
     private func syncActiveUserIdIfNeeded() {

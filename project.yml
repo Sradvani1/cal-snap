@@ -2,13 +2,14 @@ name: CalSnap
 options:
   bundleIdPrefix: com.calsnap
   deploymentTarget:
-    iOS: "17.0"
+    iOS: "26.0"
   createIntermediateGroups: true
   groupSortPosition: top
 settings:
   base:
-    SWIFT_VERSION: "5.10"
-    IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+    SWIFT_VERSION: "6.0"
+    IPHONEOS_DEPLOYMENT_TARGET: "26.0"
+    SWIFT_STRICT_CONCURRENCY: complete
 targets:
   CalSnap:
     type: application

@@ -7,17 +7,21 @@
 ## Project Overview
 
 **App Name:** CalSnap  
-**Platform:** iOS 17+  
-**Language:** Swift 5.10  
+**Platform:** iOS 26+  
+**Language:** Swift 6.2 (Xcode `SWIFT_VERSION` = 6.0)  
 **UI Framework:** SwiftUI  
-**Architecture:** MVVM with `@Observable` view models (Combine optional in later PRs only)  
+**Architecture:** MVVM with `@MainActor @Observable` view models  
 **Persistence:** SwiftData  
 **AI Backend:** Google Gemini 2.5 Flash via Google AI SDK for Swift  
 **Health Integration:** HealthKit  
 **Package Manager:** Swift Package Manager (SPM)  
-**Minimum Deployment:** iOS 17.0  
-**Xcode Version:** 16.x  
+**Minimum Deployment:** iOS 26.0  
+**Xcode Version:** 26.x  
 **Target Devices:** iPhone only (portrait-primary)
+
+**Agent skills:** Cursor applies `.agents/skills/swiftui-*` and `swift-language` for Swift/SwiftUI implementation detail. This spec and `engineering-rules.md` override skills for product scope, data model design, and PR boundaries.
+
+**Swift 6 concurrency:** `SWIFT_STRICT_CONCURRENCY = complete`. View models, routers, and `AppContainer` use explicit `@MainActor` — do **not** enable project-wide `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor` (it breaks SwiftData `@Model` types).
 
 ***
 
@@ -77,8 +81,8 @@ CalSnap/
 // Package.swift dependencies
 .package(url: "https://github.com/google/generative-ai-swift", from: "0.5.0"),
 // No other third-party dependencies — keep the dependency tree minimal.
-// All other functionality uses Apple frameworks: SwiftUI, SwiftData, 
-// Combine, HealthKit, PhotosUI, CryptoKit, Security (Keychain)
+// All other functionality uses Apple frameworks: SwiftUI, SwiftData,
+// HealthKit, PhotosUI, CryptoKit, Security (Keychain)
 ```
 
 ***
@@ -203,6 +207,8 @@ final class WeighIn {
     var sourceIsHealthKit: Bool
 }
 ```
+
+**SwiftData notes:** `@Attribute(.unique)` is used for local-only storage. If CloudKit sync is added later, remove `.unique` and make relationships optional per SwiftData+CloudKit requirements.
 
 ***
 
@@ -367,9 +373,9 @@ struct NutritionCalculator {
     static func isOnPlateau(weighIns: [WeighIn]) -> Bool {
         guard weighIns.count >= AppConstants.Plateau.weeksToDetect else { return false }
         let recent = weighIns.suffix(AppConstants.Plateau.weeksToDetect)
-        let min = recent.map(\.weightKg).min()!
-        let max = recent.map(\.weightKg).max()!
-        return (max - min) < AppConstants.Plateau.weightChangeThresholdKg
+        guard let minWeight = recent.map(\.weightKg).min(),
+              let maxWeight = recent.map(\.weightKg).max() else { return false }
+        return (maxWeight - minWeight) < AppConstants.Plateau.weightChangeThresholdKg
     }
 }
 ```
@@ -686,6 +692,19 @@ enum KeychainError: Error {
 
 ***
 
+## Navigation Architecture
+
+- Root feature flows use `NavigationStack(path:)` with typed `Hashable` route enums (e.g. `DashboardRoute`, `MealScannerRoute`).
+- SwiftData models used in routes implement stable `Hashable` via `id` only.
+- Register destinations with `.navigationDestination(for:)` — never use deprecated `NavigationView` or `NavigationLink(destination:)`.
+- Do not mix `navigationDestination(for:)` and `NavigationLink(destination:)` in the same hierarchy.
+- Sheets: prefer `.sheet(item:)` for model-driven presentation (weigh-in draft, plateau context, editable meal); use `.sheet(isPresented:)` only for simple boolean UI (e.g. share sheet).
+- Sheets own their dismiss logic internally; use `.presentationSizing(.form)` for form-style sheets.
+- Each tab (if added) gets its own `NavigationStack` and independent `NavigationPath`.
+- Deep links: centralize URL parsing in a `@MainActor @Observable` router; handle via `.onOpenURL`.
+
+***
+
 ## PR Breakdown
 
 Each PR below is a self-contained unit. Cursor should implement them in order. Each PR depends on all prior PRs being merged and green. Every PR must have passing unit tests for the business logic layer before merge.
@@ -716,12 +735,12 @@ Each PR below is a self-contained unit. Cursor should implement them in order. E
 **Xcode project settings (PR1):**
 - Product name: `CalSnap`
 - Bundle identifier: `com.calsnap.app`
-- Deployment target: iOS 17.0
+- Deployment target: iOS 26.0
 - Supported destinations: iPhone only
 - Swift Package Manager: **no third-party packages in PR1** (Gemini SDK is added in PR4)
 
 **`AppContainer` (PR1 only):**
-- Define an `@Observable` type with no service dependencies.
+- Define an `@MainActor @Observable` type with no service dependencies.
 - Inject via SwiftUI environment from `CalSnapApp` so later PRs can extend it without renaming.
 - Do not initialize Gemini, USDA, HealthKit, or repository types in PR1.
 
@@ -796,6 +815,7 @@ Screen sequence:
 
 **ViewModel: `OnboardingViewModel`**
 ```swift
+@MainActor
 @Observable
 class OnboardingViewModel {
     var currentStep: OnboardingStep = .welcome
@@ -874,6 +894,7 @@ struct ProfileDraft {
 
 **ViewModel: `DashboardViewModel`**
 ```swift
+@MainActor
 @Observable
 class DashboardViewModel {
     var activeProfile: UserProfile?
@@ -899,7 +920,7 @@ class DashboardViewModel {
 
 **Profile Switcher:** A persistent header control showing the active user's name/initials avatar. Tapping reveals the second profile (if it exists). Profile state stored in `@AppStorage("activeUserId")`.
 
-**Plateau Alert:** When `NutritionCalculator.isOnPlateau(weighIns:)` returns true, a sheet presents three options:
+**Plateau Alert:** When `NutritionCalculator.isOnPlateau(weighIns:)` returns true, present options via `.sheet(item: $plateauContext)` (enum or struct conforming to `Identifiable`):
 1. Diet Break — sets a temporary 14-day maintenance mode (target = TDEE, no deficit)
 2. Small Reduction — reduces daily target by 60 kcal and recalculates
 3. Dismiss — snooze for 2 weeks
@@ -952,6 +973,7 @@ MealScannerView
 
 **ViewModel: `MealScannerViewModel`**
 ```swift
+@MainActor
 @Observable
 class MealScannerViewModel {
     var selectedImage: UIImage?
@@ -1054,7 +1076,7 @@ struct EditableFoodItem: Identifiable {
 
 **Acceptance criteria:**
 - All CRUD operations on meals work end-to-end
-- Dashboard totals update immediately after edit/delete (Combine publisher or SwiftData observation)
+- Dashboard totals update immediately after edit/delete via `@Observable` view model refresh or SwiftData `@Query` invalidation
 - HealthKit writes fire on log and reversal fires on delete
 
 ***
@@ -1063,7 +1085,7 @@ struct EditableFoodItem: Identifiable {
 
 **Goal:** Weekly weigh-in UX, dynamic TDEE recalculation, and weight chart.
 
-**WeighInView (sheet, triggered from Dashboard or weekly reminder):**
+**WeighInView** — presented via `.sheet(item: $weighInDraft)` from Dashboard or weekly reminder deep link:
 ```
 [Large number input — weight in user's preferred unit]
 [Unit toggle: lbs / kg]
@@ -1155,6 +1177,7 @@ struct EditableFoodItem: Identifiable {
 
 **InsightsViewModel:**
 ```swift
+@MainActor
 @Observable
 class AnalyticsViewModel {
     var selectedRange: DateRange = .days(7)
@@ -1305,7 +1328,11 @@ extension Font {
 **Accessibility:**
 - All interactive elements have `.accessibilityLabel` and `.accessibilityHint`
 - Calorie ring has `.accessibilityValue` reading remaining calories
-- Dynamic type supported (all text uses Font extensions, no fixed sizes except `csLargeCalorie`)
+- Dynamic type supported (prefer system text styles; use `.font(.body.scaled(by:))` for custom scaling)
+- Icon-only buttons use `Button("Label", systemImage:)` with `.labelStyle(.iconOnly)` where needed
+- Respect `.accessibilityDifferentiateWithoutColor` — do not rely on color alone for status
+- Replace decorative motion with opacity when Reduce Motion is enabled
+- No `onTapGesture` for primary actions — use `Button`
 - VoiceOver order set on Dashboard
 
 **Dark Mode:**
@@ -1332,34 +1359,7 @@ extension Font {
 
 **Goal:** Finish production features — home screen widget, local notifications, and final QA sweep.
 
-**Notification System:**
-```swift
-// NotificationManager.swift
-class NotificationManager {
-    static let shared = NotificationManager()
-    
-    func scheduleWeighInReminder(day: Weekday, time: DateComponents, userName: String) {
-        let content = UNMutableNotificationContent()
-        content.title = "Weekly Weigh-In"
-        content.body = "Time to log your weight, \(userName)."
-        content.sound = .default
-        content.categoryIdentifier = "WEIGH_IN"
-        
-        var triggerComponents = DateComponents()
-        triggerComponents.weekday = day.rawValue
-        triggerComponents.hour = time.hour
-        triggerComponents.minute = time.minute
-        
-        let trigger = UNCalendarNotificationTrigger(dateMatching: triggerComponents, repeats: true)
-        let request = UNNotificationRequest(identifier: "weigh-in-\(userName)", content: content, trigger: trigger)
-        UNUserNotificationCenter.current().add(request)
-    }
-    
-    func cancelWeighInReminder(userName: String) {
-        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["weigh-in-\(userName)"])
-    }
-}
-```
+**Notification System:** See PR6 `NotificationManager` (`@MainActor class` conforming to `UNUserNotificationCenterDelegate`) — schedule/cancel/snooze by `userId`, `pendingWeighInSheet` for cold launch, injected via `AppContainer`. PR10 extends for daily reminders and widgets; do not reintroduce a singleton `shared` instance.
 
 **Home Screen Widget (WidgetKit — separate target `CalSnapWidget`):**
 - Small widget: Calorie ring with remaining calories number
@@ -1402,10 +1402,14 @@ Register in `Info.plist` as `NSUserActivityTypes`.
 **Final QA Checklist (acceptance criteria for PR 10):**
 - App launches cold in < 1.5 seconds on iPhone 14
 - No memory leaks in Instruments (Leaks template)
+- Profile dashboard scroll on Release build, real device (SwiftUI Instruments template)
+- No `DateFormatter`/`NumberFormatter` allocation in view `body`
+- Meal list and weigh-in history use `List` or `LazyVStack` with stable `Identifiable` IDs
+- No filter/sort inside `ForEach` initializers
 - Gemini call cancels cleanly if user navigates away mid-scan
 - All sheets dismiss correctly on swipe-down
 - Keyboard avoidance works on all form inputs
-- No hardcoded strings (all user-facing copy in `Localizable.strings` — English only for v1)
+- No hardcoded strings (all user-facing copy in `Localizable.xcstrings` with manual symbol keys — English only for v1)
 - Privacy manifest (`PrivacyInfo.xcprivacy`) complete: declares HealthKit, camera, photo library, network access
 - App Store privacy nutrition labels can be filled out accurately
 
@@ -1491,13 +1495,18 @@ class MockMealAnalyzer: MealAnalyzerProtocol {
 
 ## Cursor-Specific Instructions
 
-1. **Always start a new file** by declaring the module docstring and imports before any implementation
-2. **Never use `@StateObject`** — use `@State` with `@Observable` (iOS 17 observation framework)
-3. **SwiftData queries** use `@Query` macro in views and `ModelContext` in ViewModels passed via environment
-4. **Combine is used sparingly** — only for debouncing search inputs and reactive HealthKit updates; prefer `@Observable` + `async/await` elsewhere
-5. **All async calls** are structured concurrency (`async/await`) — no completion handlers except HealthKit legacy APIs
-6. **Error handling** follows the pattern: service throws → ViewModel catches → sets `var error: Error?` → view shows `ErrorBanner` component
-7. **SwiftUI previews** required for all view files using `#Preview` macro with mock data
-8. **Gemini calls** are always gated by a non-nil API key check from Keychain before firing
-9. **Unit conversion** (lbs ↔ kg, ft/in ↔ cm) is handled exclusively in `UserProfile` computed properties and display formatters — all internal storage is metric (kg, cm)
-10. **HealthKit writes** are fire-and-forget (`Task { try? await ... }`) — they should never block the UI or surface errors to users (log to console only)
+1. **New files** — declare imports first; add a brief file comment only when purpose is non-obvious
+2. **Never use `@StateObject`, `ObservableObject`, `@Published`, or `@EnvironmentObject`** — use `@State` with `@MainActor @Observable`
+3. **All `@Observable` view models, routers, and UI-facing services** must be `@MainActor`
+4. **SwiftData queries** use `@Query` macro in views and `ModelContext` in ViewModels passed via environment
+5. **Navigation** — `NavigationStack(path:)` with `Hashable` route enums and `.navigationDestination(for:)`; prefer `.sheet(item:)` for model-driven sheets
+6. **All async calls** use structured concurrency (`async/await`) — no completion handlers except legacy HealthKit APIs wrapped in continuations
+7. **Never use Grand Central Dispatch** — use `Task`, actors, and `async`/`await`; prefer `Task.sleep(for:)` over `Task.sleep(nanoseconds:)`
+8. **Formatting** — use `FormatStyle` / `Text(_, format:)` for user-visible dates, numbers, and measurements
+9. **Data loading** — prefer `task {}` over `onAppear {}` for async work
+10. **Error handling** — service throws → ViewModel catches → sets `var error: Error?` → view shows `ErrorBanner`; use typed throws where the error domain is singular
+11. **SwiftUI previews** required for all view files using `#Preview` macro with mock data
+12. **Gemini calls** are always gated by a non-nil API key check from Keychain before firing
+13. **Unit conversion** (lbs ↔ kg, ft/in ↔ cm) is handled exclusively in display formatters — all internal storage is metric (kg, cm)
+14. **HealthKit writes** are fire-and-forget (`Task { try? await ... }`) — they must never block the UI or surface errors to users (log only)
+15. **Apply agent skills** (`.agents/skills/swiftui-*`, `swift-language`) for API choice, navigation, performance, and accessibility

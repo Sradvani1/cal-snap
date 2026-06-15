@@ -456,14 +456,10 @@ final class MealScannerViewModel {
         await withCheckedContinuation { continuation in
             let monitor = NWPathMonitor()
             let queue = DispatchQueue(label: "com.calsnap.network-check")
-            let lock = NSLock()
-            var didResume = false
+            let state = NetworkCheckState()
 
             let resume: @Sendable (Bool) -> Void = { value in
-                lock.lock()
-                defer { lock.unlock() }
-                guard !didResume else { return }
-                didResume = true
+                guard state.tryResume() else { return }
                 monitor.cancel()
                 continuation.resume(returning: value)
             }
@@ -477,5 +473,18 @@ final class MealScannerViewModel {
                 resume(false)
             }
         }
+    }
+}
+
+private final class NetworkCheckState: @unchecked Sendable {
+    private let lock = NSLock()
+    private var didResume = false
+
+    func tryResume() -> Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        guard !didResume else { return false }
+        didResume = true
+        return true
     }
 }

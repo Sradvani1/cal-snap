@@ -1,5 +1,6 @@
 import SwiftUI
 
+@MainActor
 @Observable
 final class AppContainer {
     let healthKitService = HealthKitService()
@@ -7,4 +8,5 @@ final class AppContainer {
     let userProfileRepository = UserProfileRepository()
     let mealRepository = MealRepository()
     let weighInRepository = WeighInRepository()
+    let notificationManager = NotificationManager()
 }

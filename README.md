@@ -22,7 +22,7 @@ CalSnap is an iOS app for simple calorie and macronutrient tracking from meal ph
 
 ## Build and test
 
-Requires Xcode 16.x and iOS 17+ simulator.
+Requires Xcode 26.x and iOS 26+ simulator.
 
 ```bash
 # Build and run tests (use Xcode.app, not Command Line Tools alone)

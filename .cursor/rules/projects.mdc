@@ -11,11 +11,12 @@ Follow these rules on every task:
 - Treat `docs/technical-spec.md` as the implementation source of truth.
 - Treat `docs/product-research.md` as the product and science source of truth.
 - Treat `docs/engineering-rules.md` as the coding behavior source of truth.
+- Apply agent skills under `.agents/skills/` (swiftui-pro, swift-language, swiftui-performance, swiftui-navigation) for Swift/SwiftUI implementation detail.
 - Do not implement beyond the current PR scope.
 - Prefer simple, production-appropriate code over framework-heavy abstractions.
-- Use Swift 5.10, SwiftUI, SwiftData, HealthKit, and SPM only.
-- Use `@Observable` for view models.
-- Prefer `async/await`.
+- Use Swift 6.2, iOS 26+, SwiftUI, SwiftData, HealthKit, and SPM only.
+- Use `@MainActor @Observable` for view models and routers.
+- Prefer `async/await`; never use Grand Central Dispatch.
 - Keep business logic out of SwiftUI views.
 - Store API keys only in Keychain.
 - All internal units must be metric.

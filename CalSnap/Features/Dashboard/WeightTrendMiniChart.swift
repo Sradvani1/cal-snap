@@ -5,11 +5,18 @@ struct WeightTrendMiniChart: View {
     let weighIns: [WeighIn]
     let startingWeightKg: Double
     let useLbs: Bool
+    var onTap: () -> Void = {}
+    var onLogWeighIn: () -> Void = {}
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Weight Trend")
-                .font(.headline)
+            HStack {
+                Text("Weight Trend")
+                    .font(.headline)
+                Spacer()
+                Button("Log weigh-in", action: onLogWeighIn)
+                    .font(.caption.weight(.semibold))
+            }
 
             if weighIns.count >= 2 {
                 Chart(weighIns, id: \.id) { weighIn in
@@ -31,6 +38,8 @@ struct WeightTrendMiniChart: View {
                     Text("Your weight trend will appear after weekly weigh-ins")
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                    Button("Log your first weigh-in", action: onLogWeighIn)
+                        .font(.caption.weight(.semibold))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.vertical, 8)
@@ -39,6 +48,10 @@ struct WeightTrendMiniChart: View {
         .padding()
         .background(Color(.secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 16))
+        .contentShape(RoundedRectangle(cornerRadius: 16))
+        .onTapGesture(perform: onTap)
+        .accessibilityAddTraits(.isButton)
+        .accessibilityHint("Opens weight progress")
     }
 
     private func displayWeight(_ kg: Double) -> Double {

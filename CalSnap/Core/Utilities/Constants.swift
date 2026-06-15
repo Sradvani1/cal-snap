@@ -10,6 +10,22 @@ enum AppStorageKey {
     static func maintenanceModeUntil(userId: UUID) -> String {
         "maintenanceModeUntil_\(userId.uuidString)"
     }
+
+    static func weighInSnoozeUntil(userId: UUID) -> String {
+        "weighInSnoozeUntil_\(userId.uuidString)"
+    }
+
+    static func weighInReminderWeekday(userId: UUID) -> String {
+        "weighInReminderWeekday_\(userId.uuidString)"
+    }
+
+    static func weighInReminderHour(userId: UUID) -> String {
+        "weighInReminderHour_\(userId.uuidString)"
+    }
+
+    static func weighInReminderMinute(userId: UUID) -> String {
+        "weighInReminderMinute_\(userId.uuidString)"
+    }
 }
 
 enum AppConstants {
@@ -60,5 +76,14 @@ enum AppConstants {
         static let maxAgeYears = 90
         static let minGoalDaysFromToday = 14
         static let maxGoalDaysFromToday = 730
+    }
+
+    enum Notifications {
+        static let weighInCategoryIdentifier = "WEIGH_IN"
+        static let defaultReminderWeekday = 1 // Sunday
+        static let defaultReminderHour = 8
+        static let defaultReminderMinute = 0
+        static let weeklyPlateauMinimumDaySpacing = 6
+        static let maxProjectionWeeks = 104
     }
 }

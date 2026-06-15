@@ -21,6 +21,7 @@ final class DashboardViewModel {
     var todaysFiberG = 0.0
     var chartWeighIns: [WeighIn] = []
     var plateauWeighIns: [WeighIn] = []
+    var latestWeighInKg: Double?
     var showPlateauAlert = false
     var loadError: String?
 
@@ -176,11 +177,17 @@ final class DashboardViewModel {
                 through: referenceDate,
                 context: context
             )
-            plateauWeighIns = try weighInRepository.fetchLatestWeighIns(
+            plateauWeighIns = try weighInRepository.fetchWeeklyPlateauWeighIns(
                 for: profile.id,
                 count: AppConstants.Plateau.weeksToDetect,
                 context: context
             )
+            let latest = try weighInRepository.fetchLatestWeighIns(
+                for: profile.id,
+                count: 1,
+                context: context
+            )
+            latestWeighInKg = latest.last?.weightKg
             checkForPlateau()
         } catch {
             loadError = error.localizedDescription
@@ -259,6 +266,7 @@ final class DashboardViewModel {
         todaysFiberG = 0
         chartWeighIns = []
         plateauWeighIns = []
+        latestWeighInKg = nil
     }
 
     private func aggregateMeals() {

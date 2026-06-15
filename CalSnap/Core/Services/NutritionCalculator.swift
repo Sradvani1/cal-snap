@@ -100,4 +100,81 @@ struct NutritionCalculator {
         let maxWeight = weights.max() ?? 0
         return (maxWeight - minWeight) < AppConstants.Plateau.weightChangeThresholdKg
     }
+
+    static func weeklyLossRateKg(from weighIns: [WeighIn]) -> Double? {
+        guard weighIns.count >= 2 else { return nil }
+        let sorted = weighIns.sorted { $0.date < $1.date }
+        let recent = Array(sorted.suffix(4))
+        guard let first = recent.first, let last = recent.last, recent.count >= 2 else {
+            return nil
+        }
+        let days = Calendar.current.dateComponents([.day], from: first.date, to: last.date).day ?? 0
+        guard days > 0 else { return nil }
+        let lossKg = first.weightKg - last.weightKg
+        return (lossKg / Double(days)) * 7.0
+    }
+
+    static func projectedGoalDate(
+        currentWeightKg: Double,
+        goalWeightKg: Double,
+        heightCm: Double,
+        ageYears: Int,
+        sex: BiologicalSex,
+        activityLevel: ActivityLevel,
+        dailyDeficitKcal: Int,
+        referenceDate: Date = Date(),
+        calendar: Calendar = .current
+    ) -> Date? {
+        guard dailyDeficitKcal > 0, currentWeightKg > goalWeightKg else { return nil }
+
+        let projection = weightProjection(
+            startWeightKg: currentWeightKg,
+            heightCm: heightCm,
+            ageYears: ageYears,
+            sex: sex,
+            activityLevel: activityLevel,
+            dailyDeficitKcal: dailyDeficitKcal,
+            weeks: AppConstants.Notifications.maxProjectionWeeks
+        )
+
+        guard let goalWeek = projection.first(where: { $0.weightKg <= goalWeightKg })?.week else {
+            return nil
+        }
+
+        return calendar.date(byAdding: .weekOfYear, value: goalWeek, to: referenceDate)
+    }
+
+    static func projectionPoints(
+        startWeightKg: Double,
+        goalWeightKg: Double,
+        heightCm: Double,
+        ageYears: Int,
+        sex: BiologicalSex,
+        activityLevel: ActivityLevel,
+        dailyDeficitKcal: Int,
+        startDate: Date = Date(),
+        calendar: Calendar = .current
+    ) -> [(date: Date, weightKg: Double)] {
+        guard dailyDeficitKcal > 0 else { return [] }
+
+        let projection = weightProjection(
+            startWeightKg: startWeightKg,
+            heightCm: heightCm,
+            ageYears: ageYears,
+            sex: sex,
+            activityLevel: activityLevel,
+            dailyDeficitKcal: dailyDeficitKcal,
+            weeks: AppConstants.Notifications.maxProjectionWeeks
+        )
+
+        var points: [(Date, Double)] = []
+        for (week, weightKg) in projection {
+            guard let date = calendar.date(byAdding: .weekOfYear, value: week, to: startDate) else {
+                continue
+            }
+            points.append((date, weightKg))
+            if weightKg <= goalWeightKg { break }
+        }
+        return points
+    }
 }

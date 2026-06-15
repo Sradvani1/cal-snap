@@ -141,4 +141,17 @@ actor HealthKitService {
         guard !samples.isEmpty else { return }
         try await store.save(samples)
     }
+
+    func logBodyMass(kg: Double, at date: Date) async throws {
+        guard HKHealthStore.isHealthDataAvailable() else { return }
+        guard let bodyMassType = HKQuantityType.quantityType(forIdentifier: .bodyMass) else { return }
+
+        let sample = HKQuantitySample(
+            type: bodyMassType,
+            quantity: HKQuantity(unit: .gramUnit(with: .kilo), doubleValue: kg),
+            start: date,
+            end: date
+        )
+        try await store.save(sample)
+    }
 }
