@@ -173,7 +173,7 @@ struct SettingsView: View {
             if let saveError = viewModel.saveError {
                 Text(saveError)
                     .font(.caption)
-                    .foregroundStyle(.red)
+                    .foregroundStyle(Color.csDanger)
             }
 
             Button(viewModel.isSaving ? "Saving…" : "Save Profile") {
@@ -222,7 +222,7 @@ struct SettingsView: View {
                 )
             }
             Text("Total: \(viewModel.macroProteinPct + viewModel.macroCarbsPct + viewModel.macroFatPct)%")
-                .foregroundStyle(viewModel.macrosAreValid ? Color.secondary : Color.red)
+                .foregroundStyle(viewModel.macrosAreValid ? Color.secondary : Color.csDanger)
         }
     }
 
@@ -253,7 +253,7 @@ struct SettingsView: View {
             if let apiKeyError = viewModel.apiKeyError {
                 Text(apiKeyError)
                     .font(.caption)
-                    .foregroundStyle(.red)
+                    .foregroundStyle(Color.csDanger)
             }
         }
     }

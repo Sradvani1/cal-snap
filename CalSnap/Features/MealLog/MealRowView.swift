@@ -39,6 +39,7 @@ struct MealRowView: View {
         .accessibilityLabel(
             "\(meal.mealType.displayName), \(meal.timestamp.formatted(date: .omitted, time: .shortened)), \(meal.totalCalories) calories"
         )
+        .accessibilityHint("Opens meal detail")
         .task(id: meal.id) {
             if let photoData = meal.photoData {
                 thumbnail = UIImage(data: photoData)

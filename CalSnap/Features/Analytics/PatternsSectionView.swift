@@ -20,7 +20,7 @@ struct PatternsSectionView: View {
                                 x: .value("Day", weekday.shortLabel),
                                 y: .value("Calories", dayOfWeekBreakdown[weekday, default: 0])
                             )
-                            .foregroundStyle(weekday.isWeekend ? Color.orange : Color.accentColor)
+                            .foregroundStyle(weekday.isWeekend ? Color.csAccent : Color.csPrimary)
                         }
                     }
                     .frame(height: 160)
@@ -43,7 +43,7 @@ struct PatternsSectionView: View {
                                 x: .value("Time", bucket.displayLabel),
                                 y: .value("Calories", timeOfDayBreakdown[bucket, default: 0])
                             )
-                            .foregroundStyle(Color.accentColor)
+                            .foregroundStyle(Color.csPrimary)
                         }
                     }
                     .frame(height: 160)

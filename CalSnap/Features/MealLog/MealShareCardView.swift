@@ -21,7 +21,7 @@ struct MealShareCardView: View {
             }
 
             Text("\(totalCalories)")
-                .font(.system(size: 44, weight: .bold, design: .rounded))
+                .font(.csLargeCalorie)
             Text("kcal")
                 .font(.title3)
                 .foregroundStyle(.secondary)

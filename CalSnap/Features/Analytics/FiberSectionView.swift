@@ -11,17 +11,12 @@ struct FiberSectionView: View {
         AnalyticsSectionCard(title: "Fiber & Micronutrients") {
             VStack(alignment: .leading, spacing: 12) {
                 if chartSeries.isEmpty {
-                    Text("No meal data in this period")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    EmptyStateView(icon: "leaf", title: "No meal data", message: "No meals logged in this period.")
                 } else {
                     Chart {
                         ForEach(chartSeries) { day in
-                            BarMark(
-                                x: .value("Date", day.date, unit: .day),
-                                y: .value("Fiber", day.fiberG)
-                            )
-                            .foregroundStyle(day.fiberG >= fiberTargetG ? Color.green : Color.orange)
+                            BarMark(x: .value("Date", day.date, unit: .day), y: .value("Fiber", day.fiberG))
+                                .foregroundStyle(day.fiberG >= fiberTargetG ? Color.csSuccess : Color.csAccent)
                         }
                         if fiberTargetG > 0 {
                             RuleMark(y: .value("Target", fiberTargetG))
@@ -39,16 +34,4 @@ struct FiberSectionView: View {
             }
         }
     }
-}
-
-#Preview {
-    FiberSectionView(
-        chartSeries: [
-            DailyNutritionSummary(date: Date.now, calories: 2000, proteinG: 0, carbsG: 0, fatG: 0, fiberG: 18),
-        ],
-        fiberTargetG: 28,
-        daysMeetingFiberTarget: 0,
-        loggedDayCount: 1
-    )
-    .padding()
 }

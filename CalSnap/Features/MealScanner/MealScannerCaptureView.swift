@@ -32,7 +32,7 @@ struct MealScannerCaptureView: View {
                             .accessibilityLabel("Meal photo")
                     } else {
                         RoundedRectangle(cornerRadius: 16)
-                            .fill(Color(.secondarySystemBackground))
+                            .fill(Color.csSurface)
                             .frame(height: 220)
                             .overlay {
                                 VStack(spacing: 8) {

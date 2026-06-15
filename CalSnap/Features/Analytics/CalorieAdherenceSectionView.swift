@@ -11,9 +11,7 @@ struct CalorieAdherenceSectionView: View {
         AnalyticsSectionCard(title: "Calorie Adherence") {
             VStack(alignment: .leading, spacing: 12) {
                 if chartSeries.isEmpty {
-                    Text("No meal data in this period")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    EmptyStateView(icon: "chart.bar", title: "No meal data", message: "No meals logged in this period.")
                 } else {
                     Chart {
                         ForEach(chartSeries) { day in
@@ -37,48 +35,20 @@ struct CalorieAdherenceSectionView: View {
                 }
 
                 HStack {
-                    statBlock(title: "Avg intake", value: "\(averageDailyCalories)")
-                    statBlock(title: "Target", value: "\(calorieTarget)")
-                    statBlock(title: "On target", value: String(format: "%.0f%%", adherencePct))
+                    NutrientStatRow(label: "Avg intake", value: "\(averageDailyCalories)")
+                    NutrientStatRow(label: "Target", value: "\(calorieTarget)")
+                    NutrientStatRow(label: "On target", value: String(format: "%.0f%%", adherencePct))
                 }
             }
         }
     }
 
     private func color(for calories: Int) -> Color {
-        guard calorieTarget > 0 else { return .accentColor }
-        let band = CalorieProgressBand.progressBand(for: Double(calories) / Double(calorieTarget))
-        switch band {
-        case .under: return .green
-        case .onTrack: return .yellow
-        case .over: return .red
-        }
-    }
-
-    private func statBlock(title: String, value: String) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(title)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            Text(value)
-                .font(.subheadline.weight(.semibold))
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        guard calorieTarget > 0 else { return Color.csPrimary }
+        return Color.calorieProgress(Double(calories) / Double(calorieTarget))
     }
 
     private var adherenceAccessibilityValue: String {
         "Average \(averageDailyCalories) calories, target \(calorieTarget), \(Int(adherencePct.rounded())) percent of logged days on target"
     }
-}
-
-#Preview {
-    CalorieAdherenceSectionView(
-        chartSeries: [
-            DailyNutritionSummary(date: Date.now, calories: 1900, proteinG: 0, carbsG: 0, fatG: 0, fiberG: 0),
-        ],
-        calorieTarget: 2000,
-        averageDailyCalories: 1900,
-        adherencePct: 57
-    )
-    .padding()
 }

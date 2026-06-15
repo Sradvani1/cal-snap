@@ -27,9 +27,7 @@ struct MealListView: View {
                 }
             }
         }
-        .padding()
-        .background(Color(.secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .sectionCard()
     }
 }
 

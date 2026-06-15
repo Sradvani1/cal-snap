@@ -18,7 +18,7 @@ struct AnalyticsInsightCard: View {
                 if let errorText {
                     Text(errorText)
                         .font(.caption)
-                        .foregroundStyle(.red)
+                        .foregroundStyle(Color.csDanger)
                 }
 
                 Button(action: onGenerate) {

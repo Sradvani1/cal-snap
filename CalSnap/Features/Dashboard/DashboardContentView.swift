@@ -28,11 +28,12 @@ struct DashboardContentView: View {
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                         }
+                        .accessibilitySortPriority(100)
 
                         if let error = viewModel.loadError {
                             Text(error)
                                 .font(.caption)
-                                .foregroundStyle(.red)
+                                .foregroundStyle(Color.csDanger)
                         }
 
                         CalorieRingCard(
@@ -42,6 +43,7 @@ struct DashboardContentView: View {
                             progress: viewModel.calorieProgress,
                             progressBand: viewModel.calorieProgressBand
                         )
+                        .accessibilitySortPriority(90)
 
                         MacroBarCard(
                             proteinConsumed: viewModel.todaysProteinG,
@@ -54,6 +56,7 @@ struct DashboardContentView: View {
                             fiberTarget: viewModel.fiberTargetG,
                             fiberProgressBand: viewModel.fiberProgressBand
                         )
+                        .accessibilitySortPriority(80)
 
                         MealListView(
                             mealsByType: viewModel.mealsByType,
@@ -68,6 +71,7 @@ struct DashboardContentView: View {
                                 navigationPath.append(.mealScanner(.create(initialMealType: mealType)))
                             }
                         )
+                        .accessibilitySortPriority(70)
 
                         DailySummaryFooterView(
                             fiberConsumedG: viewModel.todaysFiberG,
@@ -90,6 +94,7 @@ struct DashboardContentView: View {
                                 presentWeighInSheet()
                             }
                         )
+                        .accessibilitySortPriority(60)
                     }
                     .padding()
                     .padding(.bottom, 72)
@@ -100,12 +105,14 @@ struct DashboardContentView: View {
                 }
                 .labelStyle(.iconOnly)
                 .font(.title2.bold())
-                .foregroundStyle(.white)
+                .foregroundStyle(Color.csOnPrimary)
                 .frame(width: 56, height: 56)
-                .background(Color.accentColor)
+                .background(Color.csPrimary)
                 .clipShape(Circle())
                 .shadow(radius: 4, y: 2)
                 .padding()
+                .accessibilitySortPriority(50)
+                .accessibilityHint("Opens meal scanner to log a meal")
             }
             .navigationDestination(for: DashboardRoute.self) { route in
                 switch route {

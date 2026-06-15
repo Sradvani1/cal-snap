@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct ConfidenceIndicator: View {
+struct ConfidenceBadge: View {
     let level: ConfidenceLevel
     let score: Double
     let isManualEntry: Bool
@@ -10,10 +10,10 @@ struct ConfidenceIndicator: View {
     var body: some View {
         if isManualEntry {
             Label("Manual entry", systemImage: "hand.draw")
-                .font(.caption.weight(.semibold))
+                .font(.csCaption.weight(.semibold))
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
-                .background(Color(.systemGray5))
+                .background(Color.secondary.opacity(0.15))
                 .foregroundStyle(.secondary)
                 .clipShape(Capsule())
                 .accessibilityLabel("Manual entry")
@@ -23,7 +23,7 @@ struct ConfidenceIndicator: View {
             } icon: {
                 Image(systemName: symbolName)
             }
-            .font(.caption.weight(.semibold))
+            .font(.csCaption.weight(.semibold))
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
             .background(backgroundColor)
@@ -41,33 +41,33 @@ struct ConfidenceIndicator: View {
 
     private var symbolName: String {
         switch level {
-        case .high: return "checkmark.circle.fill"
-        case .medium: return "questionmark.circle.fill"
-        case .low: return "exclamationmark.triangle.fill"
+        case .high: "checkmark.circle.fill"
+        case .medium: "questionmark.circle.fill"
+        case .low: "exclamationmark.triangle.fill"
         }
     }
 
     private var backgroundColor: Color {
         switch level {
-        case .high: return .green.opacity(0.2)
-        case .medium: return .yellow.opacity(0.25)
-        case .low: return .red.opacity(0.2)
+        case .high: Color.csSuccess.opacity(0.2)
+        case .medium: Color.csWarning.opacity(0.25)
+        case .low: Color.csDanger.opacity(0.2)
         }
     }
 
     private var foregroundColor: Color {
         switch level {
-        case .high: return .green
-        case .medium: return .orange
-        case .low: return .red
+        case .high: Color.csSuccess
+        case .medium: Color.csAccent
+        case .low: Color.csDanger
         }
     }
 }
 
 #Preview("Gemini") {
-    ConfidenceIndicator(level: .high, score: 0.85, isManualEntry: false)
+    ConfidenceBadge(level: .high, score: 0.85, isManualEntry: false)
 }
 
 #Preview("Manual") {
-    ConfidenceIndicator(level: .low, score: 0, isManualEntry: true)
+    ConfidenceBadge(level: .low, score: 0, isManualEntry: true)
 }

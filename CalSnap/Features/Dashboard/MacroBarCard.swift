@@ -16,24 +16,9 @@ struct MacroBarCard: View {
             Text("Macros")
                 .font(.headline)
 
-            MacroBarRow(
-                label: "Protein",
-                consumed: proteinConsumed,
-                target: proteinTarget,
-                color: .blue
-            )
-            MacroBarRow(
-                label: "Carbs",
-                consumed: carbsConsumed,
-                target: carbsTarget,
-                color: .orange
-            )
-            MacroBarRow(
-                label: "Fat",
-                consumed: fatConsumed,
-                target: fatTarget,
-                color: .purple
-            )
+            MacroBarRow(label: "Protein", consumed: proteinConsumed, target: proteinTarget, color: Color.csProtein)
+            MacroBarRow(label: "Carbs", consumed: carbsConsumed, target: carbsTarget, color: Color.csCarbs)
+            MacroBarRow(label: "Fat", consumed: fatConsumed, target: fatTarget, color: Color.csFat)
 
             Divider()
 
@@ -41,36 +26,11 @@ struct MacroBarCard: View {
                 label: "Fiber",
                 consumed: fiberConsumed,
                 target: fiberTarget,
-                color: fiberColor,
+                color: Color.fiberProgress(for: fiberProgressBand),
                 barHeight: 6,
                 progressBand: fiberProgressBand
             )
         }
-        .padding()
-        .background(Color(.secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .sectionCard()
     }
-
-    private var fiberColor: Color {
-        switch fiberProgressBand {
-        case .onTrack: .green
-        case .moderate: .yellow
-        case .low: .red
-        }
-    }
-}
-
-#Preview {
-    MacroBarCard(
-        proteinConsumed: 90,
-        proteinTarget: 140,
-        carbsConsumed: 120,
-        carbsTarget: 235,
-        fatConsumed: 40,
-        fatTarget: 56,
-        fiberConsumed: 12,
-        fiberTarget: 28,
-        fiberProgressBand: .low
-    )
-    .padding()
 }

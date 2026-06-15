@@ -27,7 +27,7 @@ struct ScannerErrorBanner: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(.systemRed).opacity(0.1))
+        .background(Color.csDanger.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 

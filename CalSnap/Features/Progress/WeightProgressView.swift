@@ -42,7 +42,7 @@ struct WeightProgressView: View {
             if let error = viewModel.loadError {
                 Text(error)
                     .font(.caption)
-                    .foregroundStyle(.red)
+                    .foregroundStyle(Color.csDanger)
             }
 
             WeightProgressHeaderView(viewModel: viewModel)
@@ -60,26 +60,13 @@ struct WeightProgressHeaderView: View {
 
     var body: some View {
         HStack {
-            statColumn(title: "Current", value: viewModel.formatWeight(viewModel.currentWeightKg))
+            NutrientStatRow(label: "Current", value: viewModel.formatWeight(viewModel.currentWeightKg))
             Divider()
-            statColumn(title: "Start", value: viewModel.formatWeight(viewModel.profile.startingWeightKg))
+            NutrientStatRow(label: "Start", value: viewModel.formatWeight(viewModel.profile.startingWeightKg))
             Divider()
-            statColumn(title: "Goal", value: viewModel.formatWeight(viewModel.profile.goalWeightKg))
+            NutrientStatRow(label: "Goal", value: viewModel.formatWeight(viewModel.profile.goalWeightKg))
         }
-        .padding()
-        .background(Color(.secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-    }
-
-    private func statColumn(title: String, value: String) -> some View {
-        VStack(spacing: 4) {
-            Text(title)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            Text(value)
-                .font(.headline)
-        }
-        .frame(maxWidth: .infinity)
+        .sectionCard()
     }
 }
 
@@ -95,9 +82,9 @@ struct WeightProgressBarView: View {
             GeometryReader { geometry in
                 ZStack(alignment: .leading) {
                     Capsule()
-                        .fill(Color(.tertiarySystemFill))
+                        .fill(Color.secondary.opacity(0.25))
                     Capsule()
-                        .fill(Color.accentColor)
+                        .fill(Color.csPrimary)
                         .frame(width: geometry.size.width * viewModel.progressFraction)
                     if differentiateWithoutColor {
                         Capsule()
@@ -117,19 +104,23 @@ struct WeightProgressChartView: View {
     let viewModel: WeightProgressViewModel
     let onLogWeighIn: () -> Void
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var showChart = false
+    @State private var suppressCountAnimation = false
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Weight trend")
                 .font(.headline)
 
             if viewModel.weighIns.isEmpty {
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Your weight trend will appear after weekly weigh-ins")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Button("Log your first weigh-in", action: onLogWeighIn)
-                        .font(.subheadline.weight(.semibold))
-                }
+                EmptyStateView(
+                    icon: "scalemass",
+                    title: "No weigh-ins yet",
+                    message: "Your weight trend will appear after weekly weigh-ins.",
+                    actionTitle: "Log your first weigh-in",
+                    action: onLogWeighIn
+                )
             } else {
                 Chart {
                     if viewModel.chartWeighInsAscending.count >= 2 {
@@ -138,7 +129,7 @@ struct WeightProgressChartView: View {
                                 x: .value("Date", weighIn.date),
                                 y: .value("Weight", displayWeight(weighIn.weightKg))
                             )
-                            .foregroundStyle(Color.accentColor)
+                            .foregroundStyle(Color.csPrimary)
                         }
                     }
                     ForEach(viewModel.chartWeighInsAscending, id: \.id) { weighIn in
@@ -146,7 +137,7 @@ struct WeightProgressChartView: View {
                             x: .value("Date", weighIn.date),
                             y: .value("Weight", displayWeight(weighIn.weightKg))
                         )
-                        .foregroundStyle(Color.accentColor)
+                        .foregroundStyle(Color.csPrimary)
                     }
 
                     ForEach(viewModel.projectionPoints) { point in
@@ -159,19 +150,32 @@ struct WeightProgressChartView: View {
                     }
 
                     RuleMark(y: .value("Goal", displayWeight(viewModel.profile.goalWeightKg)))
-                        .foregroundStyle(.green)
+                        .foregroundStyle(Color.csSuccess)
                         .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
                         .accessibilityHidden(true)
                 }
                 .chartYAxisLabel(viewModel.useLbs ? "lbs" : "kg")
                 .frame(height: 220)
+                .opacity(showChart ? 1 : 0)
+                .animation(reduceMotion ? nil : .default, value: showChart)
+                .animation(reduceMotion || suppressCountAnimation ? nil : .default, value: viewModel.chartWeighInsAscending.count)
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(viewModel.chartAccessibilitySummary)
+                .onAppear {
+                    if reduceMotion {
+                        showChart = true
+                        suppressCountAnimation = true
+                    } else {
+                        showChart = true
+                        Task { @MainActor in
+                            try? await Task.sleep(for: .milliseconds(400))
+                            suppressCountAnimation = true
+                        }
+                    }
+                }
             }
         }
-        .padding()
-        .background(Color(.secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .sectionCard()
     }
 
     private func displayWeight(_ kg: Double) -> Double {
@@ -192,17 +196,8 @@ struct WeightProgressStatsGridView: View {
     }
 
     private func statCard(title: String, value: String) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(title)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            Text(value)
-                .font(.subheadline.weight(.semibold))
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding()
-        .background(Color(.secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        NutrientStatRow(label: title, value: value)
+            .sectionCard(cornerRadius: 12)
     }
 }
 
@@ -215,9 +210,11 @@ struct WeightProgressHistoryView: View {
                 .font(.headline)
 
             if viewModel.weighIns.isEmpty {
-                Text("No weigh-ins yet")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                EmptyStateView(
+                    icon: "list.bullet",
+                    title: "No history",
+                    message: "Weigh-in history will appear here after you log your first weigh-in."
+                )
             } else {
                 LazyVStack(spacing: 0) {
                     ForEach(viewModel.weighIns, id: \.id) { weighIn in
@@ -237,9 +234,7 @@ struct WeightProgressHistoryView: View {
                 }
             }
         }
-        .padding()
-        .background(Color(.secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .sectionCard()
     }
 }
 
@@ -248,7 +243,7 @@ struct WeightProgressHistoryView: View {
         WeightProgressView(
             viewModel: WeightProgressViewModel(
                 profile: UserProfile(
-                    name: "Alex",
+                    name: "",
                     startingWeightKg: 85,
                     goalWeightKg: 72,
                     dailyCalorieTarget: 2000,

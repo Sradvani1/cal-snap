@@ -44,13 +44,11 @@ struct DailySummaryFooterView: View {
             }
 
             Text(macroSplitText)
-                .font(.caption)
+                .font(.csCaption)
                 .foregroundStyle(.secondary)
                 .accessibilityLabel(macroSplitAccessibilityLabel)
         }
-        .padding()
-        .background(Color(.secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .sectionCard()
     }
 
     private var fiberSummaryText: String {
@@ -58,11 +56,7 @@ struct DailySummaryFooterView: View {
     }
 
     private var fiberColor: Color {
-        switch fiberProgressBand {
-        case .onTrack: .green
-        case .moderate: .yellow
-        case .low: .red
-        }
+        Color.fiberProgress(for: fiberProgressBand)
     }
 
     private var fiberIcon: String {
@@ -85,8 +79,8 @@ struct DailySummaryFooterView: View {
     }
 
     private var netCalorieColor: Color {
-        if netCalorieDelta > 0 { return .red }
-        if netCalorieDelta < 0 { return .green }
+        if netCalorieDelta > 0 { return Color.csDanger }
+        if netCalorieDelta < 0 { return Color.csSuccess }
         return .secondary
     }
 
@@ -107,17 +101,4 @@ struct DailySummaryFooterView: View {
         "Carbs \(actualMacroPercents.carbs) percent, target \(targetMacroPercents.carbs) percent. " +
         "Fat \(actualMacroPercents.fat) percent, target \(targetMacroPercents.fat) percent."
     }
-}
-
-#Preview {
-    DailySummaryFooterView(
-        fiberConsumedG: 12,
-        fiberTargetG: 28,
-        fiberProgressBand: .low,
-        netCalorieSummary: "+300 over goal",
-        netCalorieDelta: 300,
-        actualMacroPercents: (28, 45, 27),
-        targetMacroPercents: (30, 47, 25)
-    )
-    .padding()
 }

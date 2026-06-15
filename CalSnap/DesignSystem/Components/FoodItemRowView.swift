@@ -2,7 +2,7 @@ import SwiftUI
 
 struct FoodItemRowView: View {
     let item: EditableFoodItem
-    var onEdit: (() -> Void)? = nil
+    var onEdit: (() -> Void)?
 
     var body: some View {
         Group {
@@ -11,6 +11,7 @@ struct FoodItemRowView: View {
                     rowContent
                 }
                 .buttonStyle(.plain)
+                .accessibilityHint("Opens item editor")
             } else {
                 rowContent
             }
@@ -26,15 +27,15 @@ struct FoodItemRowView: View {
                         .foregroundStyle(.primary)
                     if item.isFlagged {
                         Image(systemName: "exclamationmark.triangle.fill")
-                            .foregroundStyle(.orange)
+                            .foregroundStyle(Color.csAccent)
                             .font(.caption)
                         Text("Adjust?")
-                            .font(.caption)
-                            .foregroundStyle(.orange)
+                            .font(.csCaption)
+                            .foregroundStyle(Color.csAccent)
                     }
                 }
                 Text("\(Int(item.weightG.rounded()))g · \(item.calories) kcal")
-                    .font(.caption)
+                    .font(.csCaption)
                     .foregroundStyle(.secondary)
                 Text("P \(Int(item.proteinG.rounded()))g · C \(Int(item.carbsG.rounded()))g · F \(Int(item.fatG.rounded()))g")
                     .font(.caption2)
@@ -48,8 +49,18 @@ struct FoodItemRowView: View {
             }
         }
         .padding()
-        .background(Color(.secondarySystemBackground))
+        .background(Color.csSurface)
         .clipShape(RoundedRectangle(cornerRadius: 12))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(rowAccessibilityLabel)
+    }
+
+    private var rowAccessibilityLabel: String {
+        var parts = ["\(item.name), \(item.calories) calories"]
+        if item.isFlagged {
+            parts.append("flagged for review")
+        }
+        return parts.joined(separator: ", ")
     }
 }
 

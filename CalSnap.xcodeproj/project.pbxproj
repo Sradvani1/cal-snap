@@ -65,11 +65,8 @@
 		PR4B002234567890ABCDEF01 /* EditableFoodItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR4F002234567890ABCDEF01 /* EditableFoodItem.swift */; };
 		PR4B003234567890ABCDEF01 /* MealScannerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR4F003234567890ABCDEF01 /* MealScannerViewModel.swift */; };
 		PR4B004234567890ABCDEF01 /* CameraImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR4F004234567890ABCDEF01 /* CameraImagePicker.swift */; };
-		PR4B005234567890ABCDEF01 /* MacroSplitBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR4F005234567890ABCDEF01 /* MacroSplitBar.swift */; };
-		PR4B006234567890ABCDEF01 /* ConfidenceIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR4F006234567890ABCDEF01 /* ConfidenceIndicator.swift */; };
 		PR4B007234567890ABCDEF01 /* EstimationNotesAccordion.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR4F007234567890ABCDEF01 /* EstimationNotesAccordion.swift */; };
 		PR4B008234567890ABCDEF01 /* MealTypeSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR4F008234567890ABCDEF01 /* MealTypeSelector.swift */; };
-		PR4B009234567890ABCDEF01 /* FoodItemRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR4F009234567890ABCDEF01 /* FoodItemRowView.swift */; };
 		PR4B00A234567890ABCDEF01 /* FoodItemEditSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR4F00A234567890ABCDEF01 /* FoodItemEditSheet.swift */; };
 		PR4B00B234567890ABCDEF01 /* ScannerErrorBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR4F00B234567890ABCDEF01 /* ScannerErrorBanner.swift */; };
 		PR4B00C234567890ABCDEF01 /* MealAnalysisResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR4F00C234567890ABCDEF01 /* MealAnalysisResultView.swift */; };
@@ -119,6 +116,17 @@
 		PR8B005234567890ABCDEF01 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR8F005234567890ABCDEF01 /* SettingsView.swift */; };
 		PR8B006234567890ABCDEF01 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR8F006234567890ABCDEF01 /* SettingsViewModel.swift */; };
 		PR8B008234567890ABCDEF01 /* SettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR8F008234567890ABCDEF01 /* SettingsTests.swift */; };
+		PR9B001234567890ABCDEF01 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR9F001234567890ABCDEF01 /* Colors.swift */; };
+		PR9B002234567890ABCDEF01 /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR9F002234567890ABCDEF01 /* Typography.swift */; };
+		PR9B003234567890ABCDEF01 /* CalorieRingAccessibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR9F003234567890ABCDEF01 /* CalorieRingAccessibility.swift */; };
+		PR9B004234567890ABCDEF01 /* SectionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR9F004234567890ABCDEF01 /* SectionCard.swift */; };
+		PR9B005234567890ABCDEF01 /* CalorieRingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR9F005234567890ABCDEF01 /* CalorieRingView.swift */; };
+		PR9B006234567890ABCDEF01 /* MacroBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR9F006234567890ABCDEF01 /* MacroBarView.swift */; };
+		PR9B007234567890ABCDEF01 /* ConfidenceBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR9F007234567890ABCDEF01 /* ConfidenceBadge.swift */; };
+		PR9B008234567890ABCDEF01 /* NutrientStatRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR9F008234567890ABCDEF01 /* NutrientStatRow.swift */; };
+		PR9B009234567890ABCDEF01 /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR9F009234567890ABCDEF01 /* EmptyStateView.swift */; };
+		PR9B00A234567890ABCDEF01 /* FoodItemRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR9F00A234567890ABCDEF01 /* FoodItemRowView.swift */; };
+		PR9B00B234567890ABCDEF01 /* DesignSystemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR9F00B234567890ABCDEF01 /* DesignSystemTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -193,11 +201,8 @@
 		PR4F002234567890ABCDEF01 /* EditableFoodItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableFoodItem.swift; sourceTree = "<group>"; };
 		PR4F003234567890ABCDEF01 /* MealScannerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealScannerViewModel.swift; sourceTree = "<group>"; };
 		PR4F004234567890ABCDEF01 /* CameraImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraImagePicker.swift; sourceTree = "<group>"; };
-		PR4F005234567890ABCDEF01 /* MacroSplitBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacroSplitBar.swift; sourceTree = "<group>"; };
-		PR4F006234567890ABCDEF01 /* ConfidenceIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfidenceIndicator.swift; sourceTree = "<group>"; };
 		PR4F007234567890ABCDEF01 /* EstimationNotesAccordion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EstimationNotesAccordion.swift; sourceTree = "<group>"; };
 		PR4F008234567890ABCDEF01 /* MealTypeSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTypeSelector.swift; sourceTree = "<group>"; };
-		PR4F009234567890ABCDEF01 /* FoodItemRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodItemRowView.swift; sourceTree = "<group>"; };
 		PR4F00A234567890ABCDEF01 /* FoodItemEditSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodItemEditSheet.swift; sourceTree = "<group>"; };
 		PR4F00B234567890ABCDEF01 /* ScannerErrorBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerErrorBanner.swift; sourceTree = "<group>"; };
 		PR4F00C234567890ABCDEF01 /* MealAnalysisResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealAnalysisResultView.swift; sourceTree = "<group>"; };
@@ -247,6 +252,17 @@
 		PR8F005234567890ABCDEF01 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		PR8F006234567890ABCDEF01 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		PR8F008234567890ABCDEF01 /* SettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTests.swift; sourceTree = "<group>"; };
+		PR9F001234567890ABCDEF01 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
+		PR9F002234567890ABCDEF01 /* Typography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
+		PR9F003234567890ABCDEF01 /* CalorieRingAccessibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalorieRingAccessibility.swift; sourceTree = "<group>"; };
+		PR9F004234567890ABCDEF01 /* SectionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionCard.swift; sourceTree = "<group>"; };
+		PR9F005234567890ABCDEF01 /* CalorieRingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalorieRingView.swift; sourceTree = "<group>"; };
+		PR9F006234567890ABCDEF01 /* MacroBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacroBarView.swift; sourceTree = "<group>"; };
+		PR9F007234567890ABCDEF01 /* ConfidenceBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfidenceBadge.swift; sourceTree = "<group>"; };
+		PR9F008234567890ABCDEF01 /* NutrientStatRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutrientStatRow.swift; sourceTree = "<group>"; };
+		PR9F009234567890ABCDEF01 /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
+		PR9F00A234567890ABCDEF01 /* FoodItemRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodItemRowView.swift; sourceTree = "<group>"; };
+		PR9F00B234567890ABCDEF01 /* DesignSystemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystemTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -338,6 +354,7 @@
 				PR6F007234567890ABCDEF01 /* WeighInTests.swift */,
 				PR7F00C234567890ABCDEF01 /* AnalyticsTests.swift */,
 				PR8F008234567890ABCDEF01 /* SettingsTests.swift */,
+				PR9F00B234567890ABCDEF01 /* DesignSystemTests.swift */,
 				49FF607CB3770B2AAE871821 /* NutritionCalculatorTests.swift */,
 				F1E2D3C413234567890ABCDE /* OnboardingViewModelTests.swift */,
 				SU1F001234567890ABCDEF01 /* PrimaryProfileResolutionTests.swift */,
@@ -360,10 +377,52 @@
 			children = (
 				07BA7B93AA82E7551DE228CC /* App */,
 				1B3E10E65087B79829954A5C /* Core */,
+				PR9G001234567890ABCDEF01 /* DesignSystem */,
 				FEAT0001234567890ABCDE01 /* Features */,
 				8E94AB61ECE40E4BAC89DE5F /* Resources */,
 			);
 			path = CalSnap;
+			sourceTree = "<group>";
+		};
+		PR9G001234567890ABCDEF01 /* DesignSystem */ = {
+			isa = PBXGroup;
+			children = (
+				PR9F001234567890ABCDEF01 /* Colors.swift */,
+				PR9F002234567890ABCDEF01 /* Typography.swift */,
+				PR9G002234567890ABCDEF01 /* Accessibility */,
+				PR9G003234567890ABCDEF01 /* Components */,
+				PR9G004234567890ABCDEF01 /* Modifiers */,
+			);
+			path = DesignSystem;
+			sourceTree = "<group>";
+		};
+		PR9G002234567890ABCDEF01 /* Accessibility */ = {
+			isa = PBXGroup;
+			children = (
+				PR9F003234567890ABCDEF01 /* CalorieRingAccessibility.swift */,
+			);
+			path = Accessibility;
+			sourceTree = "<group>";
+		};
+		PR9G003234567890ABCDEF01 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				PR9F005234567890ABCDEF01 /* CalorieRingView.swift */,
+				PR9F006234567890ABCDEF01 /* MacroBarView.swift */,
+				PR9F007234567890ABCDEF01 /* ConfidenceBadge.swift */,
+				PR9F008234567890ABCDEF01 /* NutrientStatRow.swift */,
+				PR9F009234567890ABCDEF01 /* EmptyStateView.swift */,
+				PR9F00A234567890ABCDEF01 /* FoodItemRowView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		PR9G004234567890ABCDEF01 /* Modifiers */ = {
+			isa = PBXGroup;
+			children = (
+				PR9F004234567890ABCDEF01 /* SectionCard.swift */,
+			);
+			path = Modifiers;
 			sourceTree = "<group>";
 		};
 		E226EB33E96E8088B825FDD5 /* Utilities */ = {
@@ -507,11 +566,8 @@
 				PR4F002234567890ABCDEF01 /* EditableFoodItem.swift */,
 				PR4F003234567890ABCDEF01 /* MealScannerViewModel.swift */,
 				PR4F004234567890ABCDEF01 /* CameraImagePicker.swift */,
-				PR4F005234567890ABCDEF01 /* MacroSplitBar.swift */,
-				PR4F006234567890ABCDEF01 /* ConfidenceIndicator.swift */,
 				PR4F007234567890ABCDEF01 /* EstimationNotesAccordion.swift */,
 				PR4F008234567890ABCDEF01 /* MealTypeSelector.swift */,
-				PR4F009234567890ABCDEF01 /* FoodItemRowView.swift */,
 				PR4F00A234567890ABCDEF01 /* FoodItemEditSheet.swift */,
 				PR4F00B234567890ABCDEF01 /* ScannerErrorBanner.swift */,
 				PR4F00C234567890ABCDEF01 /* MealAnalysisResultView.swift */,
@@ -649,11 +705,8 @@
 				PR4B002234567890ABCDEF01 /* EditableFoodItem.swift in Sources */,
 				PR4B003234567890ABCDEF01 /* MealScannerViewModel.swift in Sources */,
 				PR4B004234567890ABCDEF01 /* CameraImagePicker.swift in Sources */,
-				PR4B005234567890ABCDEF01 /* MacroSplitBar.swift in Sources */,
-				PR4B006234567890ABCDEF01 /* ConfidenceIndicator.swift in Sources */,
 				PR4B007234567890ABCDEF01 /* EstimationNotesAccordion.swift in Sources */,
 				PR4B008234567890ABCDEF01 /* MealTypeSelector.swift in Sources */,
-				PR4B009234567890ABCDEF01 /* FoodItemRowView.swift in Sources */,
 				PR4B00A234567890ABCDEF01 /* FoodItemEditSheet.swift in Sources */,
 				PR4B00B234567890ABCDEF01 /* ScannerErrorBanner.swift in Sources */,
 				PR4B00C234567890ABCDEF01 /* MealAnalysisResultView.swift in Sources */,
@@ -725,6 +778,16 @@
 				PR8B004234567890ABCDEF01 /* ShareSheet.swift in Sources */,
 				PR8B005234567890ABCDEF01 /* SettingsView.swift in Sources */,
 				PR8B006234567890ABCDEF01 /* SettingsViewModel.swift in Sources */,
+				PR9B001234567890ABCDEF01 /* Colors.swift in Sources */,
+				PR9B002234567890ABCDEF01 /* Typography.swift in Sources */,
+				PR9B003234567890ABCDEF01 /* CalorieRingAccessibility.swift in Sources */,
+				PR9B004234567890ABCDEF01 /* SectionCard.swift in Sources */,
+				PR9B005234567890ABCDEF01 /* CalorieRingView.swift in Sources */,
+				PR9B006234567890ABCDEF01 /* MacroBarView.swift in Sources */,
+				PR9B007234567890ABCDEF01 /* ConfidenceBadge.swift in Sources */,
+				PR9B008234567890ABCDEF01 /* NutrientStatRow.swift in Sources */,
+				PR9B009234567890ABCDEF01 /* EmptyStateView.swift in Sources */,
+				PR9B00A234567890ABCDEF01 /* FoodItemRowView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -737,6 +800,7 @@
 				PR6B007234567890ABCDEF01 /* WeighInTests.swift in Sources */,
 				PR7B00C234567890ABCDEF01 /* AnalyticsTests.swift in Sources */,
 				PR8B008234567890ABCDEF01 /* SettingsTests.swift in Sources */,
+				PR9B00B234567890ABCDEF01 /* DesignSystemTests.swift in Sources */,
 				PR4B00E234567890ABCDEF01 /* MealScannerViewModelTests.swift in Sources */,
 				PR4B015234567890ABCDEF01 /* MealPhotoProcessorTests.swift in Sources */,
 				1B31CEC936B87ADC8D4A5AE0 /* KeychainManagerTests.swift in Sources */,

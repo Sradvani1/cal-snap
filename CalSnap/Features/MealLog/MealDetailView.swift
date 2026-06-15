@@ -61,7 +61,7 @@ struct MealDetailView: View {
 
                             CalorieTotalView(calories: displayedMeal.totalCalories)
 
-                            MacroSplitBar(
+                            MacroBarView(
                                 proteinG: displayedMeal.totalProteinG,
                                 carbsG: displayedMeal.totalCarbsG,
                                 fatG: displayedMeal.totalFatG
@@ -83,7 +83,7 @@ struct MealDetailView: View {
                                 EstimationNotesAccordion(notes: notes)
                             }
 
-                            ConfidenceIndicator(
+                            ConfidenceBadge(
                                 level: ConfidenceLevel.from(score: displayedMeal.geminiConfidence),
                                 score: displayedMeal.geminiConfidence,
                                 isManualEntry: displayedMeal.geminiConfidence == 0
@@ -92,13 +92,13 @@ struct MealDetailView: View {
                             if let error = viewModel.loadError {
                                 Text(error)
                                     .font(.caption)
-                                    .foregroundStyle(.red)
+                                    .foregroundStyle(Color.csDanger)
                             }
 
                             if let shareError = viewModel.shareError {
                                 Text(shareError)
                                     .font(.caption)
-                                    .foregroundStyle(.red)
+                                    .foregroundStyle(Color.csDanger)
                             }
                         }
                         .padding()
@@ -124,10 +124,12 @@ struct MealDetailView: View {
                     Button("Edit") {
                         navigationPath.append(.mealScanner(.edit(mealId)))
                     }
+                    .accessibilityHint("Opens meal editor")
                     Button("Share", systemImage: "square.and.arrow.up") {
                         shareMeal()
                     }
                     .labelStyle(.iconOnly)
+                    .accessibilityHint("Shares a meal summary image")
                 }
             }
             ToolbarItem(placement: .destructiveAction) {
@@ -135,6 +137,7 @@ struct MealDetailView: View {
                     Button("Delete", role: .destructive) {
                         showDeleteConfirmation = true
                     }
+                    .accessibilityHint("Permanently deletes this meal from your log")
                 }
             }
         }

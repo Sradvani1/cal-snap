@@ -22,7 +22,9 @@ struct MealAnalysisResultView: View {
     let onReAnalyze: () -> Void
     let onDiscard: () -> Void
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var showDiscardAlert = false
+    @State private var animateItems = false
 
     var body: some View {
         ScrollView {
@@ -39,25 +41,35 @@ struct MealAnalysisResultView: View {
 
                 CalorieTotalView(calories: totalCalories)
 
-                MacroSplitBar(proteinG: proteinG, carbsG: carbsG, fatG: fatG)
+                MacroBarView(proteinG: proteinG, carbsG: carbsG, fatG: fatG)
 
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Food items")
                         .font(.headline)
-                    ForEach(items) { item in
+                    ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
                         FoodItemRowView(item: item) {
                             onEditItem(item.id)
                         }
+                        .opacity(reduceMotion || animateItems ? 1 : 0)
+                        .animation(
+                            reduceMotion ? nil : .easeOut(duration: 0.3).delay(Double(index) * 0.05),
+                            value: animateItems
+                        )
                     }
+                }
+                .onAppear { animateItems = true }
+                .onChange(of: items.count) { _, _ in
+                    animateItems = false
+                    animateItems = true
                 }
 
                 if allItemsFlagged {
                     Label("Review all items before logging", systemImage: "exclamationmark.triangle.fill")
                         .font(.subheadline)
-                        .foregroundStyle(.orange)
+                        .foregroundStyle(Color.csAccent)
                         .padding()
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color.orange.opacity(0.1))
+                        .background(Color.csAccent.opacity(0.1))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
 
@@ -65,7 +77,7 @@ struct MealAnalysisResultView: View {
                     EstimationNotesAccordion(notes: estimationNotes)
                 }
 
-                ConfidenceIndicator(
+                ConfidenceBadge(
                     level: confidenceLevel,
                     score: overallConfidence,
                     isManualEntry: isManualEntry
@@ -76,10 +88,10 @@ struct MealAnalysisResultView: View {
                 if let logError {
                     Label(logError, systemImage: "exclamationmark.circle.fill")
                         .font(.subheadline)
-                        .foregroundStyle(.red)
+                        .foregroundStyle(Color.csDanger)
                         .padding()
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color.red.opacity(0.1))
+                        .background(Color.csDanger.opacity(0.1))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
 
@@ -87,25 +99,26 @@ struct MealAnalysisResultView: View {
                     onLog()
                 } label: {
                     if isLogging {
-                        ProgressView()
-                            .frame(maxWidth: .infinity)
+                        ProgressView().frame(maxWidth: .infinity)
                     } else {
-                        Text(isEditing ? "Save Changes" : "Log This Meal")
-                            .frame(maxWidth: .infinity)
+                        Text(isEditing ? "Save Changes" : "Log This Meal").frame(maxWidth: .infinity)
                     }
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(!canLog || isLogging)
+                .accessibilityHint(isEditing ? "Saves meal edits" : "Logs this meal to your daily log")
 
                 if !isEditing {
                     Button("Re-analyze", action: onReAnalyze)
                         .frame(maxWidth: .infinity)
+                        .accessibilityHint("Runs analysis again on the meal photo")
                 }
 
                 Button(isEditing ? "Cancel" : "Discard", role: .destructive) {
                     showDiscardAlert = true
                 }
                 .frame(maxWidth: .infinity)
+                .accessibilityHint(isEditing ? "Discards unsaved edits" : "Discards this meal without saving")
             }
             .padding()
         }
@@ -116,41 +129,4 @@ struct MealAnalysisResultView: View {
             Text(isEditing ? "Your edits will not be saved." : "Nothing will be saved.")
         }
     }
-}
-
-#Preview {
-    MealAnalysisResultView(
-        image: nil,
-        totalCalories: 382,
-        proteinG: 49,
-        carbsG: 28,
-        fatG: 6,
-        items: [
-            EditableFoodItem(
-                name: "Chicken",
-                weightG: 150,
-                calories: 248,
-                proteinG: 46,
-                carbsG: 0,
-                fatG: 5,
-                fiberG: 0,
-                confidence: 0.9,
-                isFlagged: false
-            ),
-        ],
-        estimationNotes: "Estimated from plate size.",
-        confidenceLevel: .high,
-        overallConfidence: 0.9,
-        isManualEntry: false,
-        allItemsFlagged: false,
-        canLog: true,
-        isLogging: false,
-        logError: nil,
-        isEditing: false,
-        mealType: .constant(.lunch),
-        onEditItem: { _ in },
-        onLog: {},
-        onReAnalyze: {},
-        onDiscard: {}
-    )
 }

@@ -34,7 +34,7 @@ struct AnalyticsView: View {
                     if let error = viewModel.loadError {
                         Text(error)
                             .font(.caption)
-                            .foregroundStyle(.red)
+                            .foregroundStyle(Color.csDanger)
                     }
 
                     if viewModel.hasEnoughData {
@@ -74,11 +74,11 @@ struct AnalyticsView: View {
                             }
                         )
                     } else {
-                        AnalyticsSectionCard(title: "Not enough data") {
-                            Text("Log at least 3 days of meals to see patterns and insights.")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        }
+                        EmptyStateView(
+                            icon: "chart.line.uptrend.xyaxis",
+                            title: "Not enough data",
+                            message: "Log at least 3 days of meals on the Dashboard using the add button to see patterns and insights."
+                        )
                     }
 
                     if let weightProgressViewModel {

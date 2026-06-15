@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct MacroSplitBar: View {
+struct MacroBarView: View {
     let proteinG: Double
     let carbsG: Double
     let fatG: Double
@@ -21,26 +21,26 @@ struct MacroSplitBar: View {
             if total > 0 {
                 GeometryReader { geometry in
                     HStack(spacing: 0) {
-                        segment(width: geometry.size.width * proteinG / total, color: .blue)
-                        segment(width: geometry.size.width * carbsG / total, color: .orange)
-                        segment(width: geometry.size.width * fatG / total, color: .purple)
+                        segment(width: geometry.size.width * proteinG / total, color: Color.csProtein)
+                        segment(width: geometry.size.width * carbsG / total, color: Color.csCarbs)
+                        segment(width: geometry.size.width * fatG / total, color: Color.csFat)
                     }
                     .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
                 .frame(height: 12)
 
                 HStack(spacing: 16) {
-                    legend(label: "Protein", value: proteinG, color: .blue)
-                    legend(label: "Carbs", value: carbsG, color: .orange)
-                    legend(label: "Fat", value: fatG, color: .purple)
+                    legend(label: "Protein", value: proteinG, color: Color.csProtein)
+                    legend(label: "Carbs", value: carbsG, color: Color.csCarbs)
+                    legend(label: "Fat", value: fatG, color: Color.csFat)
                 }
-                .font(.caption)
+                .font(.csCaption)
             } else {
                 RoundedRectangle(cornerRadius: 6)
-                    .fill(Color(.systemGray4))
+                    .fill(Color.secondary.opacity(0.25))
                     .frame(height: 12)
                 Text("No macro data")
-                    .font(.caption)
+                    .font(.csCaption)
                     .foregroundStyle(.secondary)
             }
         }
@@ -64,6 +64,6 @@ struct MacroSplitBar: View {
 }
 
 #Preview {
-    MacroSplitBar(proteinG: 40, carbsG: 55, fatG: 18)
+    MacroBarView(proteinG: 40, carbsG: 50, fatG: 20)
         .padding()
 }

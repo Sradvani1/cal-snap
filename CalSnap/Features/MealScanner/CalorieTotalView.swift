@@ -6,7 +6,9 @@ struct CalorieTotalView: View {
     var body: some View {
         VStack(spacing: 4) {
             Text("\(calories)")
-                .font(.largeTitle.bold().scaled(by: 2.0))
+                .font(.csLargeCalorie)
+                .minimumScaleFactor(0.6)
+                .lineLimit(1)
             Text("calories")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
@@ -15,8 +17,4 @@ struct CalorieTotalView: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(calories) calories")
     }
-}
-
-#Preview {
-    CalorieTotalView(calories: 382)
 }

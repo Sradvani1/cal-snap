@@ -10,9 +10,7 @@ struct MacroTrendsSectionView: View {
         AnalyticsSectionCard(title: "Macro Trends") {
             VStack(alignment: .leading, spacing: 16) {
                 if chartSeries.isEmpty {
-                    Text("No meal data in this period")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    EmptyStateView(icon: "chart.bar", title: "No meal data", message: "No meals logged in this period.")
                 } else {
                     Chart {
                         ForEach(chartSeries) { day in
@@ -20,32 +18,18 @@ struct MacroTrendsSectionView: View {
                             let carbsKcal = day.carbsG * AppConstants.Nutrition.carbsCalPerGram
                             let fatKcal = day.fatG * AppConstants.Nutrition.fatCalPerGram
 
-                            BarMark(
-                                x: .value("Date", day.date, unit: .day),
-                                y: .value("Kcal", proteinKcal),
-                                stacking: .standard
-                            )
-                            .foregroundStyle(by: .value("Macro", "Protein"))
-
-                            BarMark(
-                                x: .value("Date", day.date, unit: .day),
-                                y: .value("Kcal", carbsKcal),
-                                stacking: .standard
-                            )
-                            .foregroundStyle(by: .value("Macro", "Carbs"))
-
-                            BarMark(
-                                x: .value("Date", day.date, unit: .day),
-                                y: .value("Kcal", fatKcal),
-                                stacking: .standard
-                            )
-                            .foregroundStyle(by: .value("Macro", "Fat"))
+                            BarMark(x: .value("Date", day.date, unit: .day), y: .value("Kcal", proteinKcal), stacking: .standard)
+                                .foregroundStyle(by: .value("Macro", "Protein"))
+                            BarMark(x: .value("Date", day.date, unit: .day), y: .value("Kcal", carbsKcal), stacking: .standard)
+                                .foregroundStyle(by: .value("Macro", "Carbs"))
+                            BarMark(x: .value("Date", day.date, unit: .day), y: .value("Kcal", fatKcal), stacking: .standard)
+                                .foregroundStyle(by: .value("Macro", "Fat"))
                         }
                     }
                     .chartForegroundStyleScale([
-                        "Protein": Color.blue,
-                        "Carbs": Color.orange,
-                        "Fat": Color.purple,
+                        "Protein": Color.csProtein,
+                        "Carbs": Color.csCarbs,
+                        "Fat": Color.csFat,
                     ])
                     .chartYAxisLabel("kcal")
                     .frame(height: 200)
@@ -65,14 +49,12 @@ struct MacroTrendsSectionView: View {
 
     private func macroSplitColumn(title: String, split: MacroSplit) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(title)
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            Text(title).font(.csCaption).foregroundStyle(.secondary)
             GeometryReader { geometry in
                 HStack(spacing: 0) {
-                    Color.blue.frame(width: geometry.size.width * CGFloat(split.proteinPct) / 100)
-                    Color.orange.frame(width: geometry.size.width * CGFloat(split.carbsPct) / 100)
-                    Color.purple.frame(width: geometry.size.width * CGFloat(split.fatPct) / 100)
+                    Color.csProtein.frame(width: geometry.size.width * CGFloat(split.proteinPct) / 100)
+                    Color.csCarbs.frame(width: geometry.size.width * CGFloat(split.carbsPct) / 100)
+                    Color.csFat.frame(width: geometry.size.width * CGFloat(split.fatPct) / 100)
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 6))
             }
@@ -83,15 +65,4 @@ struct MacroTrendsSectionView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
-}
-
-#Preview {
-    MacroTrendsSectionView(
-        chartSeries: [
-            DailyNutritionSummary(date: Date.now, calories: 2000, proteinG: 120, carbsG: 200, fatG: 60, fiberG: 20),
-        ],
-        actualMacroSplit: MacroSplit(proteinPct: 28, carbsPct: 47, fatPct: 25),
-        targetMacroSplit: MacroSplit(proteinPct: 28, carbsPct: 47, fatPct: 25)
-    )
-    .padding()
 }

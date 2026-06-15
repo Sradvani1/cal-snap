@@ -44,7 +44,7 @@ struct ManualMealItemCard: View {
             }
         }
         .padding()
-        .background(Color(.secondarySystemBackground))
+        .background(Color.csSurface)
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 

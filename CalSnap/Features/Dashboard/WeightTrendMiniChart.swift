@@ -33,9 +33,7 @@ struct WeightTrendMiniChart: View {
                 )
             }
         }
-        .padding()
-        .background(Color(.secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .sectionCard()
     }
 
     private var miniChartAccessibilityLabel: String {
@@ -68,10 +66,12 @@ struct WeightTrendMiniChartChart: View {
                 x: .value("Date", weighIn.date),
                 y: .value("Weight", displayWeight(weighIn.weightKg))
             )
+            .foregroundStyle(Color.csPrimary)
             PointMark(
                 x: .value("Date", weighIn.date),
                 y: .value("Weight", displayWeight(weighIn.weightKg))
             )
+            .foregroundStyle(Color.csPrimary)
         }
         .chartYAxisLabel(useLbs ? "lbs" : "kg")
         .frame(height: 120)
@@ -89,17 +89,13 @@ struct WeightTrendMiniChartEmptyState: View {
     let onLogWeighIn: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(UnitFormatters.formatWeight(kg: startingWeightKg, useLbs: useLbs))
-                .font(.title3.weight(.semibold))
-            Text("Your weight trend will appear after weekly weigh-ins")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            Button("Log your first weigh-in", action: onLogWeighIn)
-                .font(.subheadline.weight(.semibold))
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.vertical, 8)
+        EmptyStateView(
+            icon: "scalemass",
+            title: UnitFormatters.formatWeight(kg: startingWeightKg, useLbs: useLbs),
+            message: "Your weight trend will appear after weekly weigh-ins.",
+            actionTitle: "Log your first weigh-in",
+            action: onLogWeighIn
+        )
     }
 }
 

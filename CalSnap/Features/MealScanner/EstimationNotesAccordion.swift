@@ -12,7 +12,7 @@ struct EstimationNotesAccordion: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             .padding()
-            .background(Color(.secondarySystemBackground))
+            .background(Color.csSurface)
             .clipShape(RoundedRectangle(cornerRadius: 12))
         }
     }
