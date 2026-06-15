@@ -90,11 +90,18 @@ struct DashboardView: View {
     private func wireNotificationsIfNeeded() {
         guard !didWireNotifications, let vm = viewModel else { return }
         didWireNotifications = true
+        let coordinator = appContainer.navigationCoordinator
         appContainer.notificationManager.onWeighInReminderTapped = { _ in
             presentWeighInSheet(using: vm)
         }
+        appContainer.notificationManager.onDailyLogReminderTapped = {
+            coordinator.openMealScanner()
+        }
         if appContainer.notificationManager.consumePendingWeighInRequest() != nil {
             presentWeighInSheet(using: vm)
+        }
+        if appContainer.notificationManager.consumePendingScannerOpen() {
+            coordinator.openMealScanner()
         }
     }
 
@@ -114,6 +121,15 @@ struct DashboardView: View {
     private func reloadDashboard() {
         viewModel?.loadToday(context: modelContext)
         mealDetailReloadToken += 1
+        syncWidgetIfNeeded()
+    }
+
+    private func syncWidgetIfNeeded() {
+        guard let profile = viewModel?.activeProfile, let vm = viewModel else { return }
+        WidgetSyncService.sync(
+            profile: profile,
+            dashboard: vm
+        )
     }
 
     private func scheduleReminderIfNeeded() {
@@ -122,6 +138,10 @@ struct DashboardView: View {
             await appContainer.notificationManager.scheduleWeighInReminder(
                 userId: profile.id,
                 name: profile.name
+            )
+            await appContainer.notificationManager.scheduleDailyLogReminder(
+                userId: profile.id,
+                displayName: profile.name
             )
         }
     }

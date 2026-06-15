@@ -9,4 +9,9 @@ final class AppContainer {
     let mealRepository = MealRepository()
     let weighInRepository = WeighInRepository()
     let notificationManager = NotificationManager()
+    let navigationCoordinator = AppNavigationCoordinator()
+
+    init() {
+        AppNavigationCoordinatorStore.shared.bind(navigationCoordinator)
+    }
 }

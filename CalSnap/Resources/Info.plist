@@ -45,6 +45,6 @@
 <key>NSPhotoLibraryUsageDescription</key>
 <string>CalSnap can analyze meal photos from your photo library.</string>
 <key>NSUserNotificationsUsageDescription</key>
-<string>CalSnap sends weekly weigh-in reminders to keep you on track.</string>
+<string>CalSnap sends weekly weigh-in reminders and optional daily meal-log reminders to keep you on track.</string>
 </dict>
 </plist>

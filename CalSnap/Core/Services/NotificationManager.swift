@@ -1,18 +1,22 @@
 import Foundation
 import UserNotifications
 
-private let weighInNotificationUserIdKey = "userId"
+private let notificationUserIdKey = "userId"
 
 @MainActor
 @Observable
 final class NotificationManager: NSObject {
     var onWeighInReminderTapped: ((UUID?) -> Void)?
+    var onDailyLogReminderTapped: (() -> Void)?
+
     private(set) var pendingWeighInSheet = false
     private(set) var pendingWeighInUserId: UUID?
+    private(set) var pendingScannerOpen = false
 
-    private let center = UNUserNotificationCenter.current()
+    private let center: any NotificationCenterScheduling
 
-    override init() {
+    init(center: NotificationCenterScheduling = LiveNotificationCenter()) {
+        self.center = center
         super.init()
         center.delegate = self
     }
@@ -30,6 +34,8 @@ final class NotificationManager: NSObject {
             return false
         }
     }
+
+    // MARK: - Weigh-in reminder
 
     func reminderWeekday(for userId: UUID) -> Int {
         let key = AppStorageKey.weighInReminderWeekday(userId: userId)
@@ -56,16 +62,17 @@ final class NotificationManager: NSObject {
     }
 
     func scheduleWeighInReminder(userId: UUID, name: String) async {
+        _ = name
         guard await requestPermissionIfNeeded() else { return }
 
         cancelWeighInReminder(userId: userId)
 
         let content = UNMutableNotificationContent()
-        content.title = "Weekly Weigh-In"
-        content.body = "Time for your weekly weigh-in, \(name). Tap to log."
+        content.title = String(localized: "Weekly Weigh-In")
+        content.body = String(localized: "Time for your weekly weigh-in. Tap to log.")
         content.sound = .default
         content.categoryIdentifier = AppConstants.Notifications.weighInCategoryIdentifier
-        content.userInfo = [weighInNotificationUserIdKey: userId.uuidString]
+        content.userInfo = [notificationUserIdKey: userId.uuidString]
 
         var components = DateComponents()
         components.weekday = reminderWeekday(for: userId)
@@ -74,7 +81,7 @@ final class NotificationManager: NSObject {
 
         let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
         let request = UNNotificationRequest(
-            identifier: notificationIdentifier(for: userId),
+            identifier: weighInNotificationIdentifier(for: userId),
             content: content,
             trigger: trigger
         )
@@ -83,7 +90,7 @@ final class NotificationManager: NSObject {
     }
 
     func cancelWeighInReminder(userId: UUID) {
-        center.removePendingNotificationRequests(withIdentifiers: [notificationIdentifier(for: userId)])
+        center.removePendingNotificationRequests(withIdentifiers: [weighInNotificationIdentifier(for: userId)])
     }
 
     func snoozeFireDate(for userId: UUID, calendar: Calendar = .current) -> Date {
@@ -109,15 +116,15 @@ final class NotificationManager: NSObject {
         guard await requestPermissionIfNeeded() else { return }
 
         center.removePendingNotificationRequests(
-            withIdentifiers: ["\(notificationIdentifier(for: userId))-snooze"]
+            withIdentifiers: ["\(weighInNotificationIdentifier(for: userId))-snooze"]
         )
 
         let content = UNMutableNotificationContent()
-        content.title = "Weekly Weigh-In"
-        content.body = "Reminder: log your weight when you're ready."
+        content.title = String(localized: "Weekly Weigh-In")
+        content.body = String(localized: "Reminder: log your weight when you're ready.")
         content.sound = .default
         content.categoryIdentifier = AppConstants.Notifications.weighInCategoryIdentifier
-        content.userInfo = [weighInNotificationUserIdKey: userId.uuidString]
+        content.userInfo = [notificationUserIdKey: userId.uuidString]
 
         let components = calendar.dateComponents(
             [.year, .month, .day, .hour, .minute],
@@ -126,7 +133,7 @@ final class NotificationManager: NSObject {
 
         let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
         let request = UNNotificationRequest(
-            identifier: "\(notificationIdentifier(for: userId))-snooze",
+            identifier: "\(weighInNotificationIdentifier(for: userId))-snooze",
             content: content,
             trigger: trigger
         )
@@ -139,9 +146,67 @@ final class NotificationManager: NSObject {
         return Date(timeIntervalSince1970: interval) > Date.now
     }
 
-    /// Returns the notified user id when a pending sheet was consumed, or `nil` when nothing was pending.
-    /// When pending had no associated user id, returns an empty optional wrapper via `Optional.some(nil)` —
-    /// use `consumePendingWeighInRequest()` for unambiguous consumption.
+    // MARK: - Daily log reminder
+
+    func isDailyLogReminderEnabled(for userId: UUID) -> Bool {
+        UserDefaults.standard.bool(forKey: AppStorageKey.dailyLogReminderEnabled(userId: userId))
+    }
+
+    func setDailyLogReminderEnabled(_ enabled: Bool, userId: UUID) {
+        UserDefaults.standard.set(enabled, forKey: AppStorageKey.dailyLogReminderEnabled(userId: userId))
+    }
+
+    func dailyLogReminderHour(for userId: UUID) -> Int {
+        let stored = UserDefaults.standard.object(forKey: AppStorageKey.dailyLogReminderHour(userId: userId)) as? Int
+        return stored ?? AppConstants.Notifications.defaultDailyLogReminderHour
+    }
+
+    func dailyLogReminderMinute(for userId: UUID) -> Int {
+        let stored = UserDefaults.standard.object(forKey: AppStorageKey.dailyLogReminderMinute(userId: userId)) as? Int
+        return stored ?? AppConstants.Notifications.defaultDailyLogReminderMinute
+    }
+
+    func setDailyLogReminderSchedule(userId: UUID, hour: Int, minute: Int) {
+        UserDefaults.standard.set(hour, forKey: AppStorageKey.dailyLogReminderHour(userId: userId))
+        UserDefaults.standard.set(minute, forKey: AppStorageKey.dailyLogReminderMinute(userId: userId))
+    }
+
+    func scheduleDailyLogReminder(userId: UUID, displayName: String) async {
+        _ = displayName
+        guard isDailyLogReminderEnabled(for: userId) else {
+            cancelDailyLogReminder(userId: userId)
+            return
+        }
+        guard await requestPermissionIfNeeded() else { return }
+
+        cancelDailyLogReminder(userId: userId)
+
+        let content = UNMutableNotificationContent()
+        content.title = String(localized: "Log Your Meals")
+        content.body = String(localized: "Don't forget to log today's meals.")
+        content.sound = .default
+        content.categoryIdentifier = AppConstants.Notifications.dailyLogCategoryIdentifier
+        content.userInfo = [notificationUserIdKey: userId.uuidString]
+
+        var components = DateComponents()
+        components.hour = dailyLogReminderHour(for: userId)
+        components.minute = dailyLogReminderMinute(for: userId)
+
+        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
+        let request = UNNotificationRequest(
+            identifier: dailyLogNotificationIdentifier(for: userId),
+            content: content,
+            trigger: trigger
+        )
+        try? await center.add(request)
+    }
+
+    func cancelDailyLogReminder(userId: UUID) {
+        center.removePendingNotificationRequests(withIdentifiers: [dailyLogNotificationIdentifier(for: userId)])
+    }
+
+    // MARK: - Pending actions
+
     func consumePendingWeighInSheet() -> UUID? {
         guard let request = consumePendingWeighInRequest() else { return nil }
         return request.userId
@@ -153,6 +218,12 @@ final class NotificationManager: NSObject {
         let userId = pendingWeighInUserId
         pendingWeighInUserId = nil
         return PendingWeighInRequest(userId: userId)
+    }
+
+    func consumePendingScannerOpen() -> Bool {
+        guard pendingScannerOpen else { return false }
+        pendingScannerOpen = false
+        return true
     }
 
     func handleWeighInReminderTap(userId: UUID?, isSnoozeRequest: Bool) {
@@ -168,8 +239,20 @@ final class NotificationManager: NSObject {
         }
     }
 
-    private func notificationIdentifier(for userId: UUID) -> String {
+    func handleDailyLogReminderTap() {
+        if let onDailyLogReminderTapped {
+            onDailyLogReminderTapped()
+        } else {
+            pendingScannerOpen = true
+        }
+    }
+
+    func weighInNotificationIdentifier(for userId: UUID) -> String {
         "weigh-in-\(userId.uuidString)"
+    }
+
+    func dailyLogNotificationIdentifier(for userId: UUID) -> String {
+        "daily-log-\(userId.uuidString)"
     }
 }
 
@@ -182,17 +265,22 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse
     ) async {
-        guard response.notification.request.content.categoryIdentifier
-            == AppConstants.Notifications.weighInCategoryIdentifier else {
-            return
-        }
+        let category = response.notification.request.content.categoryIdentifier
 
-        let userInfo = response.notification.request.content.userInfo
-        let userId = (userInfo[weighInNotificationUserIdKey] as? String).flatMap(UUID.init(uuidString:))
-        let isSnoozeRequest = response.notification.request.identifier.hasSuffix("-snooze")
-
-        await MainActor.run {
-            handleWeighInReminderTap(userId: userId, isSnoozeRequest: isSnoozeRequest)
+        switch category {
+        case AppConstants.Notifications.weighInCategoryIdentifier:
+            let userInfo = response.notification.request.content.userInfo
+            let userId = (userInfo[notificationUserIdKey] as? String).flatMap(UUID.init(uuidString:))
+            let isSnoozeRequest = response.notification.request.identifier.hasSuffix("-snooze")
+            await MainActor.run {
+                handleWeighInReminderTap(userId: userId, isSnoozeRequest: isSnoozeRequest)
+            }
+        case AppConstants.Notifications.dailyLogCategoryIdentifier:
+            await MainActor.run {
+                handleDailyLogReminderTap()
+            }
+        default:
+            break
         }
     }
 

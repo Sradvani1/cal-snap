@@ -48,6 +48,18 @@ enum AppStorageKey {
     static func weighInReminderMinute(userId: UUID) -> String {
         "weighInReminderMinute_\(userId.uuidString)"
     }
+
+    static func dailyLogReminderEnabled(userId: UUID) -> String {
+        "dailyLogReminderEnabled_\(userId.uuidString)"
+    }
+
+    static func dailyLogReminderHour(userId: UUID) -> String {
+        "dailyLogReminderHour_\(userId.uuidString)"
+    }
+
+    static func dailyLogReminderMinute(userId: UUID) -> String {
+        "dailyLogReminderMinute_\(userId.uuidString)"
+    }
 }
 
 enum AppConstants {
@@ -110,9 +122,12 @@ enum AppConstants {
 
     enum Notifications {
         static let weighInCategoryIdentifier = "WEIGH_IN"
+        static let dailyLogCategoryIdentifier = "DAILY_LOG"
         static let defaultReminderWeekday = 1 // Sunday
         static let defaultReminderHour = 8
         static let defaultReminderMinute = 0
+        static let defaultDailyLogReminderHour = 20
+        static let defaultDailyLogReminderMinute = 0
     }
 
     enum MealPhoto {

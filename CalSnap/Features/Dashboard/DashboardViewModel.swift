@@ -311,6 +311,9 @@ final class DashboardViewModel {
             todaysFiberG += meal.totalFiberG
             grouped[meal.mealType, default: []].append(meal)
         }
+        for mealType in grouped.keys {
+            grouped[mealType]?.sort { $0.timestamp < $1.timestamp }
+        }
         mealsByType = grouped
     }
 

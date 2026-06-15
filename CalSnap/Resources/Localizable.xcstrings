@@ -1,0 +1,61 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Weekly Weigh-In" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekly Weigh-In"
+          }
+        }
+      }
+    },
+    "Time for your weekly weigh-in. Tap to log." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time for your weekly weigh-in. Tap to log."
+          }
+        }
+      }
+    },
+    "Reminder: log your weight when you're ready." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reminder: log your weight when you're ready."
+          }
+        }
+      }
+    },
+    "Log Your Meals" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log Your Meals"
+          }
+        }
+      }
+    },
+    "Don't forget to log today's meals." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Don't forget to log today's meals."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

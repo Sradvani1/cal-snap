@@ -407,6 +407,13 @@ final class MealScannerViewModelTests: XCTestCase {
         XCTAssertTrue(viewModel.hasUnsavedWork)
     }
 
+    func testCancelAnalysisResetsPhase() {
+        selectTestImage()
+        viewModel.phase = .analyzing
+        viewModel.cancelAnalysis()
+        XCTAssertEqual(viewModel.phase, .capture)
+    }
+
     func testUpdateMealThrowsWhenNotInEditMode() async {
         do {
             try await viewModel.updateMeal(context: context)

@@ -30,6 +30,10 @@ final class SettingsViewModel {
     var useLbsForWeight = AppStorageKey.useLbsForWeightValue
     var useImperialForHeight = false
 
+    var dailyLogReminderEnabled = false
+    var dailyLogReminderHour = AppConstants.Notifications.defaultDailyLogReminderHour
+    var dailyLogReminderMinute = AppConstants.Notifications.defaultDailyLogReminderMinute
+
     var reminderWeekday = AppConstants.Notifications.defaultReminderWeekday
     var reminderHour = AppConstants.Notifications.defaultReminderHour
     var reminderMinute = AppConstants.Notifications.defaultReminderMinute
@@ -124,6 +128,7 @@ final class SettingsViewModel {
             loadAPIKeyStatus()
             loadPreferences()
             loadReminderSchedule(for: profile.id)
+            loadDailyLogReminderSchedule(for: profile.id)
         } catch {
             loadError = error.localizedDescription
         }
@@ -200,6 +205,7 @@ final class SettingsViewModel {
 
             refreshPreview()
             AppStorageKey.bumpProfileDataRevision()
+            syncWidgetFromProfile(context: context)
         } catch {
             saveError = error.localizedDescription
         }
@@ -269,6 +275,33 @@ final class SettingsViewModel {
             minute: reminderMinute
         )
         await notificationManager.scheduleWeighInReminder(userId: profile.id, name: profile.name)
+    }
+
+    func updateDailyLogReminderSchedule(context: ModelContext) async {
+        guard let profile = activeProfile else { return }
+        notificationManager.setDailyLogReminderEnabled(dailyLogReminderEnabled, userId: profile.id)
+        notificationManager.setDailyLogReminderSchedule(
+            userId: profile.id,
+            hour: dailyLogReminderHour,
+            minute: dailyLogReminderMinute
+        )
+        if dailyLogReminderEnabled {
+            await notificationManager.scheduleDailyLogReminder(
+                userId: profile.id,
+                displayName: profile.name
+            )
+        } else {
+            notificationManager.cancelDailyLogReminder(userId: profile.id)
+        }
+    }
+
+    private func syncWidgetFromProfile(context: ModelContext) {
+        guard let profile = activeProfile else { return }
+        WidgetSyncService.syncFromProfile(
+            profile: profile,
+            mealRepository: mealRepository,
+            context: context
+        )
     }
 
     func syncHealthKitWeight(context: ModelContext) async {
@@ -345,6 +378,7 @@ final class SettingsViewModel {
             notificationManager: notificationManager,
             context: context
         )
+        WidgetSyncService.clear()
         AppStorageKey.bumpProfileDataRevision()
     }
 
@@ -368,6 +402,12 @@ final class SettingsViewModel {
         reminderWeekday = notificationManager.reminderWeekday(for: userId)
         reminderHour = notificationManager.reminderHour(for: userId)
         reminderMinute = notificationManager.reminderMinute(for: userId)
+    }
+
+    private func loadDailyLogReminderSchedule(for userId: UUID) {
+        dailyLogReminderEnabled = notificationManager.isDailyLogReminderEnabled(for: userId)
+        dailyLogReminderHour = notificationManager.dailyLogReminderHour(for: userId)
+        dailyLogReminderMinute = notificationManager.dailyLogReminderMinute(for: userId)
     }
 
     private func profileDraft(from profile: UserProfile) -> ProfileDraft {

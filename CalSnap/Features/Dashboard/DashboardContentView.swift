@@ -180,6 +180,16 @@ struct DashboardContentView: View {
                     onSkipped: onWeighInSheetDismissed
                 )
             }
+            .onChange(of: appContainer.navigationCoordinator.pendingScannerRoute) { _, route in
+                guard let route else { return }
+                navigationPath.append(.mealScanner(route))
+                _ = appContainer.navigationCoordinator.consumePendingScannerRoute()
+            }
+            .onAppear {
+                if let route = appContainer.navigationCoordinator.consumePendingScannerRoute() {
+                    navigationPath.append(.mealScanner(route))
+                }
+            }
         }
     }
 

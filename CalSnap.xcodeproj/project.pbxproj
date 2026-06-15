@@ -127,6 +127,25 @@
 		PR9B009234567890ABCDEF01 /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR9F009234567890ABCDEF01 /* EmptyStateView.swift */; };
 		PR9B00A234567890ABCDEF01 /* FoodItemRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR9F00A234567890ABCDEF01 /* FoodItemRowView.swift */; };
 		PR9B00B234567890ABCDEF01 /* DesignSystemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR9F00B234567890ABCDEF01 /* DesignSystemTests.swift */; };
+		62F43FD750F149118925586F /* NotificationCenterScheduling.swift in Sources */ = {isa = PBXBuildFile; fileRef = C52D2972273D4FAAB67856E6 /* NotificationCenterScheduling.swift */; };
+		DE0C28D92D4A482899CA824A /* WidgetSyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58D97DDC0CA4487908FCA69 /* WidgetSyncService.swift */; };
+		A6FDDF67E58645E5B09F4C7D /* AppNavigationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EFDF32FE26F49AAA0F77B62 /* AppNavigationCoordinator.swift */; };
+		E289E44108B74D6CA35DC160 /* OpenScannerIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50131A9B014641C685D9AAA6 /* OpenScannerIntent.swift */; };
+		D10EBE95C39942EC9F7F6750 /* WidgetData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C78784D1002347E198FF9DA6 /* WidgetData.swift */; };
+		3986E22037314042AA91BB02 /* WidgetDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4209BC0E8CEC4546B7956A41 /* WidgetDataStore.swift */; };
+		F1CF5DD80C324D2DAFAC06EB /* WidgetData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C78784D1002347E198FF9DA6 /* WidgetData.swift */; };
+		949BA545B2FB43BD889672A1 /* WidgetDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4209BC0E8CEC4546B7956A41 /* WidgetDataStore.swift */; };
+		F8F52E1CBD3346A99377F03A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 362EDA52B8F540E19425204F /* PrivacyInfo.xcprivacy */; };
+		BEA1E2BE922E4C92973C9B7B /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 28BDC77567B64C5983C2CCCF /* Localizable.xcstrings */; };
+		6EC5B1100E0A4EE5911C197F /* MockNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94654A27FC9A46539ABB9C96 /* MockNotificationCenter.swift */; };
+		DBD3A1E7C2B74013B47E6FD9 /* NotificationDailyLogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273039D4F75648B6B8B41A8E /* NotificationDailyLogTests.swift */; };
+		FA07541FF608467A9B67E818 /* WidgetDataStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 051491F3A431458F98ED3659 /* WidgetDataStoreTests.swift */; };
+		PR10B001234567890ABCDEF01 /* WidgetSyncServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR10F001234567890ABCDEF01 /* WidgetSyncServiceTests.swift */; };
+		C91EF11222B246DCB21ED607 /* CalSnapWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E654EC227254F9A8158B0DF /* CalSnapWidgetBundle.swift */; };
+		618D8615DF494A449E2BEDEA /* CalorieWidgetProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75D919A70FC04D4F83EA58E1 /* CalorieWidgetProvider.swift */; };
+		43E10E0774C64B01A7ACD67D /* SmallCalorieWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B764B4C5FE74390876B670C /* SmallCalorieWidget.swift */; };
+		2D9E65CC14064E7AAFC15F3C /* MediumMacroWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034B2E419BCA49628C4F52F7 /* MediumMacroWidget.swift */; };
+		AEF2C099D2874A95B936F430 /* CalSnapWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B8E263E6854E4AE392A5551A /* CalSnapWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -136,6 +155,14 @@
 			proxyType = 1;
 			remoteGlobalIDString = D15E0FFD9C41F6FE4D38B6C6;
 			remoteInfo = CalSnap;
+		};
+
+		4553F54BAE714BA0AE1857F0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4289E70DD2BC788EB4814590 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A2BA5ADF206842AEB33681CE;
+			remoteInfo = CalSnapWidget;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -263,6 +290,24 @@
 		PR9F009234567890ABCDEF01 /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
 		PR9F00A234567890ABCDEF01 /* FoodItemRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodItemRowView.swift; sourceTree = "<group>"; };
 		PR9F00B234567890ABCDEF01 /* DesignSystemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystemTests.swift; sourceTree = "<group>"; };
+		C52D2972273D4FAAB67856E6 /* NotificationCenterScheduling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCenterScheduling.swift; sourceTree = "<group>"; };
+		A58D97DDC0CA4487908FCA69 /* WidgetSyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSyncService.swift; sourceTree = "<group>"; };
+		0EFDF32FE26F49AAA0F77B62 /* AppNavigationCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppNavigationCoordinator.swift; sourceTree = "<group>"; };
+		50131A9B014641C685D9AAA6 /* OpenScannerIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenScannerIntent.swift; sourceTree = "<group>"; };
+		C78784D1002347E198FF9DA6 /* WidgetData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetData.swift; sourceTree = "<group>"; };
+		4209BC0E8CEC4546B7956A41 /* WidgetDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataStore.swift; sourceTree = "<group>"; };
+		362EDA52B8F540E19425204F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		28BDC77567B64C5983C2CCCF /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		94654A27FC9A46539ABB9C96 /* MockNotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockNotificationCenter.swift; sourceTree = "<group>"; };
+		273039D4F75648B6B8B41A8E /* NotificationDailyLogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationDailyLogTests.swift; sourceTree = "<group>"; };
+		051491F3A431458F98ED3659 /* WidgetDataStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataStoreTests.swift; sourceTree = "<group>"; };
+		PR10F001234567890ABCDEF01 /* WidgetSyncServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSyncServiceTests.swift; sourceTree = "<group>"; };
+		1E654EC227254F9A8158B0DF /* CalSnapWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalSnapWidgetBundle.swift; sourceTree = "<group>"; };
+		75D919A70FC04D4F83EA58E1 /* CalorieWidgetProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalorieWidgetProvider.swift; sourceTree = "<group>"; };
+		5B764B4C5FE74390876B670C /* SmallCalorieWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallCalorieWidget.swift; sourceTree = "<group>"; };
+		034B2E419BCA49628C4F52F7 /* MediumMacroWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediumMacroWidget.swift; sourceTree = "<group>"; };
+		4283787FE8704734A014F24A /* CalSnapWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CalSnapWidget.entitlements; sourceTree = "<group>"; };
+		B8E263E6854E4AE392A5551A /* CalSnapWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CalSnapWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -282,6 +327,7 @@
 			children = (
 				01A8B7CA8B06CF58A2F7B07E /* AppContainer.swift */,
 				77E2521ABC18A4107C2A866E /* CalSnapApp.swift */,
+				0EFDF32FE26F49AAA0F77B62 /* AppNavigationCoordinator.swift */,
 				842D3A9622BFDE6C189F8B07 /* RootView.swift */,
 			);
 			path = App;
@@ -290,7 +336,8 @@
 		0BE52B9228D1B2C5EA0A5717 = {
 			isa = PBXGroup;
 			children = (
-				C1B96D112C4CFE03A237556D /* CalSnap */,
+				71C1ACE8E6DA4CC6B2A05099 /* CalSnapWidget */,
+			C1B96D112C4CFE03A237556D /* CalSnap */,
 				AD0EF9C36089BF1A5881E264 /* CalSnapTests */,
 				A96C6FC20CB374EED0F51243 /* Products */,
 			);
@@ -328,6 +375,8 @@
 			children = (
 				DA06AE324EEDADDDC6EB6B50 /* Assets.xcassets */,
 				F1E2D3C415234567890ABCDE /* CalSnap.entitlements */,
+				28BDC77567B64C5983C2CCCF /* Localizable.xcstrings */,
+				362EDA52B8F540E19425204F /* PrivacyInfo.xcprivacy */,
 				4A203208125EE8A800C80A29 /* Info.plist */,
 			);
 			path = Resources;
@@ -337,6 +386,7 @@
 			isa = PBXGroup;
 			children = (
 				5183FB2DE5578C8547093C3A /* CalSnap.app */,
+				B8E263E6854E4AE392A5551A /* CalSnapWidget.appex */,
 				1FA56D67A1FDA0564BB1D59A /* CalSnapTests.xctest */,
 			);
 			name = Products;
@@ -358,6 +408,10 @@
 				49FF607CB3770B2AAE871821 /* NutritionCalculatorTests.swift */,
 				F1E2D3C413234567890ABCDE /* OnboardingViewModelTests.swift */,
 				SU1F001234567890ABCDEF01 /* PrimaryProfileResolutionTests.swift */,
+				94654A27FC9A46539ABB9C96 /* MockNotificationCenter.swift */,
+				273039D4F75648B6B8B41A8E /* NotificationDailyLogTests.swift */,
+				051491F3A431458F98ED3659 /* WidgetDataStoreTests.swift */,
+				PR10F001234567890ABCDEF01 /* WidgetSyncServiceTests.swift */,
 			);
 			path = CalSnapTests;
 			sourceTree = "<group>";
@@ -376,7 +430,9 @@
 			isa = PBXGroup;
 			children = (
 				07BA7B93AA82E7551DE228CC /* App */,
-				1B3E10E65087B79829954A5C /* Core */,
+				FFCA835A29334E8B819C2BC5 /* Shared */,
+			2E096F87B8B54E609CD0C97E /* AppIntents */,
+			1B3E10E65087B79829954A5C /* Core */,
 				PR9G001234567890ABCDEF01 /* DesignSystem */,
 				FEAT0001234567890ABCDE01 /* Features */,
 				8E94AB61ECE40E4BAC89DE5F /* Resources */,
@@ -446,7 +502,9 @@
 				F1E2D3C402234567890ABCDE /* GeminiService.swift */,
 				F1E2D3C403234567890ABCDE /* HealthKitService.swift */,
 				PR4F001234567890ABCDEF01 /* MealAnalyzerProtocol.swift */,
+				C52D2972273D4FAAB67856E6 /* NotificationCenterScheduling.swift */,
 				PR6F002234567890ABCDEF01 /* NotificationManager.swift */,
+				A58D97DDC0CA4487908FCA69 /* WidgetSyncService.swift */,
 				8F453EDE12C11B104F814B4D /* NutritionCalculator.swift */,
 				PR6F001234567890ABCDEF01 /* WeighInService.swift */,
 				PR7F002234567890ABCDEF01 /* AnalyticsAggregator.swift */,
@@ -590,6 +648,35 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		FFCA835A29334E8B819C2BC5 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+						C78784D1002347E198FF9DA6 /* WidgetData.swift */,
+				4209BC0E8CEC4546B7956A41 /* WidgetDataStore.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		2E096F87B8B54E609CD0C97E /* AppIntents */ = {
+			isa = PBXGroup;
+			children = (
+				50131A9B014641C685D9AAA6 /* OpenScannerIntent.swift */,
+			);
+			path = AppIntents;
+			sourceTree = "<group>";
+		};
+		71C1ACE8E6DA4CC6B2A05099 /* CalSnapWidget */ = {
+			isa = PBXGroup;
+			children = (
+				1E654EC227254F9A8158B0DF /* CalSnapWidgetBundle.swift */,
+				75D919A70FC04D4F83EA58E1 /* CalorieWidgetProvider.swift */,
+				5B764B4C5FE74390876B670C /* SmallCalorieWidget.swift */,
+				034B2E419BCA49628C4F52F7 /* MediumMacroWidget.swift */,
+				4283787FE8704734A014F24A /* CalSnapWidget.entitlements */,
+			);
+			path = CalSnapWidget;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -618,10 +705,12 @@
 				0FC30B2E404D99B4FE70638C /* Sources */,
 				FWBP0001234567890ABCDE01 /* Frameworks */,
 				0A5C25C567932E97AD694347 /* Resources */,
+				126384C29B564176877A99E0 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				C7096A2AC861443BBA481EB4 /* PBXTargetDependency */,
 			);
 			name = CalSnap;
 			packageProductDependencies = (
@@ -630,6 +719,24 @@
 			productName = CalSnap;
 			productReference = 5183FB2DE5578C8547093C3A /* CalSnap.app */;
 			productType = "com.apple.product-type.application";
+		};
+
+		A2BA5ADF206842AEB33681CE /* CalSnapWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8790D7F0F05F43A987E9ED7C /* Build configuration list for PBXNativeTarget "CalSnapWidget" */;
+			buildPhases = (
+				B6B17E023D4349B086258698 /* Sources */,
+				5FF87F60621546EB8A6BC11E /* Frameworks */,
+				87569ECFBF004ABB9DB7DAA6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CalSnapWidget;
+			productName = CalSnapWidget;
+			productReference = B8E263E6854E4AE392A5551A /* CalSnapWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -662,6 +769,7 @@
 			projectRoot = "";
 			targets = (
 				D15E0FFD9C41F6FE4D38B6C6 /* CalSnap */,
+				A2BA5ADF206842AEB33681CE /* CalSnapWidget */,
 				28643885527AC94065B8C87D /* CalSnapTests */,
 			);
 		};
@@ -673,6 +781,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				884011074BE2C209A9971AED /* Assets.xcassets in Resources */,
+				F8F52E1CBD3346A99377F03A /* PrivacyInfo.xcprivacy in Resources */,
+				BEA1E2BE922E4C92973C9B7B /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -788,6 +898,12 @@
 				PR9B008234567890ABCDEF01 /* NutrientStatRow.swift in Sources */,
 				PR9B009234567890ABCDEF01 /* EmptyStateView.swift in Sources */,
 				PR9B00A234567890ABCDEF01 /* FoodItemRowView.swift in Sources */,
+				62F43FD750F149118925586F /* NotificationCenterScheduling.swift in Sources */,
+				DE0C28D92D4A482899CA824A /* WidgetSyncService.swift in Sources */,
+				A6FDDF67E58645E5B09F4C7D /* AppNavigationCoordinator.swift in Sources */,
+				E289E44108B74D6CA35DC160 /* OpenScannerIntent.swift in Sources */,
+				D10EBE95C39942EC9F7F6750 /* WidgetData.swift in Sources */,
+				3986E22037314042AA91BB02 /* WidgetDataStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -808,7 +924,50 @@
 				D101E5ADAC2C4C0EBA1B0D2E /* NutritionCalculatorTests.swift in Sources */,
 				A1B2C3D413234567890ABCDE /* OnboardingViewModelTests.swift in Sources */,
 				SU1B001234567890ABCDEF01 /* PrimaryProfileResolutionTests.swift in Sources */,
+				6EC5B1100E0A4EE5911C197F /* MockNotificationCenter.swift in Sources */,
+				DBD3A1E7C2B74013B47E6FD9 /* NotificationDailyLogTests.swift in Sources */,
+				FA07541FF608467A9B67E818 /* WidgetDataStoreTests.swift in Sources */,
+				PR10B001234567890ABCDEF01 /* WidgetSyncServiceTests.swift in Sources */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+
+		B6B17E023D4349B086258698 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C91EF11222B246DCB21ED607 /* CalSnapWidgetBundle.swift in Sources */,
+				618D8615DF494A449E2BEDEA /* CalorieWidgetProvider.swift in Sources */,
+				43E10E0774C64B01A7ACD67D /* SmallCalorieWidget.swift in Sources */,
+				2D9E65CC14064E7AAFC15F3C /* MediumMacroWidget.swift in Sources */,
+				F1CF5DD80C324D2DAFAC06EB /* WidgetData.swift in Sources */,
+				949BA545B2FB43BD889672A1 /* WidgetDataStore.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5FF87F60621546EB8A6BC11E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		87569ECFBF004ABB9DB7DAA6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		126384C29B564176877A99E0 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				AEF2C099D2874A95B936F430 /* CalSnapWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
@@ -818,6 +977,12 @@
 			isa = PBXTargetDependency;
 			target = D15E0FFD9C41F6FE4D38B6C6 /* CalSnap */;
 			targetProxy = E7A22A33B96823236F57B900 /* PBXContainerItemProxy */;
+		};
+
+		C7096A2AC861443BBA481EB4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A2BA5ADF206842AEB33681CE /* CalSnapWidget */;
+			targetProxy = 4553F54BAE714BA0AE1857F0 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1027,6 +1192,59 @@
 			};
 			name = Release;
 		};
+
+		2F0D7D63ECB74130A3114325 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = CalSnapWidget/CalSnapWidget.entitlements;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = CalSnapWidget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.calsnap.app.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		A46031FEC8BE4689A7AFA097 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = CalSnapWidget/CalSnapWidget.entitlements;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = CalSnapWidget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.calsnap.app.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1056,6 +1274,16 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
+		};
+
+		8790D7F0F05F43A987E9ED7C /* Build configuration list for PBXNativeTarget "CalSnapWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2F0D7D63ECB74130A3114325 /* Debug */,
+				A46031FEC8BE4689A7AFA097 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 

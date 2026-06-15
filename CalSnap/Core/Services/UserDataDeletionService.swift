@@ -15,6 +15,7 @@ enum UserDataDeletionService {
         context.delete(profile)
         clearPerUserDefaults(userId: userId)
         notificationManager.cancelWeighInReminder(userId: userId)
+        notificationManager.cancelDailyLogReminder(userId: userId)
         try context.save()
     }
 
@@ -28,6 +29,7 @@ enum UserDataDeletionService {
         for profile in profiles {
             clearPerUserDefaults(userId: profile.id)
             notificationManager.cancelWeighInReminder(userId: profile.id)
+            notificationManager.cancelDailyLogReminder(userId: profile.id)
             context.delete(profile)
         }
         try context.save()
@@ -41,6 +43,9 @@ enum UserDataDeletionService {
             AppStorageKey.weighInReminderWeekday(userId: userId),
             AppStorageKey.weighInReminderHour(userId: userId),
             AppStorageKey.weighInReminderMinute(userId: userId),
+            AppStorageKey.dailyLogReminderEnabled(userId: userId),
+            AppStorageKey.dailyLogReminderHour(userId: userId),
+            AppStorageKey.dailyLogReminderMinute(userId: userId),
         ]
         for key in keys {
             UserDefaults.standard.removeObject(forKey: key)

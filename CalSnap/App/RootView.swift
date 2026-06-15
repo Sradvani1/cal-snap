@@ -8,8 +8,13 @@ enum AppTab: Hashable {
 }
 
 struct RootView: View {
+    @Environment(AppContainer.self) private var appContainer
     @Query(sort: \UserProfile.createdAt) private var profiles: [UserProfile]
     @State private var selectedTab: AppTab = .dashboard
+
+    private var navigationCoordinator: AppNavigationCoordinator {
+        appContainer.navigationCoordinator
+    }
 
     var body: some View {
         Group {
@@ -29,6 +34,12 @@ struct RootView: View {
                         NavigationStack {
                             SettingsView()
                         }
+                    }
+                }
+                .onChange(of: navigationCoordinator.shouldSelectDashboard) { _, shouldSelect in
+                    if shouldSelect {
+                        selectedTab = .dashboard
+                        navigationCoordinator.shouldSelectDashboard = false
                     }
                 }
             }

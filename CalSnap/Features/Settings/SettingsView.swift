@@ -319,6 +319,24 @@ struct SettingsView: View {
             .onChange(of: vm.reminderMinute) { _, _ in
                 Task { await vm.updateReminderSchedule(context: modelContext) }
             }
+
+            Toggle("Daily log reminder", isOn: $vm.dailyLogReminderEnabled)
+                .onChange(of: vm.dailyLogReminderEnabled) { _, _ in
+                    Task { await vm.updateDailyLogReminderSchedule(context: modelContext) }
+                }
+
+            DatePicker(
+                "Daily log time",
+                selection: dailyLogTimeBinding(viewModel: vm),
+                displayedComponents: .hourAndMinute
+            )
+            .disabled(!vm.dailyLogReminderEnabled)
+            .onChange(of: vm.dailyLogReminderHour) { _, _ in
+                Task { await vm.updateDailyLogReminderSchedule(context: modelContext) }
+            }
+            .onChange(of: vm.dailyLogReminderMinute) { _, _ in
+                Task { await vm.updateDailyLogReminderSchedule(context: modelContext) }
+            }
         }
     }
 
@@ -389,6 +407,22 @@ struct SettingsView: View {
                 let components = Calendar.current.dateComponents([.hour, .minute], from: newValue)
                 viewModel.reminderHour = components.hour ?? AppConstants.Notifications.defaultReminderHour
                 viewModel.reminderMinute = components.minute ?? AppConstants.Notifications.defaultReminderMinute
+            }
+        )
+    }
+
+    private func dailyLogTimeBinding(viewModel: SettingsViewModel) -> Binding<Date> {
+        Binding(
+            get: {
+                var components = DateComponents()
+                components.hour = viewModel.dailyLogReminderHour
+                components.minute = viewModel.dailyLogReminderMinute
+                return Calendar.current.date(from: components) ?? Date.now
+            },
+            set: { newValue in
+                let components = Calendar.current.dateComponents([.hour, .minute], from: newValue)
+                viewModel.dailyLogReminderHour = components.hour ?? AppConstants.Notifications.defaultDailyLogReminderHour
+                viewModel.dailyLogReminderMinute = components.minute ?? AppConstants.Notifications.defaultDailyLogReminderMinute
             }
         )
     }
