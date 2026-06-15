@@ -5,4 +5,6 @@ final class AppContainer {
     let healthKitService = HealthKitService()
     let geminiService = GeminiService()
     let userProfileRepository = UserProfileRepository()
+    let mealRepository = MealRepository()
+    let weighInRepository = WeighInRepository()
 }

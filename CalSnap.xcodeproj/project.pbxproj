@@ -26,6 +26,17 @@
 		A1B2C3D411234567890ABCDE /* OnboardingDoneStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C411234567890ABCDE /* OnboardingDoneStepView.swift */; };
 		A1B2C3D412234567890ABCDE /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C412234567890ABCDE /* DashboardView.swift */; };
 		A1B2C3D413234567890ABCDE /* OnboardingViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C413234567890ABCDE /* OnboardingViewModelTests.swift */; };
+		PR3B001234567890ABCDEF01 /* MealRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR3F001234567890ABCDEF01 /* MealRepository.swift */; };
+		PR3B002234567890ABCDEF01 /* WeighInRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR3F002234567890ABCDEF01 /* WeighInRepository.swift */; };
+		PR3B003234567890ABCDEF01 /* DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR3F003234567890ABCDEF01 /* DashboardViewModel.swift */; };
+		PR3B004234567890ABCDEF01 /* ProfileSwitcherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR3F004234567890ABCDEF01 /* ProfileSwitcherView.swift */; };
+		PR3B005234567890ABCDEF01 /* CalorieRingCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR3F005234567890ABCDEF01 /* CalorieRingCard.swift */; };
+		PR3B006234567890ABCDEF01 /* MacroBarCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR3F006234567890ABCDEF01 /* MacroBarCard.swift */; };
+		PR3B007234567890ABCDEF01 /* TodaysMealsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR3F007234567890ABCDEF01 /* TodaysMealsSection.swift */; };
+		PR3B008234567890ABCDEF01 /* WeightTrendMiniChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR3F008234567890ABCDEF01 /* WeightTrendMiniChart.swift */; };
+		PR3B009234567890ABCDEF01 /* PlateauAlertSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR3F009234567890ABCDEF01 /* PlateauAlertSheet.swift */; };
+		PR3B00A234567890ABCDEF01 /* MealScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR3F00A234567890ABCDEF01 /* MealScannerView.swift */; };
+		PR3B00B234567890ABCDEF01 /* DashboardViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR3F00B234567890ABCDEF01 /* DashboardViewModelTests.swift */; };
 		A1B2C3D414234567890ABCDE /* GoogleGenerativeAI in Frameworks */ = {isa = PBXBuildFile; productRef = P2B3C4D5E6F7890123456789A /* GoogleGenerativeAI */; };
 		1B31CEC936B87ADC8D4A5AE0 /* KeychainManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7D1271130B39D7B9A67E609 /* KeychainManagerTests.swift */; };
 		275D45C3B54B6BF8EB0CD975 /* AppContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01A8B7CA8B06CF58A2F7B07E /* AppContainer.swift */; };
@@ -73,6 +84,17 @@
 		F1E2D3C411234567890ABCDE /* OnboardingDoneStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingDoneStepView.swift; sourceTree = "<group>"; };
 		F1E2D3C412234567890ABCDE /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		F1E2D3C413234567890ABCDE /* OnboardingViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModelTests.swift; sourceTree = "<group>"; };
+		PR3F001234567890ABCDEF01 /* MealRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealRepository.swift; sourceTree = "<group>"; };
+		PR3F002234567890ABCDEF01 /* WeighInRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeighInRepository.swift; sourceTree = "<group>"; };
+		PR3F003234567890ABCDEF01 /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
+		PR3F004234567890ABCDEF01 /* ProfileSwitcherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSwitcherView.swift; sourceTree = "<group>"; };
+		PR3F005234567890ABCDEF01 /* CalorieRingCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalorieRingCard.swift; sourceTree = "<group>"; };
+		PR3F006234567890ABCDEF01 /* MacroBarCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacroBarCard.swift; sourceTree = "<group>"; };
+		PR3F007234567890ABCDEF01 /* TodaysMealsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodaysMealsSection.swift; sourceTree = "<group>"; };
+		PR3F008234567890ABCDEF01 /* WeightTrendMiniChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightTrendMiniChart.swift; sourceTree = "<group>"; };
+		PR3F009234567890ABCDEF01 /* PlateauAlertSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlateauAlertSheet.swift; sourceTree = "<group>"; };
+		PR3F00A234567890ABCDEF01 /* MealScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealScannerView.swift; sourceTree = "<group>"; };
+		PR3F00B234567890ABCDEF01 /* DashboardViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModelTests.swift; sourceTree = "<group>"; };
 		F1E2D3C415234567890ABCDE /* CalSnap.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CalSnap.entitlements; sourceTree = "<group>"; };
 		01A8B7CA8B06CF58A2F7B07E /* AppContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppContainer.swift; sourceTree = "<group>"; };
 		18F8DBAE76C7C7B21976685A /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
@@ -127,6 +149,8 @@
 		C0RE0001234567890ABCDE01 /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
+				PR3F001234567890ABCDEF01 /* MealRepository.swift */,
+				PR3F002234567890ABCDEF01 /* WeighInRepository.swift */,
 				F1E2D3C404234567890ABCDE /* UserProfileRepository.swift */,
 			);
 			path = Repositories;
@@ -136,6 +160,7 @@
 			isa = PBXGroup;
 			children = (
 				FEAT0002234567890ABCDE02 /* Dashboard */,
+				PR3G001234567890ABCDEF01 /* MealScanner */,
 				FEAT0003234567890ABCDE03 /* Onboarding */,
 			);
 			path = Features;
@@ -145,8 +170,23 @@
 			isa = PBXGroup;
 			children = (
 				F1E2D3C412234567890ABCDE /* DashboardView.swift */,
+				PR3F003234567890ABCDEF01 /* DashboardViewModel.swift */,
+				PR3F004234567890ABCDEF01 /* ProfileSwitcherView.swift */,
+				PR3F005234567890ABCDEF01 /* CalorieRingCard.swift */,
+				PR3F006234567890ABCDEF01 /* MacroBarCard.swift */,
+				PR3F007234567890ABCDEF01 /* TodaysMealsSection.swift */,
+				PR3F008234567890ABCDEF01 /* WeightTrendMiniChart.swift */,
+				PR3F009234567890ABCDEF01 /* PlateauAlertSheet.swift */,
 			);
 			path = Dashboard;
+			sourceTree = "<group>";
+		};
+		PR3G001234567890ABCDEF01 /* MealScanner */ = {
+			isa = PBXGroup;
+			children = (
+				PR3F00A234567890ABCDEF01 /* MealScannerView.swift */,
+			);
+			path = MealScanner;
 			sourceTree = "<group>";
 		};
 		FEAT0003234567890ABCDE03 /* Onboarding */ = {
@@ -202,6 +242,7 @@
 		AD0EF9C36089BF1A5881E264 /* CalSnapTests */ = {
 			isa = PBXGroup;
 			children = (
+				PR3F00B234567890ABCDEF01 /* DashboardViewModelTests.swift */,
 				B7D1271130B39D7B9A67E609 /* KeychainManagerTests.swift */,
 				49FF607CB3770B2AAE871821 /* NutritionCalculatorTests.swift */,
 				F1E2D3C413234567890ABCDE /* OnboardingViewModelTests.swift */,
@@ -361,6 +402,14 @@
 				A1B2C3D40E234567890ABCDE /* CalorieTargetPreviewStepView.swift in Sources */,
 				BA9F6F8108F9A54F5D77D117 /* Constants.swift in Sources */,
 				A1B2C3D412234567890ABCDE /* DashboardView.swift in Sources */,
+				PR3B003234567890ABCDEF01 /* DashboardViewModel.swift in Sources */,
+				PR3B004234567890ABCDEF01 /* ProfileSwitcherView.swift in Sources */,
+				PR3B005234567890ABCDEF01 /* CalorieRingCard.swift in Sources */,
+				PR3B006234567890ABCDEF01 /* MacroBarCard.swift in Sources */,
+				PR3B007234567890ABCDEF01 /* TodaysMealsSection.swift in Sources */,
+				PR3B008234567890ABCDEF01 /* WeightTrendMiniChart.swift in Sources */,
+				PR3B009234567890ABCDEF01 /* PlateauAlertSheet.swift in Sources */,
+				PR3B00A234567890ABCDEF01 /* MealScannerView.swift in Sources */,
 				8E9F0C4DC5BFDCE0172C0967 /* Enums.swift in Sources */,
 				9FAB9CA4C4D6BDA01C4B66B0 /* FoodItem.swift in Sources */,
 				A1B2C3D402234567890ABCDE /* GeminiService.swift in Sources */,
@@ -369,6 +418,7 @@
 				A1B2C3D40F234567890ABCDE /* HealthKitPermissionStepView.swift in Sources */,
 				CC9C0FC95BB9ADE63B9E0FEB /* KeychainManager.swift in Sources */,
 				A8049099DF60B3369E8D2C25 /* MealEntry.swift in Sources */,
+				PR3B001234567890ABCDEF01 /* MealRepository.swift in Sources */,
 				B18D8478722A4DC5C6D169D2 /* NutritionCalculator.swift in Sources */,
 				A1B2C3D411234567890ABCDE /* OnboardingDoneStepView.swift in Sources */,
 				A1B2C3D407234567890ABCDE /* OnboardingStep.swift in Sources */,
@@ -383,6 +433,7 @@
 				A1B2C3D404234567890ABCDE /* UserProfileRepository.swift in Sources */,
 				A1B2C3D40B234567890ABCDE /* WelcomeStepView.swift in Sources */,
 				787D3991B98BFA89F80C941D /* WeighIn.swift in Sources */,
+				PR3B002234567890ABCDEF01 /* WeighInRepository.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -390,6 +441,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				PR3B00B234567890ABCDEF01 /* DashboardViewModelTests.swift in Sources */,
 				1B31CEC936B87ADC8D4A5AE0 /* KeychainManagerTests.swift in Sources */,
 				D101E5ADAC2C4C0EBA1B0D2E /* NutritionCalculatorTests.swift in Sources */,
 				A1B2C3D413234567890ABCDE /* OnboardingViewModelTests.swift in Sources */,

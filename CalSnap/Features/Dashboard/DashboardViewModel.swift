@@ -1,0 +1,269 @@
+import Foundation
+import SwiftData
+import SwiftUI
+
+enum CalorieProgressBand {
+    case under
+    case onTrack
+    case over
+}
+
+@Observable
+@MainActor
+final class DashboardViewModel {
+    var activeProfile: UserProfile?
+    var profiles: [UserProfile] = []
+    var todaysMeals: [MealEntry] = []
+    var todaysCalories = 0
+    var todaysProteinG = 0.0
+    var todaysCarbsG = 0.0
+    var todaysFatG = 0.0
+    var todaysFiberG = 0.0
+    var chartWeighIns: [WeighIn] = []
+    var plateauWeighIns: [WeighIn] = []
+    var showPlateauAlert = false
+    var loadError: String?
+
+    private let userProfileRepository: UserProfileRepository
+    private let mealRepository: MealRepository
+    private let weighInRepository: WeighInRepository
+
+    init(
+        userProfileRepository: UserProfileRepository,
+        mealRepository: MealRepository,
+        weighInRepository: WeighInRepository
+    ) {
+        self.userProfileRepository = userProfileRepository
+        self.mealRepository = mealRepository
+        self.weighInRepository = weighInRepository
+    }
+
+    var calorieProgress: Double {
+        let target = Double(activeProfile?.dailyCalorieTarget ?? 2000)
+        guard target > 0 else { return 0 }
+        return Double(todaysCalories) / target
+    }
+
+    var progressColor: Color {
+        switch Self.progressBand(for: calorieProgress) {
+        case .under: return .green
+        case .onTrack: return .yellow
+        case .over: return .red
+        }
+    }
+
+    var remainingCalories: Int {
+        (activeProfile?.dailyCalorieTarget ?? 2000) - todaysCalories
+    }
+
+    var macroTargets: (proteinG: Double, carbsG: Double, fatG: Double) {
+        guard let profile = activeProfile else {
+            return (0, 0, 0)
+        }
+        return NutritionCalculator.macroTargets(
+            dailyCalories: profile.dailyCalorieTarget,
+            proteinPct: profile.macroTargetProteinPct,
+            carbsPct: profile.macroTargetCarbsPct,
+            fatPct: profile.macroTargetFatPct
+        )
+    }
+
+    var fiberTargetG: Double {
+        let target = Double(activeProfile?.dailyCalorieTarget ?? 0)
+        return (target / 1000.0) * AppConstants.Nutrition.fiberGramsPer1000Kcal
+    }
+
+    var greeting: String {
+        let hour = Calendar.current.component(.hour, from: Date())
+        let prefix: String
+        switch hour {
+        case 5..<12: prefix = "Good morning"
+        case 12..<17: prefix = "Good afternoon"
+        case 17..<22: prefix = "Good evening"
+        default: prefix = "Hello"
+        }
+        guard let name = activeProfile?.name, !name.isEmpty else { return prefix }
+        return "\(prefix), \(name)"
+    }
+
+    var formattedDate: String {
+        Date.now.formatted(date: .complete, time: .omitted)
+    }
+
+    var useLbsForDisplay: Bool {
+        Locale.current.measurementSystem != .metric
+    }
+
+    var hasSecondProfile: Bool {
+        profiles.count > 1
+    }
+
+    static func progressBand(for ratio: Double) -> CalorieProgressBand {
+        switch ratio {
+        case ..<0.90: return .under
+        case 0.90..<1.10: return .onTrack
+        default: return .over
+        }
+    }
+
+    func loadToday(context: ModelContext, activeUserId: String) {
+        loadError = nil
+        clearTodayData()
+        do {
+            profiles = try userProfileRepository.fetchAll(context: context)
+            activeProfile = resolveActiveProfile(from: profiles, activeUserId: activeUserId)
+            guard let profile = activeProfile else { return }
+
+            todaysMeals = try mealRepository.fetchMeals(for: profile.id, on: Date(), context: context)
+            aggregateMeals()
+
+            let calendar = Calendar.current
+            let referenceDate = Date()
+            let endOfDay = calendar.startOfDay(for: referenceDate)
+            let startOfWindow = calendar.date(byAdding: .day, value: -6, to: endOfDay) ?? endOfDay
+
+            chartWeighIns = try weighInRepository.fetchWeighIns(
+                for: profile.id,
+                from: startOfWindow,
+                through: referenceDate,
+                context: context
+            )
+            plateauWeighIns = try weighInRepository.fetchLatestWeighIns(
+                for: profile.id,
+                count: AppConstants.Plateau.weeksToDetect,
+                context: context
+            )
+            checkForPlateau()
+        } catch {
+            loadError = error.localizedDescription
+            showPlateauAlert = false
+        }
+    }
+
+    func checkForPlateau() {
+        guard let profile = activeProfile else {
+            showPlateauAlert = false
+            return
+        }
+
+        if isMaintenanceActive(for: profile.id) || isPlateauSnoozed(for: profile.id) {
+            showPlateauAlert = false
+            return
+        }
+
+        guard plateauWeighIns.count >= AppConstants.Plateau.weeksToDetect else {
+            showPlateauAlert = false
+            return
+        }
+
+        showPlateauAlert = NutritionCalculator.isOnPlateau(weighIns: plateauWeighIns)
+    }
+
+    func applyDietBreak(context: ModelContext) {
+        guard let profile = activeProfile else { return }
+
+        profile.dailyCalorieTarget = profile.tdee
+        profile.deficitKcal = 0
+        profile.updatedAt = Date()
+
+        let maintenanceEnd = Calendar.current.date(byAdding: .day, value: 14, to: Date()) ?? Date()
+        storeDate(maintenanceEnd, forKey: AppStorageKey.maintenanceModeUntil(userId: profile.id))
+
+        persistProfile(context: context)
+        showPlateauAlert = false
+    }
+
+    func applySmallReduction(context: ModelContext) {
+        guard let profile = activeProfile else { return }
+
+        let minimum = minimumCalories(for: profile.sex)
+        let previousTarget = profile.dailyCalorieTarget
+        profile.dailyCalorieTarget = max(minimum, previousTarget - 60)
+        profile.deficitKcal = profile.tdee - profile.dailyCalorieTarget
+        profile.updatedAt = Date()
+
+        persistProfile(context: context)
+        showPlateauAlert = false
+    }
+
+    func dismissPlateauAlert() {
+        if let profile = activeProfile {
+            let snoozeEnd = Calendar.current.date(byAdding: .day, value: 14, to: Date()) ?? Date()
+            storeDate(snoozeEnd, forKey: AppStorageKey.plateauSnoozeUntil(userId: profile.id))
+        }
+        showPlateauAlert = false
+    }
+
+    private func resolveActiveProfile(from profiles: [UserProfile], activeUserId: String) -> UserProfile? {
+        if let id = UUID(uuidString: activeUserId),
+           let match = profiles.first(where: { $0.id == id }) {
+            return match
+        }
+        return profiles.first
+    }
+
+    private func clearTodayData() {
+        todaysMeals = []
+        todaysCalories = 0
+        todaysProteinG = 0
+        todaysCarbsG = 0
+        todaysFatG = 0
+        todaysFiberG = 0
+        chartWeighIns = []
+        plateauWeighIns = []
+    }
+
+    private func aggregateMeals() {
+        todaysCalories = 0
+        todaysProteinG = 0
+        todaysCarbsG = 0
+        todaysFatG = 0
+        todaysFiberG = 0
+
+        for meal in todaysMeals {
+            todaysCalories += meal.totalCalories
+            todaysProteinG += meal.totalProteinG
+            todaysCarbsG += meal.totalCarbsG
+            todaysFatG += meal.totalFatG
+            todaysFiberG += meal.totalFiberG
+        }
+    }
+
+    private func persistProfile(context: ModelContext) {
+        do {
+            try context.save()
+        } catch {
+            loadError = error.localizedDescription
+        }
+    }
+
+    private func minimumCalories(for sex: BiologicalSex) -> Int {
+        sex == .male
+            ? AppConstants.Deficit.minCaloriesMale
+            : AppConstants.Deficit.minCaloriesFemale
+    }
+
+    private func isMaintenanceActive(for userId: UUID) -> Bool {
+        guard let endDate = storedDate(forKey: AppStorageKey.maintenanceModeUntil(userId: userId)) else {
+            return false
+        }
+        return endDate > Date()
+    }
+
+    private func isPlateauSnoozed(for userId: UUID) -> Bool {
+        guard let endDate = storedDate(forKey: AppStorageKey.plateauSnoozeUntil(userId: userId)) else {
+            return false
+        }
+        return endDate > Date()
+    }
+
+    private func storedDate(forKey key: String) -> Date? {
+        let interval = UserDefaults.standard.double(forKey: key)
+        guard interval > 0 else { return nil }
+        return Date(timeIntervalSince1970: interval)
+    }
+
+    private func storeDate(_ date: Date, forKey key: String) {
+        UserDefaults.standard.set(date.timeIntervalSince1970, forKey: key)
+    }
+}

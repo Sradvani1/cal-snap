@@ -1,5 +1,13 @@
 enum AppStorageKey {
     static let activeUserId = "activeUserId"
+
+    static func plateauSnoozeUntil(userId: UUID) -> String {
+        "plateauSnoozeUntil_\(userId.uuidString)"
+    }
+
+    static func maintenanceModeUntil(userId: UUID) -> String {
+        "maintenanceModeUntil_\(userId.uuidString)"
+    }
 }
 
 enum AppConstants {
@@ -15,6 +23,7 @@ enum AppConstants {
         static let fatCalPerGram: Double = 9.0
         static let fiberCalPerGram: Double = 2.0
         static let alcoholCalPerGram: Double = 7.0
+        static let fiberGramsPer1000Kcal: Double = 14.0
     }
 
     enum Deficit {
