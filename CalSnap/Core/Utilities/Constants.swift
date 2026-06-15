@@ -92,4 +92,22 @@ enum AppConstants {
         static let defaultReminderHour = 8
         static let defaultReminderMinute = 0
     }
+
+    enum MealPhoto {
+        static let maxLongEdgePx = 1280
+        static let minLongEdgePx = 896
+        static let initialJPEGQuality = 0.72
+        static let minJPEGQuality = 0.50
+        /// QA target for typical meals; not runtime-enforced (retry triggers only on `hardMaxBytes`).
+        static let preferredMaxBytes = 500_000
+        /// QA upper bound for difficult images; not runtime-enforced (retry triggers only on `hardMaxBytes`).
+        static let softMaxBytes = 750_000
+        static let hardMaxBytes = 1_000_000
+        static let outputMIMEType = "image/jpeg"
+
+        static let qualityRetrySteps: [Double] = [initialJPEGQuality, 0.65, 0.60, 0.55, minJPEGQuality]
+        static let longEdgeRetrySteps: [Double] = [
+            Double(maxLongEdgePx), 1152, 1024, Double(minLongEdgePx),
+        ]
+    }
 }

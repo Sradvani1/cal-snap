@@ -36,6 +36,10 @@ final class MealScannerViewModelTests: XCTestCase {
         }
     }
 
+    private func selectTestImage(file: StaticString = #filePath, line: UInt = #line) {
+        XCTAssertTrue(viewModel.setSelectedPhoto(from: testImage()), file: file, line: line)
+    }
+
     func testEditableFoodItemScaling() {
         var item = EditableFoodItem(
             name: "Chicken",
@@ -125,6 +129,142 @@ final class MealScannerViewModelTests: XCTestCase {
         XCTAssertEqual(savedMeals.first?.items.count, 2)
     }
 
+    func testMealEntryCreationStoresPreparedPhotoData() {
+        selectTestImage()
+        guard let preparedPhoto = viewModel.preparedPhoto else {
+            XCTFail("Expected prepared photo")
+            return
+        }
+
+        let entry = viewModel.makeMealEntry()
+
+        XCTAssertEqual(entry.photoData, preparedPhoto.data)
+        XCTAssertLessThanOrEqual(preparedPhoto.byteCount, AppConstants.MealPhoto.hardMaxBytes)
+    }
+
+    func testEditMealReusesStoredPhotoData() throws {
+        let prepared = try MealPhotoProcessor.prepareForAnalysisAndStorage(testImage())
+        let foodItem = FoodItem(
+            name: "Chicken",
+            estimatedWeightG: 150,
+            calories: 248,
+            proteinG: 46,
+            carbsG: 0,
+            fatG: 5,
+            fiberG: 0,
+            confidence: 0.9,
+            isFlagged: false
+        )
+        let meal = MealEntry(
+            userId: userId,
+            timestamp: Date.now,
+            mealType: .lunch,
+            photoData: prepared.data,
+            totalCalories: 248,
+            totalProteinG: 46,
+            totalCarbsG: 0,
+            totalFatG: 5,
+            totalFiberG: 0,
+            geminiConfidence: 0.9,
+            items: [foodItem]
+        )
+        context.insert(foodItem)
+        context.insert(meal)
+        try context.save()
+
+        viewModel.loadForEditing(meal: meal)
+
+        XCTAssertEqual(viewModel.preparedPhoto?.data, prepared.data)
+        XCTAssertEqual(viewModel.makeMealEntry().photoData, prepared.data)
+    }
+
+    func testEditMealPreservesOpaquePhotoDataWhenDecodeFails() throws {
+        let opaqueData = Data([0x00, 0x01, 0x02, 0x03])
+        let foodItem = FoodItem(
+            name: "Chicken",
+            estimatedWeightG: 150,
+            calories: 248,
+            proteinG: 46,
+            carbsG: 0,
+            fatG: 5,
+            fiberG: 0,
+            confidence: 0.9,
+            isFlagged: false
+        )
+        let meal = MealEntry(
+            userId: userId,
+            timestamp: Date.now,
+            mealType: .lunch,
+            photoData: opaqueData,
+            totalCalories: 248,
+            totalProteinG: 46,
+            totalCarbsG: 0,
+            totalFatG: 5,
+            totalFiberG: 0,
+            geminiConfidence: 0.9,
+            items: [foodItem]
+        )
+        context.insert(foodItem)
+        context.insert(meal)
+        try context.save()
+
+        viewModel.loadForEditing(meal: meal)
+
+        XCTAssertEqual(viewModel.preparedPhoto?.data, opaqueData)
+        XCTAssertEqual(viewModel.makeMealEntry().photoData, opaqueData)
+    }
+
+    func testEditMealPreservesLegacyOversizedPhotoBytes() throws {
+        let large = UIGraphicsImageRenderer(size: CGSize(width: 2400, height: 2400)).image { context in
+            for x in stride(from: 0, to: 2400, by: 8) {
+                for y in stride(from: 0, to: 2400, by: 8) {
+                    let hue = CGFloat((x * 13 + y * 29) % 256) / 255
+                    UIColor(hue: hue, saturation: 1, brightness: 1, alpha: 1).setFill()
+                    context.fill(CGRect(x: x, y: y, width: 8, height: 8))
+                }
+            }
+        }
+        guard let legacyJPEG = large.jpegData(compressionQuality: 1.0),
+              legacyJPEG.count > AppConstants.MealPhoto.hardMaxBytes else {
+            XCTFail("Expected legacy JPEG larger than hard cap")
+            return
+        }
+
+        let foodItem = FoodItem(
+            name: "Chicken",
+            estimatedWeightG: 150,
+            calories: 248,
+            proteinG: 46,
+            carbsG: 0,
+            fatG: 5,
+            fiberG: 0,
+            confidence: 0.9,
+            isFlagged: false
+        )
+        let meal = MealEntry(
+            userId: userId,
+            timestamp: Date.now,
+            mealType: .lunch,
+            photoData: legacyJPEG,
+            totalCalories: 248,
+            totalProteinG: 46,
+            totalCarbsG: 0,
+            totalFatG: 5,
+            totalFiberG: 0,
+            geminiConfidence: 0.9,
+            items: [foodItem]
+        )
+        context.insert(foodItem)
+        context.insert(meal)
+        try context.save()
+
+        viewModel.loadForEditing(meal: meal)
+
+        XCTAssertEqual(viewModel.preparedPhoto?.data, legacyJPEG)
+        XCTAssertGreaterThan(legacyJPEG.count, AppConstants.MealPhoto.hardMaxBytes)
+        XCTAssertEqual(viewModel.makeMealEntry().photoData, legacyJPEG)
+    }
+
     func testApplyAnalysisPopulatesResults() {
         viewModel.applyAnalysis(.testDefault)
 
@@ -135,7 +275,7 @@ final class MealScannerViewModelTests: XCTestCase {
     }
 
     func testAnalyzeMissingAPIKey() {
-        viewModel.selectedImage = testImage()
+        selectTestImage()
 
         viewModel.analyze()
 
@@ -195,7 +335,7 @@ final class MealScannerViewModelTests: XCTestCase {
     func testHasUnsavedWorkCaptureWithImage() {
         XCTAssertFalse(viewModel.hasUnsavedWork)
 
-        viewModel.selectedImage = testImage()
+        selectTestImage()
 
         XCTAssertTrue(viewModel.hasUnsavedWork)
     }

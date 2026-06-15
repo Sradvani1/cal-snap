@@ -63,6 +63,7 @@ enum ConfidenceLevel: Equatable {
 final class MealScannerViewModel {
     var phase: MealScannerPhase = .capture
     var selectedImage: UIImage?
+    private(set) var preparedPhoto: PreparedMealImage?
     var textDescription = ""
     var analysisResult: MealAnalysisResponse?
     var editableItems: [EditableFoodItem] = []
@@ -138,7 +139,7 @@ final class MealScannerViewModel {
     }
 
     var canAnalyze: Bool {
-        selectedImage != nil && !isAnalyzing && hasGeminiAPIKey
+        preparedPhoto != nil && !isAnalyzing && hasGeminiAPIKey
     }
 
     var hasGeminiAPIKey: Bool {
@@ -178,7 +179,7 @@ final class MealScannerViewModel {
                 !item.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item.calories > 0
             }
         case .capture, .error:
-            return selectedImage != nil
+            return preparedPhoto != nil
                 || !textDescription.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         }
     }
@@ -187,11 +188,25 @@ final class MealScannerViewModel {
         UIImagePickerController.isSourceTypeAvailable(.camera)
     }
 
+    @discardableResult
+    func setSelectedPhoto(from image: UIImage) -> Bool {
+        do {
+            let prepared = try MealPhotoProcessor.prepareForAnalysisAndStorage(image)
+            preparedPhoto = prepared
+            selectedImage = UIImage(data: prepared.data)
+            return selectedImage != nil
+        } catch {
+            preparedPhoto = nil
+            selectedImage = nil
+            return false
+        }
+    }
+
     func analyze() {
         analyzeTask?.cancel()
         scannerError = nil
 
-        guard selectedImage != nil else { return }
+        guard let preparedPhoto else { return }
 
         guard hasGeminiAPIKey else {
             scannerError = .missingAPIKey
@@ -199,17 +214,10 @@ final class MealScannerViewModel {
             return
         }
 
-        guard let image = selectedImage,
-              let encoded = Self.jpegData(from: image) else {
-            scannerError = .unrecognizable
-            phase = .error
-            return
-        }
-
         let description = textDescription.trimmingCharacters(in: .whitespacesAndNewlines)
         let request = MealAnalysisRequest(
-            imageData: encoded.data,
-            mimeType: encoded.mimeType,
+            imageData: preparedPhoto.data,
+            mimeType: preparedPhoto.mimeType,
             textDescription: description.isEmpty ? nil : description
         )
 
@@ -320,6 +328,7 @@ final class MealScannerViewModel {
     func discard() {
         cancelAnalysis()
         selectedImage = nil
+        preparedPhoto = nil
         textDescription = ""
         analysisResult = nil
         editableItems = []
@@ -347,8 +356,10 @@ final class MealScannerViewModel {
         scannerError = nil
 
         if let photoData = meal.photoData {
+            preparedPhoto = MealPhotoProcessor.preparedPreservingBytes(from: photoData)
             selectedImage = UIImage(data: photoData)
         } else {
+            preparedPhoto = nil
             selectedImage = nil
         }
 
@@ -375,11 +386,13 @@ final class MealScannerViewModel {
 
         let healthKit = healthKitService
         let snapshot = MealHealthSnapshot(meal: entry)
-        Task {
-            do {
-                try await healthKit.logMeal(snapshot)
-            } catch {
-                print("HealthKit meal log failed: \(error.localizedDescription)")
+        if AppStorageKey.healthKitWritesEnabledValue {
+            Task {
+                do {
+                    try await healthKit.logMeal(snapshot)
+                } catch {
+                    print("HealthKit meal log failed: \(error.localizedDescription)")
+                }
             }
         }
     }
@@ -400,26 +413,27 @@ final class MealScannerViewModel {
 
         let healthKit = healthKitService
         let newSnapshot = MealHealthSnapshot(meal: entry)
-        Task {
-            do {
-                try await healthKit.reverseMeal(oldSnapshot)
-                try await healthKit.logMeal(newSnapshot)
-            } catch {
-                print("HealthKit meal update sync failed: \(error.localizedDescription)")
+        if AppStorageKey.healthKitWritesEnabledValue {
+            Task {
+                do {
+                    try await healthKit.reverseMeal(oldSnapshot)
+                    try await healthKit.logMeal(newSnapshot)
+                } catch {
+                    print("HealthKit meal update sync failed: \(error.localizedDescription)")
+                }
             }
         }
     }
 
     func makeMealEntry() -> MealEntry {
         let description = textDescription.trimmingCharacters(in: .whitespacesAndNewlines)
-        let photoData = selectedImage.flatMap { Self.jpegData(from: $0)?.data }
 
         return MealEntry(
             id: editingMealId ?? UUID(),
             userId: userId,
             timestamp: editingTimestamp ?? Date.now,
             mealType: mealType,
-            photoData: photoData,
+            photoData: preparedPhoto?.data,
             textDescription: description.isEmpty ? nil : description,
             totalCalories: totalCalories,
             totalProteinG: totalProteinG,
@@ -445,43 +459,6 @@ final class MealScannerViewModel {
         guard !items.isEmpty else { return 0 }
         let sum = items.reduce(0.0) { $0 + $1.confidence }
         return sum / Double(items.count)
-    }
-
-    static func jpegData(
-        from image: UIImage,
-        maxPixelDimension: CGFloat = 1536,
-        compressionQuality: CGFloat = 0.82
-    ) -> (data: Data, mimeType: String)? {
-        let normalized = normalizedImage(image)
-        let size = normalized.size
-        let maxSide = max(size.width, size.height)
-        let scale = maxSide > maxPixelDimension ? maxPixelDimension / maxSide : 1
-        let targetSize = CGSize(width: size.width * scale, height: size.height * scale)
-
-        let renderer = UIGraphicsImageRenderer(size: targetSize)
-        let resized = renderer.image { _ in
-            normalized.draw(in: CGRect(origin: .zero, size: targetSize))
-        }
-
-        guard let data = resized.jpegData(compressionQuality: compressionQuality) else {
-            return nil
-        }
-        return (data, "image/jpeg")
-    }
-
-    static func normalizedImage(_ image: UIImage) -> UIImage {
-        guard image.imageOrientation != .up else { return image }
-
-        let format = UIGraphicsImageRendererFormat()
-        format.scale = image.scale
-        return UIGraphicsImageRenderer(size: image.size, format: format).image { _ in
-            image.draw(in: CGRect(origin: .zero, size: image.size))
-        }
-    }
-
-    static func resizedForAnalysis(_ image: UIImage) -> UIImage? {
-        guard let encoded = jpegData(from: image) else { return nil }
-        return UIImage(data: encoded.data)
     }
 
     private func handleGeminiError(_ error: GeminiError) {

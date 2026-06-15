@@ -75,6 +75,8 @@
 		PR4B00C234567890ABCDEF01 /* MealAnalysisResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR4F00C234567890ABCDEF01 /* MealAnalysisResultView.swift */; };
 		PR4B00D234567890ABCDEF01 /* ManualMealEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR4F00D234567890ABCDEF01 /* ManualMealEntryView.swift */; };
 		PR4B00E234567890ABCDEF01 /* MealScannerViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR4F00E234567890ABCDEF01 /* MealScannerViewModelTests.swift */; };
+		PR4B014234567890ABCDEF01 /* MealPhotoProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR4F014234567890ABCDEF01 /* MealPhotoProcessor.swift */; };
+		PR4B015234567890ABCDEF01 /* MealPhotoProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR4F015234567890ABCDEF01 /* MealPhotoProcessorTests.swift */; };
 		PR4H001234567890ABCDEF01 /* CalorieTotalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR4H00F234567890ABCDEF01 /* CalorieTotalView.swift */; };
 		PR4H002234567890ABCDEF01 /* MealScannerCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR4H010234567890ABCDEF01 /* MealScannerCaptureView.swift */; };
 		PR4H003234567890ABCDEF01 /* MealScannerAnalyzingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR4H011234567890ABCDEF01 /* MealScannerAnalyzingView.swift */; };
@@ -194,6 +196,8 @@
 		PR4F00C234567890ABCDEF01 /* MealAnalysisResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealAnalysisResultView.swift; sourceTree = "<group>"; };
 		PR4F00D234567890ABCDEF01 /* ManualMealEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManualMealEntryView.swift; sourceTree = "<group>"; };
 		PR4F00E234567890ABCDEF01 /* MealScannerViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealScannerViewModelTests.swift; sourceTree = "<group>"; };
+		PR4F014234567890ABCDEF01 /* MealPhotoProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPhotoProcessor.swift; sourceTree = "<group>"; };
+		PR4F015234567890ABCDEF01 /* MealPhotoProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPhotoProcessorTests.swift; sourceTree = "<group>"; };
 		PR4H00F234567890ABCDEF01 /* CalorieTotalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalorieTotalView.swift; sourceTree = "<group>"; };
 		PR4H010234567890ABCDEF01 /* MealScannerCaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealScannerCaptureView.swift; sourceTree = "<group>"; };
 		PR4H011234567890ABCDEF01 /* MealScannerAnalyzingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealScannerAnalyzingView.swift; sourceTree = "<group>"; };
@@ -315,6 +319,7 @@
 				B7D1271130B39D7B9A67E609 /* KeychainManagerTests.swift */,
 				PR1F004234567890ABCDEF01 /* MealTypeTests.swift */,
 				PR4F00E234567890ABCDEF01 /* MealScannerViewModelTests.swift */,
+				PR4F015234567890ABCDEF01 /* MealPhotoProcessorTests.swift */,
 				PR5F009234567890ABCDEF01 /* MealLogCRUDTests.swift */,
 				PR6F007234567890ABCDEF01 /* WeighInTests.swift */,
 				PR7F00C234567890ABCDEF01 /* AnalyticsTests.swift */,
@@ -350,6 +355,7 @@
 			children = (
 				F1E2D3C401234567890ABCDE /* APIKeyResolver.swift */,
 				FC2F68877952481FCEDCA5E5 /* Constants.swift */,
+				PR4F014234567890ABCDEF01 /* MealPhotoProcessor.swift */,
 				PR5F00B234567890ABCDEF01 /* InteractivePopGestureDisabler.swift */,
 				PR7F001234567890ABCDEF01 /* AnalyticsTypes.swift */,
 				18F8DBAE76C7C7B21976685A /* KeychainManager.swift */,
@@ -598,6 +604,7 @@
 				6FBA09496E1526AAEA65EBC2 /* CalSnapApp.swift in Sources */,
 				A1B2C3D40E234567890ABCDE /* CalorieTargetPreviewStepView.swift in Sources */,
 				BA9F6F8108F9A54F5D77D117 /* Constants.swift in Sources */,
+				PR4B014234567890ABCDEF01 /* MealPhotoProcessor.swift in Sources */,
 				PR5B00B234567890ABCDEF01 /* InteractivePopGestureDisabler.swift in Sources */,
 				A1B2C3D412234567890ABCDE /* DashboardView.swift in Sources */,
 				PR3B010234567890ABCDEF01 /* DashboardContentView.swift in Sources */,
@@ -696,6 +703,7 @@
 				PR6B007234567890ABCDEF01 /* WeighInTests.swift in Sources */,
 				PR7B00C234567890ABCDEF01 /* AnalyticsTests.swift in Sources */,
 				PR4B00E234567890ABCDEF01 /* MealScannerViewModelTests.swift in Sources */,
+				PR4B015234567890ABCDEF01 /* MealPhotoProcessorTests.swift in Sources */,
 				1B31CEC936B87ADC8D4A5AE0 /* KeychainManagerTests.swift in Sources */,
 				PR1B004234567890ABCDEF01 /* MealTypeTests.swift in Sources */,
 				D101E5ADAC2C4C0EBA1B0D2E /* NutritionCalculatorTests.swift in Sources */,

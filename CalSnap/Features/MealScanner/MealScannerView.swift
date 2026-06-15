@@ -164,12 +164,12 @@ struct MealScannerView: View {
         }
         .fullScreenCover(isPresented: $showCamera) {
             CameraImagePicker { image in
-                if let resized = MealScannerViewModel.resizedForAnalysis(image) {
-                    viewModel.selectedImage = resized
+                if viewModel.setSelectedPhoto(from: image) {
+                    viewModel.scannerError = nil
                 } else {
-                    viewModel.selectedImage = MealScannerViewModel.normalizedImage(image)
+                    viewModel.scannerError = .unrecognizable
+                    viewModel.phase = .error
                 }
-                viewModel.scannerError = nil
             }
         }
         .onChange(of: selectedPhotoItem) { _, newItem in
@@ -177,12 +177,12 @@ struct MealScannerView: View {
                 guard let newItem else { return }
                 if let data = try? await newItem.loadTransferable(type: Data.self),
                    let image = UIImage(data: data) {
-                    if let resized = MealScannerViewModel.resizedForAnalysis(image) {
-                        viewModel.selectedImage = resized
+                    if viewModel.setSelectedPhoto(from: image) {
+                        viewModel.scannerError = nil
                     } else {
-                        viewModel.selectedImage = MealScannerViewModel.normalizedImage(image)
+                        viewModel.scannerError = .unrecognizable
+                        viewModel.phase = .error
                     }
-                    viewModel.scannerError = nil
                     selectedPhotoItem = nil
                 }
             }

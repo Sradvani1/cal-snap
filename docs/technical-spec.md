@@ -165,7 +165,7 @@ final class MealEntry {
     var userId: UUID
     var timestamp: Date
     var mealType: MealType           // enum: breakfast, lunch, dinner, snack
-    @Attribute(.externalStorage) var photoData: Data?
+    @Attribute(.externalStorage) var photoData: Data?  // JPEG, optimized; see docs/implementation/PR-04-addendum-image-storage.md
     var textDescription: String?
     var totalCalories: Int
     var totalProteinG: Double
