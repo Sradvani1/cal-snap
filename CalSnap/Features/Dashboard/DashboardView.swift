@@ -19,6 +19,7 @@ struct DashboardView: View {
     @State private var showDeleteConfirmation = false
     @State private var weighInSheetContext: WeighInSheetContext?
     @State private var weightProgressReloadTrigger = 0
+    @State private var mealDetailReloadToken = 0
     @State private var didWireNotifications = false
 
     var body: some View {
@@ -30,6 +31,7 @@ struct DashboardView: View {
                     weighInSheetContext: $weighInSheetContext,
                     activeUserId: activeUserId,
                     weightProgressReloadTrigger: weightProgressReloadTrigger,
+                    mealDetailReloadToken: mealDetailReloadToken,
                     onProfileSwitch: { profile in
                         activeUserId = profile.id.uuidString
                     },
@@ -126,6 +128,7 @@ struct DashboardView: View {
 
     private func reloadDashboard() {
         viewModel?.loadToday(context: modelContext, activeUserId: activeUserId)
+        mealDetailReloadToken += 1
         syncActiveUserIdIfNeeded()
     }
 

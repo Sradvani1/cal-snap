@@ -45,6 +45,7 @@
 		A8049099DF60B3369E8D2C25 /* MealEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48914D12FBF26E0081590A8B /* MealEntry.swift */; };
 		B18D8478722A4DC5C6D169D2 /* NutritionCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F453EDE12C11B104F814B4D /* NutritionCalculator.swift */; };
 		BA9F6F8108F9A54F5D77D117 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC2F68877952481FCEDCA5E5 /* Constants.swift */; };
+		PR5B00B234567890ABCDEF01 /* InteractivePopGestureDisabler.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR5F00B234567890ABCDEF01 /* InteractivePopGestureDisabler.swift */; };
 		CC9C0FC95BB9ADE63B9E0FEB /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18F8DBAE76C7C7B21976685A /* KeychainManager.swift */; };
 		D101E5ADAC2C4C0EBA1B0D2E /* NutritionCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FF607CB3770B2AAE871821 /* NutritionCalculatorTests.swift */; };
 		EF5DDCE6E4C48EFE86A32C10 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8852933F27AA17FD6FDC12B2 /* UserProfile.swift */; };
@@ -153,6 +154,7 @@
 		F1E2D3C413234567890ABCDE /* OnboardingViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModelTests.swift; sourceTree = "<group>"; };
 		F1E2D3C415234567890ABCDE /* CalSnap.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CalSnap.entitlements; sourceTree = "<group>"; };
 		FC2F68877952481FCEDCA5E5 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		PR5F00B234567890ABCDEF01 /* InteractivePopGestureDisabler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractivePopGestureDisabler.swift; sourceTree = "<group>"; };
 		PR3F001234567890ABCDEF01 /* MealRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealRepository.swift; sourceTree = "<group>"; };
 		PR3F002234567890ABCDEF01 /* WeighInRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeighInRepository.swift; sourceTree = "<group>"; };
 		PR3F003234567890ABCDEF01 /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
@@ -321,6 +323,7 @@
 			children = (
 				F1E2D3C401234567890ABCDE /* APIKeyResolver.swift */,
 				FC2F68877952481FCEDCA5E5 /* Constants.swift */,
+				PR5F00B234567890ABCDEF01 /* InteractivePopGestureDisabler.swift */,
 				18F8DBAE76C7C7B21976685A /* KeychainManager.swift */,
 				UTIL0001234567890ABCDE01 /* Extensions */,
 			);
@@ -548,6 +551,7 @@
 				6FBA09496E1526AAEA65EBC2 /* CalSnapApp.swift in Sources */,
 				A1B2C3D40E234567890ABCDE /* CalorieTargetPreviewStepView.swift in Sources */,
 				BA9F6F8108F9A54F5D77D117 /* Constants.swift in Sources */,
+				PR5B00B234567890ABCDEF01 /* InteractivePopGestureDisabler.swift in Sources */,
 				A1B2C3D412234567890ABCDE /* DashboardView.swift in Sources */,
 				PR3B010234567890ABCDEF01 /* DashboardContentView.swift in Sources */,
 				PR3B003234567890ABCDEF01 /* DashboardViewModel.swift in Sources */,

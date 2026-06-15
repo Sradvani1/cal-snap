@@ -266,4 +266,15 @@ final class MealScannerViewModelTests: XCTestCase {
 
         XCTAssertTrue(viewModel.hasUnsavedWork)
     }
+
+    func testUpdateMealThrowsWhenNotInEditMode() async {
+        do {
+            try await viewModel.updateMeal(context: context)
+            XCTFail("Expected notInEditMode error")
+        } catch let error as MealScannerError {
+            XCTAssertEqual(error, .notInEditMode)
+        } catch {
+            XCTFail("Unexpected error: \(error)")
+        }
+    }
 }

@@ -85,6 +85,9 @@ struct MealScannerView: View {
         .onDisappear {
             viewModel?.cancelAnalysis()
         }
+        .background {
+            InteractivePopGestureDisabler(isDisabled: viewModel?.hasUnsavedWork == true)
+        }
     }
 
     @ViewBuilder

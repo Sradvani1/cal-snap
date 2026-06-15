@@ -7,6 +7,7 @@ final class MealLogCRUDTests: XCTestCase {
     private var dashboardViewModel: DashboardViewModel!
     private var scannerViewModel: MealScannerViewModel!
     private var mealRepository: MealRepository!
+    private var healthKitService: HealthKitService!
     private var container: ModelContainer!
     private var context: ModelContext!
     private var userId: UUID!
@@ -20,6 +21,7 @@ final class MealLogCRUDTests: XCTestCase {
         )
         context = container.mainContext
         mealRepository = MealRepository()
+        healthKitService = HealthKitService()
         userId = UUID()
 
         let profile = UserProfile(
@@ -39,7 +41,7 @@ final class MealLogCRUDTests: XCTestCase {
         scannerViewModel = MealScannerViewModel(
             userId: userId,
             mealAnalyzer: MockMealAnalyzer(),
-            healthKitService: HealthKitService(),
+            healthKitService: healthKitService,
             mealRepository: mealRepository
         )
     }
@@ -47,7 +49,7 @@ final class MealLogCRUDTests: XCTestCase {
     func testMealDeletion() throws {
         let breakfast = MealEntry(
             userId: userId,
-            timestamp: Date(),
+            timestamp: Date.now,
             mealType: .breakfast,
             totalCalories: 800,
             totalProteinG: 40,
@@ -57,7 +59,7 @@ final class MealLogCRUDTests: XCTestCase {
         )
         let lunch = MealEntry(
             userId: userId,
-            timestamp: Date(),
+            timestamp: Date.now,
             mealType: .lunch,
             totalCalories: 700,
             totalProteinG: 35,
@@ -71,10 +73,15 @@ final class MealLogCRUDTests: XCTestCase {
 
         dashboardViewModel.loadToday(context: context, activeUserId: userId.uuidString)
         XCTAssertEqual(dashboardViewModel.todaysCalories, 1500)
+        XCTAssertEqual(dashboardViewModel.todaysFiberG, 9, accuracy: 0.01)
 
         let mealToDelete = try XCTUnwrap(try mealRepository.fetchMeal(id: breakfast.id, context: context))
-        _ = MealHealthSnapshot(meal: mealToDelete)
-        try mealRepository.delete(id: mealToDelete.id, context: context)
+        try MealDeletionService.delete(
+            meal: mealToDelete,
+            mealRepository: mealRepository,
+            healthKitService: healthKitService,
+            context: context
+        )
 
         let remainingMeals = try context.fetch(FetchDescriptor<MealEntry>())
         XCTAssertEqual(remainingMeals.count, 1)
@@ -82,6 +89,7 @@ final class MealLogCRUDTests: XCTestCase {
         dashboardViewModel.loadToday(context: context, activeUserId: userId.uuidString)
         XCTAssertEqual(dashboardViewModel.todaysCalories, 700)
         XCTAssertEqual(dashboardViewModel.todaysProteinG, 35, accuracy: 0.01)
+        XCTAssertEqual(dashboardViewModel.todaysFiberG, 4, accuracy: 0.01)
     }
 
     func testMealEdit() async throws {
@@ -98,7 +106,7 @@ final class MealLogCRUDTests: XCTestCase {
         )
         let meal = MealEntry(
             userId: userId,
-            timestamp: Date(),
+            timestamp: Date.now,
             mealType: .lunch,
             totalCalories: 400,
             totalProteinG: 30,
@@ -111,6 +119,9 @@ final class MealLogCRUDTests: XCTestCase {
         context.insert(foodItem)
         context.insert(meal)
         try context.save()
+
+        let originalId = meal.id
+        let originalTimestamp = meal.timestamp
 
         dashboardViewModel.loadToday(context: context, activeUserId: userId.uuidString)
         XCTAssertEqual(dashboardViewModel.todaysCalories, 400)
@@ -126,9 +137,33 @@ final class MealLogCRUDTests: XCTestCase {
         XCTAssertEqual(dashboardViewModel.todaysProteinG, 60, accuracy: 0.01)
 
         let updatedMeal = try XCTUnwrap(try mealRepository.fetchMeal(id: meal.id, context: context))
+        XCTAssertEqual(updatedMeal.id, originalId)
+        XCTAssertEqual(updatedMeal.timestamp, originalTimestamp)
         XCTAssertEqual(updatedMeal.totalCalories, 800)
         XCTAssertEqual(updatedMeal.totalProteinG, 60, accuracy: 0.01)
         XCTAssertEqual(updatedMeal.items.count, 1)
         XCTAssertEqual(updatedMeal.items.first?.calories, 800)
+    }
+
+    func testMealRepositoryDeleteThrowsWhenNotFound() throws {
+        XCTAssertThrowsError(try mealRepository.delete(id: UUID(), context: context)) { error in
+            XCTAssertEqual(error as? MealRepositoryError, .mealNotFound)
+        }
+    }
+
+    func testMealRepositoryUpdateThrowsWhenNotFound() throws {
+        let entry = MealEntry(
+            userId: userId,
+            timestamp: Date.now,
+            mealType: .lunch,
+            totalCalories: 400,
+            totalProteinG: 30,
+            totalCarbsG: 10,
+            totalFatG: 8,
+            totalFiberG: 2
+        )
+        XCTAssertThrowsError(try mealRepository.update(entry, items: [], context: context)) { error in
+            XCTAssertEqual(error as? MealRepositoryError, .mealNotFound)
+        }
     }
 }

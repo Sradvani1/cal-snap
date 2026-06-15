@@ -1,7 +1,7 @@
 import Foundation
 import SwiftData
 
-enum MealRepositoryError: Error {
+enum MealRepositoryError: Error, Equatable {
     case mealNotFound
 }
 

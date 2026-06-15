@@ -19,7 +19,7 @@ enum ScannerError: Equatable {
     case unrecognizable
 }
 
-enum MealScannerError: Error {
+enum MealScannerError: Error, Equatable {
     case mealNotFound
     case notInEditMode
 }
@@ -46,6 +46,14 @@ enum ConfidenceLevel: Equatable {
         case .high: return "High confidence"
         case .medium: return "Medium confidence"
         case .low: return "Low confidence"
+        }
+    }
+
+    static func from(score: Double) -> ConfidenceLevel {
+        switch score {
+        case 0.8...: return .high
+        case 0.6..<0.8: return .medium
+        default: return .low
         }
     }
 }

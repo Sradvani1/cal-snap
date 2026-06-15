@@ -8,11 +8,14 @@ import UIKit
 final class MealDetailViewModel {
     var meal: MealEntry?
     var loadError: String?
+    var shareError: String?
 
     private let mealRepository: MealRepository
+    private let healthKitService: HealthKitService
 
-    init(mealRepository: MealRepository = MealRepository()) {
+    init(mealRepository: MealRepository, healthKitService: HealthKitService) {
         self.mealRepository = mealRepository
+        self.healthKitService = healthKitService
     }
 
     func load(mealId: UUID, context: ModelContext) {
@@ -25,12 +28,7 @@ final class MealDetailViewModel {
         }
     }
 
-    func deleteMeal(
-        meal: MealEntry,
-        mealRepository: MealRepository,
-        healthKitService: HealthKitService,
-        context: ModelContext
-    ) throws {
+    func deleteMeal(meal: MealEntry, context: ModelContext) throws {
         try MealDeletionService.delete(
             meal: meal,
             mealRepository: mealRepository,

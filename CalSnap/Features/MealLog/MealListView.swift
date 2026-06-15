@@ -14,9 +14,16 @@ struct MealListView: View {
             Text("Today's Meals")
                 .font(.headline)
 
-            LazyVStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 16) {
                 ForEach(mealTypeOrder, id: \.self) { mealType in
-                    sectionView(for: mealType)
+                    MealListSectionView(
+                        mealType: mealType,
+                        sectionMeals: mealsByType[mealType] ?? [],
+                        onSelect: onSelect,
+                        onEdit: onEdit,
+                        onDelete: onDelete,
+                        onAdd: onAdd
+                    )
                 }
             }
         }
@@ -24,11 +31,21 @@ struct MealListView: View {
         .background(Color(.secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }
+}
 
-    @ViewBuilder
-    private func sectionView(for mealType: MealType) -> some View {
-        let sectionMeals = mealsByType[mealType] ?? []
+private struct MealListSectionView: View {
+    let mealType: MealType
+    let sectionMeals: [MealEntry]
+    let onSelect: (UUID) -> Void
+    let onEdit: (UUID) -> Void
+    let onDelete: (MealEntry) -> Void
+    let onAdd: (MealType) -> Void
 
+    private static let baseRowHeight: CGFloat = 52
+    private static let rowPhotoHeightBonus: CGFloat = 16
+    private static let listChromePaddingPerRow: CGFloat = 4
+
+    var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(mealType.displayName)
                 .font(.subheadline.weight(.semibold))
@@ -43,30 +60,56 @@ struct MealListView: View {
                         .foregroundStyle(.secondary)
                 }
             } else {
-                ForEach(sectionMeals, id: \.id) { meal in
-                    MealRowView(meal: meal) {
-                        onSelect(meal.id)
-                    }
-                    .contextMenu {
-                        Button {
+                List {
+                    ForEach(sectionMeals, id: \.id) { meal in
+                        MealRowView(meal: meal) {
                             onSelect(meal.id)
-                        } label: {
-                            Label("View", systemImage: "eye")
                         }
-                        Button {
-                            onEdit(meal.id)
-                        } label: {
-                            Label("Edit", systemImage: "pencil")
+                        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
+                        .frame(height: Self.rowHeight(for: meal))
+                        .contextMenu {
+                            Button {
+                                onSelect(meal.id)
+                            } label: {
+                                Label("View", systemImage: "eye")
+                            }
+                            Button {
+                                onEdit(meal.id)
+                            } label: {
+                                Label("Edit", systemImage: "pencil")
+                            }
+                            Button(role: .destructive) {
+                                onDelete(meal)
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
                         }
-                        Button(role: .destructive) {
-                            onDelete(meal)
-                        } label: {
-                            Label("Delete", systemImage: "trash")
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            Button(role: .destructive) {
+                                onDelete(meal)
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
                         }
                     }
                 }
+                .listStyle(.plain)
+                .scrollDisabled(true)
+                .scrollContentBackground(.hidden)
+                .frame(height: Self.sectionListHeight(meals: sectionMeals))
             }
         }
+    }
+
+    static func rowHeight(for meal: MealEntry) -> CGFloat {
+        baseRowHeight + (meal.photoData != nil ? rowPhotoHeightBonus : 0)
+    }
+
+    static func sectionListHeight(meals: [MealEntry]) -> CGFloat {
+        let rowHeights = meals.reduce(0) { $0 + rowHeight(for: $1) }
+        return rowHeights + listChromePaddingPerRow * CGFloat(meals.count)
     }
 }
 

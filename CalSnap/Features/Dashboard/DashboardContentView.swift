@@ -11,6 +11,7 @@ struct DashboardContentView: View {
 
     let activeUserId: String
     let weightProgressReloadTrigger: Int
+    let mealDetailReloadToken: Int
     let onProfileSwitch: (UserProfile) -> Void
     let onReload: () -> Void
     let onDeleteMeal: (MealEntry) -> Void
@@ -70,6 +71,9 @@ struct DashboardContentView: View {
                         )
 
                         DailySummaryFooterView(
+                            fiberConsumedG: viewModel.todaysFiberG,
+                            fiberTargetG: viewModel.fiberTargetG,
+                            fiberProgressBand: viewModel.fiberProgressBand,
                             netCalorieSummary: viewModel.netCalorieSummary,
                             netCalorieDelta: viewModel.netCalorieDelta,
                             actualMacroPercents: viewModel.actualMacroPercents,
@@ -109,6 +113,7 @@ struct DashboardContentView: View {
                 case .mealDetail(let mealId):
                     MealDetailView(
                         mealId: mealId,
+                        mealDetailReloadToken: mealDetailReloadToken,
                         onMealChanged: onReload,
                         navigationPath: $navigationPath
                     )
@@ -222,6 +227,7 @@ struct DashboardContentView: View {
         weighInSheetContext: $sheetContext,
         activeUserId: profile.id.uuidString,
         weightProgressReloadTrigger: 0,
+        mealDetailReloadToken: 0,
         onProfileSwitch: { _ in },
         onReload: {},
         onDeleteMeal: { _ in },

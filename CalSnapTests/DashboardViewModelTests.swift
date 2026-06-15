@@ -99,6 +99,30 @@ final class DashboardViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.remainingCalories, -300)
     }
 
+    func testFiberTargetFromCalorieTarget() {
+        viewModel.activeProfile = UserProfile(dailyCalorieTarget: 2000)
+        XCTAssertEqual(viewModel.fiberTargetG, 28, accuracy: 0.01)
+    }
+
+    func testFiberProgressBandThresholds() {
+        viewModel.activeProfile = UserProfile(dailyCalorieTarget: 2000)
+        viewModel.todaysFiberG = 26.6
+        XCTAssertEqual(viewModel.fiberProgressBand, .onTrack)
+
+        viewModel.todaysFiberG = 21
+        XCTAssertEqual(viewModel.fiberProgressBand, .moderate)
+
+        viewModel.todaysFiberG = 10
+        XCTAssertEqual(viewModel.fiberProgressBand, .low)
+    }
+
+    func testNetCalorieSummary() {
+        viewModel.activeProfile = UserProfile(dailyCalorieTarget: 2000)
+        viewModel.todaysCalories = 2300
+        XCTAssertEqual(viewModel.netCalorieDelta, 300)
+        XCTAssertEqual(viewModel.netCalorieSummary, "+300 over goal")
+    }
+
     func testLoadTodayResetsPlateauAlertWhenNoProfile() {
         viewModel.showPlateauAlert = true
         viewModel.loadToday(context: context, activeUserId: "")
