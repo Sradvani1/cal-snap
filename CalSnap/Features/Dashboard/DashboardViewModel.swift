@@ -73,6 +73,54 @@ final class DashboardViewModel {
         return (target / 1000.0) * AppConstants.Nutrition.fiberGramsPer1000Kcal
     }
 
+    var netCalorieDelta: Int {
+        todaysCalories - (activeProfile?.dailyCalorieTarget ?? 0)
+    }
+
+    var fiberProgressColor: Color {
+        let target = fiberTargetG
+        guard target > 0 else { return .secondary }
+        let ratio = todaysFiberG / target
+        switch ratio {
+        case 0.9...: return .green
+        case 0.7..<0.9: return .yellow
+        default: return .red
+        }
+    }
+
+    var actualMacroPercents: (protein: Int, carbs: Int, fat: Int) {
+        let proteinKcal = todaysProteinG * AppConstants.Nutrition.proteinCalPerGram
+        let carbsKcal = todaysCarbsG * AppConstants.Nutrition.carbsCalPerGram
+        let fatKcal = todaysFatG * AppConstants.Nutrition.fatCalPerGram
+        let total = proteinKcal + carbsKcal + fatKcal
+        guard total > 0 else { return (0, 0, 0) }
+        return (
+            protein: Int((proteinKcal / total * 100).rounded()),
+            carbs: Int((carbsKcal / total * 100).rounded()),
+            fat: Int((fatKcal / total * 100).rounded())
+        )
+    }
+
+    var targetMacroPercents: (protein: Int, carbs: Int, fat: Int) {
+        guard let profile = activeProfile else { return (0, 0, 0) }
+        return (
+            protein: Int((profile.macroTargetProteinPct * 100).rounded()),
+            carbs: Int((profile.macroTargetCarbsPct * 100).rounded()),
+            fat: Int((profile.macroTargetFatPct * 100).rounded())
+        )
+    }
+
+    var netCalorieSummary: String {
+        let delta = netCalorieDelta
+        if delta > 0 {
+            return "+\(delta) over goal"
+        }
+        if delta < 0 {
+            return "\(delta) under goal"
+        }
+        return "On target"
+    }
+
     var greeting: String {
         let hour = Calendar.current.component(.hour, from: Date())
         let prefix: String

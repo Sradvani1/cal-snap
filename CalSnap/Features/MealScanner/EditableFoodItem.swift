@@ -50,6 +50,22 @@ struct EditableFoodItem: Identifiable, Equatable {
         weightG = newWeightG
     }
 
+    static func from(foodItem: FoodItem) -> EditableFoodItem {
+        EditableFoodItem(
+            id: foodItem.id,
+            name: foodItem.name,
+            weightG: foodItem.estimatedWeightG,
+            calories: foodItem.calories,
+            proteinG: foodItem.proteinG,
+            carbsG: foodItem.carbsG,
+            fatG: foodItem.fatG,
+            fiberG: foodItem.fiberG,
+            confidence: foodItem.confidence,
+            isFlagged: foodItem.isFlagged,
+            originalWeightG: foodItem.estimatedWeightG
+        )
+    }
+
     static func from(
         result: MealAnalysisResponse.FoodItemResult,
         flaggedNames: Set<String>

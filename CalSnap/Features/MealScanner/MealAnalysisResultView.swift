@@ -15,6 +15,7 @@ struct MealAnalysisResultView: View {
     let canLog: Bool
     let isLogging: Bool
     let logError: String?
+    let isEditing: Bool
     @Binding var mealType: MealType
     let onEditItem: (UUID) -> Void
     let onLog: () -> Void
@@ -95,28 +96,30 @@ struct MealAnalysisResultView: View {
                         ProgressView()
                             .frame(maxWidth: .infinity)
                     } else {
-                        Text("Log This Meal")
+                        Text(isEditing ? "Save Changes" : "Log This Meal")
                             .frame(maxWidth: .infinity)
                     }
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(!canLog || isLogging)
 
-                Button("Re-analyze", action: onReAnalyze)
-                    .frame(maxWidth: .infinity)
+                if !isEditing {
+                    Button("Re-analyze", action: onReAnalyze)
+                        .frame(maxWidth: .infinity)
+                }
 
-                Button("Discard", role: .destructive) {
+                Button(isEditing ? "Cancel" : "Discard", role: .destructive) {
                     showDiscardAlert = true
                 }
                 .frame(maxWidth: .infinity)
             }
             .padding()
         }
-        .alert("Discard this meal?", isPresented: $showDiscardAlert) {
-            Button("Discard", role: .destructive, action: onDiscard)
+        .alert(isEditing ? "Discard changes?" : "Discard this meal?", isPresented: $showDiscardAlert) {
+            Button(isEditing ? "Discard Changes" : "Discard", role: .destructive, action: onDiscard)
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("Nothing will be saved.")
+            Text(isEditing ? "Your edits will not be saved." : "Nothing will be saved.")
         }
     }
 }
@@ -149,6 +152,7 @@ struct MealAnalysisResultView: View {
         canLog: true,
         isLogging: false,
         logError: nil,
+        isEditing: false,
         mealType: .constant(.lunch),
         onEditItem: { _ in },
         onLog: {},

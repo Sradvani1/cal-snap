@@ -19,6 +19,11 @@ enum ScannerError: Equatable {
     case unrecognizable
 }
 
+enum MealScannerError: Error {
+    case mealNotFound
+    case notInEditMode
+}
+
 enum ConfidenceLevel: Equatable {
     case high
     case medium
@@ -49,6 +54,8 @@ final class MealScannerViewModel {
     var isLogging = false
     var logError: String?
 
+    private var editingMealId: UUID?
+    private var editingTimestamp: Date?
     private var analyzeTask: Task<Void, Never>?
     private var originalItemWeights: [UUID: Double] = [:]
     private let userId: UUID
@@ -129,6 +136,10 @@ final class MealScannerViewModel {
             guard let original = originalItemWeights[item.id] else { return false }
             return abs(item.weightG - original) > 0.01
         }
+    }
+
+    var isEditing: Bool {
+        editingMealId != nil
     }
 
     static var isCameraAvailable: Bool {
@@ -279,9 +290,43 @@ final class MealScannerViewModel {
         scannerError = nil
         isManualEntry = false
         editingItemID = nil
+        editingMealId = nil
+        editingTimestamp = nil
         originalItemWeights = [:]
         mealType = .suggested(for: Date())
         phase = .capture
+    }
+
+    func loadForEditing(meal: MealEntry) {
+        cancelAnalysis()
+        editingMealId = meal.id
+        editingTimestamp = meal.timestamp
+        mealType = meal.mealType
+        textDescription = meal.textDescription ?? ""
+        estimationNotes = meal.estimationNotes
+        isManualEntry = meal.geminiConfidence == 0
+        analysisResult = nil
+        scannerError = nil
+
+        if let photoData = meal.photoData {
+            selectedImage = UIImage(data: photoData)
+        } else {
+            selectedImage = nil
+        }
+
+        editableItems = meal.items.map { EditableFoodItem.from(foodItem: $0) }
+        originalItemWeights = Dictionary(
+            uniqueKeysWithValues: editableItems.map { ($0.id, $0.weightG) }
+        )
+        phase = .results
+    }
+
+    func saveMeal(context: ModelContext) async throws {
+        if isEditing {
+            try await updateMeal(context: context)
+        } else {
+            try await logMeal(context: context)
+        }
     }
 
     func logMeal(context: ModelContext) async throws {
@@ -299,13 +344,39 @@ final class MealScannerViewModel {
         }
     }
 
+    func updateMeal(context: ModelContext) async throws {
+        logError = nil
+        guard let editingMealId else {
+            throw MealScannerError.notInEditMode
+        }
+        guard let existing = try mealRepository.fetchMeal(id: editingMealId, context: context) else {
+            throw MealScannerError.mealNotFound
+        }
+
+        let oldSnapshot = MealHealthSnapshot(meal: existing)
+        let entry = makeMealEntry()
+        let items = editableItems.map { $0.toFoodItem() }
+        try mealRepository.update(entry, items: items, context: context)
+
+        let healthKit = healthKitService
+        Task {
+            do {
+                try await healthKit.reverseMeal(oldSnapshot)
+                try await healthKit.logMeal(entry)
+            } catch {
+                print("HealthKit meal update sync failed: \(error.localizedDescription)")
+            }
+        }
+    }
+
     func makeMealEntry() -> MealEntry {
         let description = textDescription.trimmingCharacters(in: .whitespacesAndNewlines)
         let photoData = selectedImage.flatMap { Self.jpegData(from: $0)?.data }
 
         return MealEntry(
+            id: editingMealId ?? UUID(),
             userId: userId,
-            timestamp: Date(),
+            timestamp: editingTimestamp ?? Date(),
             mealType: mealType,
             photoData: photoData,
             textDescription: description.isEmpty ? nil : description,

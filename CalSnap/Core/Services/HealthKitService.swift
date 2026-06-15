@@ -86,4 +86,59 @@ actor HealthKitService {
         guard !samples.isEmpty else { return }
         try await store.save(samples)
     }
+
+    func reverseMeal(_ snapshot: MealHealthSnapshot) async throws {
+        guard HKHealthStore.isHealthDataAvailable() else { return }
+
+        let timestamp = snapshot.timestamp
+        var samples: [HKSample] = []
+
+        if let calorieType = HKQuantityType.quantityType(forIdentifier: .dietaryEnergyConsumed) {
+            samples.append(HKQuantitySample(
+                type: calorieType,
+                quantity: HKQuantity(unit: .kilocalorie(), doubleValue: -Double(snapshot.totalCalories)),
+                start: timestamp,
+                end: timestamp
+            ))
+        }
+
+        if let proteinType = HKQuantityType.quantityType(forIdentifier: .dietaryProtein) {
+            samples.append(HKQuantitySample(
+                type: proteinType,
+                quantity: HKQuantity(unit: .gram(), doubleValue: -snapshot.totalProteinG),
+                start: timestamp,
+                end: timestamp
+            ))
+        }
+
+        if let carbsType = HKQuantityType.quantityType(forIdentifier: .dietaryCarbohydrates) {
+            samples.append(HKQuantitySample(
+                type: carbsType,
+                quantity: HKQuantity(unit: .gram(), doubleValue: -snapshot.totalCarbsG),
+                start: timestamp,
+                end: timestamp
+            ))
+        }
+
+        if let fatType = HKQuantityType.quantityType(forIdentifier: .dietaryFatTotal) {
+            samples.append(HKQuantitySample(
+                type: fatType,
+                quantity: HKQuantity(unit: .gram(), doubleValue: -snapshot.totalFatG),
+                start: timestamp,
+                end: timestamp
+            ))
+        }
+
+        if let fiberType = HKQuantityType.quantityType(forIdentifier: .dietaryFiber) {
+            samples.append(HKQuantitySample(
+                type: fiberType,
+                quantity: HKQuantity(unit: .gram(), doubleValue: -snapshot.totalFiberG),
+                start: timestamp,
+                end: timestamp
+            ))
+        }
+
+        guard !samples.isEmpty else { return }
+        try await store.save(samples)
+    }
 }

@@ -1,6 +1,7 @@
 import PhotosUI
 import SwiftData
 import SwiftUI
+import UIKit
 
 struct MealScannerView: View {
     @Environment(AppContainer.self) private var appContainer
@@ -8,12 +9,15 @@ struct MealScannerView: View {
     @Environment(\.dismiss) private var dismiss
 
     let activeUserId: String
+    let route: MealScannerRoute
+    var onMealSaved: (() -> Void)? = nil
 
     @State private var viewModel: MealScannerViewModel?
     @State private var setupFailed = false
     @State private var showCamera = false
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var showDiscardAlert = false
+    @State private var didApplyRoute = false
 
     var body: some View {
         Group {
@@ -29,7 +33,7 @@ struct MealScannerView: View {
                 ProgressView()
             }
         }
-        .navigationTitle("Scan Meal")
+        .navigationTitle(viewModel?.isEditing == true ? "Edit Meal" : "Scan Meal")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             if viewModel == nil {
@@ -44,6 +48,7 @@ struct MealScannerView: View {
                     setupFailed = true
                 }
             }
+            applyRouteIfNeeded()
         }
         .onDisappear {
             viewModel?.cancelAnalysis()
@@ -74,13 +79,18 @@ struct MealScannerView: View {
                     canLog: viewModel.canLog,
                     isLogging: viewModel.isLogging,
                     logError: viewModel.logError,
+                    isEditing: viewModel.isEditing,
                     mealType: Bindable(viewModel).mealType,
                     onEditItem: { id in viewModel.editingItemID = id },
-                    onLog: { logMeal(viewModel: viewModel) },
+                    onLog: { saveMeal(viewModel: viewModel) },
                     onReAnalyze: { viewModel.reAnalyze() },
                     onDiscard: {
-                        viewModel.discard()
-                        dismiss()
+                        if viewModel.isEditing {
+                            dismiss()
+                        } else {
+                            viewModel.discard()
+                            dismiss()
+                        }
                     }
                 )
             case .manual:
@@ -120,6 +130,20 @@ struct MealScannerView: View {
                     viewModel.scannerError = nil
                 }
             }
+        }
+    }
+
+    private func applyRouteIfNeeded() {
+        guard !didApplyRoute, let viewModel else { return }
+        didApplyRoute = true
+
+        switch route {
+        case .create(let initialMealType):
+            if let initialMealType {
+                viewModel.mealType = initialMealType
+            }
+        case .edit(let meal):
+            viewModel.loadForEditing(meal: meal)
         }
     }
 
@@ -233,16 +257,21 @@ struct MealScannerView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    private func logMeal(viewModel: MealScannerViewModel) {
+    private func saveMeal(viewModel: MealScannerViewModel) {
         guard !viewModel.isLogging else { return }
 
         Task {
             viewModel.isLogging = true
             viewModel.logError = nil
             do {
-                try await viewModel.logMeal(context: modelContext)
-                viewModel.discard()
-                dismiss()
+                try await viewModel.saveMeal(context: modelContext)
+                if viewModel.isEditing {
+                    onMealSaved?()
+                    dismiss()
+                } else {
+                    viewModel.discard()
+                    dismiss()
+                }
             } catch {
                 viewModel.logError = "Could not save meal. Please try again."
                 print("Failed to save meal: \(error.localizedDescription)")
@@ -265,7 +294,10 @@ struct MealScannerView: View {
 
 #Preview {
     NavigationStack {
-        MealScannerView(activeUserId: UUID().uuidString)
-            .environment(AppContainer())
+        MealScannerView(
+            activeUserId: UUID().uuidString,
+            route: .create(initialMealType: nil)
+        )
+        .environment(AppContainer())
     }
 }

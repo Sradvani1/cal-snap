@@ -6,8 +6,10 @@ struct DashboardView: View {
     @Environment(\.modelContext) private var modelContext
     @AppStorage(AppStorageKey.activeUserId) private var activeUserId = ""
     @State private var viewModel: DashboardViewModel?
-    @State private var showScanner = false
+    @State private var navigationPath: [DashboardRoute] = []
     @State private var suppressActiveUserIdReload = false
+    @State private var mealPendingDelete: MealEntry?
+    @State private var showDeleteConfirmation = false
 
     var body: some View {
         Group {
@@ -32,13 +34,19 @@ struct DashboardView: View {
                 suppressActiveUserIdReload = false
                 return
             }
+            navigationPath = []
             reloadDashboard()
+        }
+        .onChange(of: navigationPath.count) { oldCount, newCount in
+            if newCount < oldCount {
+                reloadDashboard()
+            }
         }
     }
 
     @ViewBuilder
     private func dashboardContent(viewModel: DashboardViewModel) -> some View {
-        NavigationStack {
+        NavigationStack(path: $navigationPath) {
             ZStack(alignment: .bottomTrailing) {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
@@ -75,7 +83,32 @@ struct DashboardView: View {
                             fiberTarget: viewModel.fiberTargetG
                         )
 
-                        TodaysMealsSection(meals: viewModel.todaysMeals)
+                        MealListView(
+                            meals: viewModel.todaysMeals,
+                            onSelect: { meal in
+                                navigationPath.append(.mealDetail(meal))
+                            },
+                            onEdit: { meal in
+                                navigationPath.append(.mealScanner(.edit(meal)))
+                            },
+                            onDelete: { meal in
+                                mealPendingDelete = meal
+                                showDeleteConfirmation = true
+                            },
+                            onAdd: { mealType in
+                                navigationPath.append(.mealScanner(.create(initialMealType: mealType)))
+                            }
+                        )
+
+                        DailySummaryFooterView(
+                            fiberConsumed: viewModel.todaysFiberG,
+                            fiberTarget: viewModel.fiberTargetG,
+                            fiberColor: viewModel.fiberProgressColor,
+                            netCalorieSummary: viewModel.netCalorieSummary,
+                            netCalorieDelta: viewModel.netCalorieDelta,
+                            actualMacroPercents: viewModel.actualMacroPercents,
+                            targetMacroPercents: viewModel.targetMacroPercents
+                        )
 
                         WeightTrendMiniChart(
                             weighIns: viewModel.chartWeighIns,
@@ -88,7 +121,7 @@ struct DashboardView: View {
                 }
 
                 Button {
-                    showScanner = true
+                    navigationPath.append(.mealScanner(.create(initialMealType: nil)))
                 } label: {
                     Image(systemName: "plus")
                         .font(.title2.bold())
@@ -101,12 +134,20 @@ struct DashboardView: View {
                 .padding()
                 .accessibilityLabel("Add meal")
             }
-            .navigationDestination(isPresented: $showScanner) {
-                MealScannerView(activeUserId: activeUserId)
-            }
-            .onChange(of: showScanner) { _, isShowing in
-                if !isShowing {
-                    reloadDashboard()
+            .navigationDestination(for: DashboardRoute.self) { route in
+                switch route {
+                case .mealDetail(let meal):
+                    MealDetailView(
+                        meal: meal,
+                        onMealChanged: { reloadDashboard() },
+                        navigationPath: $navigationPath
+                    )
+                case .mealScanner(let scannerRoute):
+                    MealScannerView(
+                        activeUserId: activeUserId,
+                        route: scannerRoute,
+                        onMealSaved: { reloadDashboard() }
+                    )
                 }
             }
             .toolbar {
@@ -133,6 +174,34 @@ struct DashboardView: View {
                     }
                 )
             }
+            .alert("Delete this meal?", isPresented: $showDeleteConfirmation) {
+                Button("Delete", role: .destructive) {
+                    confirmDelete()
+                }
+                Button("Cancel", role: .cancel) {
+                    mealPendingDelete = nil
+                }
+            } message: {
+                Text("This removes the meal from your log and reverses the HealthKit entry.")
+            }
+        }
+    }
+
+    private func confirmDelete() {
+        guard let meal = mealPendingDelete else { return }
+
+        do {
+            try MealDeletionService.delete(
+                meal: meal,
+                mealRepository: appContainer.mealRepository,
+                healthKitService: appContainer.healthKitService,
+                context: modelContext
+            )
+            mealPendingDelete = nil
+            reloadDashboard()
+        } catch {
+            viewModel?.loadError = error.localizedDescription
+            mealPendingDelete = nil
         }
     }
 
