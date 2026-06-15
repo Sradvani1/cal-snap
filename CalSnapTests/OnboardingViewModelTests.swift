@@ -51,12 +51,13 @@ final class OnboardingViewModelTests: XCTestCase {
 
         let fetched = try repository.fetchAll(context: context)
         XCTAssertEqual(fetched.count, 1)
-        XCTAssertEqual(fetched.first?.name, "Alex")
-        XCTAssertEqual(fetched.first?.startingWeightKg, 80, accuracy: 0.01)
-        XCTAssertEqual(fetched.first?.macroTargetProteinPct, 0.28, accuracy: 0.001)
-        XCTAssertEqual(fetched.first?.macroTargetCarbsPct, 0.47, accuracy: 0.001)
-        XCTAssertEqual(fetched.first?.macroTargetFatPct, 0.25, accuracy: 0.001)
-        XCTAssertGreaterThan(fetched.first?.dailyCalorieTarget ?? 0, 0)
-        XCTAssertGreaterThan(fetched.first?.tdee ?? 0, 0)
+        let saved = try XCTUnwrap(fetched.first)
+        XCTAssertEqual(saved.name, "Alex")
+        XCTAssertEqual(saved.startingWeightKg, 80, accuracy: 0.01)
+        XCTAssertEqual(saved.macroTargetProteinPct, 0.28, accuracy: 0.001)
+        XCTAssertEqual(saved.macroTargetCarbsPct, 0.47, accuracy: 0.001)
+        XCTAssertEqual(saved.macroTargetFatPct, 0.25, accuracy: 0.001)
+        XCTAssertGreaterThan(saved.dailyCalorieTarget, 0)
+        XCTAssertGreaterThan(saved.tdee, 0)
     }
 }

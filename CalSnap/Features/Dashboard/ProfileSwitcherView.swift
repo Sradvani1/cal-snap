@@ -27,10 +27,9 @@ struct ProfileSwitcherView: View {
         }
     }
 
-    @ViewBuilder
-    private func switcherLabel(for profile: UserProfile? = nil, showChevron: Bool) {
+    private func switcherLabel(for profile: UserProfile? = nil, showChevron: Bool) -> some View {
         let displayProfile = profile ?? activeProfile ?? profiles.first
-        HStack(spacing: 8) {
+        return HStack(spacing: 8) {
             if let displayProfile {
                 Text(initials(for: displayProfile.name))
                     .font(.caption.bold())

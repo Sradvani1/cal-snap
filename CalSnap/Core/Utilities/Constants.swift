@@ -1,3 +1,5 @@
+import Foundation
+
 enum AppStorageKey {
     static let activeUserId = "activeUserId"
 

@@ -33,6 +33,7 @@
 - Handle edge cases explicitly.
 - Avoid force unwraps unless impossible to fail and clearly justified.
 - Avoid dead code, placeholders, and TODO sprawl.
+- Non-view Swift files using Foundation types (`UUID`, `Date`, `Data`, `Calendar`, etc.) must `import Foundation` explicitly.
 
 ## Testing
 - Write unit tests for business logic in each PR.
