@@ -30,7 +30,6 @@ enum UserDataDeletionService {
             notificationManager.cancelWeighInReminder(userId: profile.id)
             context.delete(profile)
         }
-        UserDefaults.standard.removeObject(forKey: AppStorageKey.activeUserId)
         try context.save()
     }
 

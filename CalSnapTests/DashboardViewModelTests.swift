@@ -75,7 +75,7 @@ final class DashboardViewModelTests: XCTestCase {
         meals.forEach { context.insert($0) }
         try context.save()
 
-        viewModel.loadToday(context: context, activeUserId: profile.id.uuidString)
+        viewModel.loadToday(context: context)
 
         XCTAssertEqual(viewModel.todaysCalories, 1500)
         XCTAssertEqual(viewModel.todaysProteinG, 105, accuracy: 0.01)
@@ -88,9 +88,9 @@ final class DashboardViewModelTests: XCTestCase {
     }
 
     func testProgressColor() {
-        XCTAssertEqual(DashboardViewModel.progressBand(for: 0.89), .under)
-        XCTAssertEqual(DashboardViewModel.progressBand(for: 0.95), .onTrack)
-        XCTAssertEqual(DashboardViewModel.progressBand(for: 1.15), .over)
+        XCTAssertEqual(CalorieProgressBand.progressBand(for: 0.89), .under)
+        XCTAssertEqual(CalorieProgressBand.progressBand(for: 0.95), .onTrack)
+        XCTAssertEqual(CalorieProgressBand.progressBand(for: 1.15), .over)
     }
 
     func testRemaining() {
@@ -125,7 +125,7 @@ final class DashboardViewModelTests: XCTestCase {
 
     func testLoadTodayResetsPlateauAlertWhenNoProfile() {
         viewModel.showPlateauAlert = true
-        viewModel.loadToday(context: context, activeUserId: "")
+        viewModel.loadToday(context: context)
         XCTAssertFalse(viewModel.showPlateauAlert)
     }
 
@@ -137,7 +137,7 @@ final class DashboardViewModelTests: XCTestCase {
             forKey: AppStorageKey.plateauSnoozeUntil(userId: profile.id)
         )
 
-        viewModel.loadToday(context: context, activeUserId: profile.id.uuidString)
+        viewModel.loadToday(context: context)
 
         XCTAssertFalse(viewModel.showPlateauAlert)
     }
@@ -150,14 +150,14 @@ final class DashboardViewModelTests: XCTestCase {
             forKey: AppStorageKey.maintenanceModeUntil(userId: profile.id)
         )
 
-        viewModel.loadToday(context: context, activeUserId: profile.id.uuidString)
+        viewModel.loadToday(context: context)
 
         XCTAssertFalse(viewModel.showPlateauAlert)
     }
 
     func testApplyDietBreakUpdatesTargetAndDismissesOnSave() throws {
         let profile = try makeProfileWithPlateauWeighIns()
-        viewModel.loadToday(context: context, activeUserId: profile.id.uuidString)
+        viewModel.loadToday(context: context)
         XCTAssertTrue(viewModel.showPlateauAlert)
 
         viewModel.applyDietBreak(context: context)
@@ -175,7 +175,7 @@ final class DashboardViewModelTests: XCTestCase {
 
     func testApplyDietBreakKeepsAlertOnSaveFailure() throws {
         let profile = try makeProfileWithPlateauWeighIns()
-        viewModel.loadToday(context: context, activeUserId: profile.id.uuidString)
+        viewModel.loadToday(context: context)
         XCTAssertTrue(viewModel.showPlateauAlert)
 
         let originalTarget = profile.dailyCalorieTarget
@@ -204,7 +204,7 @@ final class DashboardViewModelTests: XCTestCase {
         context.insert(profile)
         try context.save()
 
-        viewModel.loadToday(context: context, activeUserId: profile.id.uuidString)
+        viewModel.loadToday(context: context)
         viewModel.showPlateauAlert = true
 
         viewModel.applySmallReduction(context: context)
@@ -223,7 +223,7 @@ final class DashboardViewModelTests: XCTestCase {
         context.insert(profile)
         try context.save()
 
-        viewModel.loadToday(context: context, activeUserId: profile.id.uuidString)
+        viewModel.loadToday(context: context)
         viewModel.showPlateauAlert = true
 
         viewModel.dismissPlateauAlert()

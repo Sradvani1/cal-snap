@@ -4,7 +4,6 @@ import SwiftData
 struct AnalyticsView: View {
     @Environment(AppContainer.self) private var appContainer
     @Environment(\.modelContext) private var modelContext
-    @AppStorage(AppStorageKey.activeUserId) private var activeUserId = ""
     @AppStorage(AppStorageKey.profileDataRevision) private var profileDataRevision = 0
 
     @State private var viewModel: AnalyticsViewModel?
@@ -19,7 +18,7 @@ struct AnalyticsView: View {
     @State private var weighInSheetContext: WeighInSheetContext?
 
     private var reloadToken: String {
-        "\(activeUserId)-\(selectedRange.displayLabel)-\(customRangeStart.timeIntervalSince1970)-\(customRangeEnd.timeIntervalSince1970)"
+        "\(selectedRange.displayLabel)-\(customRangeStart.timeIntervalSince1970)-\(customRangeEnd.timeIntervalSince1970)-\(profileDataRevision)"
     }
 
     var body: some View {
@@ -31,15 +30,6 @@ struct AnalyticsView: View {
                         selectedRange: $selectedRange,
                         showCustomRangeSheet: $showCustomRangeSheet
                     )
-
-                    if viewModel.profiles.count > 1 {
-                        Picker("Profile", selection: profileSelection) {
-                            ForEach(viewModel.profiles, id: \.id) { profile in
-                                Text(profile.name).tag(profile.id.uuidString)
-                            }
-                        }
-                        .pickerStyle(.segmented)
-                    }
 
                     if let error = viewModel.loadError {
                         Text(error)
@@ -160,16 +150,6 @@ struct AnalyticsView: View {
         }
     }
 
-    private var profileSelection: Binding<String> {
-        Binding(
-            get: { activeUserId },
-            set: { newValue in
-                activeUserId = newValue
-                clearInsight()
-            }
-        )
-    }
-
     private func clearInsight() {
         viewModel?.aiInsightText = nil
         viewModel?.insightError = nil
@@ -188,7 +168,7 @@ struct AnalyticsView: View {
     private func reloadAnalytics(bumpWeightReload: Bool = false) {
         guard let viewModel else { return }
         viewModel.selectedRange = selectedRange
-        viewModel.load(context: modelContext, activeUserId: activeUserId)
+        viewModel.load(context: modelContext)
         refreshWeightProgressViewModel(bumpReload: bumpWeightReload)
     }
 

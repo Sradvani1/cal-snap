@@ -133,7 +133,7 @@ final class WeighInTests: XCTestCase {
             mealRepository: MealRepository(),
             weighInRepository: weighInRepository
         )
-        viewModel.loadToday(context: context, activeUserId: profile.id.uuidString)
+        viewModel.loadToday(context: context)
 
         XCTAssertEqual(viewModel.plateauWeighIns.count, 3)
         XCTAssertTrue(NutritionCalculator.isOnPlateau(weighIns: viewModel.plateauWeighIns))

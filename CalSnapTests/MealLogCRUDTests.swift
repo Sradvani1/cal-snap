@@ -71,7 +71,7 @@ final class MealLogCRUDTests: XCTestCase {
         context.insert(lunch)
         try context.save()
 
-        dashboardViewModel.loadToday(context: context, activeUserId: userId.uuidString)
+        dashboardViewModel.loadToday(context: context)
         XCTAssertEqual(dashboardViewModel.todaysCalories, 1500)
         XCTAssertEqual(dashboardViewModel.todaysFiberG, 9, accuracy: 0.01)
 
@@ -86,7 +86,7 @@ final class MealLogCRUDTests: XCTestCase {
         let remainingMeals = try context.fetch(FetchDescriptor<MealEntry>())
         XCTAssertEqual(remainingMeals.count, 1)
 
-        dashboardViewModel.loadToday(context: context, activeUserId: userId.uuidString)
+        dashboardViewModel.loadToday(context: context)
         XCTAssertEqual(dashboardViewModel.todaysCalories, 700)
         XCTAssertEqual(dashboardViewModel.todaysProteinG, 35, accuracy: 0.01)
         XCTAssertEqual(dashboardViewModel.todaysFiberG, 4, accuracy: 0.01)
@@ -123,7 +123,7 @@ final class MealLogCRUDTests: XCTestCase {
         let originalId = meal.id
         let originalTimestamp = meal.timestamp
 
-        dashboardViewModel.loadToday(context: context, activeUserId: userId.uuidString)
+        dashboardViewModel.loadToday(context: context)
         XCTAssertEqual(dashboardViewModel.todaysCalories, 400)
 
         let persistedMeal = try XCTUnwrap(try mealRepository.fetchMeal(id: meal.id, context: context))
@@ -132,7 +132,7 @@ final class MealLogCRUDTests: XCTestCase {
 
         try await scannerViewModel.updateMeal(context: context)
 
-        dashboardViewModel.loadToday(context: context, activeUserId: userId.uuidString)
+        dashboardViewModel.loadToday(context: context)
         XCTAssertEqual(dashboardViewModel.todaysCalories, 800)
         XCTAssertEqual(dashboardViewModel.todaysProteinG, 60, accuracy: 0.01)
 

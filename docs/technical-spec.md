@@ -800,13 +800,15 @@ struct CalSnapApp: App {
 
 ### PR 2: User Profile & Onboarding Flow
 
-**Goal:** Complete onboarding flow for first-time launch. Creates and persists UserProfile. Handles dual-user setup.
+**Product direction:** One install = one person. Local-only storage, no auth, no in-app profile switching. See [`PR-single-user-local-only-addendum.md`](implementation/PR-single-user-local-only-addendum.md).
+
+**Goal:** Complete onboarding flow for first-time launch. Creates and persists exactly one `UserProfile`.
 
 **Feature: Onboarding (multi-step form)**
 
 Screen sequence:
-1. **Welcome** — App name, tagline ("Eat smart. Lose weight. No obsession."), two profile name inputs ("Your name" + "Partner's name" — partner is optional)
-2. **Profile Setup (per user)** — Name, sex picker, date of birth (date picker, 18–90 years), height (ft/in picker with cm toggle), current weight (lbs/kg toggle)
+1. **Welcome** — App name, tagline ("Eat smart. Lose weight. No obsession."), brief on-device/local-storage note (no name fields)
+2. **Profile Setup** — Sex picker, date of birth (date picker, 18–90 years), height (ft/in picker with cm toggle), current weight (lbs/kg toggle). No required display name.
 3. **Goal Setup** — Goal weight, target date (date picker, 2 weeks minimum from today, 2 years maximum), activity level (card-style picker with description and icon per level)
 4. **Calorie Target Preview** — Shows calculated TDEE, recommended deficit, daily calorie target, macro targets in a summary card. Science blurb: "This estimate has a natural ±15% variance. Your real number reveals itself over 2–3 weeks of tracking." Deficit slider (250–500, with 750 unlockable via toggle + acknowledgment alert)
 5. **HealthKit Permission** — Request HealthKit authorization with brief explanation
@@ -819,9 +821,7 @@ Screen sequence:
 @Observable
 class OnboardingViewModel {
     var currentStep: OnboardingStep = .welcome
-    var profileA = ProfileDraft()
-    var profileB = ProfileDraft()        // optional second user
-    var activeProfile: ProfileDraft = .init()
+    var profileDraft = ProfileDraft()
     var calculatedTDEE: Int = 0
     var calculatedTarget: Int = 0
     var calculatedDeficit: Int = 350
@@ -829,12 +829,12 @@ class OnboardingViewModel {
     var isCalculating: Bool = false
     
     func calculateTargets() { ... }      // calls NutritionCalculator
-    func saveProfiles(context: ModelContext) throws { ... }
+    func saveProfile(context: ModelContext) throws { ... }
     func testGeminiKey(_ key: String) async -> Bool { ... }
 }
 
 struct ProfileDraft {
-    var name: String = ""
+    var name: String = ""                // optional; may be set later in Settings
     var sex: BiologicalSex = .male
     var dateOfBirth: Date = Calendar.current.date(byAdding: .year, value: -35, to: Date())!
     var heightCm: Double = 175
@@ -847,13 +847,14 @@ struct ProfileDraft {
 ```
 
 **Test requirements:**
-- `testOnboardingValidation()` — blank name prevents advance
+- `testOnboardingValidation()` — profile setup advances without a display name
 - `testGoalDateMinimum()` — date < 2 weeks from today is rejected
 - `testProfilePersistence()` — ProfileDraft → UserProfile → SwiftData round-trip
+- `testPrimaryProfileResolution()` — earliest `createdAt` wins when multiple profiles exist (legacy stores)
 
 **Acceptance criteria:**
 - Full onboarding flow navigable on iPhone simulator
-- UserProfile(s) persisted to SwiftData on completion
+- UserProfile persisted to SwiftData on completion
 - HealthKit authorization request fires on step 5
 - Gemini API key stored in Keychain, not UserDefaults
 - App skips onboarding on second launch if profile exists
@@ -867,8 +868,7 @@ struct ProfileDraft {
 **Layout: `DashboardView`**
 
 ```
-[Profile Switcher — top right, avatar + name]
-[Greeting + date]
+[Greeting ("Today" when no display name, or time-of-day + name) + date]
 
 [CalorieRingCard]
   ├── Large circular progress ring (consumed / target)
@@ -914,11 +914,10 @@ class DashboardViewModel {
     
     func loadToday(context: ModelContext) { ... }
     func checkForPlateau() { ... }
-    func switchUser(to profile: UserProfile) { ... }
 }
 ```
 
-**Profile Switcher:** A persistent header control showing the active user's name/initials avatar. Tapping reveals the second profile (if it exists). Profile state stored in `@AppStorage("activeUserId")`.
+**Header:** Greeting line uses `"Today"` when display name is empty; otherwise time-of-day greeting plus optional display name from Settings.
 
 **Plateau Alert:** When `NutritionCalculator.isOnPlateau(weighIns:)` returns true, present options via `.sheet(item: $plateauContext)` (enum or struct conforming to `Identifiable`):
 1. Diet Break — sets a temporary 14-day maintenance mode (target = TDEE, no deficit)
@@ -933,7 +932,7 @@ class DashboardViewModel {
 **Acceptance criteria:**
 - Dashboard renders with real data from onboarding-created profile
 - Calorie ring animates on load
-- Profile switcher functional with 2 users
+- Dashboard renders with data from the single persisted profile (no profile switcher)
 - FAB navigates to MealScannerView (stub OK in this PR)
 - Plateau alert fires when detected
 
@@ -1230,9 +1229,8 @@ Build a summary prompt from aggregated stats (no raw food data sent — only agg
 - Macro target customization (sliders for protein/carbs/fat %, with validation that sums to 100%)
 - Minimum calorie floor display (read-only, for transparency)
 
-**Second User**
-- Add partner profile (same onboarding flow, abbreviated)
-- Remove partner profile (with data deletion confirmation)
+**Display name (optional)**
+- Optional display name field in Settings (used for greetings and export metadata; may be left blank)
 
 **API Keys**
 - Gemini API key — masked display, edit button, test button
@@ -1253,8 +1251,7 @@ Build a summary prompt from aggregated stats (no raw food data sent — only agg
 
 **Data**
 - Export all data as CSV (generates file with MealEntry + WeighIn data, shares via UIActivityViewController)
-- Delete all my data (confirmation alert → wipes SwiftData for active user)
-- Delete all data for both users
+- Delete all my data (confirmation alert → wipes SwiftData for the primary profile and related AppStorage keys)
 
 **About**
 - App version
@@ -1269,7 +1266,8 @@ Build a summary prompt from aggregated stats (no raw food data sent — only agg
 - All profile edits persist and propagate to dashboard
 - API key changes take effect immediately (no restart required)
 - CSV export generates correctly and shares
-- Data deletion wipes only the targeted user's records
+- `testEmptyDisplayNameIsValidAndPersists()` — blank display name saves and reloads from Settings
+- Data deletion wipes the primary user's records
 
 ***
 

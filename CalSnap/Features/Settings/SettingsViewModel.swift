@@ -5,7 +5,6 @@ import SwiftUI
 @MainActor
 @Observable
 final class SettingsViewModel {
-    var profiles: [UserProfile] = []
     var activeProfile: UserProfile?
     var draft = ProfileDraft()
     var currentWeightKg: Double = 0
@@ -66,15 +65,6 @@ final class SettingsViewModel {
         self.notificationManager = notificationManager
     }
 
-    var hasSecondProfile: Bool {
-        profiles.count > 1
-    }
-
-    var partnerProfile: UserProfile? {
-        guard let activeProfile else { return nil }
-        return profiles.first { $0.id != activeProfile.id }
-    }
-
     var macrosAreValid: Bool {
         ProfileUpdateService.macroPercentsAreValid(
             protein: macroProteinPct,
@@ -84,17 +74,13 @@ final class SettingsViewModel {
     }
 
     var canSaveProfile: Bool {
-        !draft.trimmedName.isEmpty
-            && draft.isDateOfBirthValid()
+        draft.isDateOfBirthValid()
             && draft.isGoalTargetDateValid()
             && macrosAreValid
             && !isSaving
     }
 
     var profileValidationMessage: String? {
-        if draft.trimmedName.isEmpty {
-            return "Enter a name to save."
-        }
         if !draft.isDateOfBirthValid() {
             return "Age must be between \(AppConstants.Onboarding.minAgeYears) and \(AppConstants.Onboarding.maxAgeYears)."
         }
@@ -107,11 +93,10 @@ final class SettingsViewModel {
         return nil
     }
 
-    func load(context: ModelContext, activeUserId: String) {
+    func load(context: ModelContext) {
         loadError = nil
         do {
-            profiles = try userProfileRepository.fetchAll(context: context)
-            activeProfile = resolveActiveProfile(from: profiles, activeUserId: activeUserId)
+            activeProfile = try userProfileRepository.fetchPrimaryProfile(context: context)
             guard let profile = activeProfile else { return }
 
             draft = profileDraft(from: profile)
@@ -354,29 +339,8 @@ final class SettingsViewModel {
         return url
     }
 
-    func deleteActiveUserData(context: ModelContext) throws {
-        guard let profile = activeProfile else { return }
-        try UserDataDeletionService.deleteUserData(
-            userId: profile.id,
-            userProfileRepository: userProfileRepository,
-            notificationManager: notificationManager,
-            context: context
-        )
-        AppStorageKey.bumpProfileDataRevision()
-    }
-
     func deleteAllUserData(context: ModelContext) throws {
         try UserDataDeletionService.deleteAllUserData(
-            userProfileRepository: userProfileRepository,
-            notificationManager: notificationManager,
-            context: context
-        )
-        AppStorageKey.bumpProfileDataRevision()
-    }
-
-    func deletePartnerData(context: ModelContext, partnerId: UUID) throws {
-        try UserDataDeletionService.deleteUserData(
-            userId: partnerId,
             userProfileRepository: userProfileRepository,
             notificationManager: notificationManager,
             context: context
@@ -420,14 +384,6 @@ final class SettingsViewModel {
         draft.useLbsGoalWeight = useLbsForWeight
         draft.useImperialHeight = useImperialForHeight
         return draft
-    }
-
-    private func resolveActiveProfile(from profiles: [UserProfile], activeUserId: String) -> UserProfile? {
-        if let id = UUID(uuidString: activeUserId),
-           let match = profiles.first(where: { $0.id == id }) {
-            return match
-        }
-        return profiles.first
     }
 }
 

@@ -9,10 +9,8 @@ struct DashboardContentView: View {
     @Binding var navigationPath: [DashboardRoute]
     @Binding var weighInSheetContext: WeighInSheetContext?
 
-    let activeUserId: String
     let weightProgressReloadTrigger: Int
     let mealDetailReloadToken: Int
-    let onProfileSwitch: (UserProfile) -> Void
     let onReload: () -> Void
     let onDeleteMeal: (MealEntry) -> Void
     let onWeighInSheetDismissed: () -> Void
@@ -119,11 +117,15 @@ struct DashboardContentView: View {
                         navigationPath: $navigationPath
                     )
                 case .mealScanner(let scannerRoute):
-                    MealScannerView(
-                        activeUserId: activeUserId,
-                        route: scannerRoute,
-                        onMealSaved: onReload
-                    )
+                    if let userId = viewModel.activeProfile?.id {
+                        MealScannerView(
+                            userId: userId,
+                            route: scannerRoute,
+                            onMealSaved: onReload
+                        )
+                    } else {
+                        ContentUnavailableView("No profile", systemImage: "person.crop.circle")
+                    }
                 case .weightProgress:
                     if let profile = viewModel.activeProfile {
                         WeightProgressView(
@@ -138,15 +140,6 @@ struct DashboardContentView: View {
                     } else {
                         ContentUnavailableView("No profile", systemImage: "person.crop.circle")
                     }
-                }
-            }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    ProfileSwitcherView(
-                        profiles: viewModel.profiles,
-                        activeProfile: viewModel.activeProfile,
-                        onSwitch: onProfileSwitch
-                    )
                 }
             }
             .sheet(isPresented: Bindable(viewModel).showPlateauAlert) {
@@ -185,7 +178,8 @@ struct DashboardContentView: View {
 
     private func presentWeighInSheet() {
         guard let profile = viewModel.activeProfile else { return }
-        let currentWeight = viewModel.latestWeighInKg ?? profile.startingWeightKg
+        let currentWeight = viewModel.latestWeighInKg(for: profile.id, context: modelContext)
+            ?? profile.startingWeightKg
         weighInSheetContext = WeighInSheetContext(
             id: profile.id,
             profile: profile,
@@ -218,16 +212,13 @@ struct DashboardContentView: View {
         weighInRepository: WeighInRepository()
     )
     viewModel.activeProfile = profile
-    viewModel.profiles = [profile]
 
     return DashboardContentView(
         viewModel: viewModel,
         navigationPath: $path,
         weighInSheetContext: $sheetContext,
-        activeUserId: profile.id.uuidString,
         weightProgressReloadTrigger: 0,
         mealDetailReloadToken: 0,
-        onProfileSwitch: { _ in },
         onReload: {},
         onDeleteMeal: { _ in },
         onWeighInSheetDismissed: {},

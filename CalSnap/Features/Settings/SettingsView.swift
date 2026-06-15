@@ -4,14 +4,10 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(AppContainer.self) private var appContainer
     @Environment(\.modelContext) private var modelContext
-    @AppStorage(AppStorageKey.activeUserId) private var activeUserId = ""
     @AppStorage(AppStorageKey.profileDataRevision) private var profileDataRevision = 0
 
     @State private var viewModel: SettingsViewModel?
-    @State private var showAddPartner = false
-    @State private var showDeleteActiveUserConfirmation = false
-    @State private var showDeleteAllConfirmation = false
-    @State private var showRemovePartnerConfirmation = false
+    @State private var showDeleteConfirmation = false
     @State private var showExportSheet = false
     @State private var exportShareURL: URL?
 
@@ -21,27 +17,11 @@ struct SettingsView: View {
     @State private var heightInches = 9
     @State private var heightCmDisplay = 175.0
 
-    private var reloadToken: String {
-        "\(activeUserId)-\(profileDataRevision)"
-    }
-
     var body: some View {
         Form {
             if let viewModel {
-                if viewModel.profiles.count > 1 {
-                    Section("Profile") {
-                        Picker("Editing", selection: profileSelection) {
-                            ForEach(viewModel.profiles, id: \.id) { profile in
-                                Text(profile.name).tag(profile.id.uuidString)
-                            }
-                        }
-                        .pickerStyle(.segmented)
-                    }
-                }
-
                 profileSection(viewModel: viewModel)
                 macrosSection(viewModel: viewModel)
-                secondUserSection(viewModel: viewModel)
                 apiKeysSection(viewModel: viewModel)
                 healthSection(viewModel: viewModel)
                 notificationsSection(viewModel: viewModel)
@@ -55,7 +35,7 @@ struct SettingsView: View {
             }
         }
         .navigationTitle("Settings")
-        .task(id: reloadToken) {
+        .task(id: profileDataRevision) {
             if viewModel == nil {
                 viewModel = SettingsViewModel(
                     userProfileRepository: appContainer.userProfileRepository,
@@ -66,44 +46,21 @@ struct SettingsView: View {
                     notificationManager: appContainer.notificationManager
                 )
             }
-            viewModel?.load(context: modelContext, activeUserId: activeUserId)
+            viewModel?.load(context: modelContext)
             syncDisplayFieldsFromViewModel()
-        }
-        .sheet(isPresented: $showAddPartner) {
-            AddPartnerFlowView {
-                reloadSettings()
-            }
         }
         .sheet(isPresented: $showExportSheet) {
             if let exportShareURL {
                 ShareSheet(items: [exportShareURL])
             }
         }
-        .alert("Delete all your data?", isPresented: $showDeleteActiveUserConfirmation) {
+        .alert("Delete all your data?", isPresented: $showDeleteConfirmation) {
             Button("Delete", role: .destructive) {
-                deleteActiveUserData()
+                deleteAllData()
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("This permanently removes meals and weigh-ins for the selected profile.")
-        }
-        .alert("Delete all data for both users?", isPresented: $showDeleteAllConfirmation) {
-            Button("Delete All", role: .destructive) {
-                deleteAllUserData()
-            }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("This permanently removes all profiles, meals, and weigh-ins.")
-        }
-        .alert("Remove partner?", isPresented: $showRemovePartnerConfirmation) {
-            Button("Remove", role: .destructive) {
-                removePartner()
-            }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            if let partner = viewModel?.partnerProfile {
-                Text("This deletes \(partner.name)'s profile and all associated data.")
-            }
+            Text("This permanently removes your profile, meals, and weigh-ins from this device.")
         }
     }
 
@@ -111,11 +68,14 @@ struct SettingsView: View {
 
     @ViewBuilder
     private func profileSection(viewModel: SettingsViewModel) -> some View {
-        Section("Profile") {
-            TextField("Name", text: Binding(
+        Section {
+            TextField("Display name (optional)", text: Binding(
                 get: { viewModel.draft.name },
                 set: { newValue in viewModel.updateDraft { $0.name = newValue } }
             ))
+            Text("Used for greetings and export metadata. Leave blank for neutral copy.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
 
             Picker("Sex", selection: Binding(
                 get: { viewModel.draft.sex },
@@ -220,6 +180,8 @@ struct SettingsView: View {
                 Task { await viewModel.saveProfile(context: modelContext) }
             }
             .disabled(!viewModel.canSaveProfile)
+        } header: {
+            Text("Profile")
         }
     }
 
@@ -265,22 +227,6 @@ struct SettingsView: View {
     }
 
     @ViewBuilder
-    private func secondUserSection(viewModel: SettingsViewModel) -> some View {
-        Section("Second User") {
-            if viewModel.hasSecondProfile, let partner = viewModel.partnerProfile {
-                Text("Partner: \(partner.name)")
-                Button("Remove Partner", role: .destructive) {
-                    showRemovePartnerConfirmation = true
-                }
-            } else {
-                Button("Add Partner") {
-                    showAddPartner = true
-                }
-            }
-        }
-    }
-
-    @ViewBuilder
     private func apiKeysSection(viewModel: SettingsViewModel) -> some View {
         @Bindable var vm = viewModel
         Section("API Keys") {
@@ -317,6 +263,7 @@ struct SettingsView: View {
         @Bindable var vm = viewModel
         Section("Health & Integrations") {
             Toggle("Write meals and weight to Health", isOn: $vm.healthKitWritesEnabled)
+                .accessibilityHint("When enabled, logged meals and weigh-ins sync to Apple Health")
                 .onChange(of: vm.healthKitWritesEnabled) { _, enabled in
                     vm.persistHealthKitPreferences()
                     if enabled {
@@ -324,6 +271,7 @@ struct SettingsView: View {
                     }
                 }
             Toggle("Read weight from Health", isOn: $vm.healthKitWeightReadsEnabled)
+                .accessibilityHint("When enabled, CalSnap can import body weight from Apple Health")
                 .onChange(of: vm.healthKitWeightReadsEnabled) { _, enabled in
                     vm.persistHealthKitPreferences()
                     if enabled {
@@ -334,6 +282,7 @@ struct SettingsView: View {
                 Task { await viewModel.syncHealthKitWeight(context: modelContext) }
             }
             .disabled(viewModel.isSyncing)
+            .accessibilityHint("Imports the latest body weight from Apple Health")
             if let message = viewModel.syncMessage {
                 Text(message)
                     .font(.caption)
@@ -407,14 +356,11 @@ struct SettingsView: View {
             Button("Export CSV") {
                 exportCSV()
             }
+            .accessibilityHint("Creates a CSV file with meals and weigh-ins to share")
             Button("Delete All My Data", role: .destructive) {
-                showDeleteActiveUserConfirmation = true
+                showDeleteConfirmation = true
             }
-            if viewModel.hasSecondProfile {
-                Button("Delete All Data for Both Users", role: .destructive) {
-                    showDeleteAllConfirmation = true
-                }
-            }
+            .accessibilityHint("Permanently deletes your local profile, meals, and weigh-ins")
         }
     }
 
@@ -430,15 +376,6 @@ struct SettingsView: View {
     }
 
     // MARK: - Helpers
-
-    private var profileSelection: Binding<String> {
-        Binding(
-            get: { activeUserId },
-            set: { newValue in
-                activeUserId = newValue
-            }
-        )
-    }
 
     private func reminderTimeBinding(viewModel: SettingsViewModel) -> Binding<Date> {
         Binding(
@@ -479,11 +416,6 @@ struct SettingsView: View {
         }
     }
 
-    private func reloadSettings() {
-        viewModel?.load(context: modelContext, activeUserId: activeUserId)
-        syncDisplayFieldsFromViewModel()
-    }
-
     private func saveGeminiAPIKey(viewModel: SettingsViewModel) {
         do {
             try viewModel.saveGeminiAPIKey()
@@ -510,41 +442,10 @@ struct SettingsView: View {
         }
     }
 
-    private func deleteActiveUserData() {
-        guard let viewModel else { return }
-        let deletedId = viewModel.activeProfile?.id
-        do {
-            try viewModel.deleteActiveUserData(context: modelContext)
-            if deletedId?.uuidString == activeUserId {
-                let remaining = try appContainer.userProfileRepository.fetchAll(context: modelContext).first
-                activeUserId = remaining?.id.uuidString ?? ""
-            }
-            reloadSettings()
-        } catch {
-            viewModel.saveError = error.localizedDescription
-        }
-    }
-
-    private func deleteAllUserData() {
+    private func deleteAllData() {
         guard let viewModel else { return }
         do {
             try viewModel.deleteAllUserData(context: modelContext)
-            activeUserId = ""
-        } catch {
-            viewModel.saveError = error.localizedDescription
-        }
-    }
-
-    private func removePartner() {
-        guard let viewModel, let partner = viewModel.partnerProfile else { return }
-        do {
-            let partnerId = partner.id
-            if partnerId.uuidString == activeUserId,
-               let remaining = viewModel.profiles.first(where: { $0.id != partnerId }) {
-                activeUserId = remaining.id.uuidString
-            }
-            try viewModel.deletePartnerData(context: modelContext, partnerId: partnerId)
-            reloadSettings()
         } catch {
             viewModel.saveError = error.localizedDescription
         }

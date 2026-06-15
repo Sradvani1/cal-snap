@@ -12,7 +12,7 @@ struct CalorieTargetPreviewStepView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Calorie target for \(viewModel.activeProfile.trimmedName)")
+            Text("Your calorie target")
                 .font(.title2.bold())
 
             GroupBox {
@@ -41,7 +41,7 @@ struct CalorieTargetPreviewStepView: View {
             }
 
             VStack(alignment: .leading, spacing: 8) {
-                Text("Daily deficit: \(viewModel.activeProfile.requestedDeficit) kcal")
+                Text("Daily deficit: \(viewModel.profileDraft.requestedDeficit) kcal")
                     .font(.headline)
                 Slider(
                     value: viewModel.deficitSliderBinding(),

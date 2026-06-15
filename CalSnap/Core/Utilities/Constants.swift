@@ -1,7 +1,6 @@
 import Foundation
 
 enum AppStorageKey {
-    static let activeUserId = "activeUserId"
     static let profileDataRevision = "profileDataRevision"
     static let healthKitWritesEnabled = "healthKitWritesEnabled"
     static let healthKitWeightReadsEnabled = "healthKitWeightReadsEnabled"

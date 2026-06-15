@@ -4,11 +4,9 @@ import SwiftData
 struct DashboardView: View {
     @Environment(AppContainer.self) private var appContainer
     @Environment(\.modelContext) private var modelContext
-    @AppStorage(AppStorageKey.activeUserId) private var activeUserId = ""
     @AppStorage(AppStorageKey.profileDataRevision) private var profileDataRevision = 0
     @State private var viewModel: DashboardViewModel?
     @State private var navigationPath: [DashboardRoute] = []
-    @State private var suppressActiveUserIdReload = false
     @State private var mealPendingDelete: MealEntry?
     @State private var showDeleteConfirmation = false
     @State private var weighInSheetContext: WeighInSheetContext?
@@ -23,12 +21,8 @@ struct DashboardView: View {
                     viewModel: viewModel,
                     navigationPath: $navigationPath,
                     weighInSheetContext: $weighInSheetContext,
-                    activeUserId: activeUserId,
                     weightProgressReloadTrigger: weightProgressReloadTrigger,
                     mealDetailReloadToken: mealDetailReloadToken,
-                    onProfileSwitch: { profile in
-                        activeUserId = profile.id.uuidString
-                    },
                     onReload: reloadDashboard,
                     onDeleteMeal: { meal in
                         mealPendingDelete = meal
@@ -65,15 +59,6 @@ struct DashboardView: View {
             scheduleReminderIfNeeded()
             wireNotificationsIfNeeded()
         }
-        .onChange(of: activeUserId) { _, _ in
-            guard !suppressActiveUserIdReload else {
-                suppressActiveUserIdReload = false
-                return
-            }
-            navigationPath = []
-            reloadDashboard()
-            scheduleReminderIfNeeded()
-        }
         .onChange(of: navigationPath.count) { oldCount, newCount in
             if newCount < oldCount {
                 reloadDashboard()
@@ -105,29 +90,16 @@ struct DashboardView: View {
     private func wireNotificationsIfNeeded() {
         guard !didWireNotifications, let vm = viewModel else { return }
         didWireNotifications = true
-        appContainer.notificationManager.onWeighInReminderTapped = { userId in
-            presentWeighInSheet(for: userId, using: vm)
+        appContainer.notificationManager.onWeighInReminderTapped = { _ in
+            presentWeighInSheet(using: vm)
         }
-        if let pending = appContainer.notificationManager.consumePendingWeighInRequest() {
-            presentWeighInSheet(for: pending.userId, using: vm)
+        if appContainer.notificationManager.consumePendingWeighInRequest() != nil {
+            presentWeighInSheet(using: vm)
         }
     }
 
-    private func presentWeighInSheet(for userId: UUID?, using viewModel: DashboardViewModel) {
-        let resolvedUserId = userId ?? viewModel.activeProfile?.id
-        guard let resolvedUserId else { return }
-
-        if resolvedUserId.uuidString != activeUserId {
-            navigationPath = []
-            suppressActiveUserIdReload = true
-            activeUserId = resolvedUserId.uuidString
-            viewModel.loadToday(context: modelContext, activeUserId: activeUserId)
-        }
-
-        guard let profile = viewModel.profiles.first(where: { $0.id == resolvedUserId })
-            ?? viewModel.activeProfile else {
-            return
-        }
+    private func presentWeighInSheet(using viewModel: DashboardViewModel) {
+        guard let profile = viewModel.activeProfile else { return }
 
         let currentWeight = viewModel.latestWeighInKg(for: profile.id, context: modelContext)
             ?? profile.startingWeightKg
@@ -140,28 +112,18 @@ struct DashboardView: View {
     }
 
     private func reloadDashboard() {
-        viewModel?.loadToday(context: modelContext, activeUserId: activeUserId)
+        viewModel?.loadToday(context: modelContext)
         mealDetailReloadToken += 1
-        syncActiveUserIdIfNeeded()
     }
 
     private func scheduleReminderIfNeeded() {
-        guard let profiles = viewModel?.profiles, !profiles.isEmpty else { return }
+        guard let profile = viewModel?.activeProfile else { return }
         Task {
-            for profile in profiles {
-                await appContainer.notificationManager.scheduleWeighInReminder(
-                    userId: profile.id,
-                    name: profile.name
-                )
-            }
+            await appContainer.notificationManager.scheduleWeighInReminder(
+                userId: profile.id,
+                name: profile.name
+            )
         }
-    }
-
-    private func syncActiveUserIdIfNeeded() {
-        guard activeUserId.isEmpty,
-              let profileId = viewModel?.activeProfile?.id.uuidString else { return }
-        suppressActiveUserIdReload = true
-        activeUserId = profileId
     }
 }
 

@@ -41,6 +41,7 @@
 		A1B2C3D418234567890ABCDE /* GeminiTestIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C418234567890ABCDE /* GeminiTestIndicatorView.swift */; };
 		A1B2C3D412234567890ABCDE /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C412234567890ABCDE /* DashboardView.swift */; };
 		A1B2C3D413234567890ABCDE /* OnboardingViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C413234567890ABCDE /* OnboardingViewModelTests.swift */; };
+		SU1B001234567890ABCDEF01 /* PrimaryProfileResolutionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SU1F001234567890ABCDEF01 /* PrimaryProfileResolutionTests.swift */; };
 		A1B2C3D414234567890ABCDE /* GoogleGenerativeAI in Frameworks */ = {isa = PBXBuildFile; productRef = P2B3C4D5E6F7890123456789A /* GoogleGenerativeAI */; };
 		A8049099DF60B3369E8D2C25 /* MealEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48914D12FBF26E0081590A8B /* MealEntry.swift */; };
 		B18D8478722A4DC5C6D169D2 /* NutritionCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F453EDE12C11B104F814B4D /* NutritionCalculator.swift */; };
@@ -52,7 +53,6 @@
 		PR3B001234567890ABCDEF01 /* MealRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR3F001234567890ABCDEF01 /* MealRepository.swift */; };
 		PR3B002234567890ABCDEF01 /* WeighInRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR3F002234567890ABCDEF01 /* WeighInRepository.swift */; };
 		PR3B003234567890ABCDEF01 /* DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR3F003234567890ABCDEF01 /* DashboardViewModel.swift */; };
-		PR3B004234567890ABCDEF01 /* ProfileSwitcherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR3F004234567890ABCDEF01 /* ProfileSwitcherView.swift */; };
 		PR3B005234567890ABCDEF01 /* CalorieRingCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR3F005234567890ABCDEF01 /* CalorieRingCard.swift */; };
 		PR3B006234567890ABCDEF01 /* MacroBarCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR3F006234567890ABCDEF01 /* MacroBarCard.swift */; };
 		PR3B010234567890ABCDEF01 /* DashboardContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR3F010234567890ABCDEF01 /* DashboardContentView.swift */; };
@@ -118,7 +118,6 @@
 		PR8B004234567890ABCDEF01 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR8F004234567890ABCDEF01 /* ShareSheet.swift */; };
 		PR8B005234567890ABCDEF01 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR8F005234567890ABCDEF01 /* SettingsView.swift */; };
 		PR8B006234567890ABCDEF01 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR8F006234567890ABCDEF01 /* SettingsViewModel.swift */; };
-		PR8B007234567890ABCDEF01 /* AddPartnerFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR8F007234567890ABCDEF01 /* AddPartnerFlowView.swift */; };
 		PR8B008234567890ABCDEF01 /* SettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR8F008234567890ABCDEF01 /* SettingsTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -181,7 +180,7 @@
 		PR3F001234567890ABCDEF01 /* MealRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealRepository.swift; sourceTree = "<group>"; };
 		PR3F002234567890ABCDEF01 /* WeighInRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeighInRepository.swift; sourceTree = "<group>"; };
 		PR3F003234567890ABCDEF01 /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
-		PR3F004234567890ABCDEF01 /* ProfileSwitcherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSwitcherView.swift; sourceTree = "<group>"; };
+		SU1F001234567890ABCDEF01 /* PrimaryProfileResolutionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryProfileResolutionTests.swift; sourceTree = "<group>"; };
 		PR3F005234567890ABCDEF01 /* CalorieRingCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalorieRingCard.swift; sourceTree = "<group>"; };
 		PR3F006234567890ABCDEF01 /* MacroBarCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacroBarCard.swift; sourceTree = "<group>"; };
 		PR3F010234567890ABCDEF01 /* DashboardContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardContentView.swift; sourceTree = "<group>"; };
@@ -247,7 +246,6 @@
 		PR8F004234567890ABCDEF01 /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
 		PR8F005234567890ABCDEF01 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		PR8F006234567890ABCDEF01 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
-		PR8F007234567890ABCDEF01 /* AddPartnerFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPartnerFlowView.swift; sourceTree = "<group>"; };
 		PR8F008234567890ABCDEF01 /* SettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -342,6 +340,7 @@
 				PR8F008234567890ABCDEF01 /* SettingsTests.swift */,
 				49FF607CB3770B2AAE871821 /* NutritionCalculatorTests.swift */,
 				F1E2D3C413234567890ABCDE /* OnboardingViewModelTests.swift */,
+				SU1F001234567890ABCDEF01 /* PrimaryProfileResolutionTests.swift */,
 			);
 			path = CalSnapTests;
 			sourceTree = "<group>";
@@ -419,7 +418,6 @@
 				F1E2D3C412234567890ABCDE /* DashboardView.swift */,
 				PR3F010234567890ABCDEF01 /* DashboardContentView.swift */,
 				PR3F003234567890ABCDEF01 /* DashboardViewModel.swift */,
-				PR3F004234567890ABCDEF01 /* ProfileSwitcherView.swift */,
 				PR3F005234567890ABCDEF01 /* CalorieRingCard.swift */,
 				PR3F006234567890ABCDEF01 /* MacroBarCard.swift */,
 				PR3F011234567890ABCDEF01 /* MacroBarRow.swift */,
@@ -485,7 +483,6 @@
 			children = (
 				PR8F005234567890ABCDEF01 /* SettingsView.swift */,
 				PR8F006234567890ABCDEF01 /* SettingsViewModel.swift */,
-				PR8F007234567890ABCDEF01 /* AddPartnerFlowView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -641,7 +638,6 @@
 				A1B2C3D412234567890ABCDE /* DashboardView.swift in Sources */,
 				PR3B010234567890ABCDEF01 /* DashboardContentView.swift in Sources */,
 				PR3B003234567890ABCDEF01 /* DashboardViewModel.swift in Sources */,
-				PR3B004234567890ABCDEF01 /* ProfileSwitcherView.swift in Sources */,
 				PR3B005234567890ABCDEF01 /* CalorieRingCard.swift in Sources */,
 				PR3B006234567890ABCDEF01 /* MacroBarCard.swift in Sources */,
 				PR3B011234567890ABCDEF01 /* MacroBarRow.swift in Sources */,
@@ -729,7 +725,6 @@
 				PR8B004234567890ABCDEF01 /* ShareSheet.swift in Sources */,
 				PR8B005234567890ABCDEF01 /* SettingsView.swift in Sources */,
 				PR8B006234567890ABCDEF01 /* SettingsViewModel.swift in Sources */,
-				PR8B007234567890ABCDEF01 /* AddPartnerFlowView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -748,6 +743,7 @@
 				PR1B004234567890ABCDEF01 /* MealTypeTests.swift in Sources */,
 				D101E5ADAC2C4C0EBA1B0D2E /* NutritionCalculatorTests.swift in Sources */,
 				A1B2C3D413234567890ABCDE /* OnboardingViewModelTests.swift in Sources */,
+				SU1B001234567890ABCDEF01 /* PrimaryProfileResolutionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

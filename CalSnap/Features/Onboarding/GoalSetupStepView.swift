@@ -14,28 +14,28 @@ struct GoalSetupStepView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Goals for \(viewModel.activeProfile.trimmedName)")
+            Text("Your goals")
                 .font(.title2.bold())
 
             Toggle("Use lbs for goal weight", isOn: viewModel.binding(\.useLbsGoalWeight))
-                .onChange(of: viewModel.activeProfile.useLbsGoalWeight) { _, useLbs in
+                .onChange(of: viewModel.profileDraft.useLbsGoalWeight) { _, useLbs in
                     goalWeightDisplay = useLbs
-                        ? UnitFormatters.kgToLbs(viewModel.activeProfile.goalWeightKg)
-                        : viewModel.activeProfile.goalWeightKg
+                        ? UnitFormatters.kgToLbs(viewModel.profileDraft.goalWeightKg)
+                        : viewModel.profileDraft.goalWeightKg
                 }
 
             Stepper(
                 UnitFormatters.stepperGoalWeightLabel(
                     displayValue: goalWeightDisplay,
-                    useLbs: viewModel.activeProfile.useLbsGoalWeight
+                    useLbs: viewModel.profileDraft.useLbsGoalWeight
                 ),
                 value: $goalWeightDisplay,
                 in: goalWeightRange,
-                step: viewModel.activeProfile.useLbsGoalWeight ? 1 : 0.5
+                step: viewModel.profileDraft.useLbsGoalWeight ? 1 : 0.5
             )
             .onChange(of: goalWeightDisplay) { _, newValue in
-                viewModel.updateActiveProfile { draft in
-                    draft.goalWeightKg = viewModel.activeProfile.useLbsGoalWeight
+                viewModel.updateProfileDraft { draft in
+                    draft.goalWeightKg = viewModel.profileDraft.useLbsGoalWeight
                         ? UnitFormatters.lbsToKg(newValue)
                         : newValue
                 }
@@ -53,7 +53,7 @@ struct GoalSetupStepView: View {
 
             ForEach(ActivityLevel.allCases, id: \.self) { level in
                 Button {
-                    viewModel.updateActiveProfile { $0.activityLevel = level }
+                    viewModel.updateProfileDraft { $0.activityLevel = level }
                 } label: {
                     HStack(spacing: 12) {
                         Image(systemName: level.systemImage)
@@ -68,7 +68,7 @@ struct GoalSetupStepView: View {
                                 .foregroundStyle(.secondary)
                         }
                         Spacer()
-                        if viewModel.activeProfile.activityLevel == level {
+                        if viewModel.profileDraft.activityLevel == level {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundStyle(.tint)
                         }
@@ -77,24 +77,24 @@ struct GoalSetupStepView: View {
                     .background(
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(
-                                viewModel.activeProfile.activityLevel == level ? Color.accentColor : Color.secondary.opacity(0.3),
-                                lineWidth: viewModel.activeProfile.activityLevel == level ? 2 : 1
+                                viewModel.profileDraft.activityLevel == level ? Color.accentColor : Color.secondary.opacity(0.3),
+                                lineWidth: viewModel.profileDraft.activityLevel == level ? 2 : 1
                             )
                     )
                 }
                 .buttonStyle(.plain)
-                .accessibilityAddTraits(viewModel.activeProfile.activityLevel == level ? .isSelected : [])
+                .accessibilityAddTraits(viewModel.profileDraft.activityLevel == level ? .isSelected : [])
             }
         }
         .task {
-            goalWeightDisplay = viewModel.activeProfile.useLbsGoalWeight
-                ? UnitFormatters.kgToLbs(viewModel.activeProfile.goalWeightKg)
-                : viewModel.activeProfile.goalWeightKg
+            goalWeightDisplay = viewModel.profileDraft.useLbsGoalWeight
+                ? UnitFormatters.kgToLbs(viewModel.profileDraft.goalWeightKg)
+                : viewModel.profileDraft.goalWeightKg
         }
     }
 
     private var goalWeightRange: ClosedRange<Double> {
-        viewModel.activeProfile.useLbsGoalWeight ? 80...400 : 35...180
+        viewModel.profileDraft.useLbsGoalWeight ? 80...400 : 35...180
     }
 }
 

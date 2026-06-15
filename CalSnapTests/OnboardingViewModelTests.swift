@@ -16,11 +16,17 @@ final class OnboardingViewModelTests: XCTestCase {
     }
 
     func testOnboardingValidation() {
+        viewModel.currentStep = .welcome
+        XCTAssertTrue(viewModel.canAdvance(from: .welcome))
+
         viewModel.currentStep = .profileSetup
-        viewModel.profileA.name = ""
+        viewModel.profileDraft.name = ""
+        let invalidDOB = Calendar.current.date(byAdding: .year, value: -10, to: Date.now)!
+        viewModel.profileDraft.dateOfBirth = invalidDOB
         XCTAssertFalse(viewModel.canAdvance(from: .profileSetup))
 
-        viewModel.profileA.name = "Alex"
+        let validDOB = Calendar.current.date(byAdding: .year, value: -35, to: Date.now)!
+        viewModel.profileDraft.dateOfBirth = validDOB
         XCTAssertTrue(viewModel.canAdvance(from: .profileSetup))
     }
 
@@ -40,7 +46,7 @@ final class OnboardingViewModelTests: XCTestCase {
         let repository = UserProfileRepository()
 
         var draft = ProfileDraft()
-        draft.name = "Alex"
+        draft.name = ""
         draft.weightKg = 80
         draft.heightCm = 178
         draft.goalWeightKg = 72
@@ -52,7 +58,7 @@ final class OnboardingViewModelTests: XCTestCase {
         let fetched = try repository.fetchAll(context: context)
         XCTAssertEqual(fetched.count, 1)
         let saved = try XCTUnwrap(fetched.first)
-        XCTAssertEqual(saved.name, "Alex")
+        XCTAssertEqual(saved.name, "")
         XCTAssertEqual(saved.startingWeightKg, 80, accuracy: 0.01)
         XCTAssertEqual(saved.macroTargetProteinPct, AppConstants.Nutrition.defaultMacroProteinPct, accuracy: 0.001)
         XCTAssertEqual(saved.macroTargetCarbsPct, AppConstants.Nutrition.defaultMacroCarbsPct, accuracy: 0.001)

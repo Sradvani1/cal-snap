@@ -113,4 +113,40 @@ final class SettingsTests: XCTestCase {
         XCTAssertTrue(csv.contains("78.5"))
         XCTAssertFalse(csv.contains("photoData"))
     }
+
+    @MainActor
+    func testEmptyDisplayNameIsValidAndPersists() async throws {
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try ModelContainer(for: UserProfile.self, configurations: config)
+        let context = container.mainContext
+        let repository = UserProfileRepository()
+
+        let profile = UserProfile(
+            name: "Alex",
+            dailyCalorieTarget: 2000,
+            tdee: 2300,
+            deficitKcal: 300
+        )
+        context.insert(profile)
+        try context.save()
+
+        let viewModel = SettingsViewModel(
+            userProfileRepository: repository,
+            mealRepository: MealRepository(),
+            weighInRepository: WeighInRepository(),
+            healthKitService: HealthKitService(),
+            geminiService: GeminiService(),
+            notificationManager: NotificationManager()
+        )
+        viewModel.load(context: context)
+        viewModel.updateDraft { $0.name = "" }
+
+        XCTAssertTrue(viewModel.canSaveProfile)
+        XCTAssertNil(viewModel.profileValidationMessage)
+
+        await viewModel.saveProfile(context: context)
+
+        let saved = try XCTUnwrap(repository.fetchPrimaryProfile(context: context))
+        XCTAssertEqual(saved.name, "")
+    }
 }

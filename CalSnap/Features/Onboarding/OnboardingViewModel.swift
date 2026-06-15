@@ -6,9 +6,7 @@ import SwiftUI
 @Observable
 final class OnboardingViewModel {
     var currentStep: OnboardingStep = .welcome
-    var profileA = ProfileDraft()
-    var profileB = ProfileDraft()
-    var currentProfileIndex = 0
+    var profileDraft = ProfileDraft()
 
     var calculatedTDEE = 0
     var calculatedTarget = 0
@@ -40,50 +38,26 @@ final class OnboardingViewModel {
         self.userProfileRepository = userProfileRepository
     }
 
-    var activeProfile: ProfileDraft {
-        get { currentProfileIndex == 0 ? profileA : profileB }
-        set {
-            if currentProfileIndex == 0 {
-                profileA = newValue
-            } else {
-                profileB = newValue
-            }
-        }
-    }
-
-    var activeProfileTitle: String {
-        if currentProfileIndex == 0 {
-            return profileA.trimmedName.isEmpty ? "Your profile" : profileA.trimmedName
-        }
-        return profileB.trimmedName.isEmpty ? "Partner's profile" : profileB.trimmedName
-    }
-
-    var hasPartner: Bool {
-        !profileB.trimmedName.isEmpty
-    }
-
     var progress: Double {
         Double(currentStep.rawValue + 1) / Double(OnboardingStep.allCases.count)
     }
 
-    func updateActiveProfile(_ update: (inout ProfileDraft) -> Void) {
-        var draft = activeProfile
-        update(&draft)
-        activeProfile = draft
+    func updateProfileDraft(_ update: (inout ProfileDraft) -> Void) {
+        update(&profileDraft)
     }
 
     func binding<T>(_ keyPath: WritableKeyPath<ProfileDraft, T>) -> Binding<T> {
         Binding(
-            get: { self.activeProfile[keyPath: keyPath] },
+            get: { self.profileDraft[keyPath: keyPath] },
             set: { newValue in
-                self.updateActiveProfile { $0[keyPath: keyPath] = newValue }
+                self.updateProfileDraft { $0[keyPath: keyPath] = newValue }
             }
         )
     }
 
     func deficitSliderBinding() -> Binding<Double> {
         Binding(
-            get: { Double(self.activeProfile.requestedDeficit) },
+            get: { Double(self.profileDraft.requestedDeficit) },
             set: { self.updateDeficit(Int($0)) }
         )
     }
@@ -91,11 +65,11 @@ final class OnboardingViewModel {
     func canAdvance(from step: OnboardingStep) -> Bool {
         switch step {
         case .welcome:
-            return !profileA.trimmedName.isEmpty
+            return true
         case .profileSetup:
-            return !activeProfile.trimmedName.isEmpty && validateDateOfBirth(activeProfile.dateOfBirth)
+            return validateDateOfBirth(profileDraft.dateOfBirth)
         case .goalSetup:
-            return validateGoalTargetDate(activeProfile.goalTargetDate)
+            return validateGoalTargetDate(profileDraft.goalTargetDate)
         case .caloriePreview, .healthKit, .apiKeys, .done:
             return true
         }
@@ -119,7 +93,7 @@ final class OnboardingViewModel {
     }
 
     func calculateTargets() {
-        let draft = activeProfile
+        let draft = profileDraft
         let age = NutritionCalculator.age(from: draft.dateOfBirth)
         let bmr = NutritionCalculator.bmr(
             weightKg: draft.weightKg,
@@ -150,19 +124,17 @@ final class OnboardingViewModel {
     }
 
     func updateDeficit(_ value: Int) {
-        var draft = activeProfile
         let maxAllowed = hardDeficitUnlocked
             ? AppConstants.Deficit.hardMaxDeficitKcal
             : AppConstants.Deficit.maxDeficitKcal
-        draft.requestedDeficit = min(max(value, AppConstants.Deficit.minDeficitKcal), maxAllowed)
-        activeProfile = draft
+        profileDraft.requestedDeficit = min(max(value, AppConstants.Deficit.minDeficitKcal), maxAllowed)
         calculateTargets()
     }
 
     func unlockHardDeficit() {
         hardDeficitUnlocked = true
-        if activeProfile.requestedDeficit > AppConstants.Deficit.maxDeficitKcal {
-            updateDeficit(activeProfile.requestedDeficit)
+        if profileDraft.requestedDeficit > AppConstants.Deficit.maxDeficitKcal {
+            updateDeficit(profileDraft.requestedDeficit)
         }
     }
 
@@ -183,7 +155,6 @@ final class OnboardingViewModel {
 
         switch currentStep {
         case .welcome:
-            currentProfileIndex = 0
             currentStep = .profileSetup
         case .profileSetup:
             currentStep = .goalSetup
@@ -191,17 +162,11 @@ final class OnboardingViewModel {
             currentStep = .caloriePreview
             calculateTargets()
         case .caloriePreview:
-            if currentProfileIndex == 0, hasPartner {
-                currentProfileIndex = 1
-                hardDeficitUnlocked = false
-                currentStep = .profileSetup
-            } else {
-                currentStep = .healthKit
-            }
+            currentStep = .healthKit
         case .healthKit:
             currentStep = .apiKeys
         case .apiKeys:
-            try saveProfiles(context: context)
+            try saveProfile(context: context)
             do {
                 try saveAPIKeys()
             } catch {
@@ -219,19 +184,12 @@ final class OnboardingViewModel {
         case .welcome:
             break
         case .profileSetup:
-            if currentProfileIndex == 1 {
-                currentProfileIndex = 0
-                currentStep = .caloriePreview
-                calculateTargets()
-            } else {
-                currentStep = .welcome
-            }
+            currentStep = .welcome
         case .goalSetup:
             currentStep = .profileSetup
         case .caloriePreview:
             currentStep = .goalSetup
         case .healthKit:
-            currentProfileIndex = hasPartner ? 1 : 0
             currentStep = .caloriePreview
             calculateTargets()
         case .apiKeys:
@@ -253,14 +211,9 @@ final class OnboardingViewModel {
         }
     }
 
-    func saveProfiles(context: ModelContext) throws {
-        let profileARecord = userProfileRepository.makeUserProfile(from: profileA)
-        var profiles = [profileARecord]
-        if hasPartner {
-            profiles.append(userProfileRepository.makeUserProfile(from: profileB))
-        }
-        try userProfileRepository.save(profiles, context: context)
-        UserDefaults.standard.set(profileARecord.id.uuidString, forKey: AppStorageKey.activeUserId)
+    func saveProfile(context: ModelContext) throws {
+        let profile = userProfileRepository.makeUserProfile(from: profileDraft)
+        try userProfileRepository.save([profile], context: context)
     }
 
     func requestHealthKit() async {
@@ -290,12 +243,7 @@ final class OnboardingViewModel {
 
     private func validationMessage(for step: OnboardingStep) -> String {
         switch step {
-        case .welcome:
-            return "Enter your name to continue."
         case .profileSetup:
-            if activeProfile.trimmedName.isEmpty {
-                return "Enter a name to continue."
-            }
             return "Age must be between \(AppConstants.Onboarding.minAgeYears) and \(AppConstants.Onboarding.maxAgeYears)."
         case .goalSetup:
             return "Goal date must be 2 weeks to 2 years from today."

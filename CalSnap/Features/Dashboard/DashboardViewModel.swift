@@ -30,7 +30,6 @@ enum FiberProgressBand {
 @Observable
 final class DashboardViewModel {
     var activeProfile: UserProfile?
-    var profiles: [UserProfile] = []
     var todaysMeals: [MealEntry] = []
     var mealsByType: [MealType: [MealEntry]] = [:]
     var todaysCalories = 0
@@ -139,6 +138,7 @@ final class DashboardViewModel {
     }
 
     var greeting: String {
+        guard let name = activeProfile?.name, !name.isEmpty else { return "Today" }
         let hour = Calendar.current.component(.hour, from: Date.now)
         let prefix: String
         switch hour {
@@ -147,7 +147,6 @@ final class DashboardViewModel {
         case 17..<22: prefix = "Good evening"
         default: prefix = "Hello"
         }
-        guard let name = activeProfile?.name, !name.isEmpty else { return prefix }
         return "\(prefix), \(name)"
     }
 
@@ -159,20 +158,15 @@ final class DashboardViewModel {
         AppStorageKey.useLbsForWeightValue
     }
 
-    var hasSecondProfile: Bool {
-        profiles.count > 1
-    }
-
     static func progressBand(for ratio: Double) -> CalorieProgressBand {
         CalorieProgressBand.progressBand(for: ratio)
     }
 
-    func loadToday(context: ModelContext, activeUserId: String) {
+    func loadToday(context: ModelContext) {
         loadError = nil
         clearTodayData()
         do {
-            profiles = try userProfileRepository.fetchAll(context: context)
-            activeProfile = resolveActiveProfile(from: profiles, activeUserId: activeUserId)
+            activeProfile = try userProfileRepository.fetchPrimaryProfile(context: context)
             guard let profile = activeProfile else { return }
 
             todaysMeals = try mealRepository.fetchMeals(for: profile.id, on: Date.now, context: context)
@@ -285,14 +279,6 @@ final class DashboardViewModel {
             storeDate(snoozeEnd, forKey: AppStorageKey.plateauSnoozeUntil(userId: profile.id))
         }
         showPlateauAlert = false
-    }
-
-    private func resolveActiveProfile(from profiles: [UserProfile], activeUserId: String) -> UserProfile? {
-        if let id = UUID(uuidString: activeUserId),
-           let match = profiles.first(where: { $0.id == id }) {
-            return match
-        }
-        return profiles.first
     }
 
     private func clearTodayData() {

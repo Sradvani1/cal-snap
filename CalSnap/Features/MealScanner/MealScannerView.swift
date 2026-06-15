@@ -8,12 +8,11 @@ struct MealScannerView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
 
-    let activeUserId: String
+    let userId: UUID
     let route: MealScannerRoute
     var onMealSaved: (() -> Void)? = nil
 
     @State private var viewModel: MealScannerViewModel?
-    @State private var setupFailed = false
     @State private var editLoadFailed = false
     @State private var showCamera = false
     @State private var selectedPhotoItem: PhotosPickerItem?
@@ -31,12 +30,6 @@ struct MealScannerView: View {
                 )
             } else if let viewModel {
                 scannerContent(viewModel: viewModel)
-            } else if setupFailed {
-                ContentUnavailableView(
-                    "Unable to scan",
-                    systemImage: "person.crop.circle.badge.exclamationmark",
-                    description: Text("Select a profile on the dashboard and try again.")
-                )
             } else {
                 ProgressView()
             }
@@ -69,16 +62,12 @@ struct MealScannerView: View {
         }
         .task {
             if viewModel == nil {
-                if let userId = UUID(uuidString: activeUserId) {
-                    viewModel = MealScannerViewModel(
-                        userId: userId,
-                        mealAnalyzer: appContainer.geminiService,
-                        healthKitService: appContainer.healthKitService,
-                        mealRepository: appContainer.mealRepository
-                    )
-                } else {
-                    setupFailed = true
-                }
+                viewModel = MealScannerViewModel(
+                    userId: userId,
+                    mealAnalyzer: appContainer.geminiService,
+                    healthKitService: appContainer.healthKitService,
+                    mealRepository: appContainer.mealRepository
+                )
             }
             applyRouteIfNeeded()
         }
@@ -251,7 +240,7 @@ struct MealScannerView: View {
 #Preview {
     NavigationStack {
         MealScannerView(
-            activeUserId: UUID().uuidString,
+            userId: UUID(),
             route: .create(initialMealType: nil)
         )
         .environment(AppContainer())

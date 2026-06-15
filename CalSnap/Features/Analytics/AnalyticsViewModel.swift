@@ -5,7 +5,6 @@ import SwiftData
 @Observable
 final class AnalyticsViewModel {
     var selectedRange: AnalyticsDateRange = .days(7)
-    var profiles: [UserProfile] = []
     var activeProfile: UserProfile?
     var meals: [MealEntry] = []
     var loadError: String?
@@ -56,12 +55,11 @@ final class AnalyticsViewModel {
         AppStorageKey.useLbsForWeightValue
     }
 
-    func load(context: ModelContext, activeUserId: String) {
+    func load(context: ModelContext) {
         loadError = nil
 
         do {
-            profiles = try userProfileRepository.fetchAll(context: context)
-            activeProfile = resolveActiveProfile(from: profiles, activeUserId: activeUserId)
+            activeProfile = try userProfileRepository.fetchPrimaryProfile(context: context)
             guard let profile = activeProfile else {
                 clearAggregates()
                 return
@@ -183,14 +181,6 @@ final class AnalyticsViewModel {
         } catch {
             insightError = error.localizedDescription
         }
-    }
-
-    private func resolveActiveProfile(from profiles: [UserProfile], activeUserId: String) -> UserProfile? {
-        if let uuid = UUID(uuidString: activeUserId),
-           let match = profiles.first(where: { $0.id == uuid }) {
-            return match
-        }
-        return profiles.first
     }
 
     private func clearAggregates() {

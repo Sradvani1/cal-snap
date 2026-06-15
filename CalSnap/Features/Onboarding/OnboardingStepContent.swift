@@ -13,13 +13,11 @@ struct OnboardingStepContent: View {
                 VStack(alignment: .leading, spacing: 16) {
                     switch viewModel.currentStep {
                     case .welcome:
-                        WelcomeStepView(viewModel: viewModel)
+                        WelcomeStepView()
                     case .profileSetup:
                         ProfileSetupStepView(viewModel: viewModel)
-                            .id("profileSetup-\(viewModel.currentProfileIndex)")
                     case .goalSetup:
                         GoalSetupStepView(viewModel: viewModel)
-                            .id("goalSetup-\(viewModel.currentProfileIndex)")
                     case .caloriePreview:
                         CalorieTargetPreviewStepView(viewModel: viewModel)
                     case .healthKit:
