@@ -98,6 +98,18 @@
 		PR6B006234567890ABCDEF01 /* WeightProgressViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR6F006234567890ABCDEF01 /* WeightProgressViewModel.swift */; };
 		PR6B008234567890ABCDEF01 /* WeighInSheetContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR6F008234567890ABCDEF01 /* WeighInSheetContext.swift */; };
 		PR6B007234567890ABCDEF01 /* WeighInTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR6F007234567890ABCDEF01 /* WeighInTests.swift */; };
+		PR7B001234567890ABCDEF01 /* AnalyticsTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR7F001234567890ABCDEF01 /* AnalyticsTypes.swift */; };
+		PR7B002234567890ABCDEF01 /* AnalyticsAggregator.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR7F002234567890ABCDEF01 /* AnalyticsAggregator.swift */; };
+		PR7B003234567890ABCDEF01 /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR7F003234567890ABCDEF01 /* AnalyticsView.swift */; };
+		PR7B004234567890ABCDEF01 /* AnalyticsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR7F004234567890ABCDEF01 /* AnalyticsViewModel.swift */; };
+		PR7B005234567890ABCDEF01 /* AnalyticsTimeframePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR7F005234567890ABCDEF01 /* AnalyticsTimeframePicker.swift */; };
+		PR7B006234567890ABCDEF01 /* CalorieAdherenceSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR7F006234567890ABCDEF01 /* CalorieAdherenceSectionView.swift */; };
+		PR7B007234567890ABCDEF01 /* MacroTrendsSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR7F007234567890ABCDEF01 /* MacroTrendsSectionView.swift */; };
+		PR7B008234567890ABCDEF01 /* FiberSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR7F008234567890ABCDEF01 /* FiberSectionView.swift */; };
+		PR7B009234567890ABCDEF01 /* PatternsSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR7F009234567890ABCDEF01 /* PatternsSectionView.swift */; };
+		PR7B00A234567890ABCDEF01 /* AnalyticsInsightCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR7F00A234567890ABCDEF01 /* AnalyticsInsightCard.swift */; };
+		PR7B00B234567890ABCDEF01 /* AnalyticsSectionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR7F00B234567890ABCDEF01 /* AnalyticsSectionCard.swift */; };
+		PR7B00C234567890ABCDEF01 /* AnalyticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR7F00C234567890ABCDEF01 /* AnalyticsTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -205,6 +217,18 @@
 		PR6F006234567890ABCDEF01 /* WeightProgressViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightProgressViewModel.swift; sourceTree = "<group>"; };
 		PR6F008234567890ABCDEF01 /* WeighInSheetContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeighInSheetContext.swift; sourceTree = "<group>"; };
 		PR6F007234567890ABCDEF01 /* WeighInTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeighInTests.swift; sourceTree = "<group>"; };
+		PR7F001234567890ABCDEF01 /* AnalyticsTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTypes.swift; sourceTree = "<group>"; };
+		PR7F002234567890ABCDEF01 /* AnalyticsAggregator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsAggregator.swift; sourceTree = "<group>"; };
+		PR7F003234567890ABCDEF01 /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsView.swift; sourceTree = "<group>"; };
+		PR7F004234567890ABCDEF01 /* AnalyticsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsViewModel.swift; sourceTree = "<group>"; };
+		PR7F005234567890ABCDEF01 /* AnalyticsTimeframePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTimeframePicker.swift; sourceTree = "<group>"; };
+		PR7F006234567890ABCDEF01 /* CalorieAdherenceSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalorieAdherenceSectionView.swift; sourceTree = "<group>"; };
+		PR7F007234567890ABCDEF01 /* MacroTrendsSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacroTrendsSectionView.swift; sourceTree = "<group>"; };
+		PR7F008234567890ABCDEF01 /* FiberSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiberSectionView.swift; sourceTree = "<group>"; };
+		PR7F009234567890ABCDEF01 /* PatternsSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternsSectionView.swift; sourceTree = "<group>"; };
+		PR7F00A234567890ABCDEF01 /* AnalyticsInsightCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsInsightCard.swift; sourceTree = "<group>"; };
+		PR7F00B234567890ABCDEF01 /* AnalyticsSectionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsSectionCard.swift; sourceTree = "<group>"; };
+		PR7F00C234567890ABCDEF01 /* AnalyticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -293,6 +317,7 @@
 				PR4F00E234567890ABCDEF01 /* MealScannerViewModelTests.swift */,
 				PR5F009234567890ABCDEF01 /* MealLogCRUDTests.swift */,
 				PR6F007234567890ABCDEF01 /* WeighInTests.swift */,
+				PR7F00C234567890ABCDEF01 /* AnalyticsTests.swift */,
 				49FF607CB3770B2AAE871821 /* NutritionCalculatorTests.swift */,
 				F1E2D3C413234567890ABCDE /* OnboardingViewModelTests.swift */,
 			);
@@ -326,6 +351,7 @@
 				F1E2D3C401234567890ABCDE /* APIKeyResolver.swift */,
 				FC2F68877952481FCEDCA5E5 /* Constants.swift */,
 				PR5F00B234567890ABCDEF01 /* InteractivePopGestureDisabler.swift */,
+				PR7F001234567890ABCDEF01 /* AnalyticsTypes.swift */,
 				18F8DBAE76C7C7B21976685A /* KeychainManager.swift */,
 				UTIL0001234567890ABCDE01 /* Extensions */,
 			);
@@ -341,6 +367,7 @@
 				PR6F002234567890ABCDEF01 /* NotificationManager.swift */,
 				8F453EDE12C11B104F814B4D /* NutritionCalculator.swift */,
 				PR6F001234567890ABCDEF01 /* WeighInService.swift */,
+				PR7F002234567890ABCDEF01 /* AnalyticsAggregator.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -352,6 +379,7 @@
 				PR5G001234567890ABCDEF01 /* MealLog */,
 				PR3G001234567890ABCDEF01 /* MealScanner */,
 				PR6G001234567890ABCDEF01 /* Progress */,
+				PR7G001234567890ABCDEF01 /* Analytics */,
 				FEAT0003234567890ABCDE03 /* Onboarding */,
 			);
 			path = Features;
@@ -406,6 +434,22 @@
 				PR6F006234567890ABCDEF01 /* WeightProgressViewModel.swift */,
 			);
 			path = Progress;
+			sourceTree = "<group>";
+		};
+		PR7G001234567890ABCDEF01 /* Analytics */ = {
+			isa = PBXGroup;
+			children = (
+				PR7F003234567890ABCDEF01 /* AnalyticsView.swift */,
+				PR7F004234567890ABCDEF01 /* AnalyticsViewModel.swift */,
+				PR7F005234567890ABCDEF01 /* AnalyticsTimeframePicker.swift */,
+				PR7F006234567890ABCDEF01 /* CalorieAdherenceSectionView.swift */,
+				PR7F007234567890ABCDEF01 /* MacroTrendsSectionView.swift */,
+				PR7F008234567890ABCDEF01 /* FiberSectionView.swift */,
+				PR7F009234567890ABCDEF01 /* PatternsSectionView.swift */,
+				PR7F00A234567890ABCDEF01 /* AnalyticsInsightCard.swift */,
+				PR7F00B234567890ABCDEF01 /* AnalyticsSectionCard.swift */,
+			);
+			path = Analytics;
 			sourceTree = "<group>";
 		};
 		PR5G001234567890ABCDEF01 /* MealLog */ = {
@@ -629,6 +673,17 @@
 				PR6B005234567890ABCDEF01 /* WeightProgressView.swift in Sources */,
 				PR6B006234567890ABCDEF01 /* WeightProgressViewModel.swift in Sources */,
 				PR6B008234567890ABCDEF01 /* WeighInSheetContext.swift in Sources */,
+				PR7B001234567890ABCDEF01 /* AnalyticsTypes.swift in Sources */,
+				PR7B002234567890ABCDEF01 /* AnalyticsAggregator.swift in Sources */,
+				PR7B003234567890ABCDEF01 /* AnalyticsView.swift in Sources */,
+				PR7B004234567890ABCDEF01 /* AnalyticsViewModel.swift in Sources */,
+				PR7B005234567890ABCDEF01 /* AnalyticsTimeframePicker.swift in Sources */,
+				PR7B006234567890ABCDEF01 /* CalorieAdherenceSectionView.swift in Sources */,
+				PR7B007234567890ABCDEF01 /* MacroTrendsSectionView.swift in Sources */,
+				PR7B008234567890ABCDEF01 /* FiberSectionView.swift in Sources */,
+				PR7B009234567890ABCDEF01 /* PatternsSectionView.swift in Sources */,
+				PR7B00A234567890ABCDEF01 /* AnalyticsInsightCard.swift in Sources */,
+				PR7B00B234567890ABCDEF01 /* AnalyticsSectionCard.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -639,6 +694,7 @@
 				PR3B00B234567890ABCDEF01 /* DashboardViewModelTests.swift in Sources */,
 				PR5B009234567890ABCDEF01 /* MealLogCRUDTests.swift in Sources */,
 				PR6B007234567890ABCDEF01 /* WeighInTests.swift in Sources */,
+				PR7B00C234567890ABCDEF01 /* AnalyticsTests.swift in Sources */,
 				PR4B00E234567890ABCDEF01 /* MealScannerViewModelTests.swift in Sources */,
 				1B31CEC936B87ADC8D4A5AE0 /* KeychainManagerTests.swift in Sources */,
 				PR1B004234567890ABCDEF01 /* MealTypeTests.swift in Sources */,

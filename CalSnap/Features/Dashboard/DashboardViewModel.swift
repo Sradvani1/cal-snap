@@ -5,6 +5,19 @@ enum CalorieProgressBand {
     case under
     case onTrack
     case over
+
+    static func progressBand(for ratio: Double) -> CalorieProgressBand {
+        switch ratio {
+        case ..<0.90: return .under
+        case 0.90..<1.10: return .onTrack
+        default: return .over
+        }
+    }
+
+    static func isCalorieIntakeOnTarget(calories: Int, target: Int) -> Bool {
+        guard target > 0 else { return false }
+        return progressBand(for: Double(calories) / Double(target)) == .onTrack
+    }
 }
 
 enum FiberProgressBand {
@@ -55,7 +68,7 @@ final class DashboardViewModel {
     }
 
     var calorieProgressBand: CalorieProgressBand {
-        Self.progressBand(for: calorieProgress)
+        CalorieProgressBand.progressBand(for: calorieProgress)
     }
 
     var remainingCalories: Int {
@@ -75,8 +88,7 @@ final class DashboardViewModel {
     }
 
     var fiberTargetG: Double {
-        let target = Double(activeProfile?.dailyCalorieTarget ?? 0)
-        return (target / 1000.0) * AppConstants.Nutrition.fiberGramsPer1000Kcal
+        NutritionCalculator.fiberTargetG(dailyCalorieTarget: activeProfile?.dailyCalorieTarget ?? 0)
     }
 
     var fiberProgressRatio: Double {
@@ -98,16 +110,12 @@ final class DashboardViewModel {
     }
 
     var actualMacroPercents: (protein: Int, carbs: Int, fat: Int) {
-        let proteinKcal = todaysProteinG * AppConstants.Nutrition.proteinCalPerGram
-        let carbsKcal = todaysCarbsG * AppConstants.Nutrition.carbsCalPerGram
-        let fatKcal = todaysFatG * AppConstants.Nutrition.fatCalPerGram
-        let total = proteinKcal + carbsKcal + fatKcal
-        guard total > 0 else { return (0, 0, 0) }
-        return (
-            protein: Int((proteinKcal / total * 100).rounded()),
-            carbs: Int((carbsKcal / total * 100).rounded()),
-            fat: Int((fatKcal / total * 100).rounded())
+        let split = NutritionCalculator.macroPercents(
+            proteinG: todaysProteinG,
+            carbsG: todaysCarbsG,
+            fatG: todaysFatG
         )
+        return (split.proteinPct, split.carbsPct, split.fatPct)
     }
 
     var targetMacroPercents: (protein: Int, carbs: Int, fat: Int) {
@@ -156,11 +164,7 @@ final class DashboardViewModel {
     }
 
     static func progressBand(for ratio: Double) -> CalorieProgressBand {
-        switch ratio {
-        case ..<0.90: return .under
-        case 0.90..<1.10: return .onTrack
-        default: return .over
-        }
+        CalorieProgressBand.progressBand(for: ratio)
     }
 
     func loadToday(context: ModelContext, activeUserId: String) {

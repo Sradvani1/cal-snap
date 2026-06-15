@@ -27,6 +27,29 @@ struct MealRepository {
         return try context.fetch(descriptor)
     }
 
+    func fetchMeals(
+        for userId: UUID,
+        from startOfWindow: Date,
+        through endOfReferenceDay: Date,
+        context: ModelContext
+    ) throws -> [MealEntry] {
+        let calendar = Calendar.current
+        let windowStart = calendar.startOfDay(for: startOfWindow)
+        let dayStart = calendar.startOfDay(for: endOfReferenceDay)
+        guard let dayEnd = calendar.date(byAdding: .day, value: 1, to: dayStart) else {
+            return []
+        }
+
+        let predicate = #Predicate<MealEntry> { meal in
+            meal.userId == userId && meal.timestamp >= windowStart && meal.timestamp < dayEnd
+        }
+        var descriptor = FetchDescriptor<MealEntry>(
+            predicate: predicate,
+            sortBy: [SortDescriptor(\.timestamp)]
+        )
+        return try context.fetch(descriptor)
+    }
+
     func fetchMeal(id: UUID, context: ModelContext) throws -> MealEntry? {
         let mealId = id
         let predicate = #Predicate<MealEntry> { meal in

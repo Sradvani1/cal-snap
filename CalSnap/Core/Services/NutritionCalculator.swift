@@ -53,6 +53,29 @@ struct NutritionCalculator {
         )
     }
 
+    static func macroPercents(
+        proteinG: Double,
+        carbsG: Double,
+        fatG: Double
+    ) -> MacroSplit {
+        let proteinKcal = proteinG * AppConstants.Nutrition.proteinCalPerGram
+        let carbsKcal = carbsG * AppConstants.Nutrition.carbsCalPerGram
+        let fatKcal = fatG * AppConstants.Nutrition.fatCalPerGram
+        let total = proteinKcal + carbsKcal + fatKcal
+        guard total > 0 else {
+            return MacroSplit(proteinPct: 0, carbsPct: 0, fatPct: 0)
+        }
+        return MacroSplit(
+            proteinPct: Int((proteinKcal / total * 100).rounded()),
+            carbsPct: Int((carbsKcal / total * 100).rounded()),
+            fatPct: Int((fatKcal / total * 100).rounded())
+        )
+    }
+
+    static func fiberTargetG(dailyCalorieTarget: Int) -> Double {
+        (Double(dailyCalorieTarget) / 1000.0) * AppConstants.Nutrition.fiberGramsPer1000Kcal
+    }
+
     static func bmi(weightKg: Double, heightCm: Double) -> Double {
         let heightM = heightCm / 100
         return weightKg / (heightM * heightM)

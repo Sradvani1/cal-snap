@@ -2,39 +2,56 @@ import Charts
 import SwiftUI
 import SwiftData
 
+enum WeightProgressPresentation {
+    case navigationStack
+    case embedded
+}
+
 struct WeightProgressView: View {
     @Environment(\.modelContext) private var modelContext
+    var presentation: WeightProgressPresentation = .navigationStack
     @Bindable var viewModel: WeightProgressViewModel
     var onLogWeighIn: () -> Void
     var reloadTrigger: Int
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                if let error = viewModel.loadError {
-                    Text(error)
-                        .font(.caption)
-                        .foregroundStyle(.red)
+        Group {
+            switch presentation {
+            case .navigationStack:
+                ScrollView {
+                    weightProgressContent
                 }
-
-                WeightProgressHeaderView(viewModel: viewModel)
-                WeightProgressBarView(viewModel: viewModel)
-                WeightProgressChartView(viewModel: viewModel, onLogWeighIn: onLogWeighIn)
-                WeightProgressStatsGridView(viewModel: viewModel)
-                WeightProgressHistoryView(viewModel: viewModel)
-            }
-            .padding()
-        }
-        .navigationTitle("Weight Progress")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button("Log weigh-in", action: onLogWeighIn)
+                .navigationTitle("Weight Progress")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Log weigh-in", action: onLogWeighIn)
+                    }
+                }
+            case .embedded:
+                weightProgressContent
             }
         }
         .task(id: reloadTrigger) {
             viewModel.load(context: modelContext)
         }
+    }
+
+    private var weightProgressContent: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            if let error = viewModel.loadError {
+                Text(error)
+                    .font(.caption)
+                    .foregroundStyle(.red)
+            }
+
+            WeightProgressHeaderView(viewModel: viewModel)
+            WeightProgressBarView(viewModel: viewModel)
+            WeightProgressChartView(viewModel: viewModel, onLogWeighIn: onLogWeighIn)
+            WeightProgressStatsGridView(viewModel: viewModel)
+            WeightProgressHistoryView(viewModel: viewModel)
+        }
+        .padding(presentation == .embedded ? 0 : 16)
     }
 }
 

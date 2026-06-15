@@ -98,7 +98,7 @@ actor GeminiService {
             )
         )
 
-        let prompt = Self.buildPrompt(description: request.textDescription)
+        let prompt = Self.buildMealAnalysisPrompt(description: request.textDescription)
         let textPart = ModelContent.Part.text(prompt)
         let imagePart = ModelContent.Part.data(mimetype: request.mimeType, request.imageData)
 
@@ -123,6 +123,37 @@ actor GeminiService {
         }
     }
 
+    func generateAnalyticsInsight(_ payload: AnalyticsInsightPayload) async throws(GeminiError) -> String {
+        let apiKey: String
+        do {
+            guard let key = try APIKeyResolver.resolvedGeminiAPIKey(),
+                  !key.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                throw GeminiError.apiKeyMissing
+            }
+            apiKey = key
+        } catch let error as GeminiError {
+            throw error
+        } catch {
+            throw Self.mapRequestError(error)
+        }
+
+        let model = GenerativeModel(name: AppConstants.Gemini.model, apiKey: apiKey)
+        let prompt = Self.buildAnalyticsInsightPrompt(payload)
+
+        let response: GenerateContentResponse
+        do {
+            response = try await model.generateContent(prompt)
+        } catch {
+            throw Self.mapRequestError(error)
+        }
+
+        guard let text = response.text?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !text.isEmpty else {
+            throw GeminiError.emptyResponse
+        }
+        return text
+    }
+
     private static func mapRequestError(_ error: Error) -> GeminiError {
         if let urlError = error as? URLError, urlError.code == .notConnectedToInternet {
             return .requestFailed("No internet connection.")
@@ -130,7 +161,7 @@ actor GeminiService {
         return .requestFailed(error.localizedDescription)
     }
 
-    private static func buildPrompt(description: String?) -> String {
+    private static func buildMealAnalysisPrompt(description: String?) -> String {
         var prompt = """
         Analyze this meal image and return a JSON nutritional breakdown.
 
@@ -157,6 +188,37 @@ actor GeminiService {
         }
 
         return prompt
+    }
+
+    private static func buildAnalyticsInsightPrompt(_ payload: AnalyticsInsightPayload) -> String {
+        var lines: [String] = [
+            "You are a nutrition coach. Based only on the aggregated dietary statistics below, write a 2–3 sentence actionable insight.",
+            "Do not invent data beyond what is provided. Be encouraging and specific.",
+            "",
+            "Timeframe: \(payload.timeframeLabel)",
+            "Logged days: \(payload.loggedDayCount)",
+            "Average daily calories: \(payload.averageDailyCalories) (target: \(payload.calorieTarget))",
+            "Days on target (±10%): \(String(format: "%.0f", payload.adherencePercent))%",
+            "Macro split actual: \(payload.actualMacroSplit.proteinPct)% protein, \(payload.actualMacroSplit.carbsPct)% carbs, \(payload.actualMacroSplit.fatPct)% fat",
+            "Macro split target: \(payload.targetMacroSplit.proteinPct)% protein, \(payload.targetMacroSplit.carbsPct)% carbs, \(payload.targetMacroSplit.fatPct)% fat",
+            "Average daily fiber: \(String(format: "%.0f", payload.averageDailyFiberG))g (target: \(String(format: "%.0f", payload.fiberTargetG))g)",
+        ]
+
+        if let weekend = payload.weekendAverageCalories, let weekday = payload.weekdayAverageCalories {
+            lines.append("Weekend avg calories: \(weekend); weekday avg: \(weekday)")
+        }
+
+        if !payload.topFoods.isEmpty {
+            let foodSummary = payload.topFoods.map { "\($0.name) (\($0.count)×)" }.joined(separator: ", ")
+            lines.append("Most logged foods: \(foodSummary)")
+        }
+
+        if let change = payload.weightChangeKg {
+            let direction = change < 0 ? "lost" : "gained"
+            lines.append("Weight change in period: \(direction) \(String(format: "%.1f", abs(change))) kg")
+        }
+
+        return lines.joined(separator: "\n")
     }
 
     private static var responseSchema: Schema {
