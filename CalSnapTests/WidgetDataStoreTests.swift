@@ -20,4 +20,25 @@ final class WidgetDataStoreTests: XCTestCase {
         let decoded = try JSONDecoder().decode(WidgetData.self, from: encoded)
         XCTAssertEqual(decoded, data)
     }
+
+    func testWidgetDataStoreSaveLoadAndClear() {
+        let data = WidgetData(
+            displayName: "",
+            targetCalories: 1800,
+            consumedCalories: 900,
+            proteinConsumedG: 60,
+            carbsConsumedG: 100,
+            fatConsumedG: 30,
+            proteinTargetG: 120,
+            carbsTargetG: 200,
+            fatTargetG: 50,
+            updatedAt: Date.now
+        )
+
+        WidgetDataStore.save(data)
+        XCTAssertEqual(WidgetDataStore.load(), data)
+
+        WidgetDataStore.clear()
+        XCTAssertNil(WidgetDataStore.load())
+    }
 }

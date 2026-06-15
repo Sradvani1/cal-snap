@@ -87,6 +87,33 @@ final class DashboardViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.mealsByType[.dinner]?.count, 1)
     }
 
+    func testMealsByTypeSortedByTimestampWithinBucket() throws {
+        let profile = UserProfile(
+            name: "Alex",
+            dailyCalorieTarget: 2000,
+            tdee: 2350,
+            deficitKcal: 350
+        )
+        context.insert(profile)
+
+        let calendar = Calendar.current
+        let startOfToday = calendar.startOfDay(for: Date.now)
+        let earlier = calendar.date(byAdding: .hour, value: 12, to: startOfToday)!
+        let later = calendar.date(byAdding: .hour, value: 13, to: startOfToday)!
+        let meals = [
+            MealEntry(userId: profile.id, timestamp: later, mealType: .lunch, totalCalories: 600),
+            MealEntry(userId: profile.id, timestamp: earlier, mealType: .lunch, totalCalories: 400),
+        ]
+        meals.forEach { context.insert($0) }
+        try context.save()
+
+        viewModel.loadToday(context: context)
+
+        let lunchMeals = try XCTUnwrap(viewModel.mealsByType[.lunch])
+        XCTAssertEqual(lunchMeals.map(\.totalCalories), [400, 600])
+        XCTAssertEqual(lunchMeals.map(\.timestamp), [earlier, later])
+    }
+
     func testProgressColor() {
         XCTAssertEqual(CalorieProgressBand.progressBand(for: 0.89), .under)
         XCTAssertEqual(CalorieProgressBand.progressBand(for: 0.95), .onTrack)

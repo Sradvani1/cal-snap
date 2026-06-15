@@ -5,14 +5,18 @@ import XCTest
 
 final class DesignSystemTests: XCTestCase {
     func testCalorieRingAccessibilityValue() {
-        XCTAssertEqual(
-            CalorieRingAccessibility.valueText(remaining: 800, target: 2000),
-            "800 calories remaining of 2000 goal"
+        let remainingExpected = String(
+            format: String(localized: "designSystem.calorieRing.accessibility.remaining"),
+            800,
+            2000
         )
-        XCTAssertEqual(
-            CalorieRingAccessibility.valueText(remaining: -300, target: 2000),
-            "300 calories over 2000 goal"
+        let overExpected = String(
+            format: String(localized: "designSystem.calorieRing.accessibility.over"),
+            300,
+            2000
         )
+        XCTAssertEqual(CalorieRingAccessibility.valueText(remaining: 800, target: 2000), remainingExpected)
+        XCTAssertEqual(CalorieRingAccessibility.valueText(remaining: -300, target: 2000), overExpected)
     }
 
     func testCalorieProgressColorBands() {
