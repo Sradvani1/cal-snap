@@ -7,7 +7,7 @@ struct MealDetailView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
 
-    let meal: MealEntry
+    let mealId: UUID
     let onMealChanged: () -> Void
     @Binding var navigationPath: [DashboardRoute]
 
@@ -84,6 +84,12 @@ struct MealDetailView: View {
                     }
                     .padding()
                 }
+            } else if viewModel.loadError != nil {
+                ContentUnavailableView(
+                    "Meal not found",
+                    systemImage: "fork.knife.circle",
+                    description: Text(viewModel.loadError ?? "This meal may have been deleted.")
+                )
             } else {
                 ProgressView()
             }
@@ -92,30 +98,33 @@ struct MealDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {
-                Button("Edit") {
-                    guard let current = viewModel.meal else { return }
-                    navigationPath.append(.mealScanner(.edit(current)))
+                if viewModel.meal != nil {
+                    Button("Edit") {
+                        navigationPath.append(.mealScanner(.edit(mealId)))
+                    }
+                    Button {
+                        shareImage = viewModel.makeShareImage()
+                        showShareSheet = shareImage != nil
+                    } label: {
+                        Image(systemName: "square.and.arrow.up")
+                    }
+                    .accessibilityLabel("Share")
                 }
-                Button {
-                    shareImage = viewModel.makeShareImage()
-                    showShareSheet = shareImage != nil
-                } label: {
-                    Image(systemName: "square.and.arrow.up")
-                }
-                .accessibilityLabel("Share")
             }
             ToolbarItem(placement: .destructiveAction) {
-                Button("Delete", role: .destructive) {
-                    showDeleteConfirmation = true
+                if viewModel.meal != nil {
+                    Button("Delete", role: .destructive) {
+                        showDeleteConfirmation = true
+                    }
                 }
             }
         }
-        .onAppear {
-            viewModel.refresh(meal: meal, context: modelContext)
+        .task(id: mealId) {
+            viewModel.load(mealId: mealId, context: modelContext)
         }
         .onChange(of: navigationPath.count) { oldCount, newCount in
             if newCount < oldCount {
-                viewModel.refresh(meal: meal, context: modelContext)
+                viewModel.load(mealId: mealId, context: modelContext)
             }
         }
         .alert("Delete this meal?", isPresented: $showDeleteConfirmation) {
@@ -171,20 +180,10 @@ private struct ShareSheet: UIViewControllerRepresentable {
 
 #Preview {
     @Previewable @State var path: [DashboardRoute] = []
-    let meal = MealEntry(
-        userId: UUID(),
-        timestamp: Date(),
-        mealType: .lunch,
-        totalCalories: 650,
-        totalProteinG: 40,
-        totalCarbsG: 55,
-        totalFatG: 22,
-        totalFiberG: 8,
-        geminiConfidence: 0.85
-    )
+    let mealId = UUID()
 
     NavigationStack {
-        MealDetailView(meal: meal, onMealChanged: {}, navigationPath: $path)
+        MealDetailView(mealId: mealId, onMealChanged: {}, navigationPath: $path)
             .environment(AppContainer())
     }
 }

@@ -15,11 +15,12 @@ final class MealDetailViewModel {
         self.mealRepository = mealRepository
     }
 
-    func refresh(meal: MealEntry, context: ModelContext) {
+    func load(mealId: UUID, context: ModelContext) {
         do {
-            self.meal = try mealRepository.fetchMeal(id: meal.id, context: context) ?? meal
-            loadError = nil
+            meal = try mealRepository.fetchMeal(id: mealId, context: context)
+            loadError = meal == nil ? "Meal not found." : nil
         } catch {
+            meal = nil
             loadError = error.localizedDescription
         }
     }

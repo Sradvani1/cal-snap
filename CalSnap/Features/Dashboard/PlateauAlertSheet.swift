@@ -53,6 +53,7 @@ struct PlateauAlertSheet: View {
             .navigationTitle("Plateau Detected")
             .navigationBarTitleDisplayMode(.inline)
         }
+        .presentationSizing(.form)
         .presentationDetents([.medium])
         .interactiveDismissDisabled()
     }

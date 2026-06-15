@@ -14,6 +14,7 @@ struct MealScannerView: View {
 
     @State private var viewModel: MealScannerViewModel?
     @State private var setupFailed = false
+    @State private var editLoadFailed = false
     @State private var showCamera = false
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var showDiscardAlert = false
@@ -21,7 +22,13 @@ struct MealScannerView: View {
 
     var body: some View {
         Group {
-            if let viewModel {
+            if editLoadFailed {
+                ContentUnavailableView(
+                    "Meal not found",
+                    systemImage: "fork.knife.circle",
+                    description: Text("This meal may have been deleted.")
+                )
+            } else if let viewModel {
                 scannerContent(viewModel: viewModel)
             } else if setupFailed {
                 ContentUnavailableView(
@@ -142,8 +149,18 @@ struct MealScannerView: View {
             if let initialMealType {
                 viewModel.mealType = initialMealType
             }
-        case .edit(let meal):
-            viewModel.loadForEditing(meal: meal)
+        case .edit(let mealId):
+            Task {
+                do {
+                    guard let meal = try appContainer.mealRepository.fetchMeal(id: mealId, context: modelContext) else {
+                        editLoadFailed = true
+                        return
+                    }
+                    viewModel.loadForEditing(meal: meal)
+                } catch {
+                    editLoadFailed = true
+                }
+            }
         }
     }
 

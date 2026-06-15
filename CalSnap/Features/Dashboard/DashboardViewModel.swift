@@ -1,11 +1,16 @@
 import Foundation
 import SwiftData
-import SwiftUI
 
 enum CalorieProgressBand {
     case under
     case onTrack
     case over
+}
+
+enum FiberProgressBand {
+    case low
+    case moderate
+    case onTrack
 }
 
 @Observable
@@ -14,6 +19,7 @@ final class DashboardViewModel {
     var activeProfile: UserProfile?
     var profiles: [UserProfile] = []
     var todaysMeals: [MealEntry] = []
+    var mealsByType: [MealType: [MealEntry]] = [:]
     var todaysCalories = 0
     var todaysProteinG = 0.0
     var todaysCarbsG = 0.0
@@ -24,6 +30,9 @@ final class DashboardViewModel {
     var latestWeighInKg: Double?
     var showPlateauAlert = false
     var loadError: String?
+
+    /// When `true`, `persistProfile` returns `false` without calling `context.save()`.
+    internal var simulatePersistProfileFailure = false
 
     private let userProfileRepository: UserProfileRepository
     private let mealRepository: MealRepository
@@ -45,12 +54,8 @@ final class DashboardViewModel {
         return Double(todaysCalories) / target
     }
 
-    var progressColor: Color {
-        switch Self.progressBand(for: calorieProgress) {
-        case .under: return .green
-        case .onTrack: return .yellow
-        case .over: return .red
-        }
+    var calorieProgressBand: CalorieProgressBand {
+        Self.progressBand(for: calorieProgress)
     }
 
     var remainingCalories: Int {
@@ -74,19 +79,22 @@ final class DashboardViewModel {
         return (target / 1000.0) * AppConstants.Nutrition.fiberGramsPer1000Kcal
     }
 
-    var netCalorieDelta: Int {
-        todaysCalories - (activeProfile?.dailyCalorieTarget ?? 0)
+    var fiberProgressRatio: Double {
+        let target = fiberTargetG
+        guard target > 0 else { return 0 }
+        return todaysFiberG / target
     }
 
-    var fiberProgressColor: Color {
-        let target = fiberTargetG
-        guard target > 0 else { return .secondary }
-        let ratio = todaysFiberG / target
-        switch ratio {
-        case 0.9...: return .green
-        case 0.7..<0.9: return .yellow
-        default: return .red
+    var fiberProgressBand: FiberProgressBand {
+        switch fiberProgressRatio {
+        case 0.9...: return .onTrack
+        case 0.7..<0.9: return .moderate
+        default: return .low
         }
+    }
+
+    var netCalorieDelta: Int {
+        todaysCalories - (activeProfile?.dailyCalorieTarget ?? 0)
     }
 
     var actualMacroPercents: (protein: Int, carbs: Int, fat: Int) {
@@ -123,7 +131,7 @@ final class DashboardViewModel {
     }
 
     var greeting: String {
-        let hour = Calendar.current.component(.hour, from: Date())
+        let hour = Calendar.current.component(.hour, from: Date.now)
         let prefix: String
         switch hour {
         case 5..<12: prefix = "Good morning"
@@ -163,11 +171,11 @@ final class DashboardViewModel {
             activeProfile = resolveActiveProfile(from: profiles, activeUserId: activeUserId)
             guard let profile = activeProfile else { return }
 
-            todaysMeals = try mealRepository.fetchMeals(for: profile.id, on: Date(), context: context)
+            todaysMeals = try mealRepository.fetchMeals(for: profile.id, on: Date.now, context: context)
             aggregateMeals()
 
             let calendar = Calendar.current
-            let referenceDate = Date()
+            let referenceDate = Date.now
             let endOfDay = calendar.startOfDay(for: referenceDate)
             let startOfWindow = calendar.date(byAdding: .day, value: -6, to: endOfDay) ?? endOfDay
 
@@ -217,33 +225,51 @@ final class DashboardViewModel {
     func applyDietBreak(context: ModelContext) {
         guard let profile = activeProfile else { return }
 
+        let previousTarget = profile.dailyCalorieTarget
+        let previousDeficit = profile.deficitKcal
+        let previousUpdatedAt = profile.updatedAt
+
         profile.dailyCalorieTarget = profile.tdee
         profile.deficitKcal = 0
-        profile.updatedAt = Date()
+        profile.updatedAt = Date.now
 
-        let maintenanceEnd = Calendar.current.date(byAdding: .day, value: 14, to: Date()) ?? Date()
+        guard persistProfile(context: context) else {
+            profile.dailyCalorieTarget = previousTarget
+            profile.deficitKcal = previousDeficit
+            profile.updatedAt = previousUpdatedAt
+            return
+        }
+
+        let maintenanceEnd = Calendar.current.date(byAdding: .day, value: 14, to: Date.now) ?? Date.now
         storeDate(maintenanceEnd, forKey: AppStorageKey.maintenanceModeUntil(userId: profile.id))
-
-        persistProfile(context: context)
         showPlateauAlert = false
     }
 
     func applySmallReduction(context: ModelContext) {
         guard let profile = activeProfile else { return }
 
-        let minimum = minimumCalories(for: profile.sex)
         let previousTarget = profile.dailyCalorieTarget
+        let previousDeficit = profile.deficitKcal
+        let previousUpdatedAt = profile.updatedAt
+
+        let minimum = minimumCalories(for: profile.sex)
         profile.dailyCalorieTarget = max(minimum, previousTarget - 60)
         profile.deficitKcal = profile.tdee - profile.dailyCalorieTarget
-        profile.updatedAt = Date()
+        profile.updatedAt = Date.now
 
-        persistProfile(context: context)
+        guard persistProfile(context: context) else {
+            profile.dailyCalorieTarget = previousTarget
+            profile.deficitKcal = previousDeficit
+            profile.updatedAt = previousUpdatedAt
+            return
+        }
+
         showPlateauAlert = false
     }
 
     func dismissPlateauAlert() {
         if let profile = activeProfile {
-            let snoozeEnd = Calendar.current.date(byAdding: .day, value: 14, to: Date()) ?? Date()
+            let snoozeEnd = Calendar.current.date(byAdding: .day, value: 14, to: Date.now) ?? Date.now
             storeDate(snoozeEnd, forKey: AppStorageKey.plateauSnoozeUntil(userId: profile.id))
         }
         showPlateauAlert = false
@@ -259,6 +285,7 @@ final class DashboardViewModel {
 
     private func clearTodayData() {
         todaysMeals = []
+        mealsByType = [:]
         todaysCalories = 0
         todaysProteinG = 0
         todaysCarbsG = 0
@@ -267,6 +294,7 @@ final class DashboardViewModel {
         chartWeighIns = []
         plateauWeighIns = []
         latestWeighInKg = nil
+        showPlateauAlert = false
     }
 
     private func aggregateMeals() {
@@ -276,20 +304,30 @@ final class DashboardViewModel {
         todaysFatG = 0
         todaysFiberG = 0
 
+        var grouped: [MealType: [MealEntry]] = [:]
         for meal in todaysMeals {
             todaysCalories += meal.totalCalories
             todaysProteinG += meal.totalProteinG
             todaysCarbsG += meal.totalCarbsG
             todaysFatG += meal.totalFatG
             todaysFiberG += meal.totalFiberG
+            grouped[meal.mealType, default: []].append(meal)
         }
+        mealsByType = grouped
     }
 
-    private func persistProfile(context: ModelContext) {
+    @discardableResult
+    private func persistProfile(context: ModelContext) -> Bool {
+        if simulatePersistProfileFailure {
+            loadError = "Simulated save failure"
+            return false
+        }
         do {
             try context.save()
+            return true
         } catch {
             loadError = error.localizedDescription
+            return false
         }
     }
 
@@ -303,14 +341,14 @@ final class DashboardViewModel {
         guard let endDate = storedDate(forKey: AppStorageKey.maintenanceModeUntil(userId: userId)) else {
             return false
         }
-        return endDate > Date()
+        return endDate > Date.now
     }
 
     private func isPlateauSnoozed(for userId: UUID) -> Bool {
         guard let endDate = storedDate(forKey: AppStorageKey.plateauSnoozeUntil(userId: userId)) else {
             return false
         }
-        return endDate > Date()
+        return endDate > Date.now
     }
 
     private func storedDate(forKey key: String) -> Date? {

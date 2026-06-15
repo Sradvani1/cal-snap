@@ -23,6 +23,14 @@ final class DashboardViewModelTests: XCTestCase {
         )
     }
 
+    override func tearDown() async throws {
+        let defaults = UserDefaults.standard
+        for key in defaults.dictionaryRepresentation().keys where key.hasPrefix("plateauSnoozeUntil_") || key.hasPrefix("maintenanceModeUntil_") {
+            defaults.removeObject(forKey: key)
+        }
+        try await super.tearDown()
+    }
+
     func testDashboardCalcToday() throws {
         let profile = UserProfile(
             name: "Alex",
@@ -35,7 +43,7 @@ final class DashboardViewModelTests: XCTestCase {
         let meals = [
             MealEntry(
                 userId: profile.id,
-                timestamp: Date(),
+                timestamp: Date.now,
                 mealType: .breakfast,
                 totalCalories: 400,
                 totalProteinG: 30,
@@ -45,7 +53,7 @@ final class DashboardViewModelTests: XCTestCase {
             ),
             MealEntry(
                 userId: profile.id,
-                timestamp: Date(),
+                timestamp: Date.now,
                 mealType: .lunch,
                 totalCalories: 600,
                 totalProteinG: 35,
@@ -55,7 +63,7 @@ final class DashboardViewModelTests: XCTestCase {
             ),
             MealEntry(
                 userId: profile.id,
-                timestamp: Date(),
+                timestamp: Date.now,
                 mealType: .dinner,
                 totalCalories: 500,
                 totalProteinG: 40,
@@ -74,6 +82,9 @@ final class DashboardViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.todaysCarbsG, 140, accuracy: 0.01)
         XCTAssertEqual(viewModel.todaysFatG, 50, accuracy: 0.01)
         XCTAssertEqual(viewModel.todaysFiberG, 19, accuracy: 0.01)
+        XCTAssertEqual(viewModel.mealsByType[.breakfast]?.count, 1)
+        XCTAssertEqual(viewModel.mealsByType[.lunch]?.count, 1)
+        XCTAssertEqual(viewModel.mealsByType[.dinner]?.count, 1)
     }
 
     func testProgressColor() {
@@ -86,5 +97,146 @@ final class DashboardViewModelTests: XCTestCase {
         viewModel.activeProfile = UserProfile(dailyCalorieTarget: 2000)
         viewModel.todaysCalories = 2300
         XCTAssertEqual(viewModel.remainingCalories, -300)
+    }
+
+    func testLoadTodayResetsPlateauAlertWhenNoProfile() {
+        viewModel.showPlateauAlert = true
+        viewModel.loadToday(context: context, activeUserId: "")
+        XCTAssertFalse(viewModel.showPlateauAlert)
+    }
+
+    func testPlateauSnoozeSuppressesAlert() throws {
+        let profile = try makeProfileWithPlateauWeighIns()
+        let snoozeEnd = Calendar.current.date(byAdding: .day, value: 14, to: Date.now)!
+        UserDefaults.standard.set(
+            snoozeEnd.timeIntervalSince1970,
+            forKey: AppStorageKey.plateauSnoozeUntil(userId: profile.id)
+        )
+
+        viewModel.loadToday(context: context, activeUserId: profile.id.uuidString)
+
+        XCTAssertFalse(viewModel.showPlateauAlert)
+    }
+
+    func testMaintenanceModeSuppressesAlert() throws {
+        let profile = try makeProfileWithPlateauWeighIns()
+        let maintenanceEnd = Calendar.current.date(byAdding: .day, value: 14, to: Date.now)!
+        UserDefaults.standard.set(
+            maintenanceEnd.timeIntervalSince1970,
+            forKey: AppStorageKey.maintenanceModeUntil(userId: profile.id)
+        )
+
+        viewModel.loadToday(context: context, activeUserId: profile.id.uuidString)
+
+        XCTAssertFalse(viewModel.showPlateauAlert)
+    }
+
+    func testApplyDietBreakUpdatesTargetAndDismissesOnSave() throws {
+        let profile = try makeProfileWithPlateauWeighIns()
+        viewModel.loadToday(context: context, activeUserId: profile.id.uuidString)
+        XCTAssertTrue(viewModel.showPlateauAlert)
+
+        viewModel.applyDietBreak(context: context)
+
+        XCTAssertEqual(profile.dailyCalorieTarget, profile.tdee)
+        XCTAssertEqual(profile.deficitKcal, 0)
+        XCTAssertFalse(viewModel.showPlateauAlert)
+    }
+
+    func testApplyDietBreakNoOpWithoutActiveProfile() {
+        viewModel.showPlateauAlert = true
+        viewModel.applyDietBreak(context: context)
+        XCTAssertTrue(viewModel.showPlateauAlert)
+    }
+
+    func testApplyDietBreakKeepsAlertOnSaveFailure() throws {
+        let profile = try makeProfileWithPlateauWeighIns()
+        viewModel.loadToday(context: context, activeUserId: profile.id.uuidString)
+        XCTAssertTrue(viewModel.showPlateauAlert)
+
+        let originalTarget = profile.dailyCalorieTarget
+        let originalDeficit = profile.deficitKcal
+
+        viewModel.simulatePersistProfileFailure = true
+        viewModel.applyDietBreak(context: context)
+
+        XCTAssertTrue(viewModel.showPlateauAlert)
+        XCTAssertEqual(profile.dailyCalorieTarget, originalTarget)
+        XCTAssertEqual(profile.deficitKcal, originalDeficit)
+        XCTAssertEqual(
+            UserDefaults.standard.double(forKey: AppStorageKey.maintenanceModeUntil(userId: profile.id)),
+            0
+        )
+    }
+
+    func testApplySmallReductionRespectsMinimum() throws {
+        let profile = UserProfile(
+            name: "Alex",
+            sex: .female,
+            dailyCalorieTarget: AppConstants.Deficit.minCaloriesFemale,
+            tdee: 1700,
+            deficitKcal: 200
+        )
+        context.insert(profile)
+        try context.save()
+
+        viewModel.loadToday(context: context, activeUserId: profile.id.uuidString)
+        viewModel.showPlateauAlert = true
+
+        viewModel.applySmallReduction(context: context)
+
+        XCTAssertEqual(profile.dailyCalorieTarget, AppConstants.Deficit.minCaloriesFemale)
+        XCTAssertFalse(viewModel.showPlateauAlert)
+    }
+
+    func testDismissPlateauAlertStoresSnooze() throws {
+        let profile = UserProfile(
+            name: "Alex",
+            dailyCalorieTarget: 2000,
+            tdee: 2350,
+            deficitKcal: 350
+        )
+        context.insert(profile)
+        try context.save()
+
+        viewModel.loadToday(context: context, activeUserId: profile.id.uuidString)
+        viewModel.showPlateauAlert = true
+
+        viewModel.dismissPlateauAlert()
+
+        XCTAssertFalse(viewModel.showPlateauAlert)
+        let stored = UserDefaults.standard.double(forKey: AppStorageKey.plateauSnoozeUntil(userId: profile.id))
+        XCTAssertGreaterThan(stored, 0)
+    }
+
+    private func makeProfileWithPlateauWeighIns() throws -> UserProfile {
+        let profile = UserProfile(
+            name: "Alex",
+            dailyCalorieTarget: 2000,
+            tdee: 2350,
+            deficitKcal: 350
+        )
+        context.insert(profile)
+
+        let calendar = Calendar.current
+        let today = Date.now
+        let twoWeeksAgo = calendar.date(byAdding: .day, value: -14, to: today)!
+        let oneWeekAgo = calendar.date(byAdding: .day, value: -7, to: today)!
+
+        let weighInRepository = WeighInRepository()
+        try weighInRepository.save(
+            WeighIn(userId: profile.id, date: twoWeeksAgo, weightKg: 80.0),
+            context: context
+        )
+        try weighInRepository.save(
+            WeighIn(userId: profile.id, date: oneWeekAgo, weightKg: 80.0),
+            context: context
+        )
+        try weighInRepository.save(
+            WeighIn(userId: profile.id, date: today, weightKg: 80.0),
+            context: context
+        )
+
+        return profile
     }
 }

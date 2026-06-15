@@ -5,10 +5,25 @@ struct CalorieRingCard: View {
     let target: Int
     let remaining: Int
     let progress: Double
-    let progressColor: Color
+    let progressBand: CalorieProgressBand
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityDifferentiateWithoutColor) private var differentiateWithoutColor
 
     private var ringProgress: Double {
         min(max(progress, 0), 1)
+    }
+
+    private var isOverTarget: Bool {
+        progress > 1
+    }
+
+    private var progressColor: Color {
+        switch progressBand {
+        case .under: .green
+        case .onTrack: .yellow
+        case .over: .red
+        }
     }
 
     var body: some View {
@@ -16,15 +31,29 @@ struct CalorieRingCard: View {
             ZStack {
                 Circle()
                     .stroke(Color.secondary.opacity(0.2), lineWidth: 16)
+
+                if isOverTarget {
+                    Circle()
+                        .stroke(progressColor.opacity(0.35), lineWidth: 20)
+                }
+
                 Circle()
                     .trim(from: 0, to: ringProgress)
                     .stroke(progressColor, style: StrokeStyle(lineWidth: 16, lineCap: .round))
                     .rotationEffect(.degrees(-90))
-                    .animation(.spring(response: 0.6, dampingFraction: 0.8), value: ringProgress)
+                    .animation(
+                        reduceMotion ? nil : .spring(response: 0.6, dampingFraction: 0.8),
+                        value: ringProgress
+                    )
 
                 VStack(spacing: 4) {
-                    Text("\(remaining)")
-                        .font(.system(size: 44, weight: .bold, design: .rounded))
+                    if differentiateWithoutColor {
+                        Label(bandLabel, systemImage: bandIcon)
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(progressColor)
+                    }
+                    Text("\(abs(remaining))")
+                        .font(.largeTitle.bold().monospacedDigit())
                     Text(remaining >= 0 ? "remaining" : "over")
                         .font(.caption)
                         .foregroundStyle(.secondary)
@@ -50,6 +79,22 @@ struct CalorieRingCard: View {
         .accessibilityValue(accessibilityValueText)
     }
 
+    private var bandLabel: String {
+        switch progressBand {
+        case .under: "Under goal"
+        case .onTrack: "On track"
+        case .over: "Over goal"
+        }
+    }
+
+    private var bandIcon: String {
+        switch progressBand {
+        case .under: "arrow.down.circle"
+        case .onTrack: "checkmark.circle"
+        case .over: "arrow.up.circle"
+        }
+    }
+
     private var accessibilityValueText: String {
         if remaining >= 0 {
             return "\(remaining) calories remaining of \(target) goal"
@@ -64,7 +109,7 @@ struct CalorieRingCard: View {
         target: 2000,
         remaining: 800,
         progress: 0.6,
-        progressColor: .green
+        progressBand: .under
     )
     .padding()
 }
@@ -75,7 +120,7 @@ struct CalorieRingCard: View {
         target: 2000,
         remaining: -300,
         progress: 1.15,
-        progressColor: .red
+        progressBand: .over
     )
     .padding()
 }

@@ -1,7 +1,7 @@
 import SwiftUI
 import SwiftData
 
-private struct WeighInSheetContext: Identifiable {
+struct WeighInSheetContext: Identifiable {
     let id: UUID
     let profile: UserProfile
     let currentWeightKg: Double
@@ -18,16 +18,45 @@ struct DashboardView: View {
     @State private var mealPendingDelete: MealEntry?
     @State private var showDeleteConfirmation = false
     @State private var weighInSheetContext: WeighInSheetContext?
+    @State private var weightProgressReloadTrigger = 0
+    @State private var didWireNotifications = false
 
     var body: some View {
         Group {
             if let viewModel {
-                dashboardContent(viewModel: viewModel)
+                DashboardContentView(
+                    viewModel: viewModel,
+                    navigationPath: $navigationPath,
+                    weighInSheetContext: $weighInSheetContext,
+                    activeUserId: activeUserId,
+                    weightProgressReloadTrigger: weightProgressReloadTrigger,
+                    onProfileSwitch: { profile in
+                        activeUserId = profile.id.uuidString
+                    },
+                    onReload: reloadDashboard,
+                    onDeleteMeal: { meal in
+                        mealPendingDelete = meal
+                        showDeleteConfirmation = true
+                    },
+                    onWeighInSheetDismissed: {
+                        weightProgressReloadTrigger += 1
+                    }
+                )
+                .alert("Delete this meal?", isPresented: $showDeleteConfirmation) {
+                    Button("Delete", role: .destructive) {
+                        confirmDelete()
+                    }
+                    Button("Cancel", role: .cancel) {
+                        mealPendingDelete = nil
+                    }
+                } message: {
+                    Text("This removes the meal from your log and reverses the HealthKit entry.")
+                }
             } else {
                 ProgressView()
             }
         }
-        .onAppear {
+        .task {
             if viewModel == nil {
                 viewModel = DashboardViewModel(
                     userProfileRepository: appContainer.userProfileRepository,
@@ -37,13 +66,7 @@ struct DashboardView: View {
             }
             reloadDashboard()
             scheduleReminderIfNeeded()
-            guard let vm = viewModel else { return }
-            appContainer.notificationManager.onWeighInReminderTapped = {
-                presentWeighInSheet(using: vm)
-            }
-            if appContainer.notificationManager.consumePendingWeighInSheet() {
-                presentWeighInSheet(using: vm)
-            }
+            wireNotificationsIfNeeded()
         }
         .onChange(of: activeUserId) { _, _ in
             guard !suppressActiveUserIdReload else {
@@ -57,188 +80,6 @@ struct DashboardView: View {
         .onChange(of: navigationPath.count) { oldCount, newCount in
             if newCount < oldCount {
                 reloadDashboard()
-            }
-        }
-    }
-
-    @ViewBuilder
-    private func dashboardContent(viewModel: DashboardViewModel) -> some View {
-        NavigationStack(path: $navigationPath) {
-            ZStack(alignment: .bottomTrailing) {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 20) {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(viewModel.greeting)
-                                .font(.title2.bold())
-                            Text(viewModel.formattedDate)
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        }
-
-                        if let error = viewModel.loadError {
-                            Text(error)
-                                .font(.caption)
-                                .foregroundStyle(.red)
-                        }
-
-                        CalorieRingCard(
-                            consumed: viewModel.todaysCalories,
-                            target: viewModel.activeProfile?.dailyCalorieTarget ?? 2000,
-                            remaining: viewModel.remainingCalories,
-                            progress: viewModel.calorieProgress,
-                            progressColor: viewModel.progressColor
-                        )
-
-                        MacroBarCard(
-                            proteinConsumed: viewModel.todaysProteinG,
-                            proteinTarget: viewModel.macroTargets.proteinG,
-                            carbsConsumed: viewModel.todaysCarbsG,
-                            carbsTarget: viewModel.macroTargets.carbsG,
-                            fatConsumed: viewModel.todaysFatG,
-                            fatTarget: viewModel.macroTargets.fatG,
-                            fiberConsumed: viewModel.todaysFiberG,
-                            fiberTarget: viewModel.fiberTargetG
-                        )
-
-                        MealListView(
-                            meals: viewModel.todaysMeals,
-                            onSelect: { meal in
-                                navigationPath.append(.mealDetail(meal))
-                            },
-                            onEdit: { meal in
-                                navigationPath.append(.mealScanner(.edit(meal)))
-                            },
-                            onDelete: { meal in
-                                mealPendingDelete = meal
-                                showDeleteConfirmation = true
-                            },
-                            onAdd: { mealType in
-                                navigationPath.append(.mealScanner(.create(initialMealType: mealType)))
-                            }
-                        )
-
-                        DailySummaryFooterView(
-                            fiberConsumed: viewModel.todaysFiberG,
-                            fiberTarget: viewModel.fiberTargetG,
-                            fiberColor: viewModel.fiberProgressColor,
-                            netCalorieSummary: viewModel.netCalorieSummary,
-                            netCalorieDelta: viewModel.netCalorieDelta,
-                            actualMacroPercents: viewModel.actualMacroPercents,
-                            targetMacroPercents: viewModel.targetMacroPercents
-                        )
-
-                        WeightTrendMiniChart(
-                            weighIns: viewModel.chartWeighIns,
-                            startingWeightKg: viewModel.activeProfile?.startingWeightKg ?? 0,
-                            useLbs: viewModel.useLbsForDisplay,
-                            onTap: {
-                                navigationPath.append(.weightProgress)
-                            },
-                            onLogWeighIn: {
-                                presentWeighInSheet(using: viewModel)
-                            }
-                        )
-                    }
-                    .padding()
-                    .padding(.bottom, 72)
-                }
-
-                Button {
-                    navigationPath.append(.mealScanner(.create(initialMealType: nil)))
-                } label: {
-                    Image(systemName: "plus")
-                        .font(.title2.bold())
-                        .foregroundStyle(.white)
-                        .frame(width: 56, height: 56)
-                        .background(Color.accentColor)
-                        .clipShape(Circle())
-                        .shadow(radius: 4, y: 2)
-                }
-                .padding()
-                .accessibilityLabel("Add meal")
-            }
-            .navigationDestination(for: DashboardRoute.self) { route in
-                switch route {
-                case .mealDetail(let meal):
-                    MealDetailView(
-                        meal: meal,
-                        onMealChanged: { reloadDashboard() },
-                        navigationPath: $navigationPath
-                    )
-                case .mealScanner(let scannerRoute):
-                    MealScannerView(
-                        activeUserId: activeUserId,
-                        route: scannerRoute,
-                        onMealSaved: { reloadDashboard() }
-                    )
-                case .weightProgress:
-                    if let profile = viewModel.activeProfile {
-                        WeightProgressView(
-                            viewModel: WeightProgressViewModel(
-                                profile: profile,
-                                useLbs: viewModel.useLbsForDisplay,
-                                weighInRepository: appContainer.weighInRepository
-                            ),
-                            showWeighInSheet: weighInSheetBinding(for: viewModel)
-                        )
-                    } else {
-                        ContentUnavailableView("No profile", systemImage: "person.crop.circle")
-                    }
-                }
-            }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    ProfileSwitcherView(
-                        profiles: viewModel.profiles,
-                        activeProfile: viewModel.activeProfile,
-                        onSwitch: { profile in
-                            activeUserId = profile.id.uuidString
-                        }
-                    )
-                }
-            }
-            .sheet(isPresented: plateauAlertBinding(viewModel)) {
-                PlateauAlertSheet(
-                    onDietBreak: {
-                        viewModel.applyDietBreak(context: modelContext)
-                    },
-                    onSmallReduction: {
-                        viewModel.applySmallReduction(context: modelContext)
-                    },
-                    onDismiss: {
-                        viewModel.dismissPlateauAlert()
-                    }
-                )
-            }
-            .sheet(item: $weighInSheetContext) { context in
-                WeighInView(
-                    viewModel: WeighInViewModel(
-                        profile: context.profile,
-                        currentWeightKg: context.currentWeightKg,
-                        useLbs: context.useLbs,
-                        weighInRepository: appContainer.weighInRepository,
-                        healthKitService: appContainer.healthKitService
-                    ),
-                    notificationManager: appContainer.notificationManager,
-                    onSaved: { result in
-                        reloadDashboard()
-                        scheduleReminderIfNeeded()
-                        if result.didTriggerPlateau {
-                            viewModel.checkForPlateau()
-                        }
-                    },
-                    onSkipped: {}
-                )
-            }
-            .alert("Delete this meal?", isPresented: $showDeleteConfirmation) {
-                Button("Delete", role: .destructive) {
-                    confirmDelete()
-                }
-                Button("Cancel", role: .cancel) {
-                    mealPendingDelete = nil
-                }
-            } message: {
-                Text("This removes the meal from your log and reverses the HealthKit entry.")
             }
         }
     }
@@ -261,17 +102,15 @@ struct DashboardView: View {
         }
     }
 
-    private func weighInSheetBinding(for viewModel: DashboardViewModel) -> Binding<Bool> {
-        Binding(
-            get: { weighInSheetContext != nil },
-            set: { isPresented in
-                if isPresented {
-                    presentWeighInSheet(using: viewModel)
-                } else {
-                    weighInSheetContext = nil
-                }
-            }
-        )
+    private func wireNotificationsIfNeeded() {
+        guard !didWireNotifications, let vm = viewModel else { return }
+        didWireNotifications = true
+        appContainer.notificationManager.onWeighInReminderTapped = {
+            presentWeighInSheet(using: vm)
+        }
+        if appContainer.notificationManager.consumePendingWeighInSheet() {
+            presentWeighInSheet(using: vm)
+        }
     }
 
     private func presentWeighInSheet(using viewModel: DashboardViewModel) {
@@ -307,13 +146,6 @@ struct DashboardView: View {
               let profileId = viewModel?.activeProfile?.id.uuidString else { return }
         suppressActiveUserIdReload = true
         activeUserId = profileId
-    }
-
-    private func plateauAlertBinding(_ viewModel: DashboardViewModel) -> Binding<Bool> {
-        Binding(
-            get: { viewModel.showPlateauAlert },
-            set: { viewModel.showPlateauAlert = $0 }
-        )
     }
 }
 

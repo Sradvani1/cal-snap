@@ -22,6 +22,8 @@ struct ProfileSwitcherView: View {
             } label: {
                 switcherLabel(showChevron: true)
             }
+            .accessibilityLabel("Switch profile")
+            .accessibilityHint("Choose which profile to view on the dashboard")
         } else if let profile = activeProfile ?? profiles.first {
             switcherLabel(for: profile, showChevron: false)
         }

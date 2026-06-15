@@ -5,7 +5,8 @@ import SwiftData
 struct WeightProgressView: View {
     @Environment(\.modelContext) private var modelContext
     @Bindable var viewModel: WeightProgressViewModel
-    @Binding var showWeighInSheet: Bool
+    var onLogWeighIn: () -> Void
+    var reloadTrigger: Int
 
     var body: some View {
         ScrollView {
@@ -28,18 +29,11 @@ struct WeightProgressView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button("Log weigh-in") {
-                    showWeighInSheet = true
-                }
+                Button("Log weigh-in", action: onLogWeighIn)
             }
         }
-        .task {
+        .task(id: reloadTrigger) {
             viewModel.load(context: modelContext)
-        }
-        .onChange(of: showWeighInSheet) { _, isShowing in
-            if !isShowing {
-                viewModel.load(context: modelContext)
-            }
         }
     }
 
@@ -94,10 +88,8 @@ struct WeightProgressView: View {
                     Text("Your weight trend will appear after weekly weigh-ins")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    Button("Log your first weigh-in") {
-                        showWeighInSheet = true
-                    }
-                    .font(.subheadline.weight(.semibold))
+                    Button("Log your first weigh-in", action: onLogWeighIn)
+                        .font(.subheadline.weight(.semibold))
                 }
             } else {
                 Chart {
@@ -210,7 +202,8 @@ struct WeightProgressView: View {
                 useLbs: false,
                 weighInRepository: WeighInRepository()
             ),
-            showWeighInSheet: .constant(false)
+            onLogWeighIn: {},
+            reloadTrigger: 0
         )
     }
 }

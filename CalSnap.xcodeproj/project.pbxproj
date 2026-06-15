@@ -54,6 +54,8 @@
 		PR3B004234567890ABCDEF01 /* ProfileSwitcherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR3F004234567890ABCDEF01 /* ProfileSwitcherView.swift */; };
 		PR3B005234567890ABCDEF01 /* CalorieRingCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR3F005234567890ABCDEF01 /* CalorieRingCard.swift */; };
 		PR3B006234567890ABCDEF01 /* MacroBarCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR3F006234567890ABCDEF01 /* MacroBarCard.swift */; };
+		PR3B010234567890ABCDEF01 /* DashboardContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR3F010234567890ABCDEF01 /* DashboardContentView.swift */; };
+		PR3B011234567890ABCDEF01 /* MacroBarRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR3F011234567890ABCDEF01 /* MacroBarRow.swift */; };
 		PR3B008234567890ABCDEF01 /* WeightTrendMiniChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR3F008234567890ABCDEF01 /* WeightTrendMiniChart.swift */; };
 		PR3B009234567890ABCDEF01 /* PlateauAlertSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR3F009234567890ABCDEF01 /* PlateauAlertSheet.swift */; };
 		PR3B00A234567890ABCDEF01 /* MealScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR3F00A234567890ABCDEF01 /* MealScannerView.swift */; };
@@ -79,6 +81,7 @@
 		PR5B005234567890ABCDEF01 /* MealDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR5F005234567890ABCDEF01 /* MealDetailViewModel.swift */; };
 		PR5B006234567890ABCDEF01 /* MealShareCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR5F006234567890ABCDEF01 /* MealShareCardView.swift */; };
 		PR5B007234567890ABCDEF01 /* MealListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR5F007234567890ABCDEF01 /* MealListView.swift */; };
+		PR5B00A234567890ABCDEF01 /* MealRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR5F00A234567890ABCDEF01 /* MealRowView.swift */; };
 		PR5B008234567890ABCDEF01 /* DailySummaryFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR5F008234567890ABCDEF01 /* DailySummaryFooterView.swift */; };
 		PR5B009234567890ABCDEF01 /* MealLogCRUDTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR5F009234567890ABCDEF01 /* MealLogCRUDTests.swift */; };
 		PR6B001234567890ABCDEF01 /* WeighInService.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR6F001234567890ABCDEF01 /* WeighInService.swift */; };
@@ -151,6 +154,8 @@
 		PR3F004234567890ABCDEF01 /* ProfileSwitcherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSwitcherView.swift; sourceTree = "<group>"; };
 		PR3F005234567890ABCDEF01 /* CalorieRingCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalorieRingCard.swift; sourceTree = "<group>"; };
 		PR3F006234567890ABCDEF01 /* MacroBarCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacroBarCard.swift; sourceTree = "<group>"; };
+		PR3F010234567890ABCDEF01 /* DashboardContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardContentView.swift; sourceTree = "<group>"; };
+		PR3F011234567890ABCDEF01 /* MacroBarRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacroBarRow.swift; sourceTree = "<group>"; };
 		PR3F008234567890ABCDEF01 /* WeightTrendMiniChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightTrendMiniChart.swift; sourceTree = "<group>"; };
 		PR3F009234567890ABCDEF01 /* PlateauAlertSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlateauAlertSheet.swift; sourceTree = "<group>"; };
 		PR3F00A234567890ABCDEF01 /* MealScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealScannerView.swift; sourceTree = "<group>"; };
@@ -176,6 +181,7 @@
 		PR5F005234567890ABCDEF01 /* MealDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealDetailViewModel.swift; sourceTree = "<group>"; };
 		PR5F006234567890ABCDEF01 /* MealShareCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealShareCardView.swift; sourceTree = "<group>"; };
 		PR5F007234567890ABCDEF01 /* MealListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealListView.swift; sourceTree = "<group>"; };
+		PR5F00A234567890ABCDEF01 /* MealRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealRowView.swift; sourceTree = "<group>"; };
 		PR5F008234567890ABCDEF01 /* DailySummaryFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailySummaryFooterView.swift; sourceTree = "<group>"; };
 		PR5F009234567890ABCDEF01 /* MealLogCRUDTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealLogCRUDTests.swift; sourceTree = "<group>"; };
 		PR6F001234567890ABCDEF01 /* WeighInService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeighInService.swift; sourceTree = "<group>"; };
@@ -340,10 +346,12 @@
 			isa = PBXGroup;
 			children = (
 				F1E2D3C412234567890ABCDE /* DashboardView.swift */,
+				PR3F010234567890ABCDEF01 /* DashboardContentView.swift */,
 				PR3F003234567890ABCDEF01 /* DashboardViewModel.swift */,
 				PR3F004234567890ABCDEF01 /* ProfileSwitcherView.swift */,
 				PR3F005234567890ABCDEF01 /* CalorieRingCard.swift */,
 				PR3F006234567890ABCDEF01 /* MacroBarCard.swift */,
+				PR3F011234567890ABCDEF01 /* MacroBarRow.swift */,
 				PR5F008234567890ABCDEF01 /* DailySummaryFooterView.swift */,
 				PR3F008234567890ABCDEF01 /* WeightTrendMiniChart.swift */,
 				PR3F009234567890ABCDEF01 /* PlateauAlertSheet.swift */,
@@ -393,6 +401,7 @@
 				PR5F005234567890ABCDEF01 /* MealDetailViewModel.swift */,
 				PR5F006234567890ABCDEF01 /* MealShareCardView.swift */,
 				PR5F007234567890ABCDEF01 /* MealListView.swift */,
+				PR5F00A234567890ABCDEF01 /* MealRowView.swift */,
 			);
 			path = MealLog;
 			sourceTree = "<group>";
@@ -525,10 +534,12 @@
 				A1B2C3D40E234567890ABCDE /* CalorieTargetPreviewStepView.swift in Sources */,
 				BA9F6F8108F9A54F5D77D117 /* Constants.swift in Sources */,
 				A1B2C3D412234567890ABCDE /* DashboardView.swift in Sources */,
+				PR3B010234567890ABCDEF01 /* DashboardContentView.swift in Sources */,
 				PR3B003234567890ABCDEF01 /* DashboardViewModel.swift in Sources */,
 				PR3B004234567890ABCDEF01 /* ProfileSwitcherView.swift in Sources */,
 				PR3B005234567890ABCDEF01 /* CalorieRingCard.swift in Sources */,
 				PR3B006234567890ABCDEF01 /* MacroBarCard.swift in Sources */,
+				PR3B011234567890ABCDEF01 /* MacroBarRow.swift in Sources */,
 				PR5B008234567890ABCDEF01 /* DailySummaryFooterView.swift in Sources */,
 				PR3B008234567890ABCDEF01 /* WeightTrendMiniChart.swift in Sources */,
 				PR3B009234567890ABCDEF01 /* PlateauAlertSheet.swift in Sources */,
@@ -565,6 +576,7 @@
 				PR5B005234567890ABCDEF01 /* MealDetailViewModel.swift in Sources */,
 				PR5B006234567890ABCDEF01 /* MealShareCardView.swift in Sources */,
 				PR5B007234567890ABCDEF01 /* MealListView.swift in Sources */,
+				PR5B00A234567890ABCDEF01 /* MealRowView.swift in Sources */,
 				B18D8478722A4DC5C6D169D2 /* NutritionCalculator.swift in Sources */,
 				A1B2C3D419234567890ABCDE /* GeminiTestState.swift in Sources */,
 				A1B2C3D418234567890ABCDE /* GeminiTestIndicatorView.swift in Sources */,
