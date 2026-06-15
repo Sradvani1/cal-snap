@@ -26,10 +26,10 @@ final class OnboardingViewModelTests: XCTestCase {
 
     func testGoalDateMinimum() {
         let calendar = Calendar.current
-        let tooSoon = calendar.date(byAdding: .day, value: 7, to: Date())!
+        let tooSoon = calendar.date(byAdding: .day, value: 7, to: Date.now)!
         XCTAssertFalse(viewModel.validateGoalTargetDate(tooSoon))
 
-        let valid = calendar.date(byAdding: .day, value: 14, to: Date())!
+        let valid = calendar.date(byAdding: .day, value: 14, to: Date.now)!
         XCTAssertTrue(viewModel.validateGoalTargetDate(valid))
     }
 
@@ -54,9 +54,9 @@ final class OnboardingViewModelTests: XCTestCase {
         let saved = try XCTUnwrap(fetched.first)
         XCTAssertEqual(saved.name, "Alex")
         XCTAssertEqual(saved.startingWeightKg, 80, accuracy: 0.01)
-        XCTAssertEqual(saved.macroTargetProteinPct, 0.28, accuracy: 0.001)
-        XCTAssertEqual(saved.macroTargetCarbsPct, 0.47, accuracy: 0.001)
-        XCTAssertEqual(saved.macroTargetFatPct, 0.25, accuracy: 0.001)
+        XCTAssertEqual(saved.macroTargetProteinPct, AppConstants.Nutrition.defaultMacroProteinPct, accuracy: 0.001)
+        XCTAssertEqual(saved.macroTargetCarbsPct, AppConstants.Nutrition.defaultMacroCarbsPct, accuracy: 0.001)
+        XCTAssertEqual(saved.macroTargetFatPct, AppConstants.Nutrition.defaultMacroFatPct, accuracy: 0.001)
         XCTAssertGreaterThan(saved.dailyCalorieTarget, 0)
         XCTAssertGreaterThan(saved.tdee, 0)
     }

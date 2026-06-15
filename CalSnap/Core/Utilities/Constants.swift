@@ -42,6 +42,9 @@ enum AppConstants {
         static let fiberCalPerGram: Double = 2.0
         static let alcoholCalPerGram: Double = 7.0
         static let fiberGramsPer1000Kcal: Double = 14.0
+        static let defaultMacroProteinPct: Double = 0.28
+        static let defaultMacroCarbsPct: Double = 0.47
+        static let defaultMacroFatPct: Double = 0.25
     }
 
     enum Deficit {

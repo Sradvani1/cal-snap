@@ -25,9 +25,9 @@ enum UnitFormatters {
 
     static func formatWeight(kg: Double, useLbs: Bool) -> String {
         if useLbs {
-            return String(format: "%.1f lbs", kgToLbs(kg))
+            return kgToLbs(kg).formatted(.number.precision(.fractionLength(1))) + " lbs"
         }
-        return String(format: "%.1f kg", kg)
+        return kg.formatted(.number.precision(.fractionLength(1))) + " kg"
     }
 
     static func formatHeight(cm: Double, useImperial: Bool) -> String {
@@ -35,6 +35,28 @@ enum UnitFormatters {
             let parts = cmToFeetInches(cm)
             return "\(parts.feet) ft \(parts.inches) in"
         }
-        return String(format: "%.0f cm", cm)
+        return cm.formatted(.number.precision(.fractionLength(0))) + " cm"
+    }
+
+    static func stepperWeightLabel(displayValue: Double, useLbs: Bool) -> String {
+        if useLbs {
+            let formatted = displayValue.formatted(.number.precision(.fractionLength(0)))
+            return "Weight: \(formatted) lbs"
+        }
+        let formatted = displayValue.formatted(.number.precision(.fractionLength(1)))
+        return "Weight: \(formatted) kg"
+    }
+
+    static func stepperGoalWeightLabel(displayValue: Double, useLbs: Bool) -> String {
+        if useLbs {
+            let formatted = displayValue.formatted(.number.precision(.fractionLength(0)))
+            return "Goal weight: \(formatted) lbs"
+        }
+        let formatted = displayValue.formatted(.number.precision(.fractionLength(1)))
+        return "Goal weight: \(formatted) kg"
+    }
+
+    static func formatMacroGrams(_ grams: Double, fractionLength: Int) -> String {
+        grams.formatted(.number.precision(.fractionLength(fractionLength))) + " g"
     }
 }

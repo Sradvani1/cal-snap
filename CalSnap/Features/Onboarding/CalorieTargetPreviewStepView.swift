@@ -21,9 +21,9 @@ struct CalorieTargetPreviewStepView: View {
                     summaryRow("Recommended deficit", value: "\(viewModel.calculatedDeficit) kcal/day")
                     summaryRow("Daily calorie target", value: "\(viewModel.calculatedTarget) kcal/day")
                     Divider()
-                    summaryRow("Protein", value: String(format: "%.0f g", viewModel.calculatedProteinG))
-                    summaryRow("Carbs", value: String(format: "%.0f g", viewModel.calculatedCarbsG))
-                    summaryRow("Fat", value: String(format: "%.1f g", viewModel.calculatedFatG))
+                    summaryRow("Protein", value: UnitFormatters.formatMacroGrams(viewModel.calculatedProteinG, fractionLength: 0))
+                    summaryRow("Carbs", value: UnitFormatters.formatMacroGrams(viewModel.calculatedCarbsG, fractionLength: 0))
+                    summaryRow("Fat", value: UnitFormatters.formatMacroGrams(viewModel.calculatedFatG, fractionLength: 1))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -44,7 +44,7 @@ struct CalorieTargetPreviewStepView: View {
                 Text("Daily deficit: \(viewModel.activeProfile.requestedDeficit) kcal")
                     .font(.headline)
                 Slider(
-                    value: deficitSliderBinding,
+                    value: viewModel.deficitSliderBinding(),
                     in: deficitRange,
                     step: 25
                 )
@@ -57,7 +57,7 @@ struct CalorieTargetPreviewStepView: View {
                 .font(.footnote)
             }
         }
-        .onAppear {
+        .task {
             viewModel.calculateTargets()
         }
         .alert("Higher deficit warning", isPresented: $viewModel.showHardDeficitAlert) {
@@ -68,13 +68,6 @@ struct CalorieTargetPreviewStepView: View {
         } message: {
             Text("Deficits above 500 kcal/day can trigger metabolic adaptation. Proceed only if you understand the tradeoff.")
         }
-    }
-
-    private var deficitSliderBinding: Binding<Double> {
-        Binding(
-            get: { Double(viewModel.activeProfile.requestedDeficit) },
-            set: { viewModel.updateDeficit(Int($0)) }
-        )
     }
 
     private func summaryRow(_ label: String, value: String) -> some View {

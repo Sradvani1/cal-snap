@@ -2,15 +2,8 @@ import Foundation
 import SwiftData
 import SwiftUI
 
-enum GeminiTestState: Equatable {
-    case idle
-    case testing
-    case success
-    case failure(String)
-}
-
-@Observable
 @MainActor
+@Observable
 final class OnboardingViewModel {
     var currentStep: OnboardingStep = .welcome
     var profileA = ProfileDraft()
@@ -24,7 +17,6 @@ final class OnboardingViewModel {
     var calculatedCarbsG = 0.0
     var calculatedFatG = 0.0
     var warnings: [String] = []
-    var isCalculating = false
 
     var geminiAPIKeyInput = ""
     var usdaAPIKeyInput = ""
@@ -32,10 +24,7 @@ final class OnboardingViewModel {
     var hardDeficitUnlocked = false
     var showHardDeficitAlert = false
     var validationError: String?
-
-    var useImperialHeight = false
-    var useLbsWeight = false
-    var useLbsGoalWeight = false
+    var healthKitError: String?
 
     private let healthKitService: HealthKitService
     private let geminiService: GeminiService
@@ -77,6 +66,28 @@ final class OnboardingViewModel {
         Double(currentStep.rawValue + 1) / Double(OnboardingStep.allCases.count)
     }
 
+    func updateActiveProfile(_ update: (inout ProfileDraft) -> Void) {
+        var draft = activeProfile
+        update(&draft)
+        activeProfile = draft
+    }
+
+    func binding<T>(_ keyPath: WritableKeyPath<ProfileDraft, T>) -> Binding<T> {
+        Binding(
+            get: { self.activeProfile[keyPath: keyPath] },
+            set: { newValue in
+                self.updateActiveProfile { $0[keyPath: keyPath] = newValue }
+            }
+        )
+    }
+
+    func deficitSliderBinding() -> Binding<Double> {
+        Binding(
+            get: { Double(self.activeProfile.requestedDeficit) },
+            set: { self.updateDeficit(Int($0)) }
+        )
+    }
+
     func canAdvance(from step: OnboardingStep) -> Bool {
         switch step {
         case .welcome:
@@ -92,7 +103,7 @@ final class OnboardingViewModel {
 
     func validateGoalTargetDate(_ date: Date) -> Bool {
         let calendar = Calendar.current
-        let start = calendar.startOfDay(for: Date())
+        let start = calendar.startOfDay(for: Date.now)
         let target = calendar.startOfDay(for: date)
         guard let minDate = calendar.date(byAdding: .day, value: AppConstants.Onboarding.minGoalDaysFromToday, to: start),
               let maxDate = calendar.date(byAdding: .day, value: AppConstants.Onboarding.maxGoalDaysFromToday, to: start)
@@ -108,9 +119,6 @@ final class OnboardingViewModel {
     }
 
     func calculateTargets() {
-        isCalculating = true
-        defer { isCalculating = false }
-
         let draft = activeProfile
         let age = NutritionCalculator.age(from: draft.dateOfBirth)
         let bmr = NutritionCalculator.bmr(
@@ -127,9 +135,9 @@ final class OnboardingViewModel {
         )
         let macros = NutritionCalculator.macroTargets(
             dailyCalories: targetResult.target,
-            proteinPct: 0.28,
-            carbsPct: 0.47,
-            fatPct: 0.25
+            proteinPct: AppConstants.Nutrition.defaultMacroProteinPct,
+            carbsPct: AppConstants.Nutrition.defaultMacroCarbsPct,
+            fatPct: AppConstants.Nutrition.defaultMacroFatPct
         )
 
         calculatedTDEE = Int(tdeeValue.rounded())
@@ -155,6 +163,14 @@ final class OnboardingViewModel {
         hardDeficitUnlocked = true
         if activeProfile.requestedDeficit > AppConstants.Deficit.maxDeficitKcal {
             updateDeficit(activeProfile.requestedDeficit)
+        }
+    }
+
+    func advanceOrSetValidationError(context: ModelContext) {
+        do {
+            try advance(context: context)
+        } catch {
+            validationError = error.localizedDescription
         }
     }
 
@@ -185,8 +201,12 @@ final class OnboardingViewModel {
         case .healthKit:
             currentStep = .apiKeys
         case .apiKeys:
-            try saveAPIKeys()
             try saveProfiles(context: context)
+            do {
+                try saveAPIKeys()
+            } catch {
+                validationError = "Profile saved, but API keys could not be stored: \(error.localizedDescription)"
+            }
             currentStep = .done
         case .done:
             break
@@ -243,9 +263,12 @@ final class OnboardingViewModel {
         UserDefaults.standard.set(profileARecord.id.uuidString, forKey: AppStorageKey.activeUserId)
     }
 
-    func requestHealthKit() {
-        Task {
-            try? await healthKitService.requestAuthorization()
+    func requestHealthKit() async {
+        healthKitError = nil
+        do {
+            try await healthKitService.requestAuthorization()
+        } catch {
+            healthKitError = error.localizedDescription
         }
     }
 

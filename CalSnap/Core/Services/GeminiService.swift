@@ -54,16 +54,22 @@ enum GeminiError: Error, LocalizedError {
 }
 
 actor GeminiService {
-    func validateAPIKey(_ key: String) async throws -> Bool {
+    func validateAPIKey(_ key: String) async throws(GeminiError) -> Bool {
         let trimmed = key.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { throw GeminiError.apiKeyMissing }
 
         let model = GenerativeModel(name: AppConstants.Gemini.model, apiKey: trimmed)
-        let response = try await model.generateContent("Reply with OK")
-        guard let text = response.text, !text.isEmpty else {
-            throw GeminiError.emptyResponse
+        do {
+            let response = try await model.generateContent("Reply with OK")
+            guard let text = response.text, !text.isEmpty else {
+                throw GeminiError.emptyResponse
+            }
+            return true
+        } catch let error as GeminiError {
+            throw error
+        } catch {
+            throw GeminiError.validationFailed
         }
-        return true
     }
 
     func analyzeMeal(_ request: MealAnalysisRequest) async throws -> MealAnalysisResponse {

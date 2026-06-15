@@ -21,7 +21,7 @@ struct APIKeySetupStepView: View {
                 }
                 .disabled(viewModel.geminiTestState == .testing)
 
-                geminiTestIndicator
+                GeminiTestIndicatorView(state: viewModel.geminiTestState)
             }
 
             Text("USDA API key (optional)")
@@ -36,25 +36,6 @@ struct APIKeySetupStepView: View {
                 .textFieldStyle(.roundedBorder)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-    }
-
-    @ViewBuilder
-    private var geminiTestIndicator: some View {
-        switch viewModel.geminiTestState {
-        case .idle:
-            EmptyView()
-        case .testing:
-            ProgressView()
-        case .success:
-            Label("Valid key", systemImage: "checkmark.circle.fill")
-                .foregroundStyle(.green)
-                .font(.footnote)
-        case .failure(let message):
-            Label(message, systemImage: "xmark.circle.fill")
-                .foregroundStyle(.red)
-                .font(.footnote)
-                .lineLimit(2)
-        }
     }
 }
 

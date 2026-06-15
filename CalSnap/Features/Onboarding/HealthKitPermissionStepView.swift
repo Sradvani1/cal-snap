@@ -16,9 +16,15 @@ struct HealthKitPermissionStepView: View {
                 .foregroundStyle(.secondary)
 
             Button("Connect to Apple Health") {
-                viewModel.requestHealthKit()
+                Task { await viewModel.requestHealthKit() }
             }
             .buttonStyle(.bordered)
+
+            if let error = viewModel.healthKitError {
+                Text(error)
+                    .font(.footnote)
+                    .foregroundStyle(.orange)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }

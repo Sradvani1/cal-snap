@@ -35,6 +35,10 @@
 		A1B2C3D40F234567890ABCDE /* HealthKitPermissionStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C40F234567890ABCDE /* HealthKitPermissionStepView.swift */; };
 		A1B2C3D410234567890ABCDE /* APIKeySetupStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C410234567890ABCDE /* APIKeySetupStepView.swift */; };
 		A1B2C3D411234567890ABCDE /* OnboardingDoneStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C411234567890ABCDE /* OnboardingDoneStepView.swift */; };
+		A1B2C3D419234567890ABCDE /* GeminiTestState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C419234567890ABCDE /* GeminiTestState.swift */; };
+		A1B2C3D416234567890ABCDE /* OnboardingStepContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C416234567890ABCDE /* OnboardingStepContent.swift */; };
+		A1B2C3D417234567890ABCDE /* OnboardingNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C417234567890ABCDE /* OnboardingNavigationBar.swift */; };
+		A1B2C3D418234567890ABCDE /* GeminiTestIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C418234567890ABCDE /* GeminiTestIndicatorView.swift */; };
 		A1B2C3D412234567890ABCDE /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C412234567890ABCDE /* DashboardView.swift */; };
 		A1B2C3D413234567890ABCDE /* OnboardingViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C413234567890ABCDE /* OnboardingViewModelTests.swift */; };
 		A1B2C3D414234567890ABCDE /* GoogleGenerativeAI in Frameworks */ = {isa = PBXBuildFile; productRef = P2B3C4D5E6F7890123456789A /* GoogleGenerativeAI */; };
@@ -133,6 +137,10 @@
 		F1E2D3C40F234567890ABCDE /* HealthKitPermissionStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitPermissionStepView.swift; sourceTree = "<group>"; };
 		F1E2D3C410234567890ABCDE /* APIKeySetupStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeySetupStepView.swift; sourceTree = "<group>"; };
 		F1E2D3C411234567890ABCDE /* OnboardingDoneStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingDoneStepView.swift; sourceTree = "<group>"; };
+		F1E2D3C419234567890ABCDE /* GeminiTestState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiTestState.swift; sourceTree = "<group>"; };
+		F1E2D3C416234567890ABCDE /* OnboardingStepContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingStepContent.swift; sourceTree = "<group>"; };
+		F1E2D3C417234567890ABCDE /* OnboardingNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingNavigationBar.swift; sourceTree = "<group>"; };
+		F1E2D3C418234567890ABCDE /* GeminiTestIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiTestIndicatorView.swift; sourceTree = "<group>"; };
 		F1E2D3C412234567890ABCDE /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		F1E2D3C413234567890ABCDE /* OnboardingViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModelTests.swift; sourceTree = "<group>"; };
 		F1E2D3C415234567890ABCDE /* CalSnap.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CalSnap.entitlements; sourceTree = "<group>"; };
@@ -347,15 +355,19 @@
 			isa = PBXGroup;
 			children = (
 				F1E2D3C407234567890ABCDE /* OnboardingStep.swift */,
+				F1E2D3C419234567890ABCDE /* GeminiTestState.swift */,
 				F1E2D3C408234567890ABCDE /* ProfileDraft.swift */,
 				F1E2D3C409234567890ABCDE /* OnboardingViewModel.swift */,
 				F1E2D3C40A234567890ABCDE /* OnboardingView.swift */,
+				F1E2D3C416234567890ABCDE /* OnboardingStepContent.swift */,
+				F1E2D3C417234567890ABCDE /* OnboardingNavigationBar.swift */,
 				F1E2D3C40B234567890ABCDE /* WelcomeStepView.swift */,
 				F1E2D3C40C234567890ABCDE /* ProfileSetupStepView.swift */,
 				F1E2D3C40D234567890ABCDE /* GoalSetupStepView.swift */,
 				F1E2D3C40E234567890ABCDE /* CalorieTargetPreviewStepView.swift */,
 				F1E2D3C40F234567890ABCDE /* HealthKitPermissionStepView.swift */,
 				F1E2D3C410234567890ABCDE /* APIKeySetupStepView.swift */,
+				F1E2D3C418234567890ABCDE /* GeminiTestIndicatorView.swift */,
 				F1E2D3C411234567890ABCDE /* OnboardingDoneStepView.swift */,
 			);
 			path = Onboarding;
@@ -554,6 +566,10 @@
 				PR5B006234567890ABCDEF01 /* MealShareCardView.swift in Sources */,
 				PR5B007234567890ABCDEF01 /* MealListView.swift in Sources */,
 				B18D8478722A4DC5C6D169D2 /* NutritionCalculator.swift in Sources */,
+				A1B2C3D419234567890ABCDE /* GeminiTestState.swift in Sources */,
+				A1B2C3D418234567890ABCDE /* GeminiTestIndicatorView.swift in Sources */,
+				A1B2C3D416234567890ABCDE /* OnboardingStepContent.swift in Sources */,
+				A1B2C3D417234567890ABCDE /* OnboardingNavigationBar.swift in Sources */,
 				A1B2C3D411234567890ABCDE /* OnboardingDoneStepView.swift in Sources */,
 				A1B2C3D407234567890ABCDE /* OnboardingStep.swift in Sources */,
 				A1B2C3D40A234567890ABCDE /* OnboardingView.swift in Sources */,
