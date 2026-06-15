@@ -22,4 +22,12 @@ struct MealRepository {
         )
         return try context.fetch(descriptor)
     }
+
+    func save(_ entry: MealEntry, context: ModelContext) throws {
+        for item in entry.items {
+            context.insert(item)
+        }
+        context.insert(entry)
+        try context.save()
+    }
 }

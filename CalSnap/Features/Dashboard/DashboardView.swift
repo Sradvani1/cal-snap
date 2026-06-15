@@ -102,7 +102,12 @@ struct DashboardView: View {
                 .accessibilityLabel("Add meal")
             }
             .navigationDestination(isPresented: $showScanner) {
-                MealScannerView()
+                MealScannerView(activeUserId: activeUserId)
+            }
+            .onChange(of: showScanner) { _, isShowing in
+                if !isShowing {
+                    reloadDashboard()
+                }
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {

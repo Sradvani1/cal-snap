@@ -35,5 +35,9 @@
 	<string>CalSnap reads your body weight to improve calorie target accuracy.</string>
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>CalSnap logs your meals and weight to Apple Health.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>CalSnap uses your camera to photograph meals for nutritional analysis.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>CalSnap can analyze meal photos from your photo library.</string>
 </dict>
 </plist>

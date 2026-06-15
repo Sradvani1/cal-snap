@@ -79,21 +79,6 @@ struct TodaysMealsSection: View {
     }
 }
 
-private extension MealType {
-    var displayName: String {
-        rawValue.capitalized
-    }
-
-    var systemImage: String {
-        switch self {
-        case .breakfast: return "sunrise.fill"
-        case .lunch: return "sun.max.fill"
-        case .dinner: return "moon.fill"
-        case .snack: return "leaf.fill"
-        }
-    }
-}
-
 #Preview("Empty") {
     TodaysMealsSection(meals: [])
         .padding()
