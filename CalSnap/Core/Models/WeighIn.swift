@@ -3,6 +3,7 @@ import SwiftData
 
 @Model
 final class WeighIn {
+    /// Local-only uniqueness. Remove `.unique` and make relationships optional before CloudKit sync.
     @Attribute(.unique) var id: UUID
     var userId: UUID
     var date: Date
@@ -15,7 +16,7 @@ final class WeighIn {
     init(
         id: UUID = UUID(),
         userId: UUID,
-        date: Date = Date(),
+        date: Date = Date.now,
         weightKg: Double,
         calculatedTDEE: Int = 0,
         adjustedDailyTarget: Int = 0,

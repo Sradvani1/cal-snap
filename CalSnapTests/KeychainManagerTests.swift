@@ -7,10 +7,12 @@ final class KeychainManagerTests: XCTestCase {
     override func setUp() {
         super.setUp()
         KeychainManager.delete(account: testAccount)
+        KeychainManager.delete(for: .geminiAPIKey)
     }
 
     override func tearDown() {
         KeychainManager.delete(account: testAccount)
+        KeychainManager.delete(for: .geminiAPIKey)
         super.tearDown()
     }
 
@@ -22,5 +24,20 @@ final class KeychainManagerTests: XCTestCase {
         KeychainManager.delete(account: testAccount)
         let afterDelete = try KeychainManager.load(account: testAccount)
         XCTAssertNil(afterDelete)
+    }
+
+    func testSaveLoadDeleteRoundTripWithKeychainKey() throws {
+        try KeychainManager.save("test-gemini-key", for: .geminiAPIKey)
+        let loaded = try KeychainManager.load(for: .geminiAPIKey)
+        XCTAssertEqual(loaded, "test-gemini-key")
+
+        KeychainManager.delete(for: .geminiAPIKey)
+        let afterDelete = try KeychainManager.load(for: .geminiAPIKey)
+        XCTAssertNil(afterDelete)
+    }
+
+    func testLoadMissingKeyReturnsNil() throws {
+        let loaded = try KeychainManager.load(account: testAccount)
+        XCTAssertNil(loaded)
     }
 }

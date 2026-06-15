@@ -13,7 +13,10 @@
 		6FBA09496E1526AAEA65EBC2 /* CalSnapApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77E2521ABC18A4107C2A866E /* CalSnapApp.swift */; };
 		787D3991B98BFA89F80C941D /* WeighIn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AA38E304E534F513EA56DE4 /* WeighIn.swift */; };
 		884011074BE2C209A9971AED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DA06AE324EEDADDDC6EB6B50 /* Assets.xcassets */; };
-		8E9F0C4DC5BFDCE0172C0967 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 298A8229C48FC85DACE2234B /* Enums.swift */; };
+		PR1B001234567890ABCDEF01 /* BiologicalSex.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR1F001234567890ABCDEF01 /* BiologicalSex.swift */; };
+		PR1B002234567890ABCDEF01 /* ActivityLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR1F002234567890ABCDEF01 /* ActivityLevel.swift */; };
+		PR1B003234567890ABCDEF01 /* MealType.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR1F003234567890ABCDEF01 /* MealType.swift */; };
+		PR1B004234567890ABCDEF01 /* MealTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR1F004234567890ABCDEF01 /* MealTypeTests.swift */; };
 		9FAB9CA4C4D6BDA01C4B66B0 /* FoodItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8D2B293BBEB60096DA39E3 /* FoodItem.swift */; };
 		A1B2C3D401234567890ABCDE /* APIKeyResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C401234567890ABCDE /* APIKeyResolver.swift */; };
 		A1B2C3D402234567890ABCDE /* GeminiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C402234567890ABCDE /* GeminiService.swift */; };
@@ -98,7 +101,10 @@
 		18F8DBAE76C7C7B21976685A /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
 		1AA38E304E534F513EA56DE4 /* WeighIn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeighIn.swift; sourceTree = "<group>"; };
 		1FA56D67A1FDA0564BB1D59A /* CalSnapTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CalSnapTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		298A8229C48FC85DACE2234B /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
+		PR1F001234567890ABCDEF01 /* BiologicalSex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiologicalSex.swift; sourceTree = "<group>"; };
+		PR1F002234567890ABCDEF01 /* ActivityLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityLevel.swift; sourceTree = "<group>"; };
+		PR1F003234567890ABCDEF01 /* MealType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealType.swift; sourceTree = "<group>"; };
+		PR1F004234567890ABCDEF01 /* MealTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTypeTests.swift; sourceTree = "<group>"; };
 		48914D12FBF26E0081590A8B /* MealEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealEntry.swift; sourceTree = "<group>"; };
 		49FF607CB3770B2AAE871821 /* NutritionCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionCalculatorTests.swift; sourceTree = "<group>"; };
 		4A203208125EE8A800C80A29 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -218,10 +224,12 @@
 		877A2FC088F554B971C7F877 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				298A8229C48FC85DACE2234B /* Enums.swift */,
+				PR1F002234567890ABCDEF01 /* ActivityLevel.swift */,
+				PR1F001234567890ABCDEF01 /* BiologicalSex.swift */,
 				BD8D2B293BBEB60096DA39E3 /* FoodItem.swift */,
 				48914D12FBF26E0081590A8B /* MealEntry.swift */,
 				PR5F001234567890ABCDEF01 /* MealHealthSnapshot.swift */,
+				PR1F003234567890ABCDEF01 /* MealType.swift */,
 				8852933F27AA17FD6FDC12B2 /* UserProfile.swift */,
 				F1E2D3C406234567890ABCDE /* UserProfile+Display.swift */,
 				1AA38E304E534F513EA56DE4 /* WeighIn.swift */,
@@ -253,6 +261,7 @@
 			children = (
 				PR3F00B234567890ABCDEF01 /* DashboardViewModelTests.swift */,
 				B7D1271130B39D7B9A67E609 /* KeychainManagerTests.swift */,
+				PR1F004234567890ABCDEF01 /* MealTypeTests.swift */,
 				PR4F00E234567890ABCDEF01 /* MealScannerViewModelTests.swift */,
 				PR5F009234567890ABCDEF01 /* MealLogCRUDTests.swift */,
 				PR6F007234567890ABCDEF01 /* WeighInTests.swift */,
@@ -525,7 +534,9 @@
 				PR4B00B234567890ABCDEF01 /* ScannerErrorBanner.swift in Sources */,
 				PR4B00C234567890ABCDEF01 /* MealAnalysisResultView.swift in Sources */,
 				PR4B00D234567890ABCDEF01 /* ManualMealEntryView.swift in Sources */,
-				8E9F0C4DC5BFDCE0172C0967 /* Enums.swift in Sources */,
+				PR1B001234567890ABCDEF01 /* BiologicalSex.swift in Sources */,
+				PR1B002234567890ABCDEF01 /* ActivityLevel.swift in Sources */,
+				PR1B003234567890ABCDEF01 /* MealType.swift in Sources */,
 				9FAB9CA4C4D6BDA01C4B66B0 /* FoodItem.swift in Sources */,
 				A1B2C3D402234567890ABCDE /* GeminiService.swift in Sources */,
 				A1B2C3D40D234567890ABCDE /* GoalSetupStepView.swift in Sources */,
@@ -574,6 +585,7 @@
 				PR6B007234567890ABCDEF01 /* WeighInTests.swift in Sources */,
 				PR4B00E234567890ABCDEF01 /* MealScannerViewModelTests.swift in Sources */,
 				1B31CEC936B87ADC8D4A5AE0 /* KeychainManagerTests.swift in Sources */,
+				PR1B004234567890ABCDEF01 /* MealTypeTests.swift in Sources */,
 				D101E5ADAC2C4C0EBA1B0D2E /* NutritionCalculatorTests.swift in Sources */,
 				A1B2C3D413234567890ABCDE /* OnboardingViewModelTests.swift in Sources */,
 			);

@@ -26,9 +26,10 @@ struct NutritionCalculator {
             warnings.append("Deficits above \(AppConstants.Deficit.maxDeficitKcal) kcal/day can trigger metabolic adaptation. Recommend 350 kcal/day.")
         }
 
-        let minimum = sex == .male
-            ? AppConstants.Deficit.minCaloriesMale
-            : AppConstants.Deficit.minCaloriesFemale
+        let minimum = switch sex {
+        case .male: AppConstants.Deficit.minCaloriesMale
+        case .female: AppConstants.Deficit.minCaloriesFemale
+        }
         let rawTarget = Int(tdee) - deficit
         let target = max(rawTarget, minimum)
 
@@ -58,7 +59,7 @@ struct NutritionCalculator {
     }
 
     static func age(from dob: Date) -> Int {
-        Calendar.current.dateComponents([.year], from: dob, to: Date()).year ?? 0
+        Calendar.current.dateComponents([.year], from: dob, to: Date.now).year ?? 0
     }
 
     static func weightProjection(
@@ -94,10 +95,11 @@ struct NutritionCalculator {
 
     static func isOnPlateau(weighIns: [WeighIn]) -> Bool {
         guard weighIns.count >= AppConstants.Plateau.weeksToDetect else { return false }
-        let recent = weighIns.suffix(AppConstants.Plateau.weeksToDetect)
-        let weights = recent.map(\.weightKg)
-        let minWeight = weights.min() ?? 0
-        let maxWeight = weights.max() ?? 0
+        let recent = weighIns
+            .sorted { $0.date < $1.date }
+            .suffix(AppConstants.Plateau.weeksToDetect)
+        guard let minWeight = recent.map(\.weightKg).min(),
+              let maxWeight = recent.map(\.weightKg).max() else { return false }
         return (maxWeight - minWeight) < AppConstants.Plateau.weightChangeThresholdKg
     }
 
@@ -122,7 +124,7 @@ struct NutritionCalculator {
         sex: BiologicalSex,
         activityLevel: ActivityLevel,
         dailyDeficitKcal: Int,
-        referenceDate: Date = Date(),
+        referenceDate: Date = Date.now,
         calendar: Calendar = .current
     ) -> Date? {
         guard dailyDeficitKcal > 0, currentWeightKg > goalWeightKg else { return nil }
@@ -152,7 +154,7 @@ struct NutritionCalculator {
         sex: BiologicalSex,
         activityLevel: ActivityLevel,
         dailyDeficitKcal: Int,
-        startDate: Date = Date(),
+        startDate: Date = Date.now,
         calendar: Calendar = .current
     ) -> [(date: Date, weightKg: Double)] {
         guard dailyDeficitKcal > 0 else { return [] }

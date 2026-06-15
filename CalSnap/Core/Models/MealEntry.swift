@@ -3,6 +3,7 @@ import SwiftData
 
 @Model
 final class MealEntry {
+    /// Local-only uniqueness. Remove `.unique` and make relationships optional before CloudKit sync.
     @Attribute(.unique) var id: UUID
     var userId: UUID
     var timestamp: Date
@@ -22,8 +23,8 @@ final class MealEntry {
     init(
         id: UUID = UUID(),
         userId: UUID,
-        timestamp: Date = Date(),
-        mealType: MealType = .suggested(for: Date()),
+        timestamp: Date = Date.now,
+        mealType: MealType = .suggested(for: Date.now),
         photoData: Data? = nil,
         textDescription: String? = nil,
         totalCalories: Int = 0,

@@ -20,6 +20,7 @@ final class NutritionCalculatorTests: XCTestCase {
     func testDailyTargetFloor() {
         let result = NutritionCalculator.dailyTarget(tdee: 2000, requestedDeficit: 1000, sex: .male)
         XCTAssertEqual(result.target, 1500)
+        XCTAssertEqual(result.deficit, 750)
         XCTAssertTrue(result.warnings.contains(where: { $0.contains("1500") }))
     }
 
@@ -48,12 +49,52 @@ final class NutritionCalculatorTests: XCTestCase {
         XCTAssertEqual(bmi, 25.2, accuracy: 0.1)
     }
 
+    func testAgeFromDateOfBirth() {
+        let dob = Calendar.current.date(byAdding: .year, value: -35, to: Date.now)!
+        XCTAssertEqual(NutritionCalculator.age(from: dob), 35)
+    }
+
     func testPlateauDetection() {
         let userId = UUID()
         let weighIns = [
-            WeighIn(userId: userId, date: Date(), weightKg: 80.0),
-            WeighIn(userId: userId, date: Date(), weightKg: 80.1),
-            WeighIn(userId: userId, date: Date(), weightKg: 80.15),
+            WeighIn(userId: userId, date: Date.now, weightKg: 80.0),
+            WeighIn(userId: userId, date: Date.now, weightKg: 80.1),
+            WeighIn(userId: userId, date: Date.now, weightKg: 80.15),
+        ]
+        XCTAssertTrue(NutritionCalculator.isOnPlateau(weighIns: weighIns))
+    }
+
+    func testPlateauDetectionInsufficientWeighIns() {
+        let userId = UUID()
+        let weighIns = [
+            WeighIn(userId: userId, date: Date.now, weightKg: 80.0),
+            WeighIn(userId: userId, date: Date.now, weightKg: 80.1),
+        ]
+        XCTAssertFalse(NutritionCalculator.isOnPlateau(weighIns: weighIns))
+    }
+
+    func testPlateauDetectionWeightSpreadTooLarge() {
+        let userId = UUID()
+        let weighIns = [
+            WeighIn(userId: userId, date: Date.now, weightKg: 80.0),
+            WeighIn(userId: userId, date: Date.now, weightKg: 80.15),
+            WeighIn(userId: userId, date: Date.now, weightKg: 80.25),
+        ]
+        XCTAssertFalse(NutritionCalculator.isOnPlateau(weighIns: weighIns))
+    }
+
+    func testPlateauDetectionUnsortedInput() {
+        let userId = UUID()
+        let calendar = Calendar.current
+        let day1 = Date.now
+        let day2 = calendar.date(byAdding: .day, value: -7, to: day1)!
+        let day3 = calendar.date(byAdding: .day, value: -14, to: day1)!
+        // Inserted out of chronological order; oldest entry should be ignored.
+        let weighIns = [
+            WeighIn(userId: userId, date: day2, weightKg: 80.1),
+            WeighIn(userId: userId, date: day1, weightKg: 80.15),
+            WeighIn(userId: userId, date: day3, weightKg: 79.0),
+            WeighIn(userId: userId, date: day2, weightKg: 80.05),
         ]
         XCTAssertTrue(NutritionCalculator.isOnPlateau(weighIns: weighIns))
     }

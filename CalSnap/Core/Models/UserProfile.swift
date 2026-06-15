@@ -3,6 +3,7 @@ import SwiftData
 
 @Model
 final class UserProfile {
+    /// Local-only uniqueness. Remove `.unique` and make relationships optional before CloudKit sync.
     @Attribute(.unique) var id: UUID
     var name: String
     var sex: BiologicalSex
@@ -27,11 +28,11 @@ final class UserProfile {
         id: UUID = UUID(),
         name: String = "",
         sex: BiologicalSex = .male,
-        dateOfBirth: Date = Calendar.current.date(byAdding: .year, value: -35, to: Date()) ?? Date(),
+        dateOfBirth: Date = Calendar.current.date(byAdding: .year, value: -35, to: Date.now) ?? Date.now,
         heightCm: Double = 175,
         startingWeightKg: Double = 80,
         goalWeightKg: Double = 72,
-        goalTargetDate: Date = Calendar.current.date(byAdding: .month, value: 6, to: Date()) ?? Date(),
+        goalTargetDate: Date = Calendar.current.date(byAdding: .month, value: 6, to: Date.now) ?? Date.now,
         activityLevel: ActivityLevel = .moderatelyActive,
         dailyCalorieTarget: Int = 0,
         tdee: Int = 0,
@@ -39,8 +40,8 @@ final class UserProfile {
         macroTargetProteinPct: Double = 0.28,
         macroTargetCarbsPct: Double = 0.47,
         macroTargetFatPct: Double = 0.25,
-        createdAt: Date = Date(),
-        updatedAt: Date = Date(),
+        createdAt: Date = Date.now,
+        updatedAt: Date = Date.now,
         meals: [MealEntry] = [],
         weighIns: [WeighIn] = []
     ) {

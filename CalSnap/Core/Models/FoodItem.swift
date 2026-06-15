@@ -3,6 +3,7 @@ import SwiftData
 
 @Model
 final class FoodItem {
+    /// Local-only uniqueness. Remove `.unique` and make relationships optional before CloudKit sync.
     @Attribute(.unique) var id: UUID
     var name: String
     var estimatedWeightG: Double
