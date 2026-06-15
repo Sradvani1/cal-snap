@@ -16,6 +16,7 @@ struct DashboardContentView: View {
     let onReload: () -> Void
     let onDeleteMeal: (MealEntry) -> Void
     let onWeighInSheetDismissed: () -> Void
+    let onWeighInSaved: () -> Void
 
     var body: some View {
         NavigationStack(path: $navigationPath) {
@@ -171,12 +172,10 @@ struct DashboardContentView: View {
                         healthKitService: appContainer.healthKitService
                     ),
                     notificationManager: appContainer.notificationManager,
-                    onSaved: { result in
+                    onSaved: { _ in
                         onReload()
+                        onWeighInSaved()
                         onWeighInSheetDismissed()
-                        if result.didTriggerPlateau {
-                            viewModel.checkForPlateau()
-                        }
                     },
                     onSkipped: onWeighInSheetDismissed
                 )
@@ -231,7 +230,8 @@ struct DashboardContentView: View {
         onProfileSwitch: { _ in },
         onReload: {},
         onDeleteMeal: { _ in },
-        onWeighInSheetDismissed: {}
+        onWeighInSheetDismissed: {},
+        onWeighInSaved: {}
     )
     .environment(AppContainer())
     .modelContainer(container)

@@ -1,13 +1,6 @@
 import SwiftUI
 import SwiftData
 
-struct WeighInSheetContext: Identifiable {
-    let id: UUID
-    let profile: UserProfile
-    let currentWeightKg: Double
-    let useLbs: Bool
-}
-
 struct DashboardView: View {
     @Environment(AppContainer.self) private var appContainer
     @Environment(\.modelContext) private var modelContext
@@ -42,7 +35,8 @@ struct DashboardView: View {
                     },
                     onWeighInSheetDismissed: {
                         weightProgressReloadTrigger += 1
-                    }
+                    },
+                    onWeighInSaved: scheduleReminderIfNeeded
                 )
                 .alert("Delete this meal?", isPresented: $showDeleteConfirmation) {
                     Button("Delete", role: .destructive) {
@@ -107,17 +101,32 @@ struct DashboardView: View {
     private func wireNotificationsIfNeeded() {
         guard !didWireNotifications, let vm = viewModel else { return }
         didWireNotifications = true
-        appContainer.notificationManager.onWeighInReminderTapped = {
-            presentWeighInSheet(using: vm)
+        appContainer.notificationManager.onWeighInReminderTapped = { userId in
+            presentWeighInSheet(for: userId, using: vm)
         }
-        if appContainer.notificationManager.consumePendingWeighInSheet() {
-            presentWeighInSheet(using: vm)
+        if let pending = appContainer.notificationManager.consumePendingWeighInRequest() {
+            presentWeighInSheet(for: pending.userId, using: vm)
         }
     }
 
-    private func presentWeighInSheet(using viewModel: DashboardViewModel) {
-        guard let profile = viewModel.activeProfile else { return }
-        let currentWeight = viewModel.latestWeighInKg ?? profile.startingWeightKg
+    private func presentWeighInSheet(for userId: UUID?, using viewModel: DashboardViewModel) {
+        let resolvedUserId = userId ?? viewModel.activeProfile?.id
+        guard let resolvedUserId else { return }
+
+        if resolvedUserId.uuidString != activeUserId {
+            navigationPath = []
+            suppressActiveUserIdReload = true
+            activeUserId = resolvedUserId.uuidString
+            viewModel.loadToday(context: modelContext, activeUserId: activeUserId)
+        }
+
+        guard let profile = viewModel.profiles.first(where: { $0.id == resolvedUserId })
+            ?? viewModel.activeProfile else {
+            return
+        }
+
+        let currentWeight = viewModel.latestWeighInKg(for: profile.id, context: modelContext)
+            ?? profile.startingWeightKg
         weighInSheetContext = WeighInSheetContext(
             id: profile.id,
             profile: profile,

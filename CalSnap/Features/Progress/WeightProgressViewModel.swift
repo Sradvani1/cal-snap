@@ -1,11 +1,23 @@
 import Foundation
 import SwiftData
 
-@Observable
+struct WeightProjectionPoint: Identifiable {
+    let date: Date
+    let weightKg: Double
+
+    var id: Date { date }
+}
+
 @MainActor
+@Observable
 final class WeightProgressViewModel {
     var weighIns: [WeighIn] = []
     var loadError: String?
+
+    private(set) var chartWeighInsAscending: [WeighIn] = []
+    private(set) var weeklyRateKg: Double?
+    private(set) var projectedGoalDate: Date?
+    private(set) var projectionPoints: [WeightProjectionPoint] = []
 
     let profile: UserProfile
     let useLbs: Bool
@@ -41,37 +53,27 @@ final class WeightProgressViewModel {
         return min(max(progress / total, 0), 1)
     }
 
-    var weeklyRateKg: Double? {
-        let sorted = weighIns.sorted { $0.date < $1.date }
-        return NutritionCalculator.weeklyLossRateKg(from: sorted)
+    var progressAccessibilityValue: String {
+        let percent = Int((progressFraction * 100).rounded())
+        return "\(percent) percent to goal"
     }
 
-    var projectedGoalDate: Date? {
-        let age = NutritionCalculator.age(from: profile.dateOfBirth)
-        return NutritionCalculator.projectedGoalDate(
-            currentWeightKg: currentWeightKg,
-            goalWeightKg: profile.goalWeightKg,
-            heightCm: profile.heightCm,
-            ageYears: age,
-            sex: profile.sex,
-            activityLevel: profile.activityLevel,
-            dailyDeficitKcal: profile.deficitKcal
-        )
-    }
+    var chartAccessibilitySummary: String {
+        guard !weighIns.isEmpty else {
+            return "No weigh-ins logged yet"
+        }
 
-    var projectionPoints: [(date: Date, weightKg: Double)] {
-        let age = NutritionCalculator.age(from: profile.dateOfBirth)
-        let startDate = weighIns.max(by: { $0.date < $1.date })?.date ?? Date()
-        return NutritionCalculator.projectionPoints(
-            startWeightKg: currentWeightKg,
-            goalWeightKg: profile.goalWeightKg,
-            heightCm: profile.heightCm,
-            ageYears: age,
-            sex: profile.sex,
-            activityLevel: profile.activityLevel,
-            dailyDeficitKcal: profile.deficitKcal,
-            startDate: startDate
-        )
+        let current = formatWeight(currentWeightKg)
+        let goal = formatWeight(profile.goalWeightKg)
+        let change = currentWeightKg - profile.startingWeightKg
+        let direction = if change < -0.1 {
+            "down \(formatWeight(abs(change))) from start"
+        } else if change > 0.1 {
+            "up \(formatWeight(change)) from start"
+        } else {
+            "unchanged from start"
+        }
+        return "Weight trend, current \(current), \(direction), goal \(goal)"
     }
 
     func load(context: ModelContext) {
@@ -82,9 +84,11 @@ final class WeightProgressViewModel {
                 sortDescending: true,
                 context: context
             )
+            refreshDerivedData()
         } catch {
             loadError = error.localizedDescription
             weighIns = []
+            clearDerivedData()
         }
     }
 
@@ -108,5 +112,41 @@ final class WeightProgressViewModel {
             return profile.deficitKcal == 0 ? "Maintaining" : "—"
         }
         return date.formatted(date: .abbreviated, time: .omitted)
+    }
+
+    private func refreshDerivedData() {
+        chartWeighInsAscending = weighIns.reversed()
+        let sorted = chartWeighInsAscending
+        weeklyRateKg = NutritionCalculator.weeklyLossRateKg(from: sorted)
+
+        let age = NutritionCalculator.age(from: profile.dateOfBirth)
+        projectedGoalDate = NutritionCalculator.projectedGoalDate(
+            currentWeightKg: currentWeightKg,
+            goalWeightKg: profile.goalWeightKg,
+            heightCm: profile.heightCm,
+            ageYears: age,
+            sex: profile.sex,
+            activityLevel: profile.activityLevel,
+            dailyDeficitKcal: profile.deficitKcal
+        )
+
+        let startDate = weighIns.max(by: { $0.date < $1.date })?.date ?? Date.now
+        projectionPoints = NutritionCalculator.projectionPoints(
+            startWeightKg: currentWeightKg,
+            goalWeightKg: profile.goalWeightKg,
+            heightCm: profile.heightCm,
+            ageYears: age,
+            sex: profile.sex,
+            activityLevel: profile.activityLevel,
+            dailyDeficitKcal: profile.deficitKcal,
+            startDate: startDate
+        ).map { WeightProjectionPoint(date: $0.date, weightKg: $0.weightKg) }
+    }
+
+    private func clearDerivedData() {
+        chartWeighInsAscending = []
+        weeklyRateKg = nil
+        projectedGoalDate = nil
+        projectionPoints = []
     }
 }

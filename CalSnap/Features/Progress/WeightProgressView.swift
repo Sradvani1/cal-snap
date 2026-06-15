@@ -17,11 +17,11 @@ struct WeightProgressView: View {
                         .foregroundStyle(.red)
                 }
 
-                headerStats
-                progressBar
-                weightChart
-                statsGrid
-                historySection
+                WeightProgressHeaderView(viewModel: viewModel)
+                WeightProgressBarView(viewModel: viewModel)
+                WeightProgressChartView(viewModel: viewModel, onLogWeighIn: onLogWeighIn)
+                WeightProgressStatsGridView(viewModel: viewModel)
+                WeightProgressHistoryView(viewModel: viewModel)
             }
             .padding()
         }
@@ -36,8 +36,12 @@ struct WeightProgressView: View {
             viewModel.load(context: modelContext)
         }
     }
+}
 
-    private var headerStats: some View {
+struct WeightProgressHeaderView: View {
+    let viewModel: WeightProgressViewModel
+
+    var body: some View {
         HStack {
             statColumn(title: "Current", value: viewModel.formatWeight(viewModel.currentWeightKg))
             Divider()
@@ -60,8 +64,14 @@ struct WeightProgressView: View {
         }
         .frame(maxWidth: .infinity)
     }
+}
 
-    private var progressBar: some View {
+struct WeightProgressBarView: View {
+    let viewModel: WeightProgressViewModel
+
+    @Environment(\.accessibilityDifferentiateWithoutColor) private var differentiateWithoutColor
+
+    var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Progress to goal")
                 .font(.subheadline.weight(.semibold))
@@ -72,13 +82,25 @@ struct WeightProgressView: View {
                     Capsule()
                         .fill(Color.accentColor)
                         .frame(width: geometry.size.width * viewModel.progressFraction)
+                    if differentiateWithoutColor {
+                        Capsule()
+                            .strokeBorder(Color.primary.opacity(0.35), lineWidth: 1)
+                    }
                 }
             }
             .frame(height: 10)
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Progress to goal")
+        .accessibilityValue(viewModel.progressAccessibilityValue)
     }
+}
 
-    private var weightChart: some View {
+struct WeightProgressChartView: View {
+    let viewModel: WeightProgressViewModel
+    let onLogWeighIn: () -> Void
+
+    var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Weight trend")
                 .font(.headline)
@@ -93,9 +115,8 @@ struct WeightProgressView: View {
                 }
             } else {
                 Chart {
-                    let actualWeighIns = viewModel.weighIns.reversed()
-                    if actualWeighIns.count >= 2 {
-                        ForEach(actualWeighIns, id: \.id) { weighIn in
+                    if viewModel.chartWeighInsAscending.count >= 2 {
+                        ForEach(viewModel.chartWeighInsAscending, id: \.id) { weighIn in
                             LineMark(
                                 x: .value("Date", weighIn.date),
                                 y: .value("Weight", displayWeight(weighIn.weightKg))
@@ -103,7 +124,7 @@ struct WeightProgressView: View {
                             .foregroundStyle(Color.accentColor)
                         }
                     }
-                    ForEach(actualWeighIns, id: \.id) { weighIn in
+                    ForEach(viewModel.chartWeighInsAscending, id: \.id) { weighIn in
                         PointMark(
                             x: .value("Date", weighIn.date),
                             y: .value("Weight", displayWeight(weighIn.weightKg))
@@ -111,7 +132,7 @@ struct WeightProgressView: View {
                         .foregroundStyle(Color.accentColor)
                     }
 
-                    ForEach(Array(viewModel.projectionPoints.enumerated()), id: \.offset) { _, point in
+                    ForEach(viewModel.projectionPoints) { point in
                         LineMark(
                             x: .value("Date", point.date),
                             y: .value("Weight", displayWeight(point.weightKg))
@@ -123,9 +144,12 @@ struct WeightProgressView: View {
                     RuleMark(y: .value("Goal", displayWeight(viewModel.profile.goalWeightKg)))
                         .foregroundStyle(.green)
                         .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
+                        .accessibilityHidden(true)
                 }
                 .chartYAxisLabel(viewModel.useLbs ? "lbs" : "kg")
                 .frame(height: 220)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(viewModel.chartAccessibilitySummary)
             }
         }
         .padding()
@@ -133,7 +157,15 @@ struct WeightProgressView: View {
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 
-    private var statsGrid: some View {
+    private func displayWeight(_ kg: Double) -> Double {
+        viewModel.useLbs ? UnitFormatters.kgToLbs(kg) : kg
+    }
+}
+
+struct WeightProgressStatsGridView: View {
+    let viewModel: WeightProgressViewModel
+
+    var body: some View {
         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
             statCard(title: "Lost so far", value: viewModel.formatWeight(viewModel.lostSoFarKg))
             statCard(title: "To goal", value: viewModel.formatWeight(viewModel.toGoalKg))
@@ -155,8 +187,12 @@ struct WeightProgressView: View {
         .background(Color(.secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
+}
 
-    private var historySection: some View {
+struct WeightProgressHistoryView: View {
+    let viewModel: WeightProgressViewModel
+
+    var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Weigh-in history")
                 .font(.headline)
@@ -166,24 +202,27 @@ struct WeightProgressView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             } else {
-                ForEach(viewModel.weighIns, id: \.id) { weighIn in
-                    HStack {
-                        Text(weighIn.date.formatted(date: .abbreviated, time: .omitted))
-                        Spacer()
-                        Text(viewModel.formatWeight(weighIn.weightKg))
-                            .fontWeight(.medium)
+                LazyVStack(spacing: 0) {
+                    ForEach(viewModel.weighIns, id: \.id) { weighIn in
+                        HStack {
+                            Text(weighIn.date.formatted(date: .abbreviated, time: .omitted))
+                            Spacer()
+                            Text(viewModel.formatWeight(weighIn.weightKg))
+                                .fontWeight(.medium)
+                        }
+                        .font(.subheadline)
+                        .padding(.vertical, 6)
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel(
+                            "\(weighIn.date.formatted(date: .abbreviated, time: .omitted)), \(viewModel.formatWeight(weighIn.weightKg))"
+                        )
                     }
-                    .font(.subheadline)
                 }
             }
         }
         .padding()
         .background(Color(.secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 16))
-    }
-
-    private func displayWeight(_ kg: Double) -> Double {
-        viewModel.useLbs ? UnitFormatters.kgToLbs(kg) : kg
     }
 }
 

@@ -67,6 +67,11 @@ enum AppConstants {
     enum Plateau {
         static let weeksToDetect: Int = 3
         static let weightChangeThresholdKg: Double = 0.23
+        static let weeklyMinimumDaySpacing = 6
+    }
+
+    enum WeightProjection {
+        static let maxWeeks = 104
     }
 
     enum USDA {
@@ -86,7 +91,5 @@ enum AppConstants {
         static let defaultReminderWeekday = 1 // Sunday
         static let defaultReminderHour = 8
         static let defaultReminderMinute = 0
-        static let weeklyPlateauMinimumDaySpacing = 6
-        static let maxProjectionWeeks = 104
     }
 }

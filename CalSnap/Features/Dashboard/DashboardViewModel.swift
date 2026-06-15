@@ -13,8 +13,8 @@ enum FiberProgressBand {
     case onTrack
 }
 
-@Observable
 @MainActor
+@Observable
 final class DashboardViewModel {
     var activeProfile: UserProfile?
     var profiles: [UserProfile] = []
@@ -201,6 +201,14 @@ final class DashboardViewModel {
             loadError = error.localizedDescription
             showPlateauAlert = false
         }
+    }
+
+    func latestWeighInKg(for profileId: UUID, context: ModelContext) -> Double? {
+        (try? weighInRepository.fetchLatestWeighIns(
+            for: profileId,
+            count: 1,
+            context: context
+        ).last?.weightKg)
     }
 
     func checkForPlateau() {

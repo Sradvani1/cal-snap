@@ -1,5 +1,8 @@
 import Foundation
+import OSLog
 import SwiftData
+
+private let weighInLogger = Logger(subsystem: "com.calsnap", category: "WeighInService")
 
 enum WeighInService {
     struct RecalculationResult {
@@ -51,7 +54,7 @@ enum WeighInService {
         profile.tdee = recalculation.tdee
         profile.dailyCalorieTarget = recalculation.dailyTarget
         profile.deficitKcal = recalculation.deficitKcal
-        profile.updatedAt = Date()
+        profile.updatedAt = Date.now
 
         let weighIn = WeighIn(
             userId: profile.id,
@@ -69,7 +72,7 @@ enum WeighInService {
             do {
                 try await healthKit.logBodyMass(kg: newWeightKg, at: date)
             } catch {
-                print("HealthKit body mass log failed: \(error.localizedDescription)")
+                weighInLogger.error("HealthKit body mass log failed: \(error.localizedDescription)")
             }
         }
 

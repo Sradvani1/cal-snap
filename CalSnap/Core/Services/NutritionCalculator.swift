@@ -136,7 +136,7 @@ struct NutritionCalculator {
             sex: sex,
             activityLevel: activityLevel,
             dailyDeficitKcal: dailyDeficitKcal,
-            weeks: AppConstants.Notifications.maxProjectionWeeks
+            weeks: AppConstants.WeightProjection.maxWeeks
         )
 
         guard let goalWeek = projection.first(where: { $0.weightKg <= goalWeightKg })?.week else {
@@ -166,7 +166,7 @@ struct NutritionCalculator {
             sex: sex,
             activityLevel: activityLevel,
             dailyDeficitKcal: dailyDeficitKcal,
-            weeks: AppConstants.Notifications.maxProjectionWeeks
+            weeks: AppConstants.WeightProjection.maxWeeks
         )
 
         var points: [(Date, Double)] = []

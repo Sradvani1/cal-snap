@@ -48,6 +48,8 @@ struct WeighInView: View {
                             .multilineTextAlignment(.trailing)
                     }
                 }
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(viewModel.targetsAccessibilitySummary)
 
                 if let error = viewModel.saveError {
                     Section {
@@ -80,10 +82,15 @@ struct WeighInView: View {
                         }
                     }
                     .disabled(!viewModel.canSave)
+                    .accessibilityLabel(viewModel.isSaving ? "Saving" : "Save")
                 }
             }
         }
+        .presentationSizing(.form)
         .interactiveDismissDisabled(viewModel.isSaving)
+        .onChange(of: viewModel.weightInput) {
+            viewModel.weightInputDidChange()
+        }
     }
 
     private func saveWeighIn() {

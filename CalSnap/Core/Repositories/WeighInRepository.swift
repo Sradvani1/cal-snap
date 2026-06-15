@@ -30,16 +30,18 @@ struct WeighInRepository {
         count: Int,
         context: ModelContext
     ) throws -> [WeighIn] {
+        guard count > 0 else { return [] }
+
         let predicate = #Predicate<WeighIn> { weighIn in
             weighIn.userId == userId
         }
         var descriptor = FetchDescriptor<WeighIn>(
             predicate: predicate,
-            sortBy: [SortDescriptor(\.date)]
+            sortBy: [SortDescriptor(\.date, order: .reverse)]
         )
-        let all = try context.fetch(descriptor)
-        guard count > 0 else { return [] }
-        return Array(all.suffix(count))
+        descriptor.fetchLimit = count
+        let latest = try context.fetch(descriptor)
+        return latest.reversed()
     }
 
     func fetchAll(
@@ -60,16 +62,26 @@ struct WeighInRepository {
     func fetchWeeklyPlateauWeighIns(
         for userId: UUID,
         count: Int,
-        minimumDaySpacing: Int = AppConstants.Notifications.weeklyPlateauMinimumDaySpacing,
+        minimumDaySpacing: Int = AppConstants.Plateau.weeklyMinimumDaySpacing,
         context: ModelContext
     ) throws -> [WeighIn] {
-        let all = try fetchAll(for: userId, sortDescending: false, context: context)
-        guard !all.isEmpty else { return [] }
+        guard count > 0 else { return [] }
+
+        let predicate = #Predicate<WeighIn> { weighIn in
+            weighIn.userId == userId
+        }
+        var descriptor = FetchDescriptor<WeighIn>(
+            predicate: predicate,
+            sortBy: [SortDescriptor(\.date, order: .reverse)]
+        )
+        descriptor.fetchLimit = count * 4
+        let recent = try context.fetch(descriptor)
+        guard !recent.isEmpty else { return [] }
 
         var selected: [WeighIn] = []
         var lastDate: Date?
 
-        for weighIn in all.reversed() {
+        for weighIn in recent {
             if let lastDate {
                 let days = Calendar.current.dateComponents([.day], from: weighIn.date, to: lastDate).day ?? 0
                 guard days >= minimumDaySpacing else { continue }

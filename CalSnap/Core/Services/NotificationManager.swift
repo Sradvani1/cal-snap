@@ -6,8 +6,9 @@ private let weighInNotificationUserIdKey = "userId"
 @MainActor
 @Observable
 final class NotificationManager: NSObject {
-    var onWeighInReminderTapped: (() -> Void)?
+    var onWeighInReminderTapped: ((UUID?) -> Void)?
     private(set) var pendingWeighInSheet = false
+    private(set) var pendingWeighInUserId: UUID?
 
     private let center = UNUserNotificationCenter.current()
 
@@ -79,12 +80,31 @@ final class NotificationManager: NSObject {
         center.removePendingNotificationRequests(withIdentifiers: [notificationIdentifier(for: userId)])
     }
 
+    func snoozeFireDate(for userId: UUID, calendar: Calendar = .current) -> Date {
+        let tomorrowStart = calendar.date(
+            byAdding: .day,
+            value: 1,
+            to: calendar.startOfDay(for: Date.now)
+        ) ?? Date.now
+        var components = calendar.dateComponents([.year, .month, .day], from: tomorrowStart)
+        components.hour = reminderHour(for: userId)
+        components.minute = reminderMinute(for: userId)
+        return calendar.date(from: components) ?? tomorrowStart
+    }
+
     func snoozeUntilTomorrow(userId: UUID) async {
         let calendar = Calendar.current
-        let tomorrow = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: Date())) ?? Date()
-        UserDefaults.standard.set(tomorrow.timeIntervalSince1970, forKey: AppStorageKey.weighInSnoozeUntil(userId: userId))
+        let fireDate = snoozeFireDate(for: userId, calendar: calendar)
+        UserDefaults.standard.set(
+            fireDate.timeIntervalSince1970,
+            forKey: AppStorageKey.weighInSnoozeUntil(userId: userId)
+        )
 
         guard await requestPermissionIfNeeded() else { return }
+
+        center.removePendingNotificationRequests(
+            withIdentifiers: ["\(notificationIdentifier(for: userId))-snooze"]
+        )
 
         let content = UNMutableNotificationContent()
         content.title = "Weekly Weigh-In"
@@ -93,7 +113,12 @@ final class NotificationManager: NSObject {
         content.categoryIdentifier = AppConstants.Notifications.weighInCategoryIdentifier
         content.userInfo = [weighInNotificationUserIdKey: userId.uuidString]
 
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 24 * 60 * 60, repeats: false)
+        let components = calendar.dateComponents(
+            [.year, .month, .day, .hour, .minute],
+            from: fireDate
+        )
+
+        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
         let request = UNNotificationRequest(
             identifier: "\(notificationIdentifier(for: userId))-snooze",
             content: content,
@@ -105,13 +130,23 @@ final class NotificationManager: NSObject {
     func isWeighInSnoozed(userId: UUID) -> Bool {
         let interval = UserDefaults.standard.double(forKey: AppStorageKey.weighInSnoozeUntil(userId: userId))
         guard interval > 0 else { return false }
-        return Date(timeIntervalSince1970: interval) > Date()
+        return Date(timeIntervalSince1970: interval) > Date.now
     }
 
-    func consumePendingWeighInSheet() -> Bool {
-        guard pendingWeighInSheet else { return false }
+    /// Returns the notified user id when a pending sheet was consumed, or `nil` when nothing was pending.
+    /// When pending had no associated user id, returns an empty optional wrapper via `Optional.some(nil)` —
+    /// use `consumePendingWeighInRequest()` for unambiguous consumption.
+    func consumePendingWeighInSheet() -> UUID? {
+        guard let request = consumePendingWeighInRequest() else { return nil }
+        return request.userId
+    }
+
+    func consumePendingWeighInRequest() -> PendingWeighInRequest? {
+        guard pendingWeighInSheet else { return nil }
         pendingWeighInSheet = false
-        return true
+        let userId = pendingWeighInUserId
+        pendingWeighInUserId = nil
+        return PendingWeighInRequest(userId: userId)
     }
 
     func handleWeighInReminderTap(userId: UUID?, isSnoozeRequest: Bool) {
@@ -120,15 +155,20 @@ final class NotificationManager: NSObject {
         }
 
         if let onWeighInReminderTapped {
-            onWeighInReminderTapped()
+            onWeighInReminderTapped(userId)
         } else {
             pendingWeighInSheet = true
+            pendingWeighInUserId = userId
         }
     }
 
     private func notificationIdentifier(for userId: UUID) -> String {
         "weigh-in-\(userId.uuidString)"
     }
+}
+
+struct PendingWeighInRequest {
+    let userId: UUID?
 }
 
 extension NotificationManager: UNUserNotificationCenterDelegate {

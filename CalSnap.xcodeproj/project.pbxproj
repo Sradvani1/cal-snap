@@ -96,6 +96,7 @@
 		PR6B004234567890ABCDEF01 /* WeighInViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR6F004234567890ABCDEF01 /* WeighInViewModel.swift */; };
 		PR6B005234567890ABCDEF01 /* WeightProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR6F005234567890ABCDEF01 /* WeightProgressView.swift */; };
 		PR6B006234567890ABCDEF01 /* WeightProgressViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR6F006234567890ABCDEF01 /* WeightProgressViewModel.swift */; };
+		PR6B008234567890ABCDEF01 /* WeighInSheetContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR6F008234567890ABCDEF01 /* WeighInSheetContext.swift */; };
 		PR6B007234567890ABCDEF01 /* WeighInTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR6F007234567890ABCDEF01 /* WeighInTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -202,6 +203,7 @@
 		PR6F004234567890ABCDEF01 /* WeighInViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeighInViewModel.swift; sourceTree = "<group>"; };
 		PR6F005234567890ABCDEF01 /* WeightProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightProgressView.swift; sourceTree = "<group>"; };
 		PR6F006234567890ABCDEF01 /* WeightProgressViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightProgressViewModel.swift; sourceTree = "<group>"; };
+		PR6F008234567890ABCDEF01 /* WeighInSheetContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeighInSheetContext.swift; sourceTree = "<group>"; };
 		PR6F007234567890ABCDEF01 /* WeighInTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeighInTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -399,6 +401,7 @@
 			children = (
 				PR6F003234567890ABCDEF01 /* WeighInView.swift */,
 				PR6F004234567890ABCDEF01 /* WeighInViewModel.swift */,
+				PR6F008234567890ABCDEF01 /* WeighInSheetContext.swift */,
 				PR6F005234567890ABCDEF01 /* WeightProgressView.swift */,
 				PR6F006234567890ABCDEF01 /* WeightProgressViewModel.swift */,
 			);
@@ -625,6 +628,7 @@
 				PR6B004234567890ABCDEF01 /* WeighInViewModel.swift in Sources */,
 				PR6B005234567890ABCDEF01 /* WeightProgressView.swift in Sources */,
 				PR6B006234567890ABCDEF01 /* WeightProgressViewModel.swift in Sources */,
+				PR6B008234567890ABCDEF01 /* WeighInSheetContext.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

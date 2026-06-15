@@ -18,48 +18,88 @@ struct WeightTrendMiniChart: View {
                     .font(.caption.weight(.semibold))
             }
 
-            Button(action: onTap) {
-                chartContent
+            if weighIns.count >= 2 {
+                Button(action: onTap) {
+                    WeightTrendMiniChartChart(weighIns: weighIns, useLbs: useLbs)
+                }
+                .buttonStyle(.plain)
+                .accessibilityHint("Opens weight progress")
+                .accessibilityLabel(miniChartAccessibilityLabel)
+            } else {
+                WeightTrendMiniChartEmptyState(
+                    startingWeightKg: startingWeightKg,
+                    useLbs: useLbs,
+                    onLogWeighIn: onLogWeighIn
+                )
             }
-            .buttonStyle(.plain)
-            .accessibilityHint("Opens weight progress")
         }
         .padding()
         .background(Color(.secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 
-    @ViewBuilder
-    private var chartContent: some View {
-        if weighIns.count >= 2 {
-            Chart(weighIns, id: \.id) { weighIn in
-                LineMark(
-                    x: .value("Date", weighIn.date),
-                    y: .value("Weight", displayWeight(weighIn.weightKg))
-                )
-                PointMark(
-                    x: .value("Date", weighIn.date),
-                    y: .value("Weight", displayWeight(weighIn.weightKg))
-                )
-            }
-            .chartYAxisLabel(useLbs ? "lbs" : "kg")
-            .frame(height: 120)
-            .frame(maxWidth: .infinity)
-        } else {
-            VStack(alignment: .leading, spacing: 8) {
-                Text(UnitFormatters.formatWeight(kg: startingWeightKg, useLbs: useLbs))
-                    .font(.title3.weight(.semibold))
-                Text("Your weight trend will appear after weekly weigh-ins")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.vertical, 8)
+    private var miniChartAccessibilityLabel: String {
+        guard let latest = weighIns.max(by: { $0.date < $1.date }) else {
+            return "Weight trend, starting weight \(UnitFormatters.formatWeight(kg: startingWeightKg, useLbs: useLbs))"
         }
+
+        let current = UnitFormatters.formatWeight(kg: latest.weightKg, useLbs: useLbs)
+        if weighIns.count >= 2,
+           let earliest = weighIns.min(by: { $0.date < $1.date }) {
+            let delta = latest.weightKg - earliest.weightKg
+            if delta < -0.1 {
+                return "Weight trend, current \(current), trending down"
+            }
+            if delta > 0.1 {
+                return "Weight trend, current \(current), trending up"
+            }
+        }
+        return "Weight trend, current \(current)"
+    }
+}
+
+struct WeightTrendMiniChartChart: View {
+    let weighIns: [WeighIn]
+    let useLbs: Bool
+
+    var body: some View {
+        Chart(weighIns, id: \.id) { weighIn in
+            LineMark(
+                x: .value("Date", weighIn.date),
+                y: .value("Weight", displayWeight(weighIn.weightKg))
+            )
+            PointMark(
+                x: .value("Date", weighIn.date),
+                y: .value("Weight", displayWeight(weighIn.weightKg))
+            )
+        }
+        .chartYAxisLabel(useLbs ? "lbs" : "kg")
+        .frame(height: 120)
+        .frame(maxWidth: .infinity)
     }
 
     private func displayWeight(_ kg: Double) -> Double {
         useLbs ? UnitFormatters.kgToLbs(kg) : kg
+    }
+}
+
+struct WeightTrendMiniChartEmptyState: View {
+    let startingWeightKg: Double
+    let useLbs: Bool
+    let onLogWeighIn: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(UnitFormatters.formatWeight(kg: startingWeightKg, useLbs: useLbs))
+                .font(.title3.weight(.semibold))
+            Text("Your weight trend will appear after weekly weigh-ins")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            Button("Log your first weigh-in", action: onLogWeighIn)
+                .font(.subheadline.weight(.semibold))
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical, 8)
     }
 }
 

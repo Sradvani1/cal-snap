@@ -1,14 +1,17 @@
 import Foundation
 import SwiftData
 
-@Observable
 @MainActor
+@Observable
 final class WeighInViewModel {
     var weightInput: Double = 0
     var useLbs: Bool
-    var selectedDate = Date()
+    var selectedDate = Date.now
     var isSaving = false
     var saveError: String?
+
+    private(set) var previewTDEE: Int = 0
+    private(set) var previewDailyTarget: Int = 0
 
     private let profile: UserProfile
     private let weighInRepository: WeighInRepository
@@ -26,6 +29,7 @@ final class WeighInViewModel {
         self.weighInRepository = weighInRepository
         self.healthKitService = healthKitService
         self.weightInput = useLbs ? UnitFormatters.kgToLbs(currentWeightKg) : currentWeightKg
+        refreshPreview()
     }
 
     var weightKg: Double {
@@ -40,18 +44,6 @@ final class WeighInViewModel {
         profile.dailyCalorieTarget
     }
 
-    var previewRecalculation: WeighInService.RecalculationResult {
-        WeighInService.recalculate(profile: profile, newWeightKg: weightKg)
-    }
-
-    var previewTDEE: Int {
-        previewRecalculation.tdee
-    }
-
-    var previewDailyTarget: Int {
-        previewRecalculation.dailyTarget
-    }
-
     var canSave: Bool {
         weightKg > 0 && !isSaving
     }
@@ -60,11 +52,26 @@ final class WeighInViewModel {
         profile.id
     }
 
+    var targetsAccessibilitySummary: String {
+        "TDEE updates from \(previousTDEE) to \(previewTDEE) calories per day. Daily target updates from \(previousDailyTarget) to \(previewDailyTarget) calories per day."
+    }
+
     func setUseLbs(_ newValue: Bool) {
         guard newValue != useLbs else { return }
         let kg = weightKg
         useLbs = newValue
         weightInput = newValue ? UnitFormatters.kgToLbs(kg) : kg
+        refreshPreview()
+    }
+
+    func weightInputDidChange() {
+        refreshPreview()
+    }
+
+    func refreshPreview() {
+        let recalculation = WeighInService.recalculate(profile: profile, newWeightKg: weightKg)
+        previewTDEE = recalculation.tdee
+        previewDailyTarget = recalculation.dailyTarget
     }
 
     func save(context: ModelContext) throws -> WeighInService.SaveResult {
