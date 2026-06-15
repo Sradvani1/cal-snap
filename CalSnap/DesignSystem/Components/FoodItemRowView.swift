@@ -11,7 +11,7 @@ struct FoodItemRowView: View {
                     rowContent
                 }
                 .buttonStyle(.plain)
-                .accessibilityHint("Opens item editor")
+                .accessibilityHint("designSystem.foodItem.editHint")
             } else {
                 rowContent
             }
@@ -29,15 +29,15 @@ struct FoodItemRowView: View {
                         Image(systemName: "exclamationmark.triangle.fill")
                             .foregroundStyle(Color.csAccent)
                             .font(.caption)
-                        Text("Adjust?")
+                        Text("designSystem.foodItem.flaggedAdjust")
                             .font(.csCaption)
                             .foregroundStyle(Color.csAccent)
                     }
                 }
-                Text("\(Int(item.weightG.rounded()))g · \(item.calories) kcal")
+                Text(String(format: String(localized: "designSystem.foodItem.weightCalories"), Int(item.weightG.rounded()), item.calories))
                     .font(.csCaption)
                     .foregroundStyle(.secondary)
-                Text("P \(Int(item.proteinG.rounded()))g · C \(Int(item.carbsG.rounded()))g · F \(Int(item.fatG.rounded()))g")
+                Text(String(format: String(localized: "designSystem.foodItem.macroSummary"), Int(item.proteinG.rounded()), Int(item.carbsG.rounded()), Int(item.fatG.rounded())))
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
@@ -56,9 +56,11 @@ struct FoodItemRowView: View {
     }
 
     private var rowAccessibilityLabel: String {
-        var parts = ["\(item.name), \(item.calories) calories"]
+        var parts = [
+            String(format: String(localized: "designSystem.foodItem.accessibility.row"), item.name, item.calories)
+        ]
         if item.isFlagged {
-            parts.append("flagged for review")
+            parts.append(String(localized: "designSystem.foodItem.accessibility.flagged"))
         }
         return parts.joined(separator: ", ")
     }

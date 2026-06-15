@@ -86,13 +86,17 @@ final class SettingsViewModel {
 
     var profileValidationMessage: String? {
         if !draft.isDateOfBirthValid() {
-            return "Age must be between \(AppConstants.Onboarding.minAgeYears) and \(AppConstants.Onboarding.maxAgeYears)."
+            return String(
+                format: String(localized: "error.validation.ageRange"),
+                AppConstants.Onboarding.minAgeYears,
+                AppConstants.Onboarding.maxAgeYears
+            )
         }
         if !draft.isGoalTargetDateValid() {
-            return "Goal date must be 2 weeks to 2 years from today."
+            return String(localized: "error.validation.goalDateRange")
         }
         if !macrosAreValid {
-            return "Macro targets must sum to 100%."
+            return String(localized: "error.validation.macroSum")
         }
         return nil
     }
@@ -242,7 +246,7 @@ final class SettingsViewModel {
     func testGeminiKey() async {
         let key = geminiAPIKeyInput.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !key.isEmpty else {
-            geminiTestState = .failure("Enter an API key to test.")
+            geminiTestState = .failure(String(localized: "settings.apiKeys.enterKeyToTest"))
             return
         }
 
@@ -307,7 +311,7 @@ final class SettingsViewModel {
     func syncHealthKitWeight(context: ModelContext) async {
         guard let profile = activeProfile else { return }
         guard healthKitWeightReadsEnabled else {
-            syncMessage = "Enable weight reads to sync from Health."
+            syncMessage = String(localized: "settings.health.syncEnableReads")
             return
         }
 
@@ -318,7 +322,7 @@ final class SettingsViewModel {
         do {
             try await healthKitService.requestAuthorization()
             guard let hkWeight = try await healthKitService.fetchLatestWeight() else {
-                syncMessage = "No weight found in Health."
+                syncMessage = String(localized: "settings.health.syncNoWeight")
                 return
             }
 
@@ -329,7 +333,7 @@ final class SettingsViewModel {
             ).last?.weightKg ?? profile.startingWeightKg
 
             guard abs(hkWeight - latestLocal) >= 0.1 else {
-                syncMessage = "Weight is already up to date."
+                syncMessage = String(localized: "settings.health.syncUpToDate")
                 return
             }
 
@@ -344,7 +348,10 @@ final class SettingsViewModel {
             currentWeightKg = hkWeight
             savedWeightKg = hkWeight
             refreshPreview()
-            syncMessage = "Imported \(UnitFormatters.formatWeight(kg: hkWeight, useLbs: useLbsForWeight)) from Health."
+            syncMessage = String(
+                format: String(localized: "settings.health.syncImported"),
+                UnitFormatters.formatWeight(kg: hkWeight, useLbs: useLbsForWeight)
+            )
             AppStorageKey.bumpProfileDataRevision()
         } catch {
             syncMessage = error.localizedDescription

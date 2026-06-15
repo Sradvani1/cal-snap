@@ -12,23 +12,23 @@ struct CalorieTargetPreviewStepView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Your calorie target")
+            Text("onboarding.calorieTarget.title")
                 .font(.title2.bold())
 
             GroupBox {
                 VStack(alignment: .leading, spacing: 8) {
-                    summaryRow("TDEE", value: "\(viewModel.calculatedTDEE) kcal/day")
-                    summaryRow("Recommended deficit", value: "\(viewModel.calculatedDeficit) kcal/day")
-                    summaryRow("Daily calorie target", value: "\(viewModel.calculatedTarget) kcal/day")
+                    summaryRow("settings.profile.tdee", value: String(format: String(localized: "units.kcalPerDay"), viewModel.calculatedTDEE))
+                    summaryRow("onboarding.calorieTarget.recommendedDeficit", value: String(format: String(localized: "units.kcalPerDay"), viewModel.calculatedDeficit))
+                    summaryRow("onboarding.calorieTarget.dailyTarget", value: String(format: String(localized: "units.kcalPerDay"), viewModel.calculatedTarget))
                     Divider()
-                    summaryRow("Protein", value: UnitFormatters.formatMacroGrams(viewModel.calculatedProteinG, fractionLength: 0))
-                    summaryRow("Carbs", value: UnitFormatters.formatMacroGrams(viewModel.calculatedCarbsG, fractionLength: 0))
-                    summaryRow("Fat", value: UnitFormatters.formatMacroGrams(viewModel.calculatedFatG, fractionLength: 1))
+                    summaryRow("designSystem.macroBar.protein", value: UnitFormatters.formatMacroGrams(viewModel.calculatedProteinG, fractionLength: 0))
+                    summaryRow("designSystem.macroBar.carbs", value: UnitFormatters.formatMacroGrams(viewModel.calculatedCarbsG, fractionLength: 0))
+                    summaryRow("designSystem.macroBar.fat", value: UnitFormatters.formatMacroGrams(viewModel.calculatedFatG, fractionLength: 1))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
 
-            Text("This estimate has a natural ±15% variance. Your real number reveals itself over 2–3 weeks of tracking.")
+            Text("onboarding.calorieTarget.varianceNote")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
 
@@ -41,7 +41,7 @@ struct CalorieTargetPreviewStepView: View {
             }
 
             VStack(alignment: .leading, spacing: 8) {
-                Text("Daily deficit: \(viewModel.profileDraft.requestedDeficit) kcal")
+                Text(String(format: String(localized: "onboarding.calorieTarget.dailyDeficit"), viewModel.profileDraft.requestedDeficit))
                     .font(.headline)
                 Slider(
                     value: viewModel.deficitSliderBinding(),
@@ -51,7 +51,7 @@ struct CalorieTargetPreviewStepView: View {
             }
 
             if !viewModel.hardDeficitUnlocked {
-                Button("Unlock up to 750 kcal/day") {
+                Button("onboarding.calorieTarget.unlockHardDeficit") {
                     viewModel.showHardDeficitAlert = true
                 }
                 .font(.footnote)
@@ -60,17 +60,17 @@ struct CalorieTargetPreviewStepView: View {
         .task {
             viewModel.calculateTargets()
         }
-        .alert("Higher deficit warning", isPresented: $viewModel.showHardDeficitAlert) {
-            Button("Cancel", role: .cancel) {}
-            Button("I understand") {
+        .alert("onboarding.calorieTarget.hardDeficitAlert.title", isPresented: $viewModel.showHardDeficitAlert) {
+            Button("common.button.cancel", role: .cancel) {}
+            Button("common.button.iUnderstand") {
                 viewModel.unlockHardDeficit()
             }
         } message: {
-            Text("Deficits above 500 kcal/day can trigger metabolic adaptation. Proceed only if you understand the tradeoff.")
+            Text("onboarding.calorieTarget.hardDeficitAlert.message")
         }
     }
 
-    private func summaryRow(_ label: String, value: String) -> some View {
+    private func summaryRow(_ label: LocalizedStringKey, value: String) -> some View {
         HStack {
             Text(label)
             Spacer()

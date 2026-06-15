@@ -48,7 +48,7 @@ struct MealDetailView: View {
                                     .frame(height: 200)
                                     .frame(maxWidth: .infinity)
                                     .clipShape(RoundedRectangle(cornerRadius: 12))
-                                    .accessibilityLabel("Meal photo")
+                                    .accessibilityLabel("mealLog.photo.accessibility")
                             }
 
                             VStack(alignment: .leading, spacing: 4) {
@@ -68,7 +68,7 @@ struct MealDetailView: View {
                             )
 
                             VStack(alignment: .leading, spacing: 8) {
-                                Text("Food items")
+                                Text("mealLog.detail.foodItems")
                                     .font(.headline)
                                 ForEach(displayedMeal.items, id: \.id) { item in
                                     FoodItemRowView(
@@ -105,9 +105,9 @@ struct MealDetailView: View {
                     }
                 } else if viewModel.loadError != nil {
                     ContentUnavailableView(
-                        "Meal not found",
+                        "mealLog.detail.notFound.title",
                         systemImage: "fork.knife.circle",
-                        description: Text(viewModel.loadError ?? "This meal may have been deleted.")
+                        description: Text(viewModel.loadError ?? String(localized: "mealLog.detail.notFound.message"))
                     )
                 } else {
                     ProgressView()
@@ -116,28 +116,28 @@ struct MealDetailView: View {
                 ProgressView()
             }
         }
-        .navigationTitle("Meal Detail")
+        .navigationTitle("mealLog.detail.navigationTitle")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {
                 if viewModel?.meal != nil {
-                    Button("Edit") {
+                    Button("common.button.edit") {
                         navigationPath.append(.mealScanner(.edit(mealId)))
                     }
-                    .accessibilityHint("Opens meal editor")
-                    Button("Share", systemImage: "square.and.arrow.up") {
+                    .accessibilityHint("mealLog.detail.editHint")
+                    Button("common.button.share", systemImage: "square.and.arrow.up") {
                         shareMeal()
                     }
                     .labelStyle(.iconOnly)
-                    .accessibilityHint("Shares a meal summary image")
+                    .accessibilityHint("mealLog.detail.shareHint")
                 }
             }
             ToolbarItem(placement: .destructiveAction) {
                 if viewModel?.meal != nil {
-                    Button("Delete", role: .destructive) {
+                    Button("common.button.delete", role: .destructive) {
                         showDeleteConfirmation = true
                     }
-                    .accessibilityHint("Permanently deletes this meal from your log")
+                    .accessibilityHint("mealLog.detail.deleteHint")
                 }
             }
         }
@@ -157,13 +157,13 @@ struct MealDetailView: View {
         .task(id: photoLoadKey) {
             await loadPhoto()
         }
-        .alert("Delete this meal?", isPresented: $showDeleteConfirmation) {
-            Button("Delete", role: .destructive) {
+        .alert("dashboard.alert.deleteMeal.title", isPresented: $showDeleteConfirmation) {
+            Button("common.button.delete", role: .destructive) {
                 deleteMeal()
             }
-            Button("Cancel", role: .cancel) {}
+            Button("common.button.cancel", role: .cancel) {}
         } message: {
-            Text("This removes the meal from your log and reverses the HealthKit entry.")
+            Text("dashboard.alert.deleteMeal.message")
         }
         .sheet(item: $shareItem) { item in
             ShareSheet(items: [item.image])
@@ -192,7 +192,7 @@ struct MealDetailView: View {
         if let image = viewModel.makeShareImage() {
             shareItem = ShareImageItem(image: image)
         } else {
-            viewModel.shareError = "Could not create share image."
+            viewModel.shareError = String(localized: "mealLog.share.error")
         }
     }
 

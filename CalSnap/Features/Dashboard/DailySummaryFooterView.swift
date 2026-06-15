@@ -13,7 +13,7 @@ struct DailySummaryFooterView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Daily Summary")
+            Text("dashboard.summary.title")
                 .font(.headline)
 
             HStack {
@@ -21,7 +21,7 @@ struct DailySummaryFooterView: View {
                     Image(systemName: fiberIcon)
                         .foregroundStyle(fiberColor)
                 }
-                Text("Fiber")
+                Text("dashboard.summary.fiber")
                     .font(.subheadline.weight(.medium))
                 Spacer()
                 Text(fiberSummaryText)
@@ -35,7 +35,7 @@ struct DailySummaryFooterView: View {
                     Image(systemName: netCalorieIcon)
                         .foregroundStyle(netCalorieColor)
                 }
-                Text("Net calories")
+                Text("dashboard.summary.netCalories")
                     .font(.subheadline.weight(.medium))
                 Spacer()
                 Text(netCalorieSummary)
@@ -52,7 +52,11 @@ struct DailySummaryFooterView: View {
     }
 
     private var fiberSummaryText: String {
-        "\(Int(fiberConsumedG.rounded()))g / \(Int(fiberTargetG.rounded()))g"
+        String(
+            format: String(localized: "dashboard.macroRow.consumedTarget"),
+            Int(fiberConsumedG.rounded()),
+            Int(fiberTargetG.rounded())
+        )
     }
 
     private var fiberColor: Color {
@@ -71,11 +75,11 @@ struct DailySummaryFooterView: View {
         let consumed = Int(fiberConsumedG.rounded())
         let target = Int(fiberTargetG.rounded())
         let bandDescription = switch fiberProgressBand {
-        case .onTrack: "on track"
-        case .moderate: "moderately low"
-        case .low: "below target"
+        case .onTrack: String(localized: "dashboard.fiber.band.onTrack")
+        case .moderate: String(localized: "dashboard.fiber.band.moderate")
+        case .low: String(localized: "dashboard.fiber.band.low")
         }
-        return "\(consumed) of \(target) grams fiber, \(bandDescription)"
+        return String(format: String(localized: "dashboard.fiber.accessibility"), consumed, target, bandDescription)
     }
 
     private var netCalorieColor: Color {
@@ -91,14 +95,26 @@ struct DailySummaryFooterView: View {
     }
 
     private var macroSplitText: String {
-        "P \(actualMacroPercents.protein)% / \(targetMacroPercents.protein)% · " +
-        "C \(actualMacroPercents.carbs)% / \(targetMacroPercents.carbs)% · " +
-        "F \(actualMacroPercents.fat)% / \(targetMacroPercents.fat)%"
+        String(
+            format: String(localized: "dashboard.summary.macroSplit"),
+            actualMacroPercents.protein,
+            targetMacroPercents.protein,
+            actualMacroPercents.carbs,
+            targetMacroPercents.carbs,
+            actualMacroPercents.fat,
+            targetMacroPercents.fat
+        )
     }
 
     private var macroSplitAccessibilityLabel: String {
-        "Protein \(actualMacroPercents.protein) percent, target \(targetMacroPercents.protein) percent. " +
-        "Carbs \(actualMacroPercents.carbs) percent, target \(targetMacroPercents.carbs) percent. " +
-        "Fat \(actualMacroPercents.fat) percent, target \(targetMacroPercents.fat) percent."
+        String(
+            format: String(localized: "dashboard.macroSplit.accessibility"),
+            actualMacroPercents.protein,
+            targetMacroPercents.protein,
+            actualMacroPercents.carbs,
+            targetMacroPercents.carbs,
+            actualMacroPercents.fat,
+            targetMacroPercents.fat
+        )
     }
 }

@@ -129,25 +129,27 @@ final class DashboardViewModel {
     var netCalorieSummary: String {
         let delta = netCalorieDelta
         if delta > 0 {
-            return "+\(delta) over goal"
+            return String(format: String(localized: "dashboard.netCalories.overGoal"), delta)
         }
         if delta < 0 {
-            return "\(delta) under goal"
+            return String(format: String(localized: "dashboard.netCalories.underGoal"), delta)
         }
-        return "On target"
+        return String(localized: "dashboard.netCalories.onTarget")
     }
 
     var greeting: String {
-        guard let name = activeProfile?.name, !name.isEmpty else { return "Today" }
+        guard let name = activeProfile?.name, !name.isEmpty else {
+            return String(localized: "dashboard.greeting.today")
+        }
         let hour = Calendar.current.component(.hour, from: Date.now)
         let prefix: String
         switch hour {
-        case 5..<12: prefix = "Good morning"
-        case 12..<17: prefix = "Good afternoon"
-        case 17..<22: prefix = "Good evening"
-        default: prefix = "Hello"
+        case 5..<12: prefix = String(localized: "dashboard.greeting.morning")
+        case 12..<17: prefix = String(localized: "dashboard.greeting.afternoon")
+        case 17..<22: prefix = String(localized: "dashboard.greeting.evening")
+        default: prefix = String(localized: "dashboard.greeting.hello")
         }
-        return "\(prefix), \(name)"
+        return String(format: String(localized: "dashboard.greeting.withName"), prefix, name)
     }
 
     var formattedDate: String {

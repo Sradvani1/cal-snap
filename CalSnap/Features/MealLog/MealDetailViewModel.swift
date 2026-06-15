@@ -21,7 +21,7 @@ final class MealDetailViewModel {
     func load(mealId: UUID, context: ModelContext) {
         do {
             meal = try mealRepository.fetchMeal(id: mealId, context: context)
-            loadError = meal == nil ? "Meal not found." : nil
+            loadError = meal == nil ? String(localized: "mealLog.detail.notFound.error") : nil
         } catch {
             meal = nil
             loadError = error.localizedDescription

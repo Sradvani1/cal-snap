@@ -33,15 +33,15 @@ struct DashboardView: View {
                     },
                     onWeighInSaved: scheduleReminderIfNeeded
                 )
-                .alert("Delete this meal?", isPresented: $showDeleteConfirmation) {
-                    Button("Delete", role: .destructive) {
+                .alert("dashboard.alert.deleteMeal.title", isPresented: $showDeleteConfirmation) {
+                    Button("common.button.delete", role: .destructive) {
                         confirmDelete()
                     }
-                    Button("Cancel", role: .cancel) {
+                    Button("common.button.cancel", role: .cancel) {
                         mealPendingDelete = nil
                     }
                 } message: {
-                    Text("This removes the meal from your log and reverses the HealthKit entry.")
+                    Text("dashboard.alert.deleteMeal.message")
                 }
             } else {
                 ProgressView()

@@ -7,9 +7,9 @@ struct OnboardingDoneStepView: View {
                 .font(.largeTitle)
                 .imageScale(.large)
                 .foregroundStyle(.green)
-            Text("You're all set!")
+            Text("onboarding.done.title")
                 .font(.title.bold())
-            Text("Your profile has been saved.")
+            Text("onboarding.done.subtitle")
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

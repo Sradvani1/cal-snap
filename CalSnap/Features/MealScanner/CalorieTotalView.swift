@@ -9,12 +9,12 @@ struct CalorieTotalView: View {
                 .font(.csLargeCalorie)
                 .minimumScaleFactor(0.6)
                 .lineLimit(1)
-            Text("calories")
+            Text("mealScanner.calories.label")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(calories) calories")
+        .accessibilityLabel(String(format: String(localized: "mealScanner.calories.accessibility"), calories))
     }
 }

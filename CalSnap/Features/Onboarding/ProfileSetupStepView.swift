@@ -15,48 +15,52 @@ struct ProfileSetupStepView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Your profile")
+            Text("onboarding.profile.title")
                 .font(.title2.bold())
 
-            Picker("Sex", selection: viewModel.binding(\.sex)) {
-                Text("Male").tag(BiologicalSex.male)
-                Text("Female").tag(BiologicalSex.female)
+            Picker("settings.profile.sex", selection: viewModel.binding(\.sex)) {
+                Text("model.biologicalSex.male").tag(BiologicalSex.male)
+                Text("model.biologicalSex.female").tag(BiologicalSex.female)
             }
             .pickerStyle(.segmented)
 
             DatePicker(
-                "Date of birth",
+                "settings.profile.dateOfBirth",
                 selection: viewModel.binding(\.dateOfBirth),
                 in: dobRange,
                 displayedComponents: .date
             )
 
-            Toggle("Use ft/in for height", isOn: viewModel.binding(\.useImperialHeight))
+            Toggle("onboarding.profile.useImperialHeight", isOn: viewModel.binding(\.useImperialHeight))
                 .onChange(of: viewModel.profileDraft.useImperialHeight) { _, useImperial in
                     syncHeightFromProfile(useImperial: useImperial)
                 }
 
             if viewModel.profileDraft.useImperialHeight {
                 HStack {
-                    Picker("Feet", selection: $heightFeet) {
-                        ForEach(4...7, id: \.self) { Text("\($0) ft").tag($0) }
+                    Picker("units.height.feet", selection: $heightFeet) {
+                        ForEach(4...7, id: \.self) { ft in
+                            Text(String(format: String(localized: "units.height.feetValue"), ft)).tag(ft)
+                        }
                     }
-                    Picker("Inches", selection: $heightInches) {
-                        ForEach(0...11, id: \.self) { Text("\($0) in").tag($0) }
+                    Picker("units.height.inches", selection: $heightInches) {
+                        ForEach(0...11, id: \.self) { inch in
+                            Text(String(format: String(localized: "units.height.inchesValue"), inch)).tag(inch)
+                        }
                     }
                 }
                 .onChange(of: heightFeet) { _, _ in updateHeightCm() }
                 .onChange(of: heightInches) { _, _ in updateHeightCm() }
             } else {
                 Stepper(
-                    "Height: \(Int(viewModel.profileDraft.heightCm)) cm",
+                    String(format: String(localized: "onboarding.profile.heightCm"), Int(viewModel.profileDraft.heightCm)),
                     value: viewModel.binding(\.heightCm),
                     in: 120...220,
                     step: 1
                 )
             }
 
-            Toggle("Use lbs for weight", isOn: viewModel.binding(\.useLbsWeight))
+            Toggle("onboarding.profile.useLbsWeight", isOn: viewModel.binding(\.useLbsWeight))
                 .onChange(of: viewModel.profileDraft.useLbsWeight) { _, useLbs in
                     syncWeightFromProfile(useLbs: useLbs)
                 }

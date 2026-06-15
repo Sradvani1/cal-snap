@@ -24,9 +24,9 @@ struct MealScannerView: View {
         Group {
             if editLoadFailed {
                 ContentUnavailableView(
-                    "Meal not found",
+                    "mealLog.detail.notFound.title",
                     systemImage: "fork.knife.circle",
-                    description: Text("This meal may have been deleted.")
+                    description: Text("mealLog.detail.notFound.message")
                 )
             } else if let viewModel {
                 scannerContent(viewModel: viewModel)
@@ -34,31 +34,42 @@ struct MealScannerView: View {
                 ProgressView()
             }
         }
-        .navigationTitle(viewModel?.isEditing == true ? "Edit Meal" : "Scan Meal")
+        .navigationTitle(viewModel?.isEditing == true ? "mealScanner.title.edit" : "mealScanner.title.scan")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(viewModel?.hasUnsavedWork == true)
         .toolbar {
             if let viewModel, viewModel.hasUnsavedWork {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Back", systemImage: "chevron.backward") {
+                    Button("common.button.back", systemImage: "chevron.backward") {
                         showBackConfirmAlert = true
                     }
                 }
             }
         }
         .alert(
-            viewModel?.isEditing == true ? "Discard changes?" : "Discard this meal?",
+            viewModel?.isEditing == true
+                ? String(localized: "mealScanner.alert.discardChanges.title")
+                : String(localized: "mealScanner.alert.discardMeal.title"),
             isPresented: $showBackConfirmAlert
         ) {
-            Button(viewModel?.isEditing == true ? "Discard Changes" : "Discard", role: .destructive) {
+            Button(
+                viewModel?.isEditing == true
+                    ? String(localized: "mealScanner.alert.discardChanges.action")
+                    : String(localized: "common.button.discard"),
+                role: .destructive
+            ) {
                 if viewModel?.isEditing != true {
                     viewModel?.discard()
                 }
                 dismiss()
             }
-            Button("Cancel", role: .cancel) {}
+            Button("common.button.cancel", role: .cancel) {}
         } message: {
-            Text(viewModel?.isEditing == true ? "Your edits will not be saved." : "Nothing will be saved.")
+            Text(
+                viewModel?.isEditing == true
+                    ? "mealScanner.alert.discardChanges.message"
+                    : "mealScanner.alert.discardMeal.message"
+            )
         }
         .task {
             if viewModel == nil {
@@ -218,7 +229,7 @@ struct MealScannerView: View {
                     dismiss()
                 }
             } catch {
-                viewModel.logError = "Could not save meal. Please try again."
+                viewModel.logError = String(localized: "mealScanner.error.saveFailed")
                 print("Failed to save meal: \(error.localizedDescription)")
             }
             viewModel.isLogging = false

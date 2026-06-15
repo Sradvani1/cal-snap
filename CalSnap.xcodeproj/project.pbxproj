@@ -137,6 +137,8 @@
 		949BA545B2FB43BD889672A1 /* WidgetDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4209BC0E8CEC4546B7956A41 /* WidgetDataStore.swift */; };
 		F8F52E1CBD3346A99377F03A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 362EDA52B8F540E19425204F /* PrivacyInfo.xcprivacy */; };
 		BEA1E2BE922E4C92973C9B7B /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 28BDC77567B64C5983C2CCCF /* Localizable.xcstrings */; };
+		PR11WIDGET0001LOCALIZABLE /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 28BDC77567B64C5983C2CCCF /* Localizable.xcstrings */; };
+		PR11TESTS00001LOCALIZABLE /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 28BDC77567B64C5983C2CCCF /* Localizable.xcstrings */; };
 		6EC5B1100E0A4EE5911C197F /* MockNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94654A27FC9A46539ABB9C96 /* MockNotificationCenter.swift */; };
 		DBD3A1E7C2B74013B47E6FD9 /* NotificationDailyLogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273039D4F75648B6B8B41A8E /* NotificationDailyLogTests.swift */; };
 		FA07541FF608467A9B67E818 /* WidgetDataStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 051491F3A431458F98ED3659 /* WidgetDataStoreTests.swift */; };
@@ -316,6 +318,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1B2C3D414234567890ABCDE /* GoogleGenerativeAI in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5FF87F60621546EB8A6BC11E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -685,6 +694,7 @@
 			buildConfigurationList = FD5229EB800ECE4CF2F4D16D /* Build configuration list for PBXNativeTarget "CalSnapTests" */;
 			buildPhases = (
 				3833063940A3F80264C508CF /* Sources */,
+				PR11TESTS00002RESOURCES /* Resources */,
 			);
 			buildRules = (
 			);
@@ -776,6 +786,14 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		PR11TESTS00002RESOURCES /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				PR11TESTS00001LOCALIZABLE /* Localizable.xcstrings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0A5C25C567932E97AD694347 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -786,7 +804,29 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		87569ECFBF004ABB9DB7DAA6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				PR11WIDGET0001LOCALIZABLE /* Localizable.xcstrings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		126384C29B564176877A99E0 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				AEF2C099D2874A95B936F430 /* CalSnapWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		0FC30B2E404D99B4FE70638C /* Sources */ = {
@@ -943,31 +983,6 @@
 				F1CF5DD80C324D2DAFAC06EB /* WidgetData.swift in Sources */,
 				949BA545B2FB43BD889672A1 /* WidgetDataStore.swift in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5FF87F60621546EB8A6BC11E /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		87569ECFBF004ABB9DB7DAA6 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		126384C29B564176877A99E0 /* Embed Foundation Extensions */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 13;
-			files = (
-				AEF2C099D2874A95B936F430 /* CalSnapWidget.appex in Embed Foundation Extensions */,
-			);
-			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */

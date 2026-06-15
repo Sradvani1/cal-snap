@@ -34,7 +34,7 @@ struct SettingsView: View {
                 }
             }
         }
-        .navigationTitle("Settings")
+        .navigationTitle("settings.title")
         .task(id: profileDataRevision) {
             if viewModel == nil {
                 viewModel = SettingsViewModel(
@@ -54,13 +54,13 @@ struct SettingsView: View {
                 ShareSheet(items: [exportShareURL])
             }
         }
-        .alert("Delete all your data?", isPresented: $showDeleteConfirmation) {
-            Button("Delete", role: .destructive) {
+        .alert("settings.alert.deleteAll.title", isPresented: $showDeleteConfirmation) {
+            Button("common.button.delete", role: .destructive) {
                 deleteAllData()
             }
-            Button("Cancel", role: .cancel) {}
+            Button("common.button.cancel", role: .cancel) {}
         } message: {
-            Text("This permanently removes your profile, meals, and weigh-ins from this device.")
+            Text("settings.alert.deleteAll.message")
         }
     }
 
@@ -69,24 +69,24 @@ struct SettingsView: View {
     @ViewBuilder
     private func profileSection(viewModel: SettingsViewModel) -> some View {
         Section {
-            TextField("Display name (optional)", text: Binding(
+            TextField("settings.profile.displayName", text: Binding(
                 get: { viewModel.draft.name },
                 set: { newValue in viewModel.updateDraft { $0.name = newValue } }
             ))
-            Text("Used for greetings and export metadata. Leave blank for neutral copy.")
+            Text("settings.profile.displayNameHint")
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
-            Picker("Sex", selection: Binding(
+            Picker("settings.profile.sex", selection: Binding(
                 get: { viewModel.draft.sex },
                 set: { newValue in viewModel.updateDraft { $0.sex = newValue } }
             )) {
-                Text("Male").tag(BiologicalSex.male)
-                Text("Female").tag(BiologicalSex.female)
+                Text("model.biologicalSex.male").tag(BiologicalSex.male)
+                Text("model.biologicalSex.female").tag(BiologicalSex.female)
             }
 
             DatePicker(
-                "Date of birth",
+                "settings.profile.dateOfBirth",
                 selection: Binding(
                     get: { viewModel.draft.dateOfBirth },
                     set: { newValue in viewModel.updateDraft { $0.dateOfBirth = newValue } }
@@ -96,18 +96,22 @@ struct SettingsView: View {
 
             if viewModel.useImperialForHeight {
                 HStack {
-                    Picker("Feet", selection: $heightFeet) {
-                        ForEach(4...7, id: \.self) { Text("\($0) ft").tag($0) }
+                    Picker("units.height.feet", selection: $heightFeet) {
+                        ForEach(4...7, id: \.self) { ft in
+                            Text(String(format: String(localized: "units.height.feetValue"), ft)).tag(ft)
+                        }
                     }
-                    Picker("Inches", selection: $heightInches) {
-                        ForEach(0...11, id: \.self) { Text("\($0) in").tag($0) }
+                    Picker("units.height.inches", selection: $heightInches) {
+                        ForEach(0...11, id: \.self) { inch in
+                            Text(String(format: String(localized: "units.height.inchesValue"), inch)).tag(inch)
+                        }
                     }
                 }
                 .onChange(of: heightFeet) { _, _ in syncHeightToDraft(viewModel) }
                 .onChange(of: heightInches) { _, _ in syncHeightToDraft(viewModel) }
             } else {
                 Stepper(
-                    "Height: \(heightCmDisplay.formatted(.number.precision(.fractionLength(0)))) cm",
+                    String(format: String(localized: "settings.profile.heightCm"), heightCmDisplay.formatted(.number.precision(.fractionLength(0)))),
                     value: $heightCmDisplay,
                     in: 120...220,
                     step: 1
@@ -130,12 +134,12 @@ struct SettingsView: View {
                 viewModel.refreshPreview()
             }
 
-            Picker("Activity level", selection: Binding(
+            Picker("settings.profile.activityLevel", selection: Binding(
                 get: { viewModel.draft.activityLevel },
                 set: { newValue in viewModel.updateDraft { $0.activityLevel = newValue } }
             )) {
                 ForEach(ActivityLevel.allCases, id: \.self) { level in
-                    Text(level.rawValue).tag(level)
+                    Text(level.localizedTitle).tag(level)
                 }
             }
 
@@ -154,7 +158,7 @@ struct SettingsView: View {
             }
 
             DatePicker(
-                "Goal date",
+                "settings.profile.goalDate",
                 selection: Binding(
                     get: { viewModel.draft.goalTargetDate },
                     set: { newValue in viewModel.updateDraft { $0.goalTargetDate = newValue } }
@@ -162,11 +166,11 @@ struct SettingsView: View {
                 displayedComponents: .date
             )
 
-            LabeledContent("TDEE", value: "\(viewModel.previewTDEE) kcal/day")
-            LabeledContent("Daily target", value: "\(viewModel.previewTarget) kcal/day")
-            LabeledContent("Minimum floor", value: "\(viewModel.minimumCalories) kcal/day")
+            LabeledContent("settings.profile.tdee", value: String(format: String(localized: "units.kcalPerDay"), viewModel.previewTDEE))
+            LabeledContent("settings.profile.dailyTarget", value: String(format: String(localized: "units.kcalPerDay"), viewModel.previewTarget))
+            LabeledContent("settings.profile.minimumFloor", value: String(format: String(localized: "units.kcalPerDay"), viewModel.minimumCalories))
 
-            Button("Recalculate") {
+            Button("settings.profile.recalculate") {
                 viewModel.refreshPreview()
             }
 
@@ -176,20 +180,20 @@ struct SettingsView: View {
                     .foregroundStyle(Color.csDanger)
             }
 
-            Button(viewModel.isSaving ? "Saving…" : "Save Profile") {
+            Button(viewModel.isSaving ? "common.status.saving" : "settings.profile.save") {
                 Task { await viewModel.saveProfile(context: modelContext) }
             }
             .disabled(!viewModel.canSaveProfile)
         } header: {
-            Text("Profile")
+            Text("settings.section.profile")
         }
     }
 
     @ViewBuilder
     private func macrosSection(viewModel: SettingsViewModel) -> some View {
-        Section("Macro Targets") {
+        Section("settings.section.macroTargets") {
             VStack(alignment: .leading) {
-                Text("Protein: \(viewModel.macroProteinPct)%")
+                Text(String(format: String(localized: "settings.macro.protein"), viewModel.macroProteinPct))
                 Slider(
                     value: Binding(
                         get: { Double(viewModel.macroProteinPct) },
@@ -200,7 +204,7 @@ struct SettingsView: View {
                 )
             }
             VStack(alignment: .leading) {
-                Text("Carbs: \(viewModel.macroCarbsPct)%")
+                Text(String(format: String(localized: "settings.macro.carbs"), viewModel.macroCarbsPct))
                 Slider(
                     value: Binding(
                         get: { Double(viewModel.macroCarbsPct) },
@@ -211,7 +215,7 @@ struct SettingsView: View {
                 )
             }
             VStack(alignment: .leading) {
-                Text("Fat: \(viewModel.macroFatPct)%")
+                Text(String(format: String(localized: "settings.macro.fat"), viewModel.macroFatPct))
                 Slider(
                     value: Binding(
                         get: { Double(viewModel.macroFatPct) },
@@ -221,7 +225,7 @@ struct SettingsView: View {
                     step: 1
                 )
             }
-            Text("Total: \(viewModel.macroProteinPct + viewModel.macroCarbsPct + viewModel.macroFatPct)%")
+            Text(String(format: String(localized: "settings.macro.total"), viewModel.macroProteinPct + viewModel.macroCarbsPct + viewModel.macroFatPct))
                 .foregroundStyle(viewModel.macrosAreValid ? Color.secondary : Color.csDanger)
         }
     }
@@ -229,24 +233,34 @@ struct SettingsView: View {
     @ViewBuilder
     private func apiKeysSection(viewModel: SettingsViewModel) -> some View {
         @Bindable var vm = viewModel
-        Section("API Keys") {
-            LabeledContent("Gemini", value: vm.geminiKeyConfigured ? "Configured" : "Not set")
-            SecureField("Gemini API key", text: $vm.geminiAPIKeyInput)
+        Section("settings.section.apiKeys") {
+            LabeledContent(
+                "settings.apiKeys.gemini",
+                value: vm.geminiKeyConfigured
+                    ? String(localized: "settings.apiKeys.configured")
+                    : String(localized: "settings.apiKeys.notSet")
+            )
+            SecureField("settings.apiKeys.geminiField", text: $vm.geminiAPIKeyInput)
             HStack {
-                Button("Test Key") {
+                Button("settings.apiKeys.testKey") {
                     Task { await viewModel.testGeminiKey() }
                 }
                 .disabled(viewModel.geminiTestState == .testing)
                 GeminiTestIndicatorView(state: viewModel.geminiTestState)
             }
-            Button("Save Gemini Key") {
+            Button("settings.apiKeys.saveGemini") {
                 saveGeminiAPIKey(viewModel: viewModel)
             }
 
-            LabeledContent("USDA", value: viewModel.usdaKeyConfigured ? "Configured" : "Not set")
-            Link("Get a free USDA API key", destination: URL(string: "https://fdc.nal.usda.gov/api-key-signup.html")!)
-            SecureField("USDA API key (optional)", text: $vm.usdaAPIKeyInput)
-            Button("Save USDA Key") {
+            LabeledContent(
+                "settings.apiKeys.usda",
+                value: viewModel.usdaKeyConfigured
+                    ? String(localized: "settings.apiKeys.configured")
+                    : String(localized: "settings.apiKeys.notSet")
+            )
+            Link("settings.apiKeys.usdaSignup", destination: URL(string: "https://fdc.nal.usda.gov/api-key-signup.html")!)
+            SecureField("settings.apiKeys.usdaFieldOptional", text: $vm.usdaAPIKeyInput)
+            Button("settings.apiKeys.saveUsda") {
                 saveUSDAAPIKey(viewModel: viewModel)
             }
 
@@ -261,28 +275,28 @@ struct SettingsView: View {
     @ViewBuilder
     private func healthSection(viewModel: SettingsViewModel) -> some View {
         @Bindable var vm = viewModel
-        Section("Health & Integrations") {
-            Toggle("Write meals and weight to Health", isOn: $vm.healthKitWritesEnabled)
-                .accessibilityHint("When enabled, logged meals and weigh-ins sync to Apple Health")
+        Section("settings.section.health") {
+            Toggle("settings.health.writeToggle", isOn: $vm.healthKitWritesEnabled)
+                .accessibilityHint("settings.health.writeHint")
                 .onChange(of: vm.healthKitWritesEnabled) { _, enabled in
                     vm.persistHealthKitPreferences()
                     if enabled {
                         Task { try? await appContainer.healthKitService.requestAuthorization() }
                     }
                 }
-            Toggle("Read weight from Health", isOn: $vm.healthKitWeightReadsEnabled)
-                .accessibilityHint("When enabled, CalSnap can import body weight from Apple Health")
+            Toggle("settings.health.readToggle", isOn: $vm.healthKitWeightReadsEnabled)
+                .accessibilityHint("settings.health.readHint")
                 .onChange(of: vm.healthKitWeightReadsEnabled) { _, enabled in
                     vm.persistHealthKitPreferences()
                     if enabled {
                         Task { try? await appContainer.healthKitService.requestAuthorization() }
                     }
                 }
-            Button(viewModel.isSyncing ? "Syncing…" : "Sync Now") {
+            Button(viewModel.isSyncing ? "common.status.syncing" : "settings.health.syncNow") {
                 Task { await viewModel.syncHealthKitWeight(context: modelContext) }
             }
             .disabled(viewModel.isSyncing)
-            .accessibilityHint("Imports the latest body weight from Apple Health")
+            .accessibilityHint("settings.health.syncHint")
             if let message = viewModel.syncMessage {
                 Text(message)
                     .font(.caption)
@@ -294,22 +308,22 @@ struct SettingsView: View {
     @ViewBuilder
     private func notificationsSection(viewModel: SettingsViewModel) -> some View {
         @Bindable var vm = viewModel
-        Section("Notifications") {
-            Picker("Weigh-in day", selection: $vm.reminderWeekday) {
-                Text("Sunday").tag(1)
-                Text("Monday").tag(2)
-                Text("Tuesday").tag(3)
-                Text("Wednesday").tag(4)
-                Text("Thursday").tag(5)
-                Text("Friday").tag(6)
-                Text("Saturday").tag(7)
+        Section("settings.section.notifications") {
+            Picker("settings.notifications.weighInDay", selection: $vm.reminderWeekday) {
+                Text("common.weekday.sunday").tag(1)
+                Text("common.weekday.monday").tag(2)
+                Text("common.weekday.tuesday").tag(3)
+                Text("common.weekday.wednesday").tag(4)
+                Text("common.weekday.thursday").tag(5)
+                Text("common.weekday.friday").tag(6)
+                Text("common.weekday.saturday").tag(7)
             }
             .onChange(of: vm.reminderWeekday) { _, _ in
                 Task { await vm.updateReminderSchedule(context: modelContext) }
             }
 
             DatePicker(
-                "Weigh-in time",
+                "settings.notifications.weighInTime",
                 selection: reminderTimeBinding(viewModel: vm),
                 displayedComponents: .hourAndMinute
             )
@@ -320,13 +334,13 @@ struct SettingsView: View {
                 Task { await vm.updateReminderSchedule(context: modelContext) }
             }
 
-            Toggle("Daily log reminder", isOn: $vm.dailyLogReminderEnabled)
+            Toggle("settings.notifications.dailyLogReminder", isOn: $vm.dailyLogReminderEnabled)
                 .onChange(of: vm.dailyLogReminderEnabled) { _, _ in
                     Task { await vm.updateDailyLogReminderSchedule(context: modelContext) }
                 }
 
             DatePicker(
-                "Daily log time",
+                "settings.notifications.dailyLogTime",
                 selection: dailyLogTimeBinding(viewModel: vm),
                 displayedComponents: .hourAndMinute
             )
@@ -343,8 +357,8 @@ struct SettingsView: View {
     @ViewBuilder
     private func unitsSection(viewModel: SettingsViewModel) -> some View {
         @Bindable var vm = viewModel
-        Section("Units") {
-            Toggle("Use lbs for weight", isOn: $vm.useLbsForWeight)
+        Section("settings.section.units") {
+            Toggle("settings.units.useLbs", isOn: $vm.useLbsForWeight)
                 .onChange(of: vm.useLbsForWeight) { _, useLbs in
                     weightDisplay = useLbs
                         ? UnitFormatters.kgToLbs(vm.currentWeightKg)
@@ -354,7 +368,7 @@ struct SettingsView: View {
                         : vm.draft.goalWeightKg
                     vm.persistUnitPreferences()
                 }
-            Toggle("Use ft/in for height", isOn: $vm.useImperialForHeight)
+            Toggle("settings.units.useImperialHeight", isOn: $vm.useImperialForHeight)
                 .onChange(of: vm.useImperialForHeight) { _, useImperial in
                     if useImperial {
                         let parts = UnitFormatters.cmToFeetInches(vm.draft.heightCm)
@@ -370,26 +384,29 @@ struct SettingsView: View {
 
     @ViewBuilder
     private func dataSection(viewModel: SettingsViewModel) -> some View {
-        Section("Data") {
-            Button("Export CSV") {
+        Section("settings.section.data") {
+            Button("settings.data.exportCsv") {
                 exportCSV()
             }
-            .accessibilityHint("Creates a CSV file with meals and weigh-ins to share")
-            Button("Delete All My Data", role: .destructive) {
+            .accessibilityHint("settings.data.exportHint")
+            Button("settings.data.deleteAll", role: .destructive) {
                 showDeleteConfirmation = true
             }
-            .accessibilityHint("Permanently deletes your local profile, meals, and weigh-ins")
+            .accessibilityHint("settings.data.deleteHint")
         }
     }
 
     private var aboutSection: some View {
-        Section("About") {
+        Section("settings.section.about") {
             if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
                let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String {
-                LabeledContent("Version", value: "\(version) (\(build))")
+                LabeledContent(
+                    "settings.about.version",
+                    value: String(format: String(localized: "settings.about.versionFormat"), version, build)
+                )
             }
-            Link("NIH Body Weight Planner", destination: URL(string: "https://www.niddk.nih.gov/bwp")!)
-            Link("USDA Dietary Guidelines", destination: URL(string: "https://www.dietaryguidelines.gov")!)
+            Link("settings.about.nihPlanner", destination: URL(string: "https://www.niddk.nih.gov/bwp")!)
+            Link("settings.about.usdaGuidelines", destination: URL(string: "https://www.dietaryguidelines.gov")!)
         }
     }
 

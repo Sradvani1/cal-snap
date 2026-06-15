@@ -10,7 +10,7 @@ struct GeminiTestIndicatorView: View {
         case .testing:
             ProgressView()
         case .success:
-            Label("Valid key", systemImage: "checkmark.circle.fill")
+            Label("settings.apiKeys.validKey", systemImage: "checkmark.circle.fill")
                 .foregroundStyle(.green)
                 .font(.footnote)
         case .failure(let message):

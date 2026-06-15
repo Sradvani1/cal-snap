@@ -26,7 +26,13 @@ struct MacroBarRow: View {
                 Text(label)
                     .font(.subheadline.weight(.medium))
                 Spacer()
-                Text("\(Int(consumed.rounded()))g / \(Int(target.rounded()))g")
+                Text(
+                    String(
+                        format: String(localized: "dashboard.macroRow.consumedTarget"),
+                        Int(consumed.rounded()),
+                        Int(target.rounded())
+                    )
+                )
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

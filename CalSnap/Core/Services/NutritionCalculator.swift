@@ -20,10 +20,14 @@ struct NutritionCalculator {
 
         if deficit > AppConstants.Deficit.hardMaxDeficitKcal {
             deficit = AppConstants.Deficit.hardMaxDeficitKcal
-            warnings.append("Deficit capped at \(AppConstants.Deficit.hardMaxDeficitKcal) kcal/day for safety.")
+            warnings.append(
+                String(format: String(localized: "nutrition.warning.deficitCapped"), AppConstants.Deficit.hardMaxDeficitKcal)
+            )
         }
         if deficit > AppConstants.Deficit.maxDeficitKcal {
-            warnings.append("Deficits above \(AppConstants.Deficit.maxDeficitKcal) kcal/day can trigger metabolic adaptation. Recommend 350 kcal/day.")
+            warnings.append(
+                String(format: String(localized: "nutrition.warning.deficitHigh"), AppConstants.Deficit.maxDeficitKcal)
+            )
         }
 
         let minimum = switch sex {
@@ -34,7 +38,7 @@ struct NutritionCalculator {
         let target = max(rawTarget, minimum)
 
         if rawTarget < minimum {
-            warnings.append("Target floored to \(minimum) kcal/day minimum for safety.")
+            warnings.append(String(format: String(localized: "nutrition.warning.targetFloored"), minimum))
         }
         return (target, deficit, warnings)
     }

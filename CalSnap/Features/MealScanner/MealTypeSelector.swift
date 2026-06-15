@@ -9,14 +9,14 @@ struct MealTypeSelector: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Meal type")
+            Text("mealScanner.mealType.label")
                 .font(.subheadline.weight(.semibold))
 
-            Text("Suggested: \(suggested.displayName)")
+            Text(String(format: String(localized: "mealScanner.mealType.suggested"), suggested.displayName))
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
-            Picker("Meal type", selection: $selection) {
+            Picker("mealScanner.mealType.label", selection: $selection) {
                 ForEach(MealType.allCases, id: \.self) { type in
                     Label(type.displayName, systemImage: type.systemImage)
                         .tag(type)

@@ -32,11 +32,11 @@ enum AnalyticsDateRange: Hashable, Sendable {
 
     var displayLabel: String {
         switch self {
-        case .days(7): return "7D"
-        case .days(30): return "30D"
-        case .days(90): return "90D"
-        case .days(let n): return "\(n)D"
-        case .custom: return "Custom"
+        case .days(7): return String(localized: "model.analytics.timeframe.7d")
+        case .days(30): return String(localized: "model.analytics.timeframe.30d")
+        case .days(90): return String(localized: "model.analytics.timeframe.90d")
+        case .days(let n): return String(format: String(localized: "model.analytics.timeframe.daysFormat"), n)
+        case .custom: return String(localized: "model.analytics.timeframe.custom")
         }
     }
 }
@@ -91,13 +91,13 @@ enum Weekday: Int, CaseIterable, Sendable {
 
     var shortLabel: String {
         switch self {
-        case .sunday: "Sun"
-        case .monday: "Mon"
-        case .tuesday: "Tue"
-        case .wednesday: "Wed"
-        case .thursday: "Thu"
-        case .friday: "Fri"
-        case .saturday: "Sat"
+        case .sunday: String(localized: "model.analytics.weekday.sun")
+        case .monday: String(localized: "model.analytics.weekday.mon")
+        case .tuesday: String(localized: "model.analytics.weekday.tue")
+        case .wednesday: String(localized: "model.analytics.weekday.wed")
+        case .thursday: String(localized: "model.analytics.weekday.thu")
+        case .friday: String(localized: "model.analytics.weekday.fri")
+        case .saturday: String(localized: "model.analytics.weekday.sat")
         }
     }
 
@@ -114,10 +114,10 @@ enum TimeOfDayBucket: String, CaseIterable, Sendable {
 
     var displayLabel: String {
         switch self {
-        case .morning: "Morning"
-        case .midday: "Midday"
-        case .evening: "Evening"
-        case .night: "Night"
+        case .morning: String(localized: "model.analytics.timeOfDay.morning")
+        case .midday: String(localized: "model.analytics.timeOfDay.midday")
+        case .evening: String(localized: "model.analytics.timeOfDay.evening")
+        case .night: String(localized: "model.analytics.timeOfDay.night")
         }
     }
 

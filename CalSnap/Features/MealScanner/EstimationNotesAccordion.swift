@@ -5,7 +5,7 @@ struct EstimationNotesAccordion: View {
 
     var body: some View {
         if !notes.isEmpty {
-            DisclosureGroup("Estimation notes") {
+            DisclosureGroup("mealScanner.estimationNotes.title") {
                 Text(notes)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)

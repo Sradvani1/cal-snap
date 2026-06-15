@@ -52,7 +52,7 @@ struct CalorieRingView: View {
                         .font(.csLargeCalorie.monospacedDigit())
                         .minimumScaleFactor(0.6)
                         .lineLimit(1)
-                    Text(remaining >= 0 ? "remaining" : "over")
+                    Text(remaining >= 0 ? "designSystem.calorieRing.remaining" : "designSystem.calorieRing.over")
                         .font(.csCaption)
                         .foregroundStyle(.secondary)
                 }
@@ -60,25 +60,25 @@ struct CalorieRingView: View {
             .frame(width: 180, height: 180)
             .padding(.vertical, 8)
 
-            Text("of \(target) kcal goal")
+            Text(String(format: String(localized: "designSystem.calorieRing.ofGoal"), target))
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
-            Text("\(consumed) kcal consumed")
+            Text(String(format: String(localized: "designSystem.calorieRing.consumed"), consumed))
                 .font(.caption)
                 .foregroundStyle(.tertiary)
         }
         .frame(maxWidth: .infinity)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Calorie progress")
+        .accessibilityLabel("designSystem.calorieRing.accessibility.label")
         .accessibilityValue(CalorieRingAccessibility.valueText(remaining: remaining, target: target))
     }
 
     private var bandLabel: String {
         switch progressBand {
-        case .under: "Under goal"
-        case .onTrack: "On track"
-        case .over: "Over goal"
+        case .under: String(localized: "designSystem.calorieRing.band.under")
+        case .onTrack: String(localized: "designSystem.calorieRing.band.onTrack")
+        case .over: String(localized: "designSystem.calorieRing.band.over")
         }
     }
 

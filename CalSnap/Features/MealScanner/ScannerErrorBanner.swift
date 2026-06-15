@@ -14,14 +14,14 @@ struct ScannerErrorBanner: View {
 
             HStack(spacing: 12) {
                 if showsRetry {
-                    Button("Retry", action: onRetry)
+                    Button("common.button.retry", action: onRetry)
                         .buttonStyle(.bordered)
                 }
                 if showsReAnalyze {
-                    Button("Try again", action: onReAnalyze)
+                    Button("common.button.tryAgain", action: onReAnalyze)
                         .buttonStyle(.bordered)
                 }
-                Button("Enter manually", action: onManualEntry)
+                Button("mealScanner.capture.enterManually", action: onManualEntry)
                     .buttonStyle(.borderedProminent)
             }
         }
@@ -34,15 +34,15 @@ struct ScannerErrorBanner: View {
     private var message: String {
         switch error {
         case .offline:
-            return "Offline mode: manual entry only"
+            return String(localized: "mealScanner.error.offline")
         case .missingAPIKey:
-            return "Gemini API key not configured. Add a key during setup or enter the meal manually."
+            return String(localized: "error.gemini.apiKeyMissing")
         case .api(let detail):
-            return "Analysis failed: \(detail)"
+            return String(format: String(localized: "mealScanner.error.analysisFailed"), detail)
         case .parse(let detail):
-            return "Could not read the analysis result: \(detail)"
+            return String(format: String(localized: "mealScanner.error.parseFailed"), detail)
         case .unrecognizable:
-            return "We couldn't recognize this meal. Try a brighter photo, add a description, or enter manually."
+            return String(localized: "mealScanner.error.unrecognizable")
         }
     }
 

@@ -2,8 +2,8 @@ import AppIntents
 import Foundation
 
 struct OpenScannerIntent: AppIntent {
-    static let title: LocalizedStringResource = "Log a Meal"
-    static let description = IntentDescription("Open CalSnap meal scanner")
+    static let title: LocalizedStringResource = "intents.openScanner.title"
+    static let description = IntentDescription(LocalizedStringResource("intents.openScanner.description"))
 
     @MainActor
     func perform() async throws -> some IntentResult {
@@ -20,7 +20,7 @@ struct CalSnapShortcuts: AppShortcutsProvider {
                 "Log a meal in \(.applicationName)",
                 "Open meal scanner in \(.applicationName)",
             ],
-            shortTitle: "Log a Meal",
+            shortTitle: LocalizedStringResource("intents.openScanner.title"),
             systemImageName: "camera.fill"
         )
     }

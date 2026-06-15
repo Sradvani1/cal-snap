@@ -30,19 +30,19 @@ struct MediumMacroWidgetView: View {
                         .lineLimit(1)
                 }
                 .frame(width: 72, height: 72)
-                Text("kcal left")
+                Text("widget.medium.kcalLeft")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
 
             if let data {
                 VStack(alignment: .leading, spacing: 8) {
-                    macroRow(label: "Protein", consumed: data.proteinConsumedG, target: data.proteinTargetG, color: .blue)
-                    macroRow(label: "Carbs", consumed: data.carbsConsumedG, target: data.carbsTargetG, color: .orange)
-                    macroRow(label: "Fat", consumed: data.fatConsumedG, target: data.fatTargetG, color: .purple)
+                    macroRow(label: String(localized: "designSystem.macroBar.protein"), consumed: data.proteinConsumedG, target: data.proteinTargetG, color: .blue)
+                    macroRow(label: String(localized: "designSystem.macroBar.carbs"), consumed: data.carbsConsumedG, target: data.carbsTargetG, color: .orange)
+                    macroRow(label: String(localized: "designSystem.macroBar.fat"), consumed: data.fatConsumedG, target: data.fatTargetG, color: .purple)
                 }
             } else {
-                Text("Open CalSnap to get started")
+                Text("widget.medium.openApp")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -59,7 +59,7 @@ struct MediumMacroWidgetView: View {
                 Text(label)
                     .font(.caption2)
                 Spacer()
-                Text("\(Int(consumed.rounded()))g")
+                Text(String(format: String(localized: "units.gramsValue"), Int(consumed.rounded())))
                     .font(.caption2.monospacedDigit())
                     .foregroundStyle(.secondary)
             }
@@ -91,8 +91,8 @@ struct MediumMacroWidget: Widget {
         StaticConfiguration(kind: kind, provider: CalorieWidgetProvider()) { entry in
             MediumMacroWidgetView(data: entry.data)
         }
-        .configurationDisplayName("Calories & Macros")
-        .description("Today's calorie ring and macro progress.")
+        .configurationDisplayName(LocalizedStringResource("widget.medium.displayName"))
+        .description(LocalizedStringResource("widget.medium.description"))
         .supportedFamilies([.systemMedium])
     }
 }

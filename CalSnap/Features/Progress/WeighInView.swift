@@ -15,36 +15,36 @@ struct WeighInView: View {
             Form {
                 Section {
                     HStack {
-                        TextField("Weight", value: $viewModel.weightInput, format: .number.precision(.fractionLength(1)))
+                        TextField("progress.weighIn.weightField", value: $viewModel.weightInput, format: .number.precision(.fractionLength(1)))
                             .keyboardType(.decimalPad)
                             .font(.largeTitle.bold())
-                            .accessibilityLabel("Weight input")
+                            .accessibilityLabel("progress.weighIn.weightInput")
 
-                        Text(viewModel.useLbs ? "lbs" : "kg")
+                        Text(viewModel.useLbs ? String(localized: "units.lbs") : String(localized: "units.kg"))
                             .font(.title3)
                             .foregroundStyle(.secondary)
                     }
 
-                    Picker("Unit", selection: Binding(
+                    Picker("progress.weighIn.unit", selection: Binding(
                         get: { viewModel.useLbs },
                         set: { viewModel.setUseLbs($0) }
                     )) {
-                        Text("lbs").tag(true)
-                        Text("kg").tag(false)
+                        Text("units.lbs").tag(true)
+                        Text("units.kg").tag(false)
                     }
                     .pickerStyle(.segmented)
                 }
 
-                Section("Date") {
-                    DatePicker("Weigh-in date", selection: $viewModel.selectedDate, displayedComponents: .date)
+                Section("common.label.date") {
+                    DatePicker("progress.weighIn.date", selection: $viewModel.selectedDate, displayedComponents: .date)
                 }
 
-                Section("Updated targets") {
-                    LabeledContent("TDEE") {
-                        Text("\(viewModel.previousTDEE) → \(viewModel.previewTDEE) kcal/day")
+                Section("progress.weighIn.updatedTargets") {
+                    LabeledContent("settings.profile.tdee") {
+                        Text(String(format: String(localized: "progress.weighIn.tdeeChange"), viewModel.previousTDEE, viewModel.previewTDEE))
                     }
-                    LabeledContent("Daily target") {
-                        Text("Your target adjusts from \(viewModel.previousDailyTarget) to \(viewModel.previewDailyTarget) kcal/day")
+                    LabeledContent("settings.profile.dailyTarget") {
+                        Text(String(format: String(localized: "progress.weighIn.targetChange"), viewModel.previousDailyTarget, viewModel.previewDailyTarget))
                             .multilineTextAlignment(.trailing)
                     }
                 }
@@ -59,11 +59,11 @@ struct WeighInView: View {
                     }
                 }
             }
-            .navigationTitle("Log Weight")
+            .navigationTitle("progress.weighIn.navigationTitle")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Remind me tomorrow") {
+                    Button("progress.weighIn.remindTomorrow") {
                         Task {
                             await notificationManager.snoozeUntilTomorrow(userId: viewModel.userId)
                             onSkipped()
@@ -78,11 +78,11 @@ struct WeighInView: View {
                         if viewModel.isSaving {
                             ProgressView()
                         } else {
-                            Text("Save")
+                            Text("common.button.save")
                         }
                     }
                     .disabled(!viewModel.canSave)
-                    .accessibilityLabel(viewModel.isSaving ? "Saving" : "Save")
+                    .accessibilityLabel(viewModel.isSaving ? "common.status.savingVerb" : "common.button.save")
                 }
             }
         }

@@ -170,7 +170,7 @@ final class OnboardingViewModel {
             do {
                 try saveAPIKeys()
             } catch {
-                validationError = "Profile saved, but API keys could not be stored: \(error.localizedDescription)"
+                validationError = String(format: String(localized: "onboarding.apiKeys.savePartialFailure"), error.localizedDescription)
             }
             currentStep = .done
         case .done:
@@ -228,7 +228,7 @@ final class OnboardingViewModel {
     func testGeminiKey() async {
         let key = geminiAPIKeyInput.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !key.isEmpty else {
-            geminiTestState = .failure("Enter an API key to test.")
+            geminiTestState = .failure(String(localized: "settings.apiKeys.enterKeyToTest"))
             return
         }
 
@@ -244,11 +244,15 @@ final class OnboardingViewModel {
     private func validationMessage(for step: OnboardingStep) -> String {
         switch step {
         case .profileSetup:
-            return "Age must be between \(AppConstants.Onboarding.minAgeYears) and \(AppConstants.Onboarding.maxAgeYears)."
+            return String(
+                format: String(localized: "error.validation.ageRange"),
+                AppConstants.Onboarding.minAgeYears,
+                AppConstants.Onboarding.maxAgeYears
+            )
         case .goalSetup:
-            return "Goal date must be 2 weeks to 2 years from today."
+            return String(localized: "error.validation.goalDateRange")
         default:
-            return "Complete required fields to continue."
+            return String(localized: "error.validation.requiredFields")
         }
     }
 }

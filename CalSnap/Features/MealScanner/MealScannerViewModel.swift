@@ -43,9 +43,9 @@ enum ConfidenceLevel: Equatable {
 
     var label: String {
         switch self {
-        case .high: return "High confidence"
-        case .medium: return "Medium confidence"
-        case .low: return "Low confidence"
+        case .high: return String(localized: "mealScanner.confidence.high")
+        case .medium: return String(localized: "mealScanner.confidence.medium")
+        case .low: return String(localized: "mealScanner.confidence.low")
         }
     }
 

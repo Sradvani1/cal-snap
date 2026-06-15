@@ -6,12 +6,21 @@ struct AnalyticsTimeframePicker: View {
     @Binding var showCustomRangeSheet: Bool
 
     var body: some View {
-        Picker("Timeframe", selection: $preset) {
+        Picker("analytics.timeframe.picker", selection: $preset) {
             ForEach(AnalyticsTimeframePreset.allCases) { option in
-                Text(option.rawValue).tag(option)
+                Text(presetLabel(option)).tag(option)
             }
         }
         .pickerStyle(.segmented)
+    }
+
+    private func presetLabel(_ preset: AnalyticsTimeframePreset) -> String {
+        switch preset {
+        case .days7: String(localized: "model.analytics.timeframe.7d")
+        case .days30: String(localized: "model.analytics.timeframe.30d")
+        case .days90: String(localized: "model.analytics.timeframe.90d")
+        case .custom: String(localized: "model.analytics.timeframe.custom")
+        }
     }
 }
 
@@ -24,17 +33,17 @@ struct AnalyticsCustomRangeSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                DatePicker("Start", selection: $customStart, in: ...Date.now, displayedComponents: .date)
-                DatePicker("End", selection: $customEnd, in: ...Date.now, displayedComponents: .date)
+                DatePicker("analytics.timeframe.start", selection: $customStart, in: ...Date.now, displayedComponents: .date)
+                DatePicker("analytics.timeframe.end", selection: $customEnd, in: ...Date.now, displayedComponents: .date)
             }
-            .navigationTitle("Custom Range")
+            .navigationTitle("analytics.timeframe.customTitle")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button("common.button.cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Apply") {
+                    Button("common.button.apply") {
                         let start = min(customStart, customEnd)
                         let end = max(customStart, customEnd)
                         onApply(start, end)

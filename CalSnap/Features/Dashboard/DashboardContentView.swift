@@ -100,7 +100,7 @@ struct DashboardContentView: View {
                     .padding(.bottom, 72)
                 }
 
-                Button("Add meal", systemImage: "plus") {
+                Button("dashboard.addMeal", systemImage: "plus") {
                     navigationPath.append(.mealScanner(.create(initialMealType: nil)))
                 }
                 .labelStyle(.iconOnly)
@@ -112,7 +112,7 @@ struct DashboardContentView: View {
                 .shadow(radius: 4, y: 2)
                 .padding()
                 .accessibilitySortPriority(50)
-                .accessibilityHint("Opens meal scanner to log a meal")
+                .accessibilityHint("dashboard.addMeal.accessibilityHint")
             }
             .navigationDestination(for: DashboardRoute.self) { route in
                 switch route {
@@ -131,7 +131,7 @@ struct DashboardContentView: View {
                             onMealSaved: onReload
                         )
                     } else {
-                        ContentUnavailableView("No profile", systemImage: "person.crop.circle")
+                        ContentUnavailableView("dashboard.empty.noProfile.title", systemImage: "person.crop.circle")
                     }
                 case .weightProgress:
                     if let profile = viewModel.activeProfile {
@@ -145,7 +145,7 @@ struct DashboardContentView: View {
                             reloadTrigger: weightProgressReloadTrigger
                         )
                     } else {
-                        ContentUnavailableView("No profile", systemImage: "person.crop.circle")
+                        ContentUnavailableView("dashboard.empty.noProfile.title", systemImage: "person.crop.circle")
                     }
                 }
             }

@@ -11,13 +11,13 @@ enum OnboardingStep: Int, CaseIterable, Hashable {
 
     var title: String {
         switch self {
-        case .welcome: return "Welcome"
-        case .profileSetup: return "Profile"
-        case .goalSetup: return "Goals"
-        case .caloriePreview: return "Calorie Target"
-        case .healthKit: return "Apple Health"
-        case .apiKeys: return "API Keys"
-        case .done: return "Done"
+        case .welcome: String(localized: "onboarding.step.welcome")
+        case .profileSetup: String(localized: "onboarding.step.profile")
+        case .goalSetup: String(localized: "onboarding.step.goals")
+        case .caloriePreview: String(localized: "onboarding.step.calorieTarget")
+        case .healthKit: String(localized: "onboarding.step.healthKit")
+        case .apiKeys: String(localized: "onboarding.step.apiKeys")
+        case .done: String(localized: "onboarding.step.done")
         }
     }
 }

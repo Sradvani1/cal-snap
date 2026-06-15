@@ -9,17 +9,17 @@ struct ConfidenceBadge: View {
 
     var body: some View {
         if isManualEntry {
-            Label("Manual entry", systemImage: "hand.draw")
+            Label("designSystem.confidence.manualEntry", systemImage: "hand.draw")
                 .font(.csCaption.weight(.semibold))
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
                 .background(Color.secondary.opacity(0.15))
                 .foregroundStyle(.secondary)
                 .clipShape(Capsule())
-                .accessibilityLabel("Manual entry")
+                .accessibilityLabel("designSystem.confidence.manualEntry")
         } else {
             Label {
-                Text("\(level.label) (\(Int((score * 100).rounded()))%)")
+                Text(String(format: String(localized: "designSystem.confidence.levelWithPercent"), level.label, Int((score * 100).rounded())))
             } icon: {
                 Image(systemName: symbolName)
             }
@@ -35,7 +35,9 @@ struct ConfidenceBadge: View {
                 }
             }
             .clipShape(Capsule())
-            .accessibilityLabel("\(level.label), \(Int((score * 100).rounded())) percent")
+            .accessibilityLabel(
+                String(format: String(localized: "designSystem.confidence.accessibility"), level.label, Int((score * 100).rounded()))
+            )
         }
     }
 

@@ -25,38 +25,42 @@ enum UnitFormatters {
 
     static func formatWeight(kg: Double, useLbs: Bool) -> String {
         if useLbs {
-            return kgToLbs(kg).formatted(.number.precision(.fractionLength(1))) + " lbs"
+            let formatted = kgToLbs(kg).formatted(.number.precision(.fractionLength(1)))
+            return String(format: String(localized: "units.weight.lbsFormat"), formatted)
         }
-        return kg.formatted(.number.precision(.fractionLength(1))) + " kg"
+        let formatted = kg.formatted(.number.precision(.fractionLength(1)))
+        return String(format: String(localized: "units.weight.kgFormat"), formatted)
     }
 
     static func formatHeight(cm: Double, useImperial: Bool) -> String {
         if useImperial {
             let parts = cmToFeetInches(cm)
-            return "\(parts.feet) ft \(parts.inches) in"
+            return String(format: String(localized: "units.height.imperialFormat"), parts.feet, parts.inches)
         }
-        return cm.formatted(.number.precision(.fractionLength(0))) + " cm"
+        let formatted = cm.formatted(.number.precision(.fractionLength(0)))
+        return String(format: String(localized: "units.height.metricFormat"), formatted)
     }
 
     static func stepperWeightLabel(displayValue: Double, useLbs: Bool) -> String {
         if useLbs {
             let formatted = displayValue.formatted(.number.precision(.fractionLength(0)))
-            return "Weight: \(formatted) lbs"
+            return String(format: String(localized: "units.stepper.weightLbs"), formatted)
         }
         let formatted = displayValue.formatted(.number.precision(.fractionLength(1)))
-        return "Weight: \(formatted) kg"
+        return String(format: String(localized: "units.stepper.weightKg"), formatted)
     }
 
     static func stepperGoalWeightLabel(displayValue: Double, useLbs: Bool) -> String {
         if useLbs {
             let formatted = displayValue.formatted(.number.precision(.fractionLength(0)))
-            return "Goal weight: \(formatted) lbs"
+            return String(format: String(localized: "units.stepper.goalWeightLbs"), formatted)
         }
         let formatted = displayValue.formatted(.number.precision(.fractionLength(1)))
-        return "Goal weight: \(formatted) kg"
+        return String(format: String(localized: "units.stepper.goalWeightKg"), formatted)
     }
 
     static func formatMacroGrams(_ grams: Double, fractionLength: Int) -> String {
-        grams.formatted(.number.precision(.fractionLength(fractionLength))) + " g"
+        let formatted = grams.formatted(.number.precision(.fractionLength(fractionLength)))
+        return String(format: String(localized: "units.macro.gramsFormat"), formatted)
     }
 }

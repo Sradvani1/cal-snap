@@ -9,10 +9,10 @@ struct PatternsSectionView: View {
     let topFoods: [TopFoodEntry]
 
     var body: some View {
-        AnalyticsSectionCard(title: "Patterns") {
+        AnalyticsSectionCard(title: String(localized: "analytics.section.patterns")) {
             VStack(alignment: .leading, spacing: 20) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Calories by day of week")
+                    Text("analytics.patterns.byWeekday")
                         .font(.subheadline.weight(.semibold))
                     Chart {
                         ForEach(Weekday.allCases, id: \.self) { weekday in
@@ -29,13 +29,13 @@ struct PatternsSectionView: View {
                 if let weekend = weekendAverageCalories, let weekday = weekdayAverageCalories {
                     let delta = weekend - weekday
                     let deltaText = delta >= 0 ? "+\(delta)" : "\(delta)"
-                    Text("Weekend avg: \(weekend) kcal · Weekday avg: \(weekday) kcal (\(deltaText) vs weekdays)")
+                    Text(String(format: String(localized: "analytics.patterns.weekendWeekdayAvg"), weekend, weekday, deltaText))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Calories by time of day")
+                    Text("analytics.patterns.byTimeOfDay")
                         .font(.subheadline.weight(.semibold))
                     Chart {
                         ForEach(TimeOfDayBucket.allCases, id: \.self) { bucket in
@@ -50,10 +50,10 @@ struct PatternsSectionView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Top logged foods")
+                    Text("analytics.patterns.topFoods")
                         .font(.subheadline.weight(.semibold))
                     if topFoods.isEmpty {
-                        Text("No food items logged yet")
+                        Text("analytics.patterns.noFoods")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     } else {
@@ -61,7 +61,7 @@ struct PatternsSectionView: View {
                             HStack {
                                 Text(food.name)
                                 Spacer()
-                                Text("\(food.count)× · ~\(food.avgCalories) kcal")
+                                Text(String(format: String(localized: "analytics.patterns.foodCountFormat"), food.count, food.avgCalories))
                                     .foregroundStyle(.secondary)
                             }
                             .font(.subheadline)

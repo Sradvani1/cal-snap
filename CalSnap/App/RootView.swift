@@ -22,15 +22,15 @@ struct RootView: View {
                 OnboardingView()
             } else {
                 TabView(selection: $selectedTab) {
-                    Tab("Dashboard", systemImage: "house.fill", value: .dashboard) {
+                    Tab("app.tab.dashboard", systemImage: "house.fill", value: .dashboard) {
                         DashboardView()
                     }
-                    Tab("Analytics", systemImage: "chart.bar.fill", value: .analytics) {
+                    Tab("app.tab.analytics", systemImage: "chart.bar.fill", value: .analytics) {
                         NavigationStack {
                             AnalyticsView()
                         }
                     }
-                    Tab("Settings", systemImage: "gearshape.fill", value: .settings) {
+                    Tab("app.tab.settings", systemImage: "gearshape.fill", value: .settings) {
                         NavigationStack {
                             SettingsView()
                         }

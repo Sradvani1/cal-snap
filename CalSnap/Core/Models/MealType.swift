@@ -14,7 +14,12 @@ enum MealType: String, Codable, CaseIterable {
     }
 
     var displayName: String {
-        rawValue.capitalized
+        switch self {
+        case .breakfast: String(localized: "model.mealType.breakfast")
+        case .lunch: String(localized: "model.mealType.lunch")
+        case .dinner: String(localized: "model.mealType.dinner")
+        case .snack: String(localized: "model.mealType.snack")
+        }
     }
 
     var systemImage: String {

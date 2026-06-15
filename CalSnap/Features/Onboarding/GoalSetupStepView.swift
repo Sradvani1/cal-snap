@@ -14,10 +14,10 @@ struct GoalSetupStepView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Your goals")
+            Text("onboarding.goals.title")
                 .font(.title2.bold())
 
-            Toggle("Use lbs for goal weight", isOn: viewModel.binding(\.useLbsGoalWeight))
+            Toggle("onboarding.goals.useLbsGoalWeight", isOn: viewModel.binding(\.useLbsGoalWeight))
                 .onChange(of: viewModel.profileDraft.useLbsGoalWeight) { _, useLbs in
                     goalWeightDisplay = useLbs
                         ? UnitFormatters.kgToLbs(viewModel.profileDraft.goalWeightKg)
@@ -42,13 +42,13 @@ struct GoalSetupStepView: View {
             }
 
             DatePicker(
-                "Target date",
+                "onboarding.goals.targetDate",
                 selection: viewModel.binding(\.goalTargetDate),
                 in: goalDateRange,
                 displayedComponents: .date
             )
 
-            Text("Activity level")
+            Text("settings.profile.activityLevel")
                 .font(.headline)
 
             ForEach(ActivityLevel.allCases, id: \.self) { level in
@@ -60,7 +60,7 @@ struct GoalSetupStepView: View {
                             .frame(width: 28)
                             .foregroundStyle(.tint)
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(level.rawValue)
+                            Text(level.localizedTitle)
                                 .font(.subheadline.bold())
                                 .foregroundStyle(.primary)
                             Text(level.description)

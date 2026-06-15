@@ -8,10 +8,14 @@ struct FiberSectionView: View {
     let loggedDayCount: Int
 
     var body: some View {
-        AnalyticsSectionCard(title: "Fiber & Micronutrients") {
+        AnalyticsSectionCard(title: String(localized: "analytics.section.fiber")) {
             VStack(alignment: .leading, spacing: 12) {
                 if chartSeries.isEmpty {
-                    EmptyStateView(icon: "leaf", title: "No meal data", message: "No meals logged in this period.")
+                    EmptyStateView(
+                        icon: "leaf",
+                        title: String(localized: "common.empty.noMealData.title"),
+                        message: String(localized: "common.empty.noMealData.message")
+                    )
                 } else {
                     Chart {
                         ForEach(chartSeries) { day in
@@ -24,11 +28,11 @@ struct FiberSectionView: View {
                                 .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
                         }
                     }
-                    .chartYAxisLabel("g")
+                    .chartYAxisLabel(String(localized: "units.grams"))
                     .frame(height: 180)
                 }
 
-                Text("Days meeting fiber target: \(daysMeetingFiberTarget) of \(loggedDayCount)")
+                Text(String(format: String(localized: "analytics.fiber.daysMeetingTarget"), daysMeetingFiberTarget, loggedDayCount))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }

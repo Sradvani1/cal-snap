@@ -11,7 +11,7 @@ struct MealListView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Today's Meals")
+            Text("dashboard.meals.title")
                 .font(.headline)
 
             VStack(alignment: .leading, spacing: 16) {
@@ -53,7 +53,7 @@ private struct MealListSectionView: View {
                 Button {
                     onAdd(mealType)
                 } label: {
-                    Label("Add \(mealType.displayName)", systemImage: "plus")
+                    Label(String(format: String(localized: "dashboard.meals.addMealType"), mealType.displayName), systemImage: "plus")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
@@ -71,24 +71,24 @@ private struct MealListSectionView: View {
                             Button {
                                 onSelect(meal.id)
                             } label: {
-                                Label("View", systemImage: "eye")
+                                Label("common.button.view", systemImage: "eye")
                             }
                             Button {
                                 onEdit(meal.id)
                             } label: {
-                                Label("Edit", systemImage: "pencil")
+                                Label("common.button.edit", systemImage: "pencil")
                             }
                             Button(role: .destructive) {
                                 onDelete(meal)
                             } label: {
-                                Label("Delete", systemImage: "trash")
+                                Label("common.button.delete", systemImage: "trash")
                             }
                         }
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             Button(role: .destructive) {
                                 onDelete(meal)
                             } label: {
-                                Label("Delete", systemImage: "trash")
+                                Label("common.button.delete", systemImage: "trash")
                             }
                         }
                     }

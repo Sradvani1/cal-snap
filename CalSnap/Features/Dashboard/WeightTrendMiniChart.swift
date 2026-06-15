@@ -11,10 +11,10 @@ struct WeightTrendMiniChart: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("Weight Trend")
+                Text("dashboard.weightTrend.title")
                     .font(.headline)
                 Spacer()
-                Button("Log weigh-in", action: onLogWeighIn)
+                Button("progress.logWeighIn", action: onLogWeighIn)
                     .font(.caption.weight(.semibold))
             }
 
@@ -23,7 +23,7 @@ struct WeightTrendMiniChart: View {
                     WeightTrendMiniChartChart(weighIns: weighIns, useLbs: useLbs)
                 }
                 .buttonStyle(.plain)
-                .accessibilityHint("Opens weight progress")
+                .accessibilityHint("dashboard.weightTrend.accessibilityHint")
                 .accessibilityLabel(miniChartAccessibilityLabel)
             } else {
                 WeightTrendMiniChartEmptyState(
@@ -38,7 +38,10 @@ struct WeightTrendMiniChart: View {
 
     private var miniChartAccessibilityLabel: String {
         guard let latest = weighIns.max(by: { $0.date < $1.date }) else {
-            return "Weight trend, starting weight \(UnitFormatters.formatWeight(kg: startingWeightKg, useLbs: useLbs))"
+            return String(
+                format: String(localized: "dashboard.weightTrend.accessibility.starting"),
+                UnitFormatters.formatWeight(kg: startingWeightKg, useLbs: useLbs)
+            )
         }
 
         let current = UnitFormatters.formatWeight(kg: latest.weightKg, useLbs: useLbs)
@@ -46,13 +49,13 @@ struct WeightTrendMiniChart: View {
            let earliest = weighIns.min(by: { $0.date < $1.date }) {
             let delta = latest.weightKg - earliest.weightKg
             if delta < -0.1 {
-                return "Weight trend, current \(current), trending down"
+                return String(format: String(localized: "dashboard.weightTrend.accessibility.down"), current)
             }
             if delta > 0.1 {
-                return "Weight trend, current \(current), trending up"
+                return String(format: String(localized: "dashboard.weightTrend.accessibility.up"), current)
             }
         }
-        return "Weight trend, current \(current)"
+        return String(format: String(localized: "dashboard.weightTrend.accessibility.current"), current)
     }
 }
 
@@ -63,17 +66,17 @@ struct WeightTrendMiniChartChart: View {
     var body: some View {
         Chart(weighIns, id: \.id) { weighIn in
             LineMark(
-                x: .value("Date", weighIn.date),
-                y: .value("Weight", displayWeight(weighIn.weightKg))
+                x: .value(String(localized: "common.label.date"), weighIn.date),
+                y: .value(String(localized: "progress.weighIn.weightField"), displayWeight(weighIn.weightKg))
             )
             .foregroundStyle(Color.csPrimary)
             PointMark(
-                x: .value("Date", weighIn.date),
-                y: .value("Weight", displayWeight(weighIn.weightKg))
+                x: .value(String(localized: "common.label.date"), weighIn.date),
+                y: .value(String(localized: "progress.weighIn.weightField"), displayWeight(weighIn.weightKg))
             )
             .foregroundStyle(Color.csPrimary)
         }
-        .chartYAxisLabel(useLbs ? "lbs" : "kg")
+        .chartYAxisLabel(useLbs ? String(localized: "units.lbs") : String(localized: "units.kg"))
         .frame(height: 120)
         .frame(maxWidth: .infinity)
     }
@@ -92,8 +95,8 @@ struct WeightTrendMiniChartEmptyState: View {
         EmptyStateView(
             icon: "scalemass",
             title: UnitFormatters.formatWeight(kg: startingWeightKg, useLbs: useLbs),
-            message: "Your weight trend will appear after weekly weigh-ins.",
-            actionTitle: "Log your first weigh-in",
+            message: String(localized: "dashboard.weightTrend.empty.message"),
+            actionTitle: String(localized: "dashboard.weightTrend.empty.action"),
             action: onLogWeighIn
         )
     }

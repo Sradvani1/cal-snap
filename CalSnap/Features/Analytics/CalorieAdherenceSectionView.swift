@@ -8,10 +8,14 @@ struct CalorieAdherenceSectionView: View {
     let adherencePct: Double
 
     var body: some View {
-        AnalyticsSectionCard(title: "Calorie Adherence") {
+        AnalyticsSectionCard(title: String(localized: "analytics.section.calorieAdherence")) {
             VStack(alignment: .leading, spacing: 12) {
                 if chartSeries.isEmpty {
-                    EmptyStateView(icon: "chart.bar", title: "No meal data", message: "No meals logged in this period.")
+                    EmptyStateView(
+                        icon: "chart.bar",
+                        title: String(localized: "common.empty.noMealData.title"),
+                        message: String(localized: "common.empty.noMealData.message")
+                    )
                 } else {
                     Chart {
                         ForEach(chartSeries) { day in
@@ -27,17 +31,17 @@ struct CalorieAdherenceSectionView: View {
                                 .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
                         }
                     }
-                    .chartYAxisLabel("kcal")
+                    .chartYAxisLabel(String(localized: "units.kcal"))
                     .frame(height: 200)
                     .accessibilityElement(children: .ignore)
-                    .accessibilityLabel("Daily calories chart")
+                    .accessibilityLabel("analytics.calorie.chartAccessibility")
                     .accessibilityValue(adherenceAccessibilityValue)
                 }
 
                 HStack {
-                    NutrientStatRow(label: "Avg intake", value: "\(averageDailyCalories)")
-                    NutrientStatRow(label: "Target", value: "\(calorieTarget)")
-                    NutrientStatRow(label: "On target", value: String(format: "%.0f%%", adherencePct))
+                    NutrientStatRow(label: String(localized: "analytics.calorie.avgIntake"), value: "\(averageDailyCalories)")
+                    NutrientStatRow(label: String(localized: "common.label.target"), value: "\(calorieTarget)")
+                    NutrientStatRow(label: String(localized: "analytics.calorie.onTarget"), value: String(format: "%.0f%%", adherencePct))
                 }
             }
         }
@@ -49,6 +53,6 @@ struct CalorieAdherenceSectionView: View {
     }
 
     private var adherenceAccessibilityValue: String {
-        "Average \(averageDailyCalories) calories, target \(calorieTarget), \(Int(adherencePct.rounded())) percent of logged days on target"
+        String(format: String(localized: "analytics.calorie.adherenceAccessibility"), averageDailyCalories, calorieTarget, Int(adherencePct.rounded()))
     }
 }

@@ -76,13 +76,13 @@ struct AnalyticsView: View {
                     } else {
                         EmptyStateView(
                             icon: "chart.line.uptrend.xyaxis",
-                            title: "Not enough data",
-                            message: "Log at least 3 days of meals on the Dashboard using the add button to see patterns and insights."
+                            title: String(localized: "analytics.empty.title"),
+                            message: String(localized: "analytics.empty.message")
                         )
                     }
 
                     if let weightProgressViewModel {
-                        AnalyticsSectionCard(title: "Weight Progress") {
+                        AnalyticsSectionCard(title: String(localized: "analytics.section.weightProgress")) {
                             WeightProgressView(
                                 presentation: .embedded,
                                 viewModel: weightProgressViewModel,
@@ -98,7 +98,7 @@ struct AnalyticsView: View {
             }
             .padding()
         }
-        .navigationTitle("Analytics")
+        .navigationTitle("analytics.title")
         .navigationBarTitleDisplayMode(.inline)
         .task(id: reloadToken) {
             if viewModel == nil {

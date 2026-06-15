@@ -5,17 +5,17 @@ struct HealthKitPermissionStepView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Connect Apple Health")
+            Text("onboarding.healthKit.title")
                 .font(.title2.bold())
 
-            Text("CalSnap can read your weight and height from Apple Health, and write meals and weigh-ins back to keep your data in sync.")
+            Text("onboarding.healthKit.description")
                 .foregroundStyle(.secondary)
 
-            Label("Optional — you can continue without granting access", systemImage: "heart.text.square")
+            Label("onboarding.healthKit.optional", systemImage: "heart.text.square")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
 
-            Button("Connect to Apple Health") {
+            Button("onboarding.healthKit.connect") {
                 Task { await viewModel.requestHealthKit() }
             }
             .buttonStyle(.bordered)

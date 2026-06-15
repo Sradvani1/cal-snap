@@ -18,7 +18,7 @@ struct MealRowView: View {
                     Text(meal.timestamp.formatted(date: .omitted, time: .shortened))
                         .font(.subheadline)
                         .foregroundStyle(.primary)
-                    Text("\(meal.totalCalories) kcal")
+                    Text(String(format: String(localized: "mealLog.row.calories"), meal.totalCalories))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -37,9 +37,9 @@ struct MealRowView: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(
-            "\(meal.mealType.displayName), \(meal.timestamp.formatted(date: .omitted, time: .shortened)), \(meal.totalCalories) calories"
+            String(format: String(localized: "mealLog.row.accessibility"), meal.mealType.displayName, meal.timestamp.formatted(date: .omitted, time: .shortened), meal.totalCalories)
         )
-        .accessibilityHint("Opens meal detail")
+        .accessibilityHint("mealLog.row.accessibilityHint")
         .task(id: meal.id) {
             if let photoData = meal.photoData {
                 thumbnail = UIImage(data: photoData)

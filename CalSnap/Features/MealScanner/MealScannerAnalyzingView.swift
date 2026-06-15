@@ -5,9 +5,9 @@ struct MealScannerAnalyzingView: View {
         VStack(spacing: 16) {
             ProgressView()
                 .controlSize(.large)
-            Text("Analyzing your meal...")
+            Text("mealScanner.analyzing.title")
                 .font(.headline)
-            Text("This usually takes a few seconds")
+            Text("mealScanner.analyzing.subtitle")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
         }

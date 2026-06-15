@@ -3,8 +3,16 @@ import Foundation
 enum CalorieRingAccessibility {
     static func valueText(remaining: Int, target: Int) -> String {
         if remaining >= 0 {
-            return "\(remaining) calories remaining of \(target) goal"
+            return String(
+                format: String(localized: "designSystem.calorieRing.accessibility.remaining"),
+                remaining,
+                target
+            )
         }
-        return "\(-remaining) calories over \(target) goal"
+        return String(
+            format: String(localized: "designSystem.calorieRing.accessibility.over"),
+            -remaining,
+            target
+        )
     }
 }

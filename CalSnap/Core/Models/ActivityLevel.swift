@@ -17,13 +17,23 @@ enum ActivityLevel: String, Codable, CaseIterable {
         }
     }
 
+    var localizedTitle: String {
+        switch self {
+        case .sedentary: String(localized: "model.activityLevel.sedentary.title")
+        case .lightlyActive: String(localized: "model.activityLevel.lightlyActive.title")
+        case .moderatelyActive: String(localized: "model.activityLevel.moderatelyActive.title")
+        case .veryActive: String(localized: "model.activityLevel.veryActive.title")
+        case .extraActive: String(localized: "model.activityLevel.extraActive.title")
+        }
+    }
+
     var description: String {
         switch self {
-        case .sedentary: return "Desk job, minimal movement"
-        case .lightlyActive: return "Light exercise 1–3 days/week"
-        case .moderatelyActive: return "Moderate exercise 3–5 days/week"
-        case .veryActive: return "Hard exercise 6–7 days/week"
-        case .extraActive: return "Physical job + hard daily exercise"
+        case .sedentary: String(localized: "model.activityLevel.sedentary.description")
+        case .lightlyActive: String(localized: "model.activityLevel.lightlyActive.description")
+        case .moderatelyActive: String(localized: "model.activityLevel.moderatelyActive.description")
+        case .veryActive: String(localized: "model.activityLevel.veryActive.description")
+        case .extraActive: String(localized: "model.activityLevel.extraActive.description")
         }
     }
 

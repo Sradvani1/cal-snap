@@ -43,13 +43,13 @@ enum GeminiError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .apiKeyMissing:
-            return "Gemini API key not configured. Add a key during setup or enter the meal manually."
+            return String(localized: "error.gemini.apiKeyMissing")
         case .emptyResponse:
-            return "Gemini returned an empty response."
+            return String(localized: "error.gemini.emptyResponse")
         case .validationFailed:
-            return "Could not validate Gemini API key."
+            return String(localized: "error.gemini.validationFailed")
         case .invalidJSON(let message):
-            return "Could not parse Gemini response: \(message)"
+            return String(format: String(localized: "error.gemini.invalidJSON"), message)
         case .requestFailed(let message):
             return message
         }

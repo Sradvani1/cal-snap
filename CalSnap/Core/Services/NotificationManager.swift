@@ -68,8 +68,8 @@ final class NotificationManager: NSObject {
         cancelWeighInReminder(userId: userId)
 
         let content = UNMutableNotificationContent()
-        content.title = String(localized: "Weekly Weigh-In")
-        content.body = String(localized: "Time for your weekly weigh-in. Tap to log.")
+        content.title = String(localized: "notifications.weighIn.title")
+        content.body = String(localized: "notifications.weighIn.body")
         content.sound = .default
         content.categoryIdentifier = AppConstants.Notifications.weighInCategoryIdentifier
         content.userInfo = [notificationUserIdKey: userId.uuidString]
@@ -120,8 +120,8 @@ final class NotificationManager: NSObject {
         )
 
         let content = UNMutableNotificationContent()
-        content.title = String(localized: "Weekly Weigh-In")
-        content.body = String(localized: "Reminder: log your weight when you're ready.")
+        content.title = String(localized: "notifications.weighIn.title")
+        content.body = String(localized: "notifications.weighIn.snoozeBody")
         content.sound = .default
         content.categoryIdentifier = AppConstants.Notifications.weighInCategoryIdentifier
         content.userInfo = [notificationUserIdKey: userId.uuidString]
@@ -182,8 +182,8 @@ final class NotificationManager: NSObject {
         cancelDailyLogReminder(userId: userId)
 
         let content = UNMutableNotificationContent()
-        content.title = String(localized: "Log Your Meals")
-        content.body = String(localized: "Don't forget to log today's meals.")
+        content.title = String(localized: "notifications.dailyLog.title")
+        content.body = String(localized: "notifications.dailyLog.body")
         content.sound = .default
         content.categoryIdentifier = AppConstants.Notifications.dailyLogCategoryIdentifier
         content.userInfo = [notificationUserIdKey: userId.uuidString]

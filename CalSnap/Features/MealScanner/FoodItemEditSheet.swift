@@ -23,32 +23,44 @@ struct FoodItemEditSheet: View {
         NavigationStack {
             Form {
                 if isManualEntry {
-                    TextField("Item name", text: $name)
+                    TextField("mealScanner.itemEdit.nameField", text: $name)
                 } else {
-                    LabeledContent("Item", value: item.name)
+                    LabeledContent("mealScanner.itemEdit.itemLabel", value: item.name)
                 }
 
-                TextField("Weight (g)", text: $weightText)
+                TextField("mealScanner.itemEdit.weightField", text: $weightText)
                     .keyboardType(.decimalPad)
                     .onChange(of: weightText) { _, _ in
                         updatePreview()
                     }
 
-                Section("Updated nutrition") {
-                    LabeledContent("Calories", value: "\(previewItem.calories) kcal")
-                    LabeledContent("Protein", value: "\(Int(previewItem.proteinG.rounded()))g")
-                    LabeledContent("Carbs", value: "\(Int(previewItem.carbsG.rounded()))g")
-                    LabeledContent("Fat", value: "\(Int(previewItem.fatG.rounded()))g")
+                Section("mealScanner.itemEdit.nutritionSection") {
+                    LabeledContent(
+                        "designSystem.nutrient.calories",
+                        value: String(format: String(localized: "designSystem.nutrient.caloriesValue"), previewItem.calories)
+                    )
+                    LabeledContent(
+                        "designSystem.macroBar.protein",
+                        value: String(format: String(localized: "units.gramsValue"), Int(previewItem.proteinG.rounded()))
+                    )
+                    LabeledContent(
+                        "designSystem.macroBar.carbs",
+                        value: String(format: String(localized: "units.gramsValue"), Int(previewItem.carbsG.rounded()))
+                    )
+                    LabeledContent(
+                        "designSystem.macroBar.fat",
+                        value: String(format: String(localized: "units.gramsValue"), Int(previewItem.fatG.rounded()))
+                    )
                 }
             }
-            .navigationTitle("Adjust item")
+            .navigationTitle("mealScanner.itemEdit.navigationTitle")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button("common.button.cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
+                    Button("common.button.save") {
                         let weight = Double(weightText) ?? item.weightG
                         onSave(name, weight)
                         dismiss()

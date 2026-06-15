@@ -25,7 +25,7 @@ struct EmptyStateView: View {
             if let actionTitle, let action {
                 Button(actionTitle, action: action)
                     .font(.subheadline.weight(.semibold))
-                    .accessibilityHint("Primary action for this empty state")
+                    .accessibilityHint("designSystem.emptyState.actionHint")
             }
         }
         .frame(maxWidth: .infinity)

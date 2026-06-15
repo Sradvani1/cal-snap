@@ -3,13 +3,13 @@ import SwiftUI
 struct WelcomeStepView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            Text("CalSnap")
+            Text("brand.name")
                 .font(.largeTitle.bold())
-            Text("Eat smart. Lose weight. No obsession.")
+            Text("onboarding.welcome.tagline")
                 .font(.title3)
                 .foregroundStyle(.secondary)
 
-            Text("CalSnap runs fully on your iPhone. Your meals, weight, and settings stay on this device.")
+            Text("onboarding.welcome.privacy")
                 .font(.body)
                 .foregroundStyle(.secondary)
         }

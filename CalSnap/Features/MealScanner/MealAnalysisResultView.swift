@@ -36,7 +36,7 @@ struct MealAnalysisResultView: View {
                         .frame(height: 120)
                         .frame(maxWidth: .infinity)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
-                        .accessibilityLabel("Meal photo")
+                        .accessibilityLabel("mealLog.photo.accessibility")
                 }
 
                 CalorieTotalView(calories: totalCalories)
@@ -44,7 +44,7 @@ struct MealAnalysisResultView: View {
                 MacroBarView(proteinG: proteinG, carbsG: carbsG, fatG: fatG)
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Food items")
+                    Text("mealLog.detail.foodItems")
                         .font(.headline)
                     ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
                         FoodItemRowView(item: item) {
@@ -64,7 +64,7 @@ struct MealAnalysisResultView: View {
                 }
 
                 if allItemsFlagged {
-                    Label("Review all items before logging", systemImage: "exclamationmark.triangle.fill")
+                    Label("mealScanner.result.reviewFlagged", systemImage: "exclamationmark.triangle.fill")
                         .font(.subheadline)
                         .foregroundStyle(Color.csAccent)
                         .padding()
@@ -101,32 +101,43 @@ struct MealAnalysisResultView: View {
                     if isLogging {
                         ProgressView().frame(maxWidth: .infinity)
                     } else {
-                        Text(isEditing ? "Save Changes" : "Log This Meal").frame(maxWidth: .infinity)
+                        Text(isEditing ? "mealScanner.result.saveChanges" : "mealScanner.result.logMeal").frame(maxWidth: .infinity)
                     }
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(!canLog || isLogging)
-                .accessibilityHint(isEditing ? "Saves meal edits" : "Logs this meal to your daily log")
+                .accessibilityHint(isEditing ? "mealScanner.result.saveEditsHint" : "mealScanner.result.logMealHint")
 
                 if !isEditing {
-                    Button("Re-analyze", action: onReAnalyze)
+                    Button("mealScanner.result.reAnalyze", action: onReAnalyze)
                         .frame(maxWidth: .infinity)
-                        .accessibilityHint("Runs analysis again on the meal photo")
+                        .accessibilityHint("mealScanner.result.reAnalyzeHint")
                 }
 
-                Button(isEditing ? "Cancel" : "Discard", role: .destructive) {
+                Button(isEditing ? "common.button.cancel" : "common.button.discard", role: .destructive) {
                     showDiscardAlert = true
                 }
                 .frame(maxWidth: .infinity)
-                .accessibilityHint(isEditing ? "Discards unsaved edits" : "Discards this meal without saving")
+                .accessibilityHint(isEditing ? "mealScanner.result.discardEditsHint" : "mealScanner.result.discardMealHint")
             }
             .padding()
         }
-        .alert(isEditing ? "Discard changes?" : "Discard this meal?", isPresented: $showDiscardAlert) {
-            Button(isEditing ? "Discard Changes" : "Discard", role: .destructive, action: onDiscard)
-            Button("Cancel", role: .cancel) {}
+        .alert(
+            isEditing
+                ? String(localized: "mealScanner.alert.discardChanges.title")
+                : String(localized: "mealScanner.alert.discardMeal.title"),
+            isPresented: $showDiscardAlert
+        ) {
+            Button(
+                isEditing
+                    ? String(localized: "mealScanner.alert.discardChanges.action")
+                    : String(localized: "common.button.discard"),
+                role: .destructive,
+                action: onDiscard
+            )
+            Button("common.button.cancel", role: .cancel) {}
         } message: {
-            Text(isEditing ? "Your edits will not be saved." : "Nothing will be saved.")
+            Text(isEditing ? "mealScanner.alert.discardChanges.message" : "mealScanner.alert.discardMeal.message")
         }
     }
 }

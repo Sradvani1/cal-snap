@@ -8,7 +8,7 @@ struct AnalyticsInsightCard: View {
     let onGenerate: () -> Void
 
     var body: some View {
-        AnalyticsSectionCard(title: "Insights") {
+        AnalyticsSectionCard(title: String(localized: "analytics.section.insights")) {
             VStack(alignment: .leading, spacing: 12) {
                 if let insightText {
                     Text(insightText)
@@ -27,21 +27,21 @@ struct AnalyticsInsightCard: View {
                             ProgressView()
                                 .controlSize(.small)
                         }
-                        Text(isGenerating ? "Generating…" : "Generate insight")
+                        Text(isGenerating ? "analytics.insight.generating" : "analytics.insight.generate")
                     }
                     .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(!hasEnoughData || isGenerating)
-                .accessibilityLabel("Generate AI insight")
+                .accessibilityLabel("analytics.insight.generateAccessibility")
                 .accessibilityHint(
                     hasEnoughData
-                        ? "Summarizes your dietary patterns using aggregated stats"
-                        : "Log at least three days of meals first"
+                        ? String(localized: "analytics.insight.generateHint")
+                        : String(localized: "analytics.insight.disabledHint")
                 )
 
                 if !hasEnoughData {
-                    Text("Log at least 3 days of meals to generate insights.")
+                    Text("analytics.insight.minimumDays")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }

@@ -29,7 +29,7 @@ struct MealScannerCaptureView: View {
                             .frame(height: 220)
                             .frame(maxWidth: .infinity)
                             .clipShape(RoundedRectangle(cornerRadius: 16))
-                            .accessibilityLabel("Meal photo")
+                            .accessibilityLabel("mealLog.photo.accessibility")
                     } else {
                         RoundedRectangle(cornerRadius: 16)
                             .fill(Color.csSurface)
@@ -39,7 +39,7 @@ struct MealScannerCaptureView: View {
                                     Image(systemName: "photo")
                                         .font(.largeTitle)
                                         .foregroundStyle(.secondary)
-                                    Text("Add a meal photo")
+                                    Text("mealScanner.capture.addPhoto")
                                         .foregroundStyle(.secondary)
                                 }
                             }
@@ -50,56 +50,56 @@ struct MealScannerCaptureView: View {
                     Button {
                         onShowCamera()
                     } label: {
-                        Label("Take Photo", systemImage: "camera")
+                        Label("mealScanner.capture.takePhoto", systemImage: "camera")
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.bordered)
                 } else {
-                    Text("Camera not available on this device. Choose a photo from your library or enter the meal manually.")
+                    Text("mealScanner.capture.noCamera")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
 
                 PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
-                    Label("Choose from Library", systemImage: "photo.on.rectangle")
+                    Label("mealScanner.capture.chooseLibrary", systemImage: "photo.on.rectangle")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
 
-                TextField("Add description (optional)", text: $viewModel.textDescription, axis: .vertical)
+                TextField("mealScanner.capture.descriptionField", text: $viewModel.textDescription, axis: .vertical)
                     .lineLimit(2...4)
                     .textFieldStyle(.roundedBorder)
 
                 if !viewModel.hasGeminiAPIKey {
-                    Text("Gemini API key not configured. Add a key during setup or enter the meal manually.")
+                    Text("error.gemini.apiKeyMissing")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
 
-                Button("Analyze") {
+                Button("mealScanner.capture.analyze") {
                     viewModel.analyze()
                 }
                 .buttonStyle(.borderedProminent)
                 .frame(maxWidth: .infinity)
                 .disabled(!viewModel.canAnalyze)
 
-                Button("Enter manually") {
+                Button("mealScanner.capture.enterManually") {
                     viewModel.enterManualEntry()
                 }
                 .frame(maxWidth: .infinity)
 
-                Button("Discard", role: .destructive) {
+                Button("common.button.discard", role: .destructive) {
                     showDiscardAlert = true
                 }
                 .frame(maxWidth: .infinity)
             }
             .padding()
         }
-        .alert("Discard this meal?", isPresented: $showDiscardAlert) {
-            Button("Discard", role: .destructive, action: onDiscard)
-            Button("Cancel", role: .cancel) {}
+        .alert("mealScanner.alert.discardMeal.title", isPresented: $showDiscardAlert) {
+            Button("common.button.discard", role: .destructive, action: onDiscard)
+            Button("common.button.cancel", role: .cancel) {}
         } message: {
-            Text("Nothing will be saved.")
+            Text("mealScanner.alert.discardMeal.message")
         }
     }
 }

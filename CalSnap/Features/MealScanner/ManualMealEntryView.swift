@@ -6,10 +6,10 @@ struct ManualMealEntryView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                Text("Enter meal manually")
+                Text("mealScanner.manual.title")
                     .font(.headline)
 
-                Text("Add each food item with at least a name and calories.")
+                Text("mealScanner.manual.subtitle")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
 
@@ -24,10 +24,10 @@ struct ManualMealEntryView: View {
                 Button {
                     viewModel.addManualItem()
                 } label: {
-                    Label("Add another item", systemImage: "plus.circle")
+                    Label("mealScanner.manual.addItem", systemImage: "plus.circle")
                 }
 
-                Button("Continue") {
+                Button("common.button.continue") {
                     viewModel.finishManualEntry()
                 }
                 .buttonStyle(.borderedProminent)

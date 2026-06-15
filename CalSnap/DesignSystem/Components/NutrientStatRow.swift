@@ -21,7 +21,7 @@ struct NutrientStatRow: View {
                 }
             }
             if let target {
-                Text("Target \(target)")
+                Text(String(format: String(localized: "designSystem.nutrientStat.target"), target))
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
             }
@@ -33,9 +33,9 @@ struct NutrientStatRow: View {
 
     private var accessibilityLabel: String {
         if let target {
-            return "\(label), \(value), target \(target)"
+            return String(format: String(localized: "designSystem.nutrientStat.accessibility.withTarget"), label, value, target)
         }
-        return "\(label), \(value)"
+        return String(format: String(localized: "designSystem.nutrientStat.accessibility.basic"), label, value)
     }
 }
 

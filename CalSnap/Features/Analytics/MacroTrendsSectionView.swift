@@ -7,10 +7,14 @@ struct MacroTrendsSectionView: View {
     let targetMacroSplit: MacroSplit
 
     var body: some View {
-        AnalyticsSectionCard(title: "Macro Trends") {
+        AnalyticsSectionCard(title: String(localized: "analytics.section.macroTrends")) {
             VStack(alignment: .leading, spacing: 16) {
                 if chartSeries.isEmpty {
-                    EmptyStateView(icon: "chart.bar", title: "No meal data", message: "No meals logged in this period.")
+                    EmptyStateView(
+                        icon: "chart.bar",
+                        title: String(localized: "common.empty.noMealData.title"),
+                        message: String(localized: "common.empty.noMealData.message")
+                    )
                 } else {
                     Chart {
                         ForEach(chartSeries) { day in
@@ -19,28 +23,28 @@ struct MacroTrendsSectionView: View {
                             let fatKcal = day.fatG * AppConstants.Nutrition.fatCalPerGram
 
                             BarMark(x: .value("Date", day.date, unit: .day), y: .value("Kcal", proteinKcal), stacking: .standard)
-                                .foregroundStyle(by: .value("Macro", "Protein"))
+                                .foregroundStyle(by: .value("Macro", String(localized: "designSystem.macroBar.protein")))
                             BarMark(x: .value("Date", day.date, unit: .day), y: .value("Kcal", carbsKcal), stacking: .standard)
-                                .foregroundStyle(by: .value("Macro", "Carbs"))
+                                .foregroundStyle(by: .value("Macro", String(localized: "designSystem.macroBar.carbs")))
                             BarMark(x: .value("Date", day.date, unit: .day), y: .value("Kcal", fatKcal), stacking: .standard)
-                                .foregroundStyle(by: .value("Macro", "Fat"))
+                                .foregroundStyle(by: .value("Macro", String(localized: "designSystem.macroBar.fat")))
                         }
                     }
                     .chartForegroundStyleScale([
-                        "Protein": Color.csProtein,
-                        "Carbs": Color.csCarbs,
-                        "Fat": Color.csFat,
+                        String(localized: "designSystem.macroBar.protein"): Color.csProtein,
+                        String(localized: "designSystem.macroBar.carbs"): Color.csCarbs,
+                        String(localized: "designSystem.macroBar.fat"): Color.csFat,
                     ])
-                    .chartYAxisLabel("kcal")
+                    .chartYAxisLabel(String(localized: "units.kcal"))
                     .frame(height: 200)
                 }
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Average macro split")
+                    Text("analytics.macro.averageSplit")
                         .font(.subheadline.weight(.semibold))
                     HStack(spacing: 16) {
-                        macroSplitColumn(title: "Actual", split: actualMacroSplit)
-                        macroSplitColumn(title: "Target", split: targetMacroSplit)
+                        macroSplitColumn(title: String(localized: "analytics.macro.actual"), split: actualMacroSplit)
+                        macroSplitColumn(title: String(localized: "common.label.target"), split: targetMacroSplit)
                     }
                 }
             }
@@ -59,7 +63,7 @@ struct MacroTrendsSectionView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 6))
             }
             .frame(height: 12)
-            Text("P \(split.proteinPct)% · C \(split.carbsPct)% · F \(split.fatPct)%")
+            Text(String(format: String(localized: "analytics.macro.splitFormat"), split.proteinPct, split.carbsPct, split.fatPct))
                 .font(.caption2)
                 .foregroundStyle(.secondary)
         }

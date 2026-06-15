@@ -15,21 +15,21 @@ struct MealShareCardView: View {
                 Text(mealType.displayName)
                     .font(.headline)
                 Spacer()
-                Text("CalSnap")
+                Text("brand.name")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.secondary)
             }
 
             Text("\(totalCalories)")
                 .font(.csLargeCalorie)
-            Text("kcal")
+            Text("units.kcal")
                 .font(.title3)
                 .foregroundStyle(.secondary)
 
             HStack(spacing: 16) {
-                macroLabel("P", grams: proteinG)
-                macroLabel("C", grams: carbsG)
-                macroLabel("F", grams: fatG)
+                macroLabel(String(localized: "units.macro.protein.short"), grams: proteinG)
+                macroLabel(String(localized: "units.macro.carbs.short"), grams: carbsG)
+                macroLabel(String(localized: "units.macro.fat.short"), grams: fatG)
             }
 
             Text(timestamp.formatted(date: .abbreviated, time: .shortened))
@@ -46,7 +46,7 @@ struct MealShareCardView: View {
             Text(label)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(.secondary)
-            Text("\(Int(grams.rounded()))g")
+            Text(String(format: String(localized: "units.gramsValue"), Int(grams.rounded())))
                 .font(.subheadline.weight(.medium))
         }
     }

@@ -28,7 +28,7 @@ struct SmallCalorieWidgetView: View {
                         .font(.title2.bold().monospacedDigit())
                         .minimumScaleFactor(0.6)
                         .lineLimit(1)
-                    Text(remaining >= 0 ? "left" : "over")
+                    Text(remaining >= 0 ? "widget.small.left" : "widget.small.over")
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                 }
@@ -36,11 +36,11 @@ struct SmallCalorieWidgetView: View {
             .frame(maxWidth: 88, maxHeight: 88)
 
             if let data {
-                Text("of \(data.targetCalories) kcal")
+                Text(String(format: String(localized: "widget.small.ofGoal"), data.targetCalories))
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             } else {
-                Text("Open CalSnap")
+                Text("widget.small.openApp")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
@@ -67,8 +67,8 @@ struct SmallCalorieWidget: Widget {
         StaticConfiguration(kind: kind, provider: CalorieWidgetProvider()) { entry in
             SmallCalorieWidgetView(data: entry.data)
         }
-        .configurationDisplayName("Calorie Ring")
-        .description("Today's remaining calories.")
+        .configurationDisplayName(LocalizedStringResource("widget.small.displayName"))
+        .description(LocalizedStringResource("widget.small.description"))
         .supportedFamilies([.systemSmall])
     }
 }

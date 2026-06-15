@@ -21,11 +21,11 @@ struct WeightProgressView: View {
                 ScrollView {
                     weightProgressContent
                 }
-                .navigationTitle("Weight Progress")
+                .navigationTitle("progress.title")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button("Log weigh-in", action: onLogWeighIn)
+                        Button("progress.logWeighIn", action: onLogWeighIn)
                     }
                 }
             case .embedded:
@@ -60,11 +60,11 @@ struct WeightProgressHeaderView: View {
 
     var body: some View {
         HStack {
-            NutrientStatRow(label: "Current", value: viewModel.formatWeight(viewModel.currentWeightKg))
+            NutrientStatRow(label: String(localized: "progress.stats.current"), value: viewModel.formatWeight(viewModel.currentWeightKg))
             Divider()
-            NutrientStatRow(label: "Start", value: viewModel.formatWeight(viewModel.profile.startingWeightKg))
+            NutrientStatRow(label: String(localized: "progress.stats.start"), value: viewModel.formatWeight(viewModel.profile.startingWeightKg))
             Divider()
-            NutrientStatRow(label: "Goal", value: viewModel.formatWeight(viewModel.profile.goalWeightKg))
+            NutrientStatRow(label: String(localized: "progress.stats.goal"), value: viewModel.formatWeight(viewModel.profile.goalWeightKg))
         }
         .sectionCard()
     }
@@ -77,7 +77,7 @@ struct WeightProgressBarView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Progress to goal")
+            Text("progress.progressBar.title")
                 .font(.subheadline.weight(.semibold))
             GeometryReader { geometry in
                 ZStack(alignment: .leading) {
@@ -95,7 +95,7 @@ struct WeightProgressBarView: View {
             .frame(height: 10)
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Progress to goal")
+        .accessibilityLabel("progress.progressBar.title")
         .accessibilityValue(viewModel.progressAccessibilityValue)
     }
 }
@@ -110,15 +110,15 @@ struct WeightProgressChartView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Weight trend")
+            Text("progress.chart.title")
                 .font(.headline)
 
             if viewModel.weighIns.isEmpty {
                 EmptyStateView(
                     icon: "scalemass",
-                    title: "No weigh-ins yet",
-                    message: "Your weight trend will appear after weekly weigh-ins.",
-                    actionTitle: "Log your first weigh-in",
+                    title: String(localized: "progress.chart.empty.title"),
+                    message: String(localized: "progress.chart.empty.message"),
+                    actionTitle: String(localized: "progress.chart.empty.action"),
                     action: onLogWeighIn
                 )
             } else {
@@ -154,7 +154,7 @@ struct WeightProgressChartView: View {
                         .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
                         .accessibilityHidden(true)
                 }
-                .chartYAxisLabel(viewModel.useLbs ? "lbs" : "kg")
+                .chartYAxisLabel(viewModel.useLbs ? String(localized: "units.lbs") : String(localized: "units.kg"))
                 .frame(height: 220)
                 .opacity(showChart ? 1 : 0)
                 .animation(reduceMotion ? nil : .default, value: showChart)
@@ -188,10 +188,10 @@ struct WeightProgressStatsGridView: View {
 
     var body: some View {
         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-            statCard(title: "Lost so far", value: viewModel.formatWeight(viewModel.lostSoFarKg))
-            statCard(title: "To goal", value: viewModel.formatWeight(viewModel.toGoalKg))
-            statCard(title: "Rate", value: viewModel.formatWeeklyRate())
-            statCard(title: "Projected goal", value: viewModel.formatProjectedGoalDate())
+            statCard(title: String(localized: "progress.stats.lostSoFar"), value: viewModel.formatWeight(viewModel.lostSoFarKg))
+            statCard(title: String(localized: "progress.stats.toGoal"), value: viewModel.formatWeight(viewModel.toGoalKg))
+            statCard(title: String(localized: "progress.stats.rate"), value: viewModel.formatWeeklyRate())
+            statCard(title: String(localized: "progress.stats.projectedGoal"), value: viewModel.formatProjectedGoalDate())
         }
     }
 
@@ -206,14 +206,14 @@ struct WeightProgressHistoryView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Weigh-in history")
+            Text("progress.history.title")
                 .font(.headline)
 
             if viewModel.weighIns.isEmpty {
                 EmptyStateView(
                     icon: "list.bullet",
-                    title: "No history",
-                    message: "Weigh-in history will appear here after you log your first weigh-in."
+                    title: String(localized: "progress.history.empty.title"),
+                    message: String(localized: "progress.history.empty.message")
                 )
             } else {
                 LazyVStack(spacing: 0) {
@@ -228,7 +228,7 @@ struct WeightProgressHistoryView: View {
                         .padding(.vertical, 6)
                         .accessibilityElement(children: .combine)
                         .accessibilityLabel(
-                            "\(weighIn.date.formatted(date: .abbreviated, time: .omitted)), \(viewModel.formatWeight(weighIn.weightKg))"
+                            String(format: String(localized: "progress.history.accessibility"), weighIn.date.formatted(date: .abbreviated, time: .omitted), viewModel.formatWeight(weighIn.weightKg))
                         )
                     }
                 }

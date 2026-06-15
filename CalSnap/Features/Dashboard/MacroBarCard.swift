@@ -13,17 +13,17 @@ struct MacroBarCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Macros")
+            Text("dashboard.macros.title")
                 .font(.headline)
 
-            MacroBarRow(label: "Protein", consumed: proteinConsumed, target: proteinTarget, color: Color.csProtein)
-            MacroBarRow(label: "Carbs", consumed: carbsConsumed, target: carbsTarget, color: Color.csCarbs)
-            MacroBarRow(label: "Fat", consumed: fatConsumed, target: fatTarget, color: Color.csFat)
+            MacroBarRow(label: String(localized: "designSystem.macroBar.protein"), consumed: proteinConsumed, target: proteinTarget, color: Color.csProtein)
+            MacroBarRow(label: String(localized: "designSystem.macroBar.carbs"), consumed: carbsConsumed, target: carbsTarget, color: Color.csCarbs)
+            MacroBarRow(label: String(localized: "designSystem.macroBar.fat"), consumed: fatConsumed, target: fatTarget, color: Color.csFat)
 
             Divider()
 
             MacroBarRow(
-                label: "Fiber",
+                label: String(localized: "dashboard.macros.fiber"),
                 consumed: fiberConsumed,
                 target: fiberTarget,
                 color: Color.fiberProgress(for: fiberProgressBand),

@@ -8,16 +8,16 @@ struct PlateauAlertSheet: View {
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 20) {
-                Text("Your weight has been stable for about three weeks. This can happen during a deficit.")
+                Text("dashboard.plateau.message")
                     .font(.body)
                     .foregroundStyle(.secondary)
 
                 VStack(spacing: 12) {
                     Button(action: onDietBreak) {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Diet Break")
+                            Text("dashboard.plateau.dietBreak.title")
                                 .font(.headline)
-                            Text("Eat at maintenance for 2 weeks to reset adaptation")
+                            Text("dashboard.plateau.dietBreak.subtitle")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
@@ -30,9 +30,9 @@ struct PlateauAlertSheet: View {
 
                     Button(action: onSmallReduction) {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Small Reduction")
+                            Text("dashboard.plateau.smallReduction.title")
                                 .font(.headline)
-                            Text("Reduce daily target by 60 kcal")
+                            Text("dashboard.plateau.smallReduction.subtitle")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
@@ -43,14 +43,14 @@ struct PlateauAlertSheet: View {
                     }
                     .buttonStyle(.plain)
 
-                    Button("Remind Me Later", action: onDismiss)
+                    Button("dashboard.plateau.remindLater", action: onDismiss)
                         .frame(maxWidth: .infinity)
                 }
 
                 Spacer()
             }
             .padding()
-            .navigationTitle("Plateau Detected")
+            .navigationTitle("dashboard.plateau.navigationTitle")
             .navigationBarTitleDisplayMode(.inline)
         }
         .presentationSizing(.form)

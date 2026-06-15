@@ -55,25 +55,25 @@ final class WeightProgressViewModel {
 
     var progressAccessibilityValue: String {
         let percent = Int((progressFraction * 100).rounded())
-        return "\(percent) percent to goal"
+        return String(format: String(localized: "progress.percentToGoal.accessibility"), percent)
     }
 
     var chartAccessibilitySummary: String {
         guard !weighIns.isEmpty else {
-            return "No weigh-ins logged yet"
+            return String(localized: "progress.noWeighIns.accessibility")
         }
 
         let current = formatWeight(currentWeightKg)
         let goal = formatWeight(profile.goalWeightKg)
         let change = currentWeightKg - profile.startingWeightKg
         let direction = if change < -0.1 {
-            "down \(formatWeight(abs(change))) from start"
+            String(format: String(localized: "progress.trendDown.accessibility"), formatWeight(abs(change)))
         } else if change > 0.1 {
-            "up \(formatWeight(change)) from start"
+            String(format: String(localized: "progress.trendUp.accessibility"), formatWeight(change))
         } else {
-            "unchanged from start"
+            String(localized: "progress.trendUnchanged.accessibility")
         }
-        return "Weight trend, current \(current), \(direction), goal \(goal)"
+        return String(format: String(localized: "progress.chartSummary.accessibility"), current, direction, goal)
     }
 
     func load(context: ModelContext) {
@@ -98,18 +98,20 @@ final class WeightProgressViewModel {
 
     func formatWeeklyRate() -> String {
         guard let rateKg = weeklyRateKg else {
-            return "Need more weigh-ins"
+            return String(localized: "progress.stats.needMoreWeighIns")
         }
         if useLbs {
             let lbsPerWeek = UnitFormatters.kgToLbs(rateKg)
-            return String(format: "~%.1f lbs/week", lbsPerWeek)
+            return String(format: String(localized: "progress.stats.rateLbsPerWeek"), lbsPerWeek)
         }
-        return String(format: "~%.1f kg/week", rateKg)
+        return String(format: String(localized: "progress.stats.rateKgPerWeek"), rateKg)
     }
 
     func formatProjectedGoalDate() -> String {
         guard let date = projectedGoalDate else {
-            return profile.deficitKcal == 0 ? "Maintaining" : "—"
+            return profile.deficitKcal == 0
+                ? String(localized: "progress.stats.maintaining")
+                : String(localized: "common.placeholder.emDash")
         }
         return date.formatted(date: .abbreviated, time: .omitted)
     }

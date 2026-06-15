@@ -53,7 +53,7 @@ final class WeighInViewModel {
     }
 
     var targetsAccessibilitySummary: String {
-        "TDEE updates from \(previousTDEE) to \(previewTDEE) calories per day. Daily target updates from \(previousDailyTarget) to \(previewDailyTarget) calories per day."
+        String(format: String(localized: "progress.weighIn.targetsAccessibility"), previousTDEE, previewTDEE, previousDailyTarget, previewDailyTarget)
     }
 
     func setUseLbs(_ newValue: Bool) {
@@ -105,7 +105,7 @@ enum WeighInViewModelError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidWeight:
-            return "Enter a valid weight to continue."
+            return String(localized: "progress.weighIn.invalidWeight")
         }
     }
 }

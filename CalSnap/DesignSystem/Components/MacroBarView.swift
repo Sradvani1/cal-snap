@@ -11,9 +11,14 @@ struct MacroBarView: View {
 
     private var accessibilitySummary: String {
         if total > 0 {
-            return "Macros: protein \(Int(proteinG.rounded())) grams, carbs \(Int(carbsG.rounded())) grams, fat \(Int(fatG.rounded())) grams"
+            return String(
+                format: String(localized: "designSystem.macroBar.accessibility.summary"),
+                Int(proteinG.rounded()),
+                Int(carbsG.rounded()),
+                Int(fatG.rounded())
+            )
         }
-        return "No macro data"
+        return String(localized: "designSystem.macroBar.noData")
     }
 
     var body: some View {
@@ -30,16 +35,16 @@ struct MacroBarView: View {
                 .frame(height: 12)
 
                 HStack(spacing: 16) {
-                    legend(label: "Protein", value: proteinG, color: Color.csProtein)
-                    legend(label: "Carbs", value: carbsG, color: Color.csCarbs)
-                    legend(label: "Fat", value: fatG, color: Color.csFat)
+                    legend(label: String(localized: "designSystem.macroBar.protein"), value: proteinG, color: Color.csProtein)
+                    legend(label: String(localized: "designSystem.macroBar.carbs"), value: carbsG, color: Color.csCarbs)
+                    legend(label: String(localized: "designSystem.macroBar.fat"), value: fatG, color: Color.csFat)
                 }
                 .font(.csCaption)
             } else {
                 RoundedRectangle(cornerRadius: 6)
                     .fill(Color.secondary.opacity(0.25))
                     .frame(height: 12)
-                Text("No macro data")
+                Text("designSystem.macroBar.noData")
                     .font(.csCaption)
                     .foregroundStyle(.secondary)
             }
@@ -58,7 +63,7 @@ struct MacroBarView: View {
     private func legend(label: String, value: Double, color: Color) -> some View {
         HStack(spacing: 4) {
             Circle().fill(color).frame(width: 8, height: 8)
-            Text("\(label) \(Int(value.rounded()))g")
+            Text(String(format: String(localized: "designSystem.macroBar.legendFormat"), label, Int(value.rounded())))
         }
     }
 }

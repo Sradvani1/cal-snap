@@ -175,7 +175,7 @@ final class AnalyticsViewModel {
         do {
             aiInsightText = try await geminiService.generateAnalyticsInsight(payload)
         } catch GeminiError.apiKeyMissing {
-            insightError = "Add your Gemini API key in Settings to generate insights."
+            insightError = String(localized: "analytics.insight.apiKeyMissing")
         } catch let error as GeminiError {
             insightError = error.localizedDescription
         } catch {
