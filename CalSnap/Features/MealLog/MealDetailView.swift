@@ -15,8 +15,6 @@ private struct PhotoLoadKey: Equatable {
 struct MealDetailView: View {
     @Environment(AppContainer.self) private var appContainer
     @Environment(\.modelContext) private var modelContext
-    @Environment(\.dismiss) private var dismiss
-
     let mealId: UUID
     let mealDetailReloadToken: Int
     let onMealChanged: () -> Void
@@ -201,8 +199,8 @@ struct MealDetailView: View {
 
         do {
             try viewModel.deleteMeal(meal: displayedMeal, context: modelContext)
-            onMealChanged()
-            dismiss()
+            photoImage = nil
+            navigationPath.removeRoutes(forMealId: mealId)
         } catch {
             viewModel.loadError = error.localizedDescription
         }

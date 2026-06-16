@@ -7,7 +7,7 @@ struct DashboardView: View {
     @AppStorage(AppStorageKey.profileDataRevision) private var profileDataRevision = 0
     @State private var viewModel: DashboardViewModel?
     @State private var navigationPath: [DashboardRoute] = []
-    @State private var mealPendingDelete: MealEntry?
+    @State private var mealPendingDeleteId: UUID?
     @State private var showDeleteConfirmation = false
     @State private var weighInSheetContext: WeighInSheetContext?
     @State private var weightProgressReloadTrigger = 0
@@ -25,7 +25,7 @@ struct DashboardView: View {
                     mealDetailReloadToken: mealDetailReloadToken,
                     onReload: reloadDashboard,
                     onDeleteMeal: { meal in
-                        mealPendingDelete = meal
+                        mealPendingDeleteId = meal.id
                         showDeleteConfirmation = true
                     },
                     onWeighInSheetDismissed: {
@@ -38,7 +38,7 @@ struct DashboardView: View {
                         confirmDelete()
                     }
                     Button("common.button.cancel", role: .cancel) {
-                        mealPendingDelete = nil
+                        mealPendingDeleteId = nil
                     }
                 } message: {
                     Text("dashboard.alert.deleteMeal.message")
@@ -70,20 +70,30 @@ struct DashboardView: View {
     }
 
     private func confirmDelete() {
-        guard let meal = mealPendingDelete else { return }
+        guard let mealId = mealPendingDeleteId else { return }
 
         do {
+            guard let meal = try appContainer.mealRepository.fetchMeal(id: mealId, context: modelContext) else {
+                mealPendingDeleteId = nil
+                reloadDashboard()
+                return
+            }
+
             try MealDeletionService.delete(
                 meal: meal,
                 mealRepository: appContainer.mealRepository,
                 healthKitService: appContainer.healthKitService,
                 context: modelContext
             )
-            mealPendingDelete = nil
-            reloadDashboard()
+            mealPendingDeleteId = nil
+            let pathCountBefore = navigationPath.count
+            navigationPath.removeRoutes(forMealId: mealId)
+            if navigationPath.count == pathCountBefore {
+                reloadDashboard()
+            }
         } catch {
             viewModel?.loadError = error.localizedDescription
-            mealPendingDelete = nil
+            mealPendingDeleteId = nil
         }
     }
 

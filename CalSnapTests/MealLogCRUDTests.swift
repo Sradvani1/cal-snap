@@ -166,4 +166,44 @@ final class MealLogCRUDTests: XCTestCase {
             XCTAssertEqual(error as? MealRepositoryError, .mealNotFound)
         }
     }
+
+    func testMealDetailViewModelClearsDisplayedMealAfterDelete() throws {
+        let meal = MealEntry(
+            userId: userId,
+            timestamp: Date.now,
+            mealType: .lunch,
+            totalCalories: 500,
+            totalProteinG: 30,
+            totalCarbsG: 40,
+            totalFatG: 15,
+            totalFiberG: 3
+        )
+        context.insert(meal)
+        try context.save()
+
+        let detailViewModel = MealDetailViewModel(
+            mealRepository: mealRepository,
+            healthKitService: healthKitService
+        )
+        detailViewModel.load(mealId: meal.id, context: context)
+        XCTAssertNotNil(detailViewModel.meal)
+
+        let persistedMeal = try XCTUnwrap(try mealRepository.fetchMeal(id: meal.id, context: context))
+        try detailViewModel.deleteMeal(meal: persistedMeal, context: context)
+
+        XCTAssertNil(detailViewModel.meal)
+    }
+
+    func testRemoveRoutesForMealId() {
+        let mealId = UUID()
+        var path: [DashboardRoute] = [
+            .mealDetail(mealId),
+            .mealScanner(.edit(mealId)),
+            .weightProgress,
+        ]
+
+        path.removeRoutes(forMealId: mealId)
+
+        XCTAssertEqual(path, [.weightProgress])
+    }
 }

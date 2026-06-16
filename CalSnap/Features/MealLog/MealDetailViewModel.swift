@@ -29,12 +29,16 @@ final class MealDetailViewModel {
     }
 
     func deleteMeal(meal: MealEntry, context: ModelContext) throws {
+        let shouldClearDisplayedMeal = self.meal?.id == meal.id
         try MealDeletionService.delete(
             meal: meal,
             mealRepository: mealRepository,
             healthKitService: healthKitService,
             context: context
         )
+        if shouldClearDisplayedMeal {
+            self.meal = nil
+        }
     }
 
     func makeShareImage() -> UIImage? {
