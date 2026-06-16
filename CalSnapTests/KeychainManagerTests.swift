@@ -40,4 +40,16 @@ final class KeychainManagerTests: XCTestCase {
         let loaded = try KeychainManager.load(account: testAccount)
         XCTAssertNil(loaded)
     }
+
+    func testGeminiKeyForValidationPrefersInputOverKeychain() throws {
+        try KeychainManager.save("stored-key", for: .geminiAPIKey)
+        let resolved = try APIKeyResolver.geminiKeyForValidation(preferredInput: " typed-key ")
+        XCTAssertEqual(resolved, "typed-key")
+    }
+
+    func testGeminiKeyForValidationFallsBackToKeychain() throws {
+        try KeychainManager.save("stored-key", for: .geminiAPIKey)
+        let resolved = try APIKeyResolver.geminiKeyForValidation(preferredInput: "   ")
+        XCTAssertEqual(resolved, "stored-key")
+    }
 }

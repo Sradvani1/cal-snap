@@ -1,5 +1,4 @@
 import Foundation
-import GoogleGenerativeAI
 
 struct MealAnalysisRequest {
     let imageData: Data
@@ -57,21 +56,27 @@ enum GeminiError: Error, LocalizedError {
 }
 
 actor GeminiService {
+    private let urlSession: URLSession
+
+    init(urlSession: URLSession = .shared) {
+        self.urlSession = urlSession
+    }
+
     func validateAPIKey(_ key: String) async throws(GeminiError) -> Bool {
         let trimmed = key.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { throw GeminiError.apiKeyMissing }
 
-        let model = GenerativeModel(name: AppConstants.Gemini.model, apiKey: trimmed)
+        let client = makeClient(apiKey: trimmed)
         do {
-            let response = try await model.generateContent("Reply with OK")
-            guard let text = response.text, !text.isEmpty else {
+            let text = try await client.generateText("Reply with OK")
+            guard !text.isEmpty else {
                 throw GeminiError.emptyResponse
             }
             return true
         } catch let error as GeminiError {
             throw error
         } catch {
-            throw GeminiError.validationFailed
+            throw Self.mapRequestError(error)
         }
     }
 
@@ -89,28 +94,22 @@ actor GeminiService {
             throw Self.mapRequestError(error)
         }
 
-        let model = GenerativeModel(
-            name: AppConstants.Gemini.model,
-            apiKey: apiKey,
-            generationConfig: GenerationConfig(
-                responseMIMEType: "application/json",
-                responseSchema: Self.responseSchema
-            )
-        )
-
         let prompt = Self.buildMealAnalysisPrompt(description: request.textDescription)
-        let textPart = ModelContent.Part.text(prompt)
-        let imagePart = ModelContent.Part.data(mimetype: request.mimeType, request.imageData)
+        let client = makeClient(apiKey: apiKey)
 
-        let response: GenerateContentResponse
+        let text: String
         do {
-            response = try await model.generateContent([textPart, imagePart])
+            text = try await client.generateMultimodalJSON(
+                prompt: prompt,
+                imageData: request.imageData,
+                mimeType: request.mimeType,
+                jsonSchema: GeminiMealAnalysisSchema.jsonSchema()
+            )
         } catch {
             throw Self.mapRequestError(error)
         }
 
-        guard let text = response.text,
-              let data = text.data(using: .utf8) else {
+        guard let data = MealAnalysisJSONParser.normalizedJSONData(from: text) else {
             throw GeminiError.emptyResponse
         }
 
@@ -119,7 +118,7 @@ actor GeminiService {
         do {
             return try decoder.decode(MealAnalysisResponse.self, from: data)
         } catch {
-            throw GeminiError.invalidJSON(error.localizedDescription)
+            throw GeminiError.invalidJSON(MealAnalysisJSONParser.decodingErrorDescription(error))
         }
     }
 
@@ -137,28 +136,90 @@ actor GeminiService {
             throw Self.mapRequestError(error)
         }
 
-        let model = GenerativeModel(name: AppConstants.Gemini.model, apiKey: apiKey)
+        let client = makeClient(apiKey: apiKey)
         let prompt = Self.buildAnalyticsInsightPrompt(payload)
 
-        let response: GenerateContentResponse
+        let text: String
         do {
-            response = try await model.generateContent(prompt)
+            text = try await client.generateText(
+                prompt,
+                maxOutputTokens: AppConstants.Gemini.maxTokens
+            )
         } catch {
             throw Self.mapRequestError(error)
         }
 
-        guard let text = response.text?.trimmingCharacters(in: .whitespacesAndNewlines),
-              !text.isEmpty else {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
             throw GeminiError.emptyResponse
         }
-        return text
+        return trimmed
+    }
+
+    private func makeClient(apiKey: String) -> GeminiRESTClient {
+        GeminiRESTClient(
+            apiKey: apiKey.trimmingCharacters(in: .whitespacesAndNewlines),
+            model: AppConstants.Gemini.model,
+            urlSession: urlSession
+        )
     }
 
     private static func mapRequestError(_ error: Error) -> GeminiError {
         if let urlError = error as? URLError, urlError.code == .notConnectedToInternet {
             return .requestFailed("No internet connection.")
         }
+
+        if let restError = error as? GeminiRESTError {
+            switch restError {
+            case .invalidResponse:
+                return .emptyResponse
+            case .apiError(let status, let message, _):
+                if message.localizedCaseInsensitiveContains("iOS client application") {
+                    let bundleID = Bundle.main.bundleIdentifier ?? "unknown"
+                    return .requestFailed(
+                        "This API key is restricted to specific iOS apps. Add bundle ID \(bundleID) in Google AI Studio, or remove iOS restrictions."
+                    )
+                }
+                if message.localizedCaseInsensitiveContains("has not been used in project")
+                    || message.localizedCaseInsensitiveContains("it is disabled") {
+                    return .requestFailed(
+                        "Enable the Generative Language API for your Google Cloud project, then wait a few minutes and retry."
+                    )
+                }
+                if message.localizedCaseInsensitiveContains("method google.ai.generativelanguage")
+                    || message.localizedCaseInsensitiveContains("are blocked") {
+                    return .requestFailed(
+                        "This API key cannot call GenerateContent from the app. In Google Cloud Console → Credentials, edit the key and either set API restrictions to \"Don't restrict key\", or allow \"Generative Language API\"."
+                    )
+                }
+                if status == "RESOURCE_EXHAUSTED"
+                    || message.localizedCaseInsensitiveContains("quota")
+                    || message.localizedCaseInsensitiveContains("rate limit") {
+                    return .requestFailed("Gemini rate limit reached. Wait a minute and try again.")
+                }
+                if isInvalidAPIKeyError(status: status, message: message) {
+                    return .validationFailed
+                }
+                if message == "User location is not supported for the API use." {
+                    return .requestFailed(message)
+                }
+                return .requestFailed(message)
+            }
+        }
+
         return .requestFailed(error.localizedDescription)
+    }
+
+    private static func isInvalidAPIKeyError(status: String, message: String) -> Bool {
+        if status == "UNAUTHENTICATED" || status == "INVALID_ARGUMENT" {
+            return message.localizedCaseInsensitiveContains("API key")
+                || message.localizedCaseInsensitiveContains("API_KEY")
+        }
+        return message.localizedCaseInsensitiveContains("API key not valid")
+            || message.localizedCaseInsensitiveContains("invalid API key")
+            || message.localizedCaseInsensitiveContains("API key expired")
+            || message.localizedCaseInsensitiveContains("API_KEY_INVALID")
+            || message.localizedCaseInsensitiveContains("reported as leaked")
     }
 
     private static func buildMealAnalysisPrompt(description: String?) -> String {
@@ -219,44 +280,5 @@ actor GeminiService {
         }
 
         return lines.joined(separator: "\n")
-    }
-
-    private static var responseSchema: Schema {
-        Schema(
-            type: .object,
-            properties: [
-                "items": Schema(
-                    type: .array,
-                    items: Schema(
-                        type: .object,
-                        properties: [
-                            "name": Schema(type: .string),
-                            "estimated_weight_g": Schema(type: .number),
-                            "calories": Schema(type: .integer),
-                            "protein_g": Schema(type: .number),
-                            "carbs_g": Schema(type: .number),
-                            "fat_g": Schema(type: .number),
-                            "fiber_g": Schema(type: .number),
-                            "confidence": Schema(type: .number),
-                        ]
-                    )
-                ),
-                "meal_total": Schema(
-                    type: .object,
-                    properties: [
-                        "calories": Schema(type: .integer),
-                        "protein_g": Schema(type: .number),
-                        "carbs_g": Schema(type: .number),
-                        "fat_g": Schema(type: .number),
-                        "fiber_g": Schema(type: .number),
-                    ]
-                ),
-                "flagged_items": Schema(
-                    type: .array,
-                    items: Schema(type: .string)
-                ),
-                "estimation_notes": Schema(type: .string),
-            ]
-        )
     }
 }

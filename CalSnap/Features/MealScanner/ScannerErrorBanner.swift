@@ -8,9 +8,31 @@ struct ScannerErrorBanner: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Label(message, systemImage: iconName)
-                .font(.subheadline)
-                .foregroundStyle(.primary)
+            if case .parse = error {
+                Label {
+                    Text(message)
+                        .font(.subheadline)
+                        .foregroundStyle(.primary)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .textSelection(.enabled)
+                } icon: {
+                    Image(systemName: iconName)
+                }
+            } else if case .api = error {
+                Label {
+                    Text(message)
+                        .font(.subheadline)
+                        .foregroundStyle(.primary)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .textSelection(.enabled)
+                } icon: {
+                    Image(systemName: iconName)
+                }
+            } else {
+                Label(message, systemImage: iconName)
+                    .font(.subheadline)
+                    .foregroundStyle(.primary)
+            }
 
             HStack(spacing: 12) {
                 if showsRetry {

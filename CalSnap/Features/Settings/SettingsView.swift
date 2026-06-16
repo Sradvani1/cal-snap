@@ -11,11 +11,10 @@ struct SettingsView: View {
     @State private var showExportSheet = false
     @State private var exportShareURL: URL?
 
-    @State private var weightDisplay = 80.0
-    @State private var goalWeightDisplay = 72.0
     @State private var heightFeet = 5
     @State private var heightInches = 9
     @State private var heightCmDisplay = 175.0
+    @State private var loadedProfileRevision = -1
 
     var body: some View {
         Form {
@@ -35,7 +34,7 @@ struct SettingsView: View {
             }
         }
         .navigationTitle("settings.title")
-        .task(id: profileDataRevision) {
+        .task {
             if viewModel == nil {
                 viewModel = SettingsViewModel(
                     userProfileRepository: appContainer.userProfileRepository,
@@ -46,8 +45,16 @@ struct SettingsView: View {
                     notificationManager: appContainer.notificationManager
                 )
             }
-            viewModel?.load(context: modelContext)
-            syncDisplayFieldsFromViewModel()
+            loadSettingsIfNeeded()
+        }
+        .onChange(of: profileDataRevision) { _, newRevision in
+            loadSettingsIfNeeded(expectedRevision: newRevision)
+        }
+        .onDisappear {
+            guard let viewModel, viewModel.canSaveProfile else { return }
+            Task {
+                await viewModel.saveProfile(context: modelContext)
+            }
         }
         .sheet(isPresented: $showExportSheet) {
             if let exportShareURL {
@@ -122,17 +129,15 @@ struct SettingsView: View {
             }
 
             Stepper(
-                UnitFormatters.stepperWeightLabel(displayValue: weightDisplay, useLbs: viewModel.useLbsForWeight),
-                value: $weightDisplay,
-                in: viewModel.useLbsForWeight ? 80...400 : 35...180,
-                step: viewModel.useLbsForWeight ? 1 : 0.5
+                UnitFormatters.stepperWeightLabel(
+                    displayValue: weightStepperBinding(viewModel: viewModel).wrappedValue,
+                    useLbs: viewModel.useLbsForWeight
+                ),
+                value: weightStepperBinding(viewModel: viewModel),
+                in: UnitFormatters.weightDisplayRange(useLbs: viewModel.useLbsForWeight),
+                step: UnitFormatters.weightDisplayStep(useLbs: viewModel.useLbsForWeight)
             )
-            .onChange(of: weightDisplay) { _, newValue in
-                viewModel.currentWeightKg = viewModel.useLbsForWeight
-                    ? UnitFormatters.lbsToKg(newValue)
-                    : newValue
-                viewModel.refreshPreview()
-            }
+            .id(viewModel.useLbsForWeight)
 
             Picker("settings.profile.activityLevel", selection: Binding(
                 get: { viewModel.draft.activityLevel },
@@ -144,18 +149,15 @@ struct SettingsView: View {
             }
 
             Stepper(
-                UnitFormatters.stepperGoalWeightLabel(displayValue: goalWeightDisplay, useLbs: viewModel.useLbsForWeight),
-                value: $goalWeightDisplay,
-                in: viewModel.useLbsForWeight ? 80...400 : 35...180,
-                step: viewModel.useLbsForWeight ? 1 : 0.5
+                UnitFormatters.stepperGoalWeightLabel(
+                    displayValue: goalWeightStepperBinding(viewModel: viewModel).wrappedValue,
+                    useLbs: viewModel.useLbsForWeight
+                ),
+                value: goalWeightStepperBinding(viewModel: viewModel),
+                in: UnitFormatters.weightDisplayRange(useLbs: viewModel.useLbsForWeight),
+                step: UnitFormatters.weightDisplayStep(useLbs: viewModel.useLbsForWeight)
             )
-            .onChange(of: goalWeightDisplay) { _, newValue in
-                viewModel.updateDraft {
-                    $0.goalWeightKg = viewModel.useLbsForWeight
-                        ? UnitFormatters.lbsToKg(newValue)
-                        : newValue
-                }
-            }
+            .id("goal-\(viewModel.useLbsForWeight)")
 
             DatePicker(
                 "settings.profile.goalDate",
@@ -358,16 +360,7 @@ struct SettingsView: View {
     private func unitsSection(viewModel: SettingsViewModel) -> some View {
         @Bindable var vm = viewModel
         Section("settings.section.units") {
-            Toggle("settings.units.useLbs", isOn: $vm.useLbsForWeight)
-                .onChange(of: vm.useLbsForWeight) { _, useLbs in
-                    weightDisplay = useLbs
-                        ? UnitFormatters.kgToLbs(vm.currentWeightKg)
-                        : vm.currentWeightKg
-                    goalWeightDisplay = useLbs
-                        ? UnitFormatters.kgToLbs(vm.draft.goalWeightKg)
-                        : vm.draft.goalWeightKg
-                    vm.persistUnitPreferences()
-                }
+            Toggle("settings.units.useLbs", isOn: useLbsForWeightBinding(viewModel: viewModel))
             Toggle("settings.units.useImperialHeight", isOn: $vm.useImperialForHeight)
                 .onChange(of: vm.useImperialForHeight) { _, useImperial in
                     if useImperial {
@@ -444,14 +437,55 @@ struct SettingsView: View {
         )
     }
 
+    private func useLbsForWeightBinding(viewModel: SettingsViewModel) -> Binding<Bool> {
+        Binding(
+            get: { viewModel.useLbsForWeight },
+            set: { useLbs in
+                viewModel.useLbsForWeight = useLbs
+                viewModel.persistUnitPreferences()
+            }
+        )
+    }
+
+    private func weightStepperBinding(viewModel: SettingsViewModel) -> Binding<Double> {
+        Binding(
+            get: {
+                UnitFormatters.displayWeight(fromKg: viewModel.currentWeightKg, useLbs: viewModel.useLbsForWeight)
+            },
+            set: { newValue in
+                let snapped = UnitFormatters.snappedDisplayWeight(newValue, useLbs: viewModel.useLbsForWeight)
+                viewModel.currentWeightKg = UnitFormatters.kgFromDisplayWeight(snapped, useLbs: viewModel.useLbsForWeight)
+                viewModel.refreshPreview()
+                Task { await viewModel.saveProfile(context: modelContext) }
+            }
+        )
+    }
+
+    private func goalWeightStepperBinding(viewModel: SettingsViewModel) -> Binding<Double> {
+        Binding(
+            get: {
+                UnitFormatters.displayWeight(fromKg: viewModel.draft.goalWeightKg, useLbs: viewModel.useLbsForWeight)
+            },
+            set: { newValue in
+                let snapped = UnitFormatters.snappedDisplayWeight(newValue, useLbs: viewModel.useLbsForWeight)
+                viewModel.updateDraft {
+                    $0.goalWeightKg = UnitFormatters.kgFromDisplayWeight(snapped, useLbs: viewModel.useLbsForWeight)
+                }
+                Task { await viewModel.saveProfile(context: modelContext) }
+            }
+        )
+    }
+
+    private func loadSettingsIfNeeded(expectedRevision: Int? = nil) {
+        let revision = expectedRevision ?? profileDataRevision
+        guard revision != loadedProfileRevision else { return }
+        viewModel?.load(context: modelContext)
+        syncDisplayFieldsFromViewModel()
+        loadedProfileRevision = revision
+    }
+
     private func syncDisplayFieldsFromViewModel() {
         guard let viewModel else { return }
-        weightDisplay = viewModel.useLbsForWeight
-            ? UnitFormatters.kgToLbs(viewModel.currentWeightKg)
-            : viewModel.currentWeightKg
-        goalWeightDisplay = viewModel.useLbsForWeight
-            ? UnitFormatters.kgToLbs(viewModel.draft.goalWeightKg)
-            : viewModel.draft.goalWeightKg
         if viewModel.useImperialForHeight {
             let parts = UnitFormatters.cmToFeetInches(viewModel.draft.heightCm)
             heightFeet = parts.feet

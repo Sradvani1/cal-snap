@@ -28,12 +28,12 @@ final class WeighInViewModel {
         self.useLbs = useLbs
         self.weighInRepository = weighInRepository
         self.healthKitService = healthKitService
-        self.weightInput = useLbs ? UnitFormatters.kgToLbs(currentWeightKg) : currentWeightKg
+        self.weightInput = UnitFormatters.preciseDisplayWeight(fromKg: currentWeightKg, useLbs: useLbs)
         refreshPreview()
     }
 
     var weightKg: Double {
-        useLbs ? UnitFormatters.lbsToKg(weightInput) : weightInput
+        useLbs ? UnitFormatters.kgFromPreciseDisplayWeight(weightInput, useLbs: true) : weightInput
     }
 
     var previousTDEE: Int {
@@ -60,7 +60,7 @@ final class WeighInViewModel {
         guard newValue != useLbs else { return }
         let kg = weightKg
         useLbs = newValue
-        weightInput = newValue ? UnitFormatters.kgToLbs(kg) : kg
+        weightInput = UnitFormatters.preciseDisplayWeight(fromKg: kg, useLbs: newValue)
         refreshPreview()
     }
 

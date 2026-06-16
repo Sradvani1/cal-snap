@@ -425,3 +425,58 @@ final class MealScannerViewModelTests: XCTestCase {
         }
     }
 }
+
+final class MealAnalysisJSONParserTests: XCTestCase {
+    func testExtractJSONObjectStripsMarkdownFence() throws {
+        let wrapped = """
+        ```json
+        {"items":[],"meal_total":{"calories":0,"protein_g":0,"carbs_g":0,"fat_g":0,"fiber_g":0},"flagged_items":[],"estimation_notes":"ok"}
+        ```
+        """
+        let json = MealAnalysisJSONParser.extractJSONObject(from: wrapped)
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        let decoded = try decoder.decode(MealAnalysisResponse.self, from: Data(json.utf8))
+        XCTAssertEqual(decoded.estimationNotes, "ok")
+    }
+
+    func testExtractJSONObjectFromPreambleText() throws {
+        let wrapped = """
+        Here is the meal analysis:
+        {"items":[],"meal_total":{"calories":0,"protein_g":0,"carbs_g":0,"fat_g":0,"fiber_g":0},"flagged_items":[],"estimation_notes":"ok"}
+        """
+        let json = MealAnalysisJSONParser.extractJSONObject(from: wrapped)
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        let decoded = try decoder.decode(MealAnalysisResponse.self, from: Data(json.utf8))
+        XCTAssertEqual(decoded.estimationNotes, "ok")
+    }
+
+    func testExtractJSONObjectFromDoubleEncodedString() throws {
+        let inner = """
+        {"items":[],"meal_total":{"calories":0,"protein_g":0,"carbs_g":0,"fat_g":0,"fiber_g":0},"flagged_items":[],"estimation_notes":"ok"}
+        """
+        let wrapped = try String(data: JSONEncoder().encode(inner), encoding: .utf8)!
+        let data = try XCTUnwrap(MealAnalysisJSONParser.normalizedJSONData(from: wrapped))
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        let decoded = try decoder.decode(MealAnalysisResponse.self, from: data)
+        XCTAssertEqual(decoded.estimationNotes, "ok")
+    }
+
+    func testExtractJSONObjectWithBraceInsideStringValue() throws {
+        let wrapped = """
+        {"items":[{"name":"curly } brace","estimated_weight_g":1,"calories":1,"protein_g":0,"carbs_g":0,"fat_g":0,"fiber_g":0,"confidence":0.9}],"meal_total":{"calories":1,"protein_g":0,"carbs_g":0,"fat_g":0,"fiber_g":0},"flagged_items":[],"estimation_notes":"ok"}
+        """
+        let data = try XCTUnwrap(MealAnalysisJSONParser.normalizedJSONData(from: wrapped))
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        let decoded = try decoder.decode(MealAnalysisResponse.self, from: data)
+        XCTAssertEqual(decoded.items.first?.name, "curly } brace")
+    }
+
+    func testIsValidJSONObjectRejectsPlainText() {
+        let data = Data("Not JSON at all".utf8)
+        XCTAssertFalse(MealAnalysisJSONParser.isValidJSONObject(data))
+    }
+}

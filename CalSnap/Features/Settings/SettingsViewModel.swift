@@ -244,9 +244,16 @@ final class SettingsViewModel {
     }
 
     func testGeminiKey() async {
-        let key = geminiAPIKeyInput.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !key.isEmpty else {
-            geminiTestState = .failure(String(localized: "settings.apiKeys.enterKeyToTest"))
+        let key: String
+        do {
+            guard let resolved = try APIKeyResolver.geminiKeyForValidation(preferredInput: geminiAPIKeyInput),
+                  !resolved.isEmpty else {
+                geminiTestState = .failure(String(localized: "settings.apiKeys.enterKeyToTest"))
+                return
+            }
+            key = resolved
+        } catch {
+            geminiTestState = .failure(error.localizedDescription)
             return
         }
 
@@ -267,7 +274,6 @@ final class SettingsViewModel {
     func persistUnitPreferences() {
         UserDefaults.standard.set(useLbsForWeight, forKey: AppStorageKey.useLbsForWeight)
         UserDefaults.standard.set(useImperialForHeight, forKey: AppStorageKey.useImperialForHeight)
-        AppStorageKey.bumpProfileDataRevision()
     }
 
     func updateReminderSchedule(context: ModelContext) async {

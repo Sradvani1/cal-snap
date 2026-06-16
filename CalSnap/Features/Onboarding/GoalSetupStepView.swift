@@ -3,7 +3,6 @@ import SwiftUI
 struct GoalSetupStepView: View {
     @Bindable var viewModel: OnboardingViewModel
 
-    @State private var goalWeightDisplay = 72.0
     @State private var goalDateRange: ClosedRange<Date> = {
         let calendar = Calendar.current
         let start = calendar.startOfDay(for: Date.now)
@@ -18,28 +17,17 @@ struct GoalSetupStepView: View {
                 .font(.title2.bold())
 
             Toggle("onboarding.goals.useLbsGoalWeight", isOn: viewModel.binding(\.useLbsGoalWeight))
-                .onChange(of: viewModel.profileDraft.useLbsGoalWeight) { _, useLbs in
-                    goalWeightDisplay = useLbs
-                        ? UnitFormatters.kgToLbs(viewModel.profileDraft.goalWeightKg)
-                        : viewModel.profileDraft.goalWeightKg
-                }
 
             Stepper(
                 UnitFormatters.stepperGoalWeightLabel(
-                    displayValue: goalWeightDisplay,
+                    displayValue: goalWeightStepperBinding.wrappedValue,
                     useLbs: viewModel.profileDraft.useLbsGoalWeight
                 ),
-                value: $goalWeightDisplay,
-                in: goalWeightRange,
-                step: viewModel.profileDraft.useLbsGoalWeight ? 1 : 0.5
+                value: goalWeightStepperBinding,
+                in: UnitFormatters.weightDisplayRange(useLbs: viewModel.profileDraft.useLbsGoalWeight),
+                step: UnitFormatters.weightDisplayStep(useLbs: viewModel.profileDraft.useLbsGoalWeight)
             )
-            .onChange(of: goalWeightDisplay) { _, newValue in
-                viewModel.updateProfileDraft { draft in
-                    draft.goalWeightKg = viewModel.profileDraft.useLbsGoalWeight
-                        ? UnitFormatters.lbsToKg(newValue)
-                        : newValue
-                }
-            }
+            .id(viewModel.profileDraft.useLbsGoalWeight)
 
             DatePicker(
                 "onboarding.goals.targetDate",
@@ -86,15 +74,24 @@ struct GoalSetupStepView: View {
                 .accessibilityAddTraits(viewModel.profileDraft.activityLevel == level ? .isSelected : [])
             }
         }
-        .task {
-            goalWeightDisplay = viewModel.profileDraft.useLbsGoalWeight
-                ? UnitFormatters.kgToLbs(viewModel.profileDraft.goalWeightKg)
-                : viewModel.profileDraft.goalWeightKg
-        }
     }
 
-    private var goalWeightRange: ClosedRange<Double> {
-        viewModel.profileDraft.useLbsGoalWeight ? 80...400 : 35...180
+    private var goalWeightStepperBinding: Binding<Double> {
+        Binding(
+            get: {
+                UnitFormatters.displayWeight(
+                    fromKg: viewModel.profileDraft.goalWeightKg,
+                    useLbs: viewModel.profileDraft.useLbsGoalWeight
+                )
+            },
+            set: { newValue in
+                let useLbs = viewModel.profileDraft.useLbsGoalWeight
+                let snapped = UnitFormatters.snappedDisplayWeight(newValue, useLbs: useLbs)
+                viewModel.updateProfileDraft { draft in
+                    draft.goalWeightKg = UnitFormatters.kgFromDisplayWeight(snapped, useLbs: useLbs)
+                }
+            }
+        )
     }
 }
 

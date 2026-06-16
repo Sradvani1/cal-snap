@@ -157,6 +157,7 @@ final class OnboardingViewModel {
         case .welcome:
             currentStep = .profileSetup
         case .profileSetup:
+            profileDraft.useLbsGoalWeight = profileDraft.useLbsWeight
             currentStep = .goalSetup
         case .goalSetup:
             currentStep = .caloriePreview
@@ -214,6 +215,9 @@ final class OnboardingViewModel {
     func saveProfile(context: ModelContext) throws {
         let profile = userProfileRepository.makeUserProfile(from: profileDraft)
         try userProfileRepository.save([profile], context: context)
+        UserDefaults.standard.set(profileDraft.useLbsWeight, forKey: AppStorageKey.useLbsForWeight)
+        UserDefaults.standard.set(profileDraft.useImperialHeight, forKey: AppStorageKey.useImperialForHeight)
+        AppStorageKey.bumpProfileDataRevision()
     }
 
     func requestHealthKit() async {
@@ -226,9 +230,16 @@ final class OnboardingViewModel {
     }
 
     func testGeminiKey() async {
-        let key = geminiAPIKeyInput.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !key.isEmpty else {
-            geminiTestState = .failure(String(localized: "settings.apiKeys.enterKeyToTest"))
+        let key: String
+        do {
+            guard let resolved = try APIKeyResolver.geminiKeyForValidation(preferredInput: geminiAPIKeyInput),
+                  !resolved.isEmpty else {
+                geminiTestState = .failure(String(localized: "settings.apiKeys.enterKeyToTest"))
+                return
+            }
+            key = resolved
+        } catch {
+            geminiTestState = .failure(error.localizedDescription)
             return
         }
 

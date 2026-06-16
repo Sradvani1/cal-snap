@@ -21,8 +21,7 @@ enum AppStorageKey {
     }
 
     static var useLbsForWeightValue: Bool {
-        UserDefaults.standard.object(forKey: useLbsForWeight) as? Bool
-            ?? (Locale.current.measurementSystem != .metric)
+        UserDefaults.standard.object(forKey: useLbsForWeight) as? Bool ?? true
     }
 
     static func plateauSnoozeUntil(userId: UUID) -> String {

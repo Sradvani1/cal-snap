@@ -14,10 +14,15 @@ struct GeminiTestIndicatorView: View {
                 .foregroundStyle(.green)
                 .font(.footnote)
         case .failure(let message):
-            Label(message, systemImage: "xmark.circle.fill")
-                .foregroundStyle(.red)
-                .font(.footnote)
-                .lineLimit(2)
+            HStack(alignment: .top, spacing: 6) {
+                Image(systemName: "xmark.circle.fill")
+                    .foregroundStyle(.red)
+                Text(message)
+                    .foregroundStyle(.red)
+                    .font(.footnote)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .textSelection(.enabled)
+            }
         }
     }
 }

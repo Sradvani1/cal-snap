@@ -51,6 +51,8 @@ final class OnboardingViewModelTests: XCTestCase {
         draft.heightCm = 178
         draft.goalWeightKg = 72
         draft.requestedDeficit = 350
+        draft.useLbsWeight = true
+        draft.useImperialHeight = true
 
         let profile = repository.makeUserProfile(from: draft)
         try repository.save([profile], context: context)
@@ -65,5 +67,39 @@ final class OnboardingViewModelTests: XCTestCase {
         XCTAssertEqual(saved.macroTargetFatPct, AppConstants.Nutrition.defaultMacroFatPct, accuracy: 0.001)
         XCTAssertGreaterThan(saved.dailyCalorieTarget, 0)
         XCTAssertGreaterThan(saved.tdee, 0)
+    }
+
+    func testSaveProfilePersistsUnitPreferences() throws {
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try ModelContainer(for: UserProfile.self, configurations: config)
+        let context = container.mainContext
+        let defaults = UserDefaults.standard
+        let priorLbs = defaults.object(forKey: AppStorageKey.useLbsForWeight)
+        let priorImperial = defaults.object(forKey: AppStorageKey.useImperialForHeight)
+        defer {
+            if let priorLbs {
+                defaults.set(priorLbs, forKey: AppStorageKey.useLbsForWeight)
+            } else {
+                defaults.removeObject(forKey: AppStorageKey.useLbsForWeight)
+            }
+            if let priorImperial {
+                defaults.set(priorImperial, forKey: AppStorageKey.useImperialForHeight)
+            } else {
+                defaults.removeObject(forKey: AppStorageKey.useImperialForHeight)
+            }
+        }
+
+        viewModel.profileDraft.useLbsWeight = true
+        viewModel.profileDraft.useImperialHeight = true
+        try viewModel.saveProfile(context: context)
+
+        XCTAssertEqual(defaults.bool(forKey: AppStorageKey.useLbsForWeight), true)
+        XCTAssertEqual(defaults.bool(forKey: AppStorageKey.useImperialForHeight), true)
+    }
+
+    func testProfileDraftDefaultsToLbs() {
+        let draft = ProfileDraft()
+        XCTAssertTrue(draft.useLbsWeight)
+        XCTAssertTrue(draft.useLbsGoalWeight)
     }
 }

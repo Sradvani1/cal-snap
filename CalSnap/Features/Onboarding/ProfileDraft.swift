@@ -11,8 +11,8 @@ struct ProfileDraft: Equatable {
     var activityLevel: ActivityLevel = .moderatelyActive
     var requestedDeficit: Int = AppConstants.Deficit.defaultDeficitKcal
     var useImperialHeight = false
-    var useLbsWeight = false
-    var useLbsGoalWeight = false
+    var useLbsWeight = true
+    var useLbsGoalWeight = true
 
     var trimmedName: String {
         name.trimmingCharacters(in: .whitespacesAndNewlines)

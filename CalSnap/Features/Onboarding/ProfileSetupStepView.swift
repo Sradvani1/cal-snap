@@ -5,7 +5,6 @@ struct ProfileSetupStepView: View {
 
     @State private var heightFeet = 5
     @State private var heightInches = 9
-    @State private var weightDisplay = 80.0
     @State private var dobRange: ClosedRange<Date> = {
         let calendar = Calendar.current
         let maxDOB = calendar.date(byAdding: .year, value: -AppConstants.Onboarding.minAgeYears, to: Date.now) ?? Date.now
@@ -61,31 +60,39 @@ struct ProfileSetupStepView: View {
             }
 
             Toggle("onboarding.profile.useLbsWeight", isOn: viewModel.binding(\.useLbsWeight))
-                .onChange(of: viewModel.profileDraft.useLbsWeight) { _, useLbs in
-                    syncWeightFromProfile(useLbs: useLbs)
-                }
 
             Stepper(
                 UnitFormatters.stepperWeightLabel(
-                    displayValue: weightDisplay,
+                    displayValue: weightStepperBinding.wrappedValue,
                     useLbs: viewModel.profileDraft.useLbsWeight
                 ),
-                value: $weightDisplay,
-                in: viewModel.profileDraft.useLbsWeight ? 80...400 : 35...180,
-                step: viewModel.profileDraft.useLbsWeight ? 1 : 0.5
+                value: weightStepperBinding,
+                in: UnitFormatters.weightDisplayRange(useLbs: viewModel.profileDraft.useLbsWeight),
+                step: UnitFormatters.weightDisplayStep(useLbs: viewModel.profileDraft.useLbsWeight)
             )
-            .onChange(of: weightDisplay) { _, newValue in
-                viewModel.updateProfileDraft { draft in
-                    draft.weightKg = viewModel.profileDraft.useLbsWeight
-                        ? UnitFormatters.lbsToKg(newValue)
-                        : newValue
-                }
-            }
+            .id(viewModel.profileDraft.useLbsWeight)
         }
         .task {
             syncHeightFromProfile(useImperial: viewModel.profileDraft.useImperialHeight)
-            syncWeightFromProfile(useLbs: viewModel.profileDraft.useLbsWeight)
         }
+    }
+
+    private var weightStepperBinding: Binding<Double> {
+        Binding(
+            get: {
+                UnitFormatters.displayWeight(
+                    fromKg: viewModel.profileDraft.weightKg,
+                    useLbs: viewModel.profileDraft.useLbsWeight
+                )
+            },
+            set: { newValue in
+                let useLbs = viewModel.profileDraft.useLbsWeight
+                let snapped = UnitFormatters.snappedDisplayWeight(newValue, useLbs: useLbs)
+                viewModel.updateProfileDraft { draft in
+                    draft.weightKg = UnitFormatters.kgFromDisplayWeight(snapped, useLbs: useLbs)
+                }
+            }
+        )
     }
 
     private func syncHeightFromProfile(useImperial: Bool) {
@@ -94,12 +101,6 @@ struct ProfileSetupStepView: View {
             heightFeet = parts.feet
             heightInches = parts.inches
         }
-    }
-
-    private func syncWeightFromProfile(useLbs: Bool) {
-        weightDisplay = useLbs
-            ? UnitFormatters.kgToLbs(viewModel.profileDraft.weightKg)
-            : viewModel.profileDraft.weightKg
     }
 
     private func updateHeightCm() {
