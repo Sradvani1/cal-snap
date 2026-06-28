@@ -5,4 +5,5 @@ export * from '@/lib/models/macro-split';
 export * from '@/lib/models/meal-entry';
 export * from '@/lib/models/meal-type';
 export * from '@/lib/models/user-profile';
+export * from '@/lib/models/profile-doc';
 export * from '@/lib/models/weigh-in';

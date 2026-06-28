@@ -2,6 +2,10 @@ import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
 import { getAuth, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
 import { getStorage, type FirebaseStorage } from 'firebase/storage';
+import {
+  connectAuthToEmulator,
+  connectFirestoreToEmulator,
+} from '@/lib/firebase/emulator';
 
 function requireEnv(name: string): string {
   const value = process.env[name];
@@ -33,11 +37,15 @@ export function getFirebaseApp(): FirebaseApp {
 }
 
 export function getFirebaseAuth(): Auth {
-  return getAuth(getFirebaseApp());
+  const auth = getAuth(getFirebaseApp());
+  connectAuthToEmulator(auth);
+  return auth;
 }
 
 export function getFirestoreDb(): Firestore {
-  return getFirestore(getFirebaseApp());
+  const db = getFirestore(getFirebaseApp());
+  connectFirestoreToEmulator(db);
+  return db;
 }
 
 export function getFirebaseStorage(): FirebaseStorage {

@@ -6,7 +6,7 @@ Implementation checklists for the CalSnap Web PR series live here. Each merged P
 
 - **Framework:** Next.js App Router, TypeScript strict, Tailwind CSS
 - **Tests:** Vitest (node environment)
-- **Backend (W02+):** Firebase Auth, Firestore, Storage
+- **Backend (W02+):** Firebase Auth, Firestore, Storage — profile at `users/{uid}/profile/main`
 - **AI (W04+):** Gemini 2.5 Flash via Vercel Route Handlers (`GEMINI_API_KEY` server-only)
 - **Package manager:** pnpm; Node 20+ (`.nvmrc` pins 22 in `calsnap-web/`)
 
@@ -36,7 +36,7 @@ Business logic lives in `calsnap-web/lib/`; `app/` stays thin.
 | PR | Doc | Status |
 |----|-----|--------|
 | W01 | [PR-W01.md](./PR-W01.md) | Implemented |
-| W02 | PR-W02.md | Planned |
+| W02 | [PR-W02.md](./PR-W02.md) | Implemented |
 | W03 | PR-W03.md | Planned |
 | W04 | PR-W04.md | Planned |
 | W05 | PR-W05.md | Planned |

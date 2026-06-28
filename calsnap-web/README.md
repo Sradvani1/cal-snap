@@ -6,6 +6,7 @@ Mobile-first Next.js app for CalSnap. See the [web implementation docs](../docs/
 
 - Node.js 20+ (`.nvmrc` pins 22)
 - [pnpm](https://pnpm.io/) (`npm install -g pnpm` or `corepack enable`)
+- [Firebase CLI](https://firebase.google.com/docs/cli) for emulators (optional)
 
 ## Setup
 
@@ -13,41 +14,71 @@ Mobile-first Next.js app for CalSnap. See the [web implementation docs](../docs/
 cd calsnap-web
 pnpm install
 cp .env.local.example .env.local
-# Fill NEXT_PUBLIC_FIREBASE_* before W02 auth work
 ```
+
+Fill in `.env.local`:
+
+- `NEXT_PUBLIC_FIREBASE_*` — from Firebase console or use demo values for emulators
+- `NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true` — for local Auth + Firestore emulators
+- `FIREBASE_ADMIN_*` — service account credentials (production); optional with emulators
 
 ## Commands
 
 ```bash
-pnpm dev          # http://localhost:3000 — placeholder home page
-pnpm test         # Vitest unit tests
+pnpm dev              # http://localhost:3000
+pnpm test             # Vitest unit tests (merge gate)
+pnpm test:integration # Firestore rules test via emulators (optional)
 pnpm lint
-pnpm build        # production build (no Firebase env required for W01 placeholder)
+pnpm build
+pnpm emulators        # Start Auth + Firestore emulators
 ```
 
-## Firebase emulators (W01 config only)
+## Auth workflow (W02)
 
-Emulator ports are defined in `firebase.json`. Start with the demo project alias (no real Firebase login required for W01):
+1. User signs in via email/password or Google redirect
+2. Client POSTs ID token to `/api/auth/session` → httpOnly `__session` cookie
+3. `middleware.ts` verifies session for protected routes
+4. Onboarding gate: `(app)/layout` reads Firestore profile; incomplete → `/onboarding`
+
+### Google OAuth setup
+
+1. Enable Google provider in Firebase Console → Authentication
+2. Add authorized domains: `localhost`, your Vercel preview domain
+3. Web uses `signInWithRedirect` only (no popup)
+
+## Firebase emulators
 
 ```bash
-npx -y firebase-tools@latest emulators:start --project demo-calsnap
+# Terminal 1
+pnpm emulators
+
+# Terminal 2 (with NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true in .env.local)
+pnpm dev
 ```
 
-Create and link a real Firebase project before W02.
+Emulator UI: http://localhost:4000
 
-## Web vs iOS deltas (W01)
+Deploy Firestore rules (not merge-gated):
+
+```bash
+firebase deploy --only firestore:rules --project <your-project>
+```
+
+## Web vs iOS deltas (W01–W02)
 
 | Concept | iOS | Web |
 |---------|-----|-----|
-| IDs | `UUID` | `string` (Firebase Auth UID / Firestore doc id) |
-| Meal photo | `photoData: Data?` | `photoStoragePath?: string` |
-| Activity level storage | Codable raw strings (`"Moderately Active"`) | camelCase union (`moderatelyActive`, …) in Firestore |
+| IDs | `UUID` | Firebase Auth UID |
+| Profile storage | SwiftData | `users/{uid}/profile/main` |
+| Onboarding steps | 7 (incl. HealthKit, API keys) | 5 |
+| Google sign-in | N/A | `signInWithRedirect` |
+| Unit prefs | UserDefaults | Fields on profile doc |
 
 ## Vercel deploy
 
-Set **Root Directory** to `calsnap-web`. Install: `pnpm install`. Build: `pnpm build`. Add `NEXT_PUBLIC_FIREBASE_*` env vars before W02.
+Set **Root Directory** to `calsnap-web`. Add all env vars from `.env.local.example`.
 
 ## Source of truth
 
 - `docs/technical-spec.md` — models, constants, calculator
-- `docs/implementation/web/PR-W01.md` — W01 acceptance checklist
+- `docs/implementation/web/PR-W02.md` — W02 acceptance checklist
