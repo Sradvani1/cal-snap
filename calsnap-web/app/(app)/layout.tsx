@@ -6,6 +6,7 @@ import { BottomTabNav } from '@/components/app/BottomTabNav';
 import { SessionErrorBanner } from '@/components/auth/SessionErrorBanner';
 import { useAuth } from '@/lib/auth/use-auth';
 import { isOnboardingComplete } from '@/lib/repositories/profile';
+import { UnsavedWorkProvider } from '@/lib/scanner/unsaved-work-context';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, loading: authLoading, sessionError } = useAuth();
@@ -47,14 +48,16 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-full bg-neutral-50 pb-20">
-      {sessionError && (
-        <div className="mx-auto max-w-lg px-4 pt-4">
-          <SessionErrorBanner message={sessionError} />
-        </div>
-      )}
-      <main>{children}</main>
-      <BottomTabNav />
-    </div>
+    <UnsavedWorkProvider>
+      <div className="min-h-full bg-neutral-50 pb-20">
+        {sessionError && (
+          <div className="mx-auto max-w-lg px-4 pt-4">
+            <SessionErrorBanner message={sessionError} />
+          </div>
+        )}
+        <main>{children}</main>
+        <BottomTabNav />
+      </div>
+    </UnsavedWorkProvider>
   );
 }

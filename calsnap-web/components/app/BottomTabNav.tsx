@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useUnsavedWork } from '@/lib/scanner/unsaved-work-context';
 
 const TABS = [
   { href: '/dashboard', label: 'Dashboard', icon: DashboardIcon },
@@ -94,6 +95,46 @@ function SettingsIcon({ active }: { active: boolean }) {
   );
 }
 
+function TabLink({
+  href,
+  label,
+  icon: Icon,
+  active,
+}: {
+  href: string;
+  label: string;
+  icon: typeof DashboardIcon;
+  active: boolean;
+}) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const { requestNavigation } = useUnsavedWork();
+
+  const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (pathname === href || pathname.startsWith(`${href}/`)) {
+      return;
+    }
+    if (!requestNavigation(href)) {
+      event.preventDefault();
+      return;
+    }
+    event.preventDefault();
+    router.push(href);
+  };
+
+  return (
+    <Link
+      href={href}
+      onClick={handleClick}
+      aria-current={active ? 'page' : undefined}
+      className="flex min-h-11 flex-col items-center justify-center gap-1 px-1 py-2 text-xs font-medium"
+    >
+      <Icon active={active} />
+      <span className={active ? 'text-neutral-900' : 'text-neutral-400'}>{label}</span>
+    </Link>
+  );
+}
+
 export function BottomTabNav() {
   const pathname = usePathname();
 
@@ -107,14 +148,7 @@ export function BottomTabNav() {
           const active = pathname === href || pathname.startsWith(`${href}/`);
           return (
             <li key={href} className="flex-1">
-              <Link
-                href={href}
-                aria-current={active ? 'page' : undefined}
-                className="flex min-h-11 flex-col items-center justify-center gap-1 px-1 py-2 text-xs font-medium"
-              >
-                <Icon active={active} />
-                <span className={active ? 'text-neutral-900' : 'text-neutral-400'}>{label}</span>
-              </Link>
+              <TabLink href={href} label={label} icon={Icon} active={active} />
             </li>
           );
         })}

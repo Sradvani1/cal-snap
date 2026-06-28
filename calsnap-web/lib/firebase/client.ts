@@ -5,6 +5,7 @@ import { getStorage, type FirebaseStorage } from 'firebase/storage';
 import {
   connectAuthToEmulator,
   connectFirestoreToEmulator,
+  connectStorageToEmulator,
 } from '@/lib/firebase/emulator';
 
 function requireEnv(name: string): string {
@@ -49,5 +50,7 @@ export function getFirestoreDb(): Firestore {
 }
 
 export function getFirebaseStorage(): FirebaseStorage {
-  return getStorage(getFirebaseApp());
+  const storage = getStorage(getFirebaseApp());
+  connectStorageToEmulator(storage);
+  return storage;
 }
