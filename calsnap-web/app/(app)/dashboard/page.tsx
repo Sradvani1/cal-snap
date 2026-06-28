@@ -1,7 +1,10 @@
 'use client';
 
+import { useMemo, useState } from 'react';
 import { useAuth } from '@/lib/auth/use-auth';
 import { useDashboard } from '@/lib/queries/use-dashboard';
+import { usePlateauAlert } from '@/lib/queries/use-plateau-alert';
+import { useProfile } from '@/lib/queries/use-profile';
 import { SessionErrorBanner } from '@/components/auth/SessionErrorBanner';
 import {
   CalorieRingCard,
@@ -29,9 +32,21 @@ import {
 } from '@/components/dashboard/DashboardHeader';
 import { ScanFab } from '@/components/dashboard/ScanFab';
 import { PlateauAlertSheet } from '@/components/dashboard/PlateauAlertSheet';
+import { WeighInSheet } from '@/components/progress/WeighInSheet';
 
 function DashboardContent({ uid }: { uid: string | undefined }) {
   const dashboard = useDashboard(uid);
+  const profileQuery = useProfile(uid);
+  const plateau = usePlateauAlert(uid);
+  const [showWeighInSheet, setShowWeighInSheet] = useState(false);
+
+  const profile = profileQuery.data?.profile;
+  const profileExtras = profileQuery.data?.extras;
+
+  const sheetReady = useMemo(
+    () => Boolean(profile && profileExtras && uid),
+    [profile, profileExtras, uid],
+  );
 
   if (dashboard.isLoading) {
     return (
@@ -63,12 +78,12 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
   return (
     <>
       <div className="mx-auto flex max-w-lg flex-col gap-6 px-4 py-8 pb-24">
-        {dashboard.error && (
+        {(dashboard.error || plateau.actionError) && (
           <SessionErrorBanner
             message={
               dashboard.error instanceof Error
                 ? dashboard.error.message
-                : 'Failed to load dashboard'
+                : plateau.actionError ?? 'Failed to load dashboard'
             }
           />
         )}
@@ -111,16 +126,28 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
           weighIns={dashboard.chartWeighIns}
           startingWeightKg={dashboard.startingWeightKg}
           useLbs={dashboard.useLbsForDisplay}
+          onLogWeighIn={() => setShowWeighInSheet(true)}
         />
       </div>
 
       <ScanFab href="/scan" />
 
+      {sheetReady && profile && profileExtras && uid && (
+        <WeighInSheet
+          open={showWeighInSheet}
+          uid={uid}
+          profile={profile}
+          profileExtras={profileExtras}
+          onClose={() => setShowWeighInSheet(false)}
+          onSaved={() => setShowWeighInSheet(false)}
+        />
+      )}
+
       <PlateauAlertSheet
-        open={dashboard.showPlateauAlert}
-        onDietBreak={() => void dashboard.applyDietBreak()}
-        onSmallReduction={() => void dashboard.applySmallReduction()}
-        onDismiss={dashboard.dismissPlateauAlert}
+        open={plateau.showPlateauAlert}
+        onDietBreak={() => void plateau.applyDietBreak()}
+        onSmallReduction={() => void plateau.applySmallReduction()}
+        onDismiss={plateau.dismissPlateauAlert}
       />
     </>
   );

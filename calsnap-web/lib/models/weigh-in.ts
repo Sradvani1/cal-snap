@@ -7,4 +7,6 @@ export interface WeighIn {
   calculatedTDEE?: number;
   adjustedDailyTarget?: number;
   bmi?: number;
+  source?: 'manual';
+  createdAt?: Date;
 }

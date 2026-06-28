@@ -9,6 +9,7 @@ export interface WeighInDoc {
   calculatedTDEE?: number;
   adjustedDailyTarget?: number;
   bmi?: number;
+  source?: 'manual';
   createdAt: Timestamp;
 }
 
@@ -21,6 +22,8 @@ export function weighInDocToEntry(id: string, doc: WeighInDoc): WeighIn {
     calculatedTDEE: doc.calculatedTDEE,
     adjustedDailyTarget: doc.adjustedDailyTarget,
     bmi: doc.bmi,
+    source: doc.source,
+    createdAt: doc.createdAt.toDate(),
   };
 }
 
@@ -32,6 +35,7 @@ export function weighInToDoc(entry: WeighIn): WeighInDoc {
     calculatedTDEE: entry.calculatedTDEE,
     adjustedDailyTarget: entry.adjustedDailyTarget,
     bmi: entry.bmi,
-    createdAt: Timestamp.fromDate(new Date()),
+    source: entry.source,
+    createdAt: Timestamp.fromDate(entry.createdAt ?? new Date()),
   };
 }

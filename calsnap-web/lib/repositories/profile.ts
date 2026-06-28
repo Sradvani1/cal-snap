@@ -23,6 +23,10 @@ import {
   dailyTarget,
   tdee,
 } from '@/lib/nutrition/calculator';
+import {
+  defaultReminderPrefs,
+  resolveReminderPrefs,
+} from '@/lib/progress/reminder-prefs';
 
 export function makeProfileFromDraft(
   draft: ProfileDraft,
@@ -78,6 +82,10 @@ export function profileToDoc(
     macroTargetFatPct: profile.macroTargetFatPct,
     useLbsForWeight: extras.useLbsForWeight,
     useImperialForHeight: extras.useImperialForHeight,
+    weighInReminderEnabled: extras.weighInReminderEnabled,
+    weighInReminderWeekday: extras.weighInReminderWeekday,
+    weighInReminderHour: extras.weighInReminderHour,
+    weighInReminderMinute: extras.weighInReminderMinute,
     createdAt: Timestamp.fromDate(profile.createdAt),
     updatedAt: Timestamp.fromDate(profile.updatedAt),
   };
@@ -156,6 +164,7 @@ export async function saveProfileFromDraft(
     currentWeightKg: draft.weightKg,
     useLbsForWeight: draft.useLbsWeight,
     useImperialForHeight: draft.useImperialHeight,
+    ...defaultReminderPrefs(),
   }, db);
   return profile;
 }
@@ -188,18 +197,51 @@ export async function updateCalorieTargets(
     currentWeightKg: docData.currentWeightKg,
     useLbsForWeight: docData.useLbsForWeight,
     useImperialForHeight: docData.useImperialForHeight,
+    weighInReminderEnabled: docData.weighInReminderEnabled,
+    weighInReminderWeekday: docData.weighInReminderWeekday,
+    weighInReminderHour: docData.weighInReminderHour,
+    weighInReminderMinute: docData.weighInReminderMinute,
   }, db);
 
   return updatedProfile;
 }
 
+export interface ProfileAfterWeighInUpdate {
+  profile: UserProfile;
+  extras: ProfileExtras;
+}
+
+export interface WeighInProfileRecalculation {
+  tdee: number;
+  dailyTarget: number;
+  deficitKcal: number;
+}
+
+export function updateProfileAfterWeighIn(
+  profile: UserProfile,
+  extras: ProfileExtras,
+  newWeightKg: number,
+  recalculation: WeighInProfileRecalculation,
+  updatedAt: Date = new Date(),
+): ProfileAfterWeighInUpdate {
+  return {
+    profile: {
+      ...profile,
+      tdee: recalculation.tdee,
+      dailyCalorieTarget: recalculation.dailyTarget,
+      deficitKcal: recalculation.deficitKcal,
+      updatedAt,
+    },
+    extras: {
+      ...extras,
+      currentWeightKg: newWeightKg,
+    },
+  };
+}
+
 export interface ProfileWithExtras {
   profile: UserProfile;
-  extras: {
-    useLbsForWeight: boolean;
-    useImperialForHeight: boolean;
-    currentWeightKg: number;
-  };
+  extras: ProfileExtras;
 }
 
 export async function getProfileWithExtras(
@@ -210,12 +252,15 @@ export async function getProfileWithExtras(
   if (!docData) {
     return null;
   }
+  const reminderPrefs = resolveReminderPrefs(docData);
   return {
     profile: docToProfile(docData, uid),
     extras: {
+      onboardingCompleted: docData.onboardingCompleted,
       useLbsForWeight: docData.useLbsForWeight,
       useImperialForHeight: docData.useImperialForHeight,
       currentWeightKg: docData.currentWeightKg,
+      ...reminderPrefs,
     },
   };
 }

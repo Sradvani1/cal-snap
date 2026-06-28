@@ -26,6 +26,11 @@ export interface ProfileDoc {
   useLbsForWeight: boolean;
   useImperialForHeight: boolean;
 
+  weighInReminderEnabled?: boolean;
+  weighInReminderWeekday?: number;
+  weighInReminderHour?: number;
+  weighInReminderMinute?: number;
+
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }
@@ -37,4 +42,8 @@ export interface ProfileExtras {
   currentWeightKg: number;
   useLbsForWeight: boolean;
   useImperialForHeight: boolean;
+  weighInReminderEnabled?: boolean;
+  weighInReminderWeekday?: number;
+  weighInReminderHour?: number;
+  weighInReminderMinute?: number;
 }

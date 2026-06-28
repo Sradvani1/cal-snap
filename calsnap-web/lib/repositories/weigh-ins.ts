@@ -86,3 +86,20 @@ export async function fetchWeeklyPlateauWeighIns(
 
   return selected;
 }
+
+export async function fetchAllWeighIns(
+  uid: string,
+  sortDescending = true,
+  db: Firestore = getFirestoreDb(),
+): Promise<WeighIn[]> {
+  const weighInsRef = collection(db, 'users', uid, 'weighIns');
+  const weighInsQuery = query(
+    weighInsRef,
+    orderBy('date', sortDescending ? 'desc' : 'asc'),
+  );
+
+  const snapshot = await getDocs(weighInsQuery);
+  return snapshot.docs.map((docSnap) =>
+    docToWeighIn(docSnap.id, docSnap.data() as WeighInDoc),
+  );
+}
