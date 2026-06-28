@@ -110,3 +110,28 @@ export function mealEntryToDoc(entry: MealEntry): MealEntryDoc {
     updatedAt: now,
   };
 }
+
+/** Update mapper — preserves `createdAt`, bumps `updatedAt`. */
+export function mealEntryToUpdateDoc(
+  entry: MealEntry,
+  createdAt: Timestamp,
+): MealEntryDoc {
+  return {
+    userId: entry.userId,
+    timestamp: Timestamp.fromDate(entry.timestamp),
+    mealType: entry.mealType,
+    photoStoragePath: entry.photoStoragePath,
+    textDescription: entry.textDescription,
+    totalCalories: entry.totalCalories,
+    totalProteinG: entry.totalProteinG,
+    totalCarbsG: entry.totalCarbsG,
+    totalFatG: entry.totalFatG,
+    totalFiberG: entry.totalFiberG,
+    geminiConfidence: entry.geminiConfidence,
+    isManuallyAdjusted: entry.isManuallyAdjusted,
+    estimationNotes: entry.estimationNotes,
+    items: entry.items.map(foodItemToDoc),
+    createdAt,
+    updatedAt: Timestamp.fromDate(new Date()),
+  };
+}

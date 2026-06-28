@@ -100,7 +100,11 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
         <DailySummaryFooter
           fiberConsumed={dashboard.fiberConsumed}
           fiberTarget={dashboard.fiberTarget}
+          fiberBand={dashboard.fiberBand}
           netSummary={dashboard.netSummary}
+          netCalorieDelta={dashboard.netCalorieDelta}
+          actualMacroPercents={dashboard.actualMacroPercents}
+          targetMacroPercents={dashboard.targetMacroPercents}
         />
 
         <WeightTrendMiniChart

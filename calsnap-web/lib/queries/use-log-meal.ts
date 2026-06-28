@@ -3,8 +3,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { localDayKey } from '@/lib/dashboard/date-window';
 import type { MealEntry } from '@/lib/models/meal-entry';
+import { invalidateMealQueries } from '@/lib/queries/invalidate-meals';
 import { createMeal, uploadMealPhoto } from '@/lib/repositories/meals';
-import { queryKeys } from '@/lib/queries/query-keys';
 
 export interface LogMealInput {
   entry: MealEntry;
@@ -32,14 +32,12 @@ export function useLogMeal(uid: string | undefined) {
       await createMeal(entryWithPhoto);
       return entryWithPhoto;
     },
-    onSuccess: () => {
+    onSuccess: (entry) => {
       if (!uid) {
         return;
       }
-      const dayKey = localDayKey(new Date());
-      void queryClient.invalidateQueries({
-        queryKey: queryKeys.todaysMeals(uid, dayKey),
-      });
+      const dayKey = localDayKey(entry.timestamp);
+      invalidateMealQueries(queryClient, uid, dayKey);
     },
   });
 }

@@ -11,6 +11,7 @@ import {
   fiberProgressRatio,
   fiberTargetForDailyCalories,
   netCalorieSummary,
+  netCalorieDelta,
   remainingCalories,
 } from '@/lib/dashboard/calorie-progress';
 import { dashboardFormattedDate, dashboardGreeting } from '@/lib/dashboard/greeting';
@@ -21,7 +22,7 @@ import {
   shouldShowPlateauAlert,
   storeDate,
 } from '@/lib/dashboard/plateau-state';
-import { macroTargets } from '@/lib/nutrition/calculator';
+import { macroTargets, macroPercents } from '@/lib/nutrition/calculator';
 import { updateCalorieTargets } from '@/lib/repositories/profile';
 import { queryKeys } from '@/lib/queries/query-keys';
 import { useProfile } from '@/lib/queries/use-profile';
@@ -70,6 +71,20 @@ export function useDashboard(uid: string | undefined) {
   const fiberTarget = fiberTargetForDailyCalories(target);
   const fiberRatio = fiberProgressRatio(aggregation.todaysFiberG, target);
   const fiberBand = fiberProgressBand(fiberRatio);
+
+  const actualMacroPercents = macroPercents(
+    aggregation.todaysProteinG,
+    aggregation.todaysCarbsG,
+    aggregation.todaysFatG,
+  );
+  const targetMacroPercents = profile
+    ? {
+        proteinPct: Math.round(profile.macroTargetProteinPct * 100),
+        carbsPct: Math.round(profile.macroTargetCarbsPct * 100),
+        fatPct: Math.round(profile.macroTargetFatPct * 100),
+      }
+    : { proteinPct: 0, carbsPct: 0, fatPct: 0 };
+  const netDelta = netCalorieDelta(consumed, target);
 
   const chartWeighIns = weighInsQuery.data?.chartWeighIns ?? [];
   const plateauWeighIns = weighInsQuery.data?.plateauWeighIns ?? [];
@@ -158,6 +173,9 @@ export function useDashboard(uid: string | undefined) {
     fatConsumed: aggregation.todaysFatG,
     mealsByType: aggregation.mealsByType,
     netSummary: netCalorieSummary(consumed, target),
+    netCalorieDelta: netDelta,
+    actualMacroPercents,
+    targetMacroPercents,
     chartWeighIns,
     startingWeightKg: profile?.startingWeightKg ?? 0,
     showPlateauAlert,

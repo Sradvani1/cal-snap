@@ -7,11 +7,18 @@ import type { MealType } from '@/lib/models/meal-type';
 import { suggestedMealTypeForDate } from '@/lib/models/meal-type';
 import {
   editableFoodItemFromAnalysisResult,
+  editableFoodItemFromFoodItem,
   editableFoodItemToFoodItem,
   emptyManualEditableFoodItem,
   updateEditableItemWeight,
   type EditableFoodItem,
 } from '@/lib/scanner/editable-food-item';
+import {
+  assertScannerEditMode,
+  editBaselineFromState,
+  editBaselinesEqual,
+  type EditBaseline,
+} from '@/lib/scanner/edit-baseline';
 import {
   allItemsFlagged,
   hasAdjustedItems,
@@ -46,6 +53,11 @@ export function useMealScanner({ userId, onUnsavedWorkChange }: UseMealScannerOp
   const [isManualEntry, setIsManualEntry] = useState(false);
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [logError, setLogError] = useState<string | null>(null);
+  const [editingMealId, setEditingMealId] = useState<string | null>(null);
+  const [editingTimestamp, setEditingTimestamp] = useState<Date | null>(null);
+  const [existingPhotoStoragePath, setExistingPhotoStoragePath] = useState<string | undefined>();
+  const [editBaseline, setEditBaseline] = useState<EditBaseline | null>(null);
+  const [externalPreviewUrl, setExternalPreviewUrl] = useState(false);
   const originalItemWeightsRef = useRef<Map<string, number>>(new Map());
   const previewUrlRef = useRef<string | null>(null);
   const analyzeGenerationRef = useRef(createAnalyzeGenerationGuard());
@@ -55,13 +67,16 @@ export function useMealScanner({ userId, onUnsavedWorkChange }: UseMealScannerOp
   }, []);
 
   const revokePreviewUrl = useCallback(() => {
-    if (previewUrlRef.current) {
+    if (previewUrlRef.current && !externalPreviewUrl) {
       URL.revokeObjectURL(previewUrlRef.current);
-      previewUrlRef.current = null;
     }
-  }, []);
+    previewUrlRef.current = null;
+    setExternalPreviewUrl(false);
+  }, [externalPreviewUrl]);
 
   const totals = useMemo(() => sumEditableItems(editableItems), [editableItems]);
+
+  const isEditing = editingMealId !== null;
 
   const computedOverallConfidence = useMemo(() => {
     if (isManualEntry) {
@@ -91,6 +106,18 @@ export function useMealScanner({ userId, onUnsavedWorkChange }: UseMealScannerOp
   const canAnalyze = Boolean(preparedPhoto) && phase !== 'analyzing';
 
   const hasUnsavedWork = useMemo(() => {
+    if (isEditing) {
+      if (!editBaseline) {
+        return false;
+      }
+      const current = editBaselineFromState(
+        mealType,
+        textDescription,
+        totals,
+        editableItems,
+      );
+      return !editBaselinesEqual(current, editBaseline);
+    }
     switch (phase) {
       case 'analyzing':
         return true;
@@ -108,7 +135,16 @@ export function useMealScanner({ userId, onUnsavedWorkChange }: UseMealScannerOp
       default:
         return false;
     }
-  }, [phase, editableItems, preparedPhoto, textDescription]);
+  }, [
+    isEditing,
+    editBaseline,
+    mealType,
+    textDescription,
+    totals,
+    editableItems,
+    phase,
+    preparedPhoto,
+  ]);
 
   useEffect(() => {
     onUnsavedWorkChange?.(hasUnsavedWork);
@@ -289,7 +325,7 @@ export function useMealScanner({ userId, onUnsavedWorkChange }: UseMealScannerOp
   }, []);
 
   const makeMealEntry = useCallback(
-    (mealId: string): MealEntry => {
+    (mealId?: string): MealEntry => {
       const description = textDescription.trim();
       const adjusted = hasAdjustedItems(
         editableItems,
@@ -298,10 +334,11 @@ export function useMealScanner({ userId, onUnsavedWorkChange }: UseMealScannerOp
       );
 
       return {
-        id: mealId,
+        id: editingMealId ?? mealId ?? crypto.randomUUID(),
         userId,
-        timestamp: new Date(),
+        timestamp: editingTimestamp ?? new Date(),
         mealType,
+        photoStoragePath: existingPhotoStoragePath,
         textDescription: description || undefined,
         totalCalories: totals.totalCalories,
         totalProteinG: totals.totalProteinG,
@@ -318,12 +355,60 @@ export function useMealScanner({ userId, onUnsavedWorkChange }: UseMealScannerOp
       textDescription,
       editableItems,
       isManualEntry,
+      editingMealId,
+      editingTimestamp,
+      existingPhotoStoragePath,
       userId,
       mealType,
       totals,
       computedOverallConfidence,
       estimationNotes,
     ],
+  );
+
+  const makeEditMealEntry = useCallback((): MealEntry => {
+    assertScannerEditMode(isEditing);
+    return makeMealEntry();
+  }, [isEditing, makeMealEntry]);
+
+  const loadForEditing = useCallback(
+    (meal: MealEntry, photoPreviewUrl?: string | null) => {
+      invalidateAnalyze();
+      setEditingMealId(meal.id);
+      setEditingTimestamp(meal.timestamp);
+      setExistingPhotoStoragePath(meal.photoStoragePath);
+      setMealType(meal.mealType);
+      setTextDescription(meal.textDescription ?? '');
+      setEstimationNotes(meal.estimationNotes ?? null);
+      setIsManualEntry(meal.geminiConfidence === 0);
+      setScannerError(null);
+      setPreparedPhoto(null);
+
+      revokePreviewUrl();
+      if (photoPreviewUrl) {
+        previewUrlRef.current = photoPreviewUrl;
+        setExternalPreviewUrl(true);
+        setPreviewUrl(photoPreviewUrl);
+      } else {
+        setPreviewUrl(null);
+      }
+
+      const items = meal.items.map(editableFoodItemFromFoodItem);
+      const weights = new Map(items.map((item) => [item.id, item.weightG]));
+      originalItemWeightsRef.current = weights;
+      setEditableItems(items);
+
+      const itemTotals = sumEditableItems(items);
+      const baseline = editBaselineFromState(
+        meal.mealType,
+        meal.textDescription ?? '',
+        itemTotals,
+        items,
+      );
+      setEditBaseline(baseline);
+      setPhase('results');
+    },
+    [invalidateAnalyze, revokePreviewUrl],
   );
 
   const discard = useCallback(() => {
@@ -338,10 +423,18 @@ export function useMealScanner({ userId, onUnsavedWorkChange }: UseMealScannerOp
     setIsManualEntry(false);
     setEditingItemId(null);
     setLogError(null);
+    setEditingMealId(null);
+    setEditingTimestamp(null);
+    setExistingPhotoStoragePath(undefined);
+    setEditBaseline(null);
     originalItemWeightsRef.current = new Map();
     setMealType(suggestedMealTypeForDate(new Date()));
     setPhase('capture');
   }, [invalidateAnalyze, revokePreviewUrl]);
+
+  const cancelEdit = useCallback(() => {
+    discard();
+  }, [discard]);
 
   const reAnalyze = useCallback(() => {
     invalidateAnalyze();
@@ -378,6 +471,8 @@ export function useMealScanner({ userId, onUnsavedWorkChange }: UseMealScannerOp
     scannerError,
     estimationNotes,
     isManualEntry,
+    isEditing,
+    editingMealId,
     editingItemId,
     setEditingItemId,
     logError,
@@ -400,6 +495,9 @@ export function useMealScanner({ userId, onUnsavedWorkChange }: UseMealScannerOp
     updateItemWeight,
     editItem,
     makeMealEntry,
+    makeEditMealEntry,
+    loadForEditing,
+    cancelEdit,
     discard,
     reAnalyze,
     retryAnalyze,

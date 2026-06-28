@@ -1,0 +1,24 @@
+import type { MealType } from '@/lib/models/meal-type';
+
+export const MEAL_TYPE_ORDER: MealType[] = ['breakfast', 'lunch', 'dinner', 'snack'];
+
+export const MEAL_TYPE_LABELS: Record<MealType, string> = {
+  breakfast: 'Breakfast',
+  lunch: 'Lunch',
+  dinner: 'Dinner',
+  snack: 'Snack',
+};
+
+export const MEAL_TYPE_ICONS: Record<MealType, string> = {
+  breakfast: '🌅',
+  lunch: '☀️',
+  dinner: '🌙',
+  snack: '🍎',
+};
+
+export function formatMealTime(timestamp: Date): string {
+  return timestamp.toLocaleTimeString(undefined, {
+    hour: 'numeric',
+    minute: '2-digit',
+  });
+}

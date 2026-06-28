@@ -1,6 +1,8 @@
 import {
   collection,
   doc,
+  deleteDoc,
+  getDoc,
   getDocs,
   orderBy,
   query,
@@ -9,15 +11,17 @@ import {
   where,
   type Firestore,
 } from 'firebase/firestore';
-import { ref, uploadBytes } from 'firebase/storage';
+import { deleteObject, getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { getFirestoreDb, getFirebaseStorage } from '@/lib/firebase/client';
 import type { MealEntry } from '@/lib/models/meal-entry';
 import {
   mealDocToEntry,
   mealEntryToDoc,
+  mealEntryToUpdateDoc,
   type MealEntryDoc,
 } from '@/lib/models/meal-entry-doc';
 import { calendarDayRange } from '@/lib/dashboard/date-window';
+import { MealNotFoundError } from '@/lib/repositories/meal-errors';
 
 export function mealPhotoStoragePath(uid: string, mealId: string): string {
   return `users/${uid}/meals/${mealId}/photo.jpg`;
@@ -65,4 +69,70 @@ export async function fetchMealsForCalendarDay(
   return snapshot.docs.map((docSnap) =>
     docToMealEntry(docSnap.id, docSnap.data() as MealEntryDoc),
   );
+}
+
+export interface FetchedMeal {
+  entry: MealEntry;
+  createdAt: Timestamp;
+}
+
+export async function fetchMeal(
+  uid: string,
+  mealId: string,
+  db: Firestore = getFirestoreDb(),
+): Promise<FetchedMeal> {
+  const docRef = doc(db, 'users', uid, 'meals', mealId);
+  const snapshot = await getDoc(docRef);
+  if (!snapshot.exists()) {
+    throw new MealNotFoundError(mealId);
+  }
+  const data = snapshot.data() as MealEntryDoc;
+  return {
+    entry: docToMealEntry(snapshot.id, data),
+    createdAt: data.createdAt,
+  };
+}
+
+export async function updateMeal(
+  entry: MealEntry,
+  existingCreatedAt: Timestamp,
+  db: Firestore = getFirestoreDb(),
+): Promise<void> {
+  const docRef = doc(db, 'users', entry.userId, 'meals', entry.id);
+  const snapshot = await getDoc(docRef);
+  if (!snapshot.exists()) {
+    throw new MealNotFoundError(entry.id);
+  }
+  await setDoc(docRef, mealEntryToUpdateDoc(entry, existingCreatedAt));
+}
+
+export async function deleteMeal(
+  uid: string,
+  mealId: string,
+  db: Firestore = getFirestoreDb(),
+): Promise<MealEntry> {
+  const docRef = doc(db, 'users', uid, 'meals', mealId);
+  const snapshot = await getDoc(docRef);
+  if (!snapshot.exists()) {
+    throw new MealNotFoundError(mealId);
+  }
+
+  const entry = docToMealEntry(snapshot.id, snapshot.data() as MealEntryDoc);
+  await deleteDoc(docRef);
+
+  if (entry.photoStoragePath) {
+    try {
+      const storageRef = ref(getFirebaseStorage(), entry.photoStoragePath);
+      await deleteObject(storageRef);
+    } catch (error) {
+      console.warn('Failed to delete meal photo from Storage:', error);
+    }
+  }
+
+  return entry;
+}
+
+export async function getMealPhotoDownloadUrl(path: string): Promise<string> {
+  const storageRef = ref(getFirebaseStorage(), path);
+  return getDownloadURL(storageRef);
 }

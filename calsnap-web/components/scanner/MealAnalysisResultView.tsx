@@ -14,6 +14,7 @@ interface MealAnalysisResultViewProps {
   onLog: () => void;
   onReAnalyze: () => void;
   onDiscard: () => void;
+  isEditing?: boolean;
 }
 
 function MacroSummary({
@@ -42,6 +43,7 @@ export function MealAnalysisResultView({
   onLog,
   onReAnalyze,
   onDiscard,
+  isEditing = false,
 }: MealAnalysisResultViewProps) {
   const editingItem =
     scanner.editableItems.find((item) => item.id === scanner.editingItemId) ?? null;
@@ -119,23 +121,31 @@ export function MealAnalysisResultView({
           onClick={onLog}
           className="min-h-11 w-full rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
         >
-          {isLogging ? 'Logging…' : 'Log this meal'}
+          {isLogging
+            ? isEditing
+              ? 'Saving…'
+              : 'Logging…'
+            : isEditing
+              ? 'Save changes'
+              : 'Log this meal'}
         </button>
-        <button
-          type="button"
-          disabled={isLogging}
-          onClick={onReAnalyze}
-          className="min-h-11 w-full rounded-lg border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-neutral-900"
-        >
-          Re-analyze
-        </button>
+        {!isEditing && (
+          <button
+            type="button"
+            disabled={isLogging}
+            onClick={onReAnalyze}
+            className="min-h-11 w-full rounded-lg border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-neutral-900"
+          >
+            Re-analyze
+          </button>
+        )}
         <button
           type="button"
           disabled={isLogging}
           onClick={onDiscard}
           className="min-h-11 w-full rounded-lg px-4 py-2 text-sm font-medium text-red-600"
         >
-          Discard
+          {isEditing ? 'Cancel' : 'Discard'}
         </button>
       </div>
 
