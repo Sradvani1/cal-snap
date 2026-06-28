@@ -2,6 +2,8 @@
 
 CalSnap is an iOS app for simple calorie and macronutrient tracking from meal photos and optional text descriptions.
 
+**Web app:** see [`calsnap-web/README.md`](calsnap-web/README.md).
+
 ## Product goals
 - Make calorie tracking fast enough to be sustainable.
 - Use Gemini vision to estimate calories and macros from a food photo.

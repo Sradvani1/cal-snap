@@ -22,3 +22,10 @@ Package.resolved
 # Cursor (keep rules; ignore plans and other local artifacts)
 .cursor/*
 !.cursor/rules/
+
+# CalSnap Web (Next.js)
+calsnap-web/node_modules/
+calsnap-web/.next/
+calsnap-web/.env.local
+calsnap-web/.vercel
+calsnap-web/coverage/
