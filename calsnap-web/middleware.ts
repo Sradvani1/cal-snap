@@ -6,7 +6,7 @@ import {
 
 const AUTH_PATHS = ['/login', '/signup'];
 const ONBOARDING_PATH = '/onboarding';
-const APP_PATHS = ['/dashboard', '/log', '/scan', '/progress', '/settings'];
+const APP_PATHS = ['/dashboard', '/log', '/scan', '/progress', '/analytics', '/settings'];
 
 async function hasValidSession(request: NextRequest): Promise<boolean> {
   const session = request.cookies.get(SESSION_COOKIE_NAME)?.value;
@@ -59,6 +59,8 @@ export const config = {
     '/scan/:path*',
     '/progress',
     '/progress/:path*',
+    '/analytics',
+    '/analytics/:path*',
     '/settings',
     '/settings/:path*',
   ],

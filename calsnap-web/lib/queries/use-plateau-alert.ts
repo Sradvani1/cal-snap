@@ -10,6 +10,7 @@ import {
   shouldShowPlateauAlert,
   storeDate,
 } from '@/lib/dashboard/plateau-state';
+import { invalidateAnalyticsQueries } from '@/lib/queries/invalidate-analytics';
 import { updateCalorieTargets } from '@/lib/repositories/profile';
 import { queryKeys } from '@/lib/queries/query-keys';
 import { useProfile } from '@/lib/queries/use-profile';
@@ -45,6 +46,7 @@ export function usePlateauAlert(uid: string | undefined) {
       return;
     }
     await queryClient.invalidateQueries({ queryKey: queryKeys.profile(uid) });
+    invalidateAnalyticsQueries(queryClient, uid);
   }, [queryClient, uid]);
 
   const applyDietBreak = useCallback(async () => {

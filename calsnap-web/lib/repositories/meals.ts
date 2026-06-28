@@ -20,7 +20,7 @@ import {
   mealEntryToUpdateDoc,
   type MealEntryDoc,
 } from '@/lib/models/meal-entry-doc';
-import { calendarDayRange } from '@/lib/dashboard/date-window';
+import { calendarDayRange, endOfLocalDayExclusive, startOfLocalDay } from '@/lib/dashboard/date-window';
 import { MealNotFoundError } from '@/lib/repositories/meal-errors';
 
 export function mealPhotoStoragePath(uid: string, mealId: string): string {
@@ -57,6 +57,28 @@ export async function fetchMealsForCalendarDay(
   db: Firestore = getFirestoreDb(),
 ): Promise<MealEntry[]> {
   const { start, end } = calendarDayRange(day);
+  const mealsRef = collection(db, 'users', uid, 'meals');
+  const mealsQuery = query(
+    mealsRef,
+    where('timestamp', '>=', Timestamp.fromDate(start)),
+    where('timestamp', '<', Timestamp.fromDate(end)),
+    orderBy('timestamp'),
+  );
+
+  const snapshot = await getDocs(mealsQuery);
+  return snapshot.docs.map((docSnap) =>
+    docToMealEntry(docSnap.id, docSnap.data() as MealEntryDoc),
+  );
+}
+
+export async function fetchMealsInRange(
+  uid: string,
+  rangeStart: Date,
+  rangeEndInclusive: Date,
+  db: Firestore = getFirestoreDb(),
+): Promise<MealEntry[]> {
+  const start = startOfLocalDay(rangeStart);
+  const end = endOfLocalDayExclusive(rangeEndInclusive);
   const mealsRef = collection(db, 'users', uid, 'meals');
   const mealsQuery = query(
     mealsRef,

@@ -26,9 +26,14 @@ import { useProgress } from '@/lib/queries/use-progress';
 interface WeightProgressViewProps {
   uid: string;
   onLogWeighIn: () => void;
+  presentation?: 'full' | 'embedded';
 }
 
-export function WeightProgressView({ uid, onLogWeighIn }: WeightProgressViewProps) {
+export function WeightProgressView({
+  uid,
+  onLogWeighIn,
+  presentation = 'full',
+}: WeightProgressViewProps) {
   const progress = useProgress(uid);
 
   if (progress.isLoading) {
@@ -56,6 +61,7 @@ export function WeightProgressView({ uid, onLogWeighIn }: WeightProgressViewProp
   }
 
   const { profile, stats, useLbs } = progress;
+  const isEmbedded = presentation === 'embedded';
 
   return (
     <div className="flex flex-col gap-6">
@@ -69,16 +75,18 @@ export function WeightProgressView({ uid, onLogWeighIn }: WeightProgressViewProp
         />
       )}
 
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-neutral-900">Progress</h1>
-        <button
-          type="button"
-          onClick={onLogWeighIn}
-          className="min-h-11 rounded-lg bg-neutral-900 px-4 py-2 text-sm font-semibold text-white"
-        >
-          Log weigh-in
-        </button>
-      </div>
+      {!isEmbedded && (
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-neutral-900">Progress</h1>
+          <button
+            type="button"
+            onClick={onLogWeighIn}
+            className="min-h-11 rounded-lg bg-neutral-900 px-4 py-2 text-sm font-semibold text-white"
+          >
+            Log weigh-in
+          </button>
+        </div>
+      )}
 
       <WeightProgressHeader
         currentWeightKg={stats.currentWeightKg}

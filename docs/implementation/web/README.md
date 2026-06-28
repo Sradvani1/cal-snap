@@ -42,7 +42,7 @@ Business logic lives in `calsnap-web/lib/`; `app/` stays thin.
 | W04 | [PR-W04.md](./PR-W04.md) | Implemented |
 | W05 | [PR-W05.md](./PR-W05.md) | Implemented |
 | W06 | [PR-W06.md](./PR-W06.md) | Implemented |
-| W07 | PR-W07.md | Planned |
+| W07 | [PR-W07.md](./PR-W07.md) | Implemented |
 | W08 | PR-W08.md | Planned |
 | W09 | PR-W09.md | Planned |
 | W10 | PR-W10.md | Planned |

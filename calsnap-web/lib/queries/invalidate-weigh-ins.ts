@@ -1,4 +1,5 @@
 import type { QueryClient } from '@tanstack/react-query';
+import { invalidateAnalyticsQueries } from '@/lib/queries/invalidate-analytics';
 import { queryKeys } from '@/lib/queries/query-keys';
 
 export function invalidateWeighInQueries(
@@ -13,4 +14,5 @@ export function invalidateWeighInQueries(
       queryKey: queryKeys.weighIns(uid, windowKey),
     });
   }
+  invalidateAnalyticsQueries(queryClient, uid);
 }

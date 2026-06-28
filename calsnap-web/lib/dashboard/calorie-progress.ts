@@ -13,6 +13,13 @@ export function calorieProgressBand(ratio: number): CalorieProgressBand {
   return 'over';
 }
 
+export function isCalorieIntakeOnTarget(calories: number, target: number): boolean {
+  if (target <= 0) {
+    return false;
+  }
+  return calorieProgressBand(calories / target) === 'onTrack';
+}
+
 export function fiberProgressBand(ratio: number): FiberProgressBand {
   if (ratio >= 0.9) {
     return 'onTrack';

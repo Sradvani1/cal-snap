@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth/use-auth';
 import { usePlateauAlert } from '@/lib/queries/use-plateau-alert';
@@ -23,6 +24,14 @@ function ProgressContent({ uid }: { uid: string | undefined }) {
         {plateau.actionError && (
           <SessionErrorBanner message={plateau.actionError} />
         )}
+        <div className="mb-4 flex justify-end">
+          <Link
+            href="/analytics"
+            className="text-sm font-semibold text-neutral-700 hover:text-neutral-900"
+          >
+            Dietary analytics →
+          </Link>
+        </div>
         {uid ? (
           <WeightProgressView
             uid={uid}
