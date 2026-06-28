@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { BottomTabNav } from '@/components/app/BottomTabNav';
 import { SessionErrorBanner } from '@/components/auth/SessionErrorBanner';
 import { useAuth } from '@/lib/auth/use-auth';
 import { isOnboardingComplete } from '@/lib/repositories/profile';
@@ -46,13 +47,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-full bg-neutral-50">
+    <div className="min-h-full bg-neutral-50 pb-20">
       {sessionError && (
         <div className="mx-auto max-w-lg px-4 pt-4">
           <SessionErrorBanner message={sessionError} />
         </div>
       )}
-      {children}
+      <main>{children}</main>
+      <BottomTabNav />
     </div>
   );
 }

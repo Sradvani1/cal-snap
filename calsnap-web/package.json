@@ -16,6 +16,7 @@
     "emulators": "firebase emulators:start --project demo-calsnap"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.12",
     "firebase": "^12.15.0",
     "firebase-admin": "^13.6.0",
     "jose": "^6.1.0",

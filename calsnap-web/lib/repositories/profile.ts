@@ -159,3 +159,63 @@ export async function saveProfileFromDraft(
   }, db);
   return profile;
 }
+
+export interface CalorieTargetUpdate {
+  dailyCalorieTarget: number;
+  deficitKcal: number;
+}
+
+export async function updateCalorieTargets(
+  uid: string,
+  targets: CalorieTargetUpdate,
+  db: Firestore = getFirestoreDb(),
+): Promise<UserProfile> {
+  const docData = await getProfileDoc(uid, db);
+  if (!docData) {
+    throw new Error('Profile not found');
+  }
+
+  const profile = docToProfile(docData, uid);
+  const updatedProfile: UserProfile = {
+    ...profile,
+    dailyCalorieTarget: targets.dailyCalorieTarget,
+    deficitKcal: targets.deficitKcal,
+    updatedAt: new Date(),
+  };
+
+  await saveProfile(uid, updatedProfile, {
+    onboardingCompleted: docData.onboardingCompleted,
+    currentWeightKg: docData.currentWeightKg,
+    useLbsForWeight: docData.useLbsForWeight,
+    useImperialForHeight: docData.useImperialForHeight,
+  }, db);
+
+  return updatedProfile;
+}
+
+export interface ProfileWithExtras {
+  profile: UserProfile;
+  extras: {
+    useLbsForWeight: boolean;
+    useImperialForHeight: boolean;
+    currentWeightKg: number;
+  };
+}
+
+export async function getProfileWithExtras(
+  uid: string,
+  db: Firestore = getFirestoreDb(),
+): Promise<ProfileWithExtras | null> {
+  const docData = await getProfileDoc(uid, db);
+  if (!docData) {
+    return null;
+  }
+  return {
+    profile: docToProfile(docData, uid),
+    extras: {
+      useLbsForWeight: docData.useLbsForWeight,
+      useImperialForHeight: docData.useImperialForHeight,
+      currentWeightKg: docData.currentWeightKg,
+    },
+  };
+}

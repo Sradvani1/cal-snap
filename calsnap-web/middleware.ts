@@ -6,6 +6,7 @@ import {
 
 const AUTH_PATHS = ['/login', '/signup'];
 const ONBOARDING_PATH = '/onboarding';
+const APP_PATHS = ['/dashboard', '/log', '/scan', '/progress', '/settings'];
 
 async function hasValidSession(request: NextRequest): Promise<boolean> {
   const session = request.cookies.get(SESSION_COOKIE_NAME)?.value;
@@ -34,7 +35,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (pathname === ONBOARDING_PATH || pathname.startsWith('/dashboard')) {
+  if (pathname === ONBOARDING_PATH || APP_PATHS.some((path) => pathname === path || pathname.startsWith(`${path}/`))) {
     if (!sessionValid) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
@@ -45,5 +46,20 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/', '/login', '/signup', '/onboarding', '/dashboard', '/dashboard/:path*'],
+  matcher: [
+    '/',
+    '/login',
+    '/signup',
+    '/onboarding',
+    '/dashboard',
+    '/dashboard/:path*',
+    '/log',
+    '/log/:path*',
+    '/scan',
+    '/scan/:path*',
+    '/progress',
+    '/progress/:path*',
+    '/settings',
+    '/settings/:path*',
+  ],
 };

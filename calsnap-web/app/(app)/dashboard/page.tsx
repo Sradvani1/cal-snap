@@ -1,53 +1,128 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/auth/use-auth';
-import { getProfile } from '@/lib/repositories/profile';
-import type { UserProfile } from '@/lib/models/user-profile';
+import { useDashboard } from '@/lib/queries/use-dashboard';
+import { SessionErrorBanner } from '@/components/auth/SessionErrorBanner';
+import {
+  CalorieRingCard,
+  CalorieRingCardSkeleton,
+} from '@/components/dashboard/CalorieRingCard';
+import {
+  MacroBarCard,
+  MacroBarCardSkeleton,
+} from '@/components/dashboard/MacroBarCard';
+import {
+  TodaysMealsSection,
+  TodaysMealsSectionSkeleton,
+} from '@/components/dashboard/TodaysMealsSection';
+import {
+  DailySummaryFooter,
+  DailySummaryFooterSkeleton,
+} from '@/components/dashboard/DailySummaryFooter';
+import {
+  WeightTrendMiniChart,
+  WeightTrendMiniChartSkeleton,
+} from '@/components/dashboard/WeightTrendMiniChart';
+import {
+  DashboardHeader,
+  DashboardHeaderSkeleton,
+} from '@/components/dashboard/DashboardHeader';
+import { ScanFab } from '@/components/dashboard/ScanFab';
+import { PlateauAlertSheet } from '@/components/dashboard/PlateauAlertSheet';
 
-export default function DashboardPage() {
-  const { user, signOut } = useAuth();
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+function DashboardContent({ uid }: { uid: string | undefined }) {
+  const dashboard = useDashboard(uid);
 
-  useEffect(() => {
-    if (!user) {
-      return;
-    }
-    void getProfile(user.uid).then(setProfile);
-  }, [user]);
+  if (dashboard.isLoading) {
+    return (
+      <div className="mx-auto flex max-w-lg flex-col gap-6 px-4 py-8 pb-24">
+        <DashboardHeaderSkeleton />
+        <CalorieRingCardSkeleton />
+        <MacroBarCardSkeleton />
+        <TodaysMealsSectionSkeleton />
+        <DailySummaryFooterSkeleton />
+        <WeightTrendMiniChartSkeleton />
+      </div>
+    );
+  }
 
-  const greeting = profile?.name ? `Hi, ${profile.name}` : 'Hi there';
+  if (dashboard.profileLoadFailed || !dashboard.profile) {
+    return (
+      <div className="mx-auto max-w-lg px-4 py-8 pb-24">
+        <SessionErrorBanner
+          message={
+            dashboard.error instanceof Error
+              ? dashboard.error.message
+              : 'Could not load your profile.'
+          }
+        />
+      </div>
+    );
+  }
 
   return (
-    <div className="mx-auto flex min-h-full max-w-lg flex-col gap-6 px-4 py-8">
-      <header className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-neutral-900">Dashboard</h1>
-        <button
-          type="button"
-          onClick={() => void signOut()}
-          className="text-sm font-medium text-neutral-600 underline"
-        >
-          Sign out
-        </button>
-      </header>
-
-      <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
-        <p className="text-lg text-neutral-900">{greeting}</p>
-        {profile ? (
-          <p className="mt-2 text-neutral-600">
-            Your daily calorie target is{' '}
-            <span className="font-semibold text-neutral-900">
-              {profile.dailyCalorieTarget} kcal
-            </span>
-          </p>
-        ) : (
-          <p className="mt-2 text-neutral-500">Loading profile…</p>
+    <>
+      <div className="mx-auto flex max-w-lg flex-col gap-6 px-4 py-8 pb-24">
+        {dashboard.error && (
+          <SessionErrorBanner
+            message={
+              dashboard.error instanceof Error
+                ? dashboard.error.message
+                : 'Failed to load dashboard'
+            }
+          />
         )}
+
+        <DashboardHeader greeting={dashboard.greeting} date={dashboard.formattedDate} />
+
+        <CalorieRingCard
+          consumed={dashboard.consumed}
+          target={dashboard.target}
+          remaining={dashboard.remaining}
+          progress={dashboard.progress}
+          band={dashboard.band}
+        />
+
+        <MacroBarCard
+          proteinConsumed={dashboard.proteinConsumed}
+          proteinTarget={dashboard.macros.proteinG}
+          carbsConsumed={dashboard.carbsConsumed}
+          carbsTarget={dashboard.macros.carbsG}
+          fatConsumed={dashboard.fatConsumed}
+          fatTarget={dashboard.macros.fatG}
+          fiberConsumed={dashboard.fiberConsumed}
+          fiberTarget={dashboard.fiberTarget}
+          fiberBand={dashboard.fiberBand}
+        />
+
+        <TodaysMealsSection mealsByType={dashboard.mealsByType} />
+
+        <DailySummaryFooter
+          fiberConsumed={dashboard.fiberConsumed}
+          fiberTarget={dashboard.fiberTarget}
+          netSummary={dashboard.netSummary}
+        />
+
+        <WeightTrendMiniChart
+          weighIns={dashboard.chartWeighIns}
+          startingWeightKg={dashboard.startingWeightKg}
+          useLbs={dashboard.useLbsForDisplay}
+        />
       </div>
 
-      <p className="text-center text-xs text-neutral-400">
-        Full dashboard features coming in W03.
-      </p>
-    </div>
+      <ScanFab href="/scan" />
+
+      <PlateauAlertSheet
+        open={dashboard.showPlateauAlert}
+        onDietBreak={() => void dashboard.applyDietBreak()}
+        onSmallReduction={() => void dashboard.applySmallReduction()}
+        onDismiss={dashboard.dismissPlateauAlert}
+      />
+    </>
   );
+}
+
+export default function DashboardPage() {
+  const { user } = useAuth();
+  return <DashboardContent key={user?.uid ?? 'signed-out'} uid={user?.uid} />;
 }
