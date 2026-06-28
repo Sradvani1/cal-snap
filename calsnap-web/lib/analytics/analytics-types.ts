@@ -1,4 +1,5 @@
 import { daysBetween, localDayKey, startOfLocalDay } from '@/lib/dashboard/date-window';
+import { copy } from '@/lib/copy';
 import type { MacroSplit } from '@/lib/models/macro-split';
 
 export const ANALYTICS_MAX_CUSTOM_SPAN_DAYS = 365;
@@ -44,12 +45,12 @@ export const AnalyticsDateRange = {
 
   displayLabel(range: AnalyticsDateRange): string {
     if (range.kind === 'days') {
-      if (range.count === 7) return '7D';
-      if (range.count === 30) return '30D';
-      if (range.count === 90) return '90D';
+      if (range.count === 7) return copy('analytics.timeframe.7d');
+      if (range.count === 30) return copy('analytics.timeframe.30d');
+      if (range.count === 90) return copy('analytics.timeframe.90d');
       return `${range.count} days`;
     }
-    return 'Custom';
+    return copy('analytics.timeframe.custom');
   },
 };
 
@@ -148,19 +149,19 @@ export function toWeekday(date: Date): Weekday | null {
 export function weekdayShortLabel(weekday: Weekday): string {
   switch (weekday) {
     case Weekday.sunday:
-      return 'Sun';
+      return copy('common.weekdayShort.sun');
     case Weekday.monday:
-      return 'Mon';
+      return copy('common.weekdayShort.mon');
     case Weekday.tuesday:
-      return 'Tue';
+      return copy('common.weekdayShort.tue');
     case Weekday.wednesday:
-      return 'Wed';
+      return copy('common.weekdayShort.wed');
     case Weekday.thursday:
-      return 'Thu';
+      return copy('common.weekdayShort.thu');
     case Weekday.friday:
-      return 'Fri';
+      return copy('common.weekdayShort.fri');
     case Weekday.saturday:
-      return 'Sat';
+      return copy('common.weekdayShort.sat');
   }
 }
 
@@ -192,13 +193,13 @@ export function timeOfDayBucketForHour(hour: number): TimeOfDayBucket {
 export function timeOfDayDisplayLabel(bucket: TimeOfDayBucket): string {
   switch (bucket) {
     case TimeOfDayBucket.morning:
-      return 'Morning';
+      return copy('common.timeOfDay.morning');
     case TimeOfDayBucket.midday:
-      return 'Midday';
+      return copy('common.timeOfDay.midday');
     case TimeOfDayBucket.evening:
-      return 'Evening';
+      return copy('common.timeOfDay.evening');
     case TimeOfDayBucket.night:
-      return 'Night';
+      return copy('common.timeOfDay.night');
   }
 }
 

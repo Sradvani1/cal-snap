@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
 import { AppProviders } from '@/components/providers/AppProviders';
+import { copy } from '@/lib/copy';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'CalSnap',
-  description: 'Eat smart. Lose weight. No obsession.',
+  title: copy('common.brand.calsnap'),
+  description: copy('onboarding.welcome.tagline'),
 };
 
 export default function RootLayout({

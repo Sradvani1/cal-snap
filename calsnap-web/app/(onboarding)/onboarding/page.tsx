@@ -8,9 +8,12 @@ import { OnboardingDoneStep } from '@/components/onboarding/OnboardingDoneStep';
 import { ProfileSetupStep } from '@/components/onboarding/ProfileSetupStep';
 import { WelcomeStep } from '@/components/onboarding/WelcomeStep';
 import { SessionErrorBanner } from '@/components/auth/SessionErrorBanner';
+import { PrimaryButton, SecondaryButton } from '@/components/design/PrimaryButton';
 import { useAuth } from '@/lib/auth/use-auth';
 import { ONBOARDING_STEP_TITLES } from '@/lib/onboarding/onboarding-step';
 import { useOnboarding } from '@/lib/onboarding/use-onboarding';
+import { copy } from '@/lib/copy';
+import { typography } from '@/lib/design/typography';
 
 export default function OnboardingPage() {
   const { user, loading, sessionError } = useAuth();
@@ -24,7 +27,7 @@ export default function OnboardingPage() {
   if (loading || !user) {
     return (
       <div className="flex min-h-full items-center justify-center">
-        <p className="text-neutral-600">Loading…</p>
+        <p className={typography.csCaption}>{copy('common.loading')}</p>
       </div>
     );
   }
@@ -36,13 +39,13 @@ export default function OnboardingPage() {
   return (
     <div className="mx-auto flex min-h-full max-w-lg flex-col px-4 py-8">
       <div className="mb-6">
-        <div className="mb-2 flex items-center justify-between text-xs text-neutral-500">
+        <div className={`${typography.csCaption} mb-2 flex items-center justify-between text-xs`}>
           <span>{ONBOARDING_STEP_TITLES[currentStep]}</span>
           <span>{Math.round(onboarding.progress * 100)}%</span>
         </div>
-        <div className="h-2 overflow-hidden rounded-full bg-neutral-200">
+        <div className="h-2 overflow-hidden rounded-full bg-cs-muted/20">
           <div
-            className="h-full bg-neutral-900 transition-all"
+            className="h-full bg-cs-primary transition-all"
             style={{ width: `${onboarding.progress * 100}%` }}
           />
         </div>
@@ -73,33 +76,30 @@ export default function OnboardingPage() {
       </div>
 
       {onboarding.validationError && (
-        <p className="mt-4 text-sm text-red-600">{onboarding.validationError}</p>
+        <p className="mt-4 text-sm text-cs-danger">{onboarding.validationError}</p>
       )}
 
       {(showBack || showContinue) && (
         <div className="mt-8 flex gap-3">
           {showBack && (
-            <button
-              type="button"
-              onClick={onboarding.goBack}
-              className="flex-1 rounded-lg border border-neutral-300 px-4 py-2.5 text-sm font-medium text-neutral-900"
-            >
-              Back
-            </button>
+            <SecondaryButton type="button" onClick={onboarding.goBack} fullWidth className="min-h-11">
+              {copy('common.button.back')}
+            </SecondaryButton>
           )}
           {showContinue && (
-            <button
+            <PrimaryButton
               type="button"
               disabled={onboarding.saving}
               onClick={() => void onboarding.advance()}
-              className="flex-1 rounded-lg bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-50"
+              fullWidth
+              className="min-h-11"
             >
               {onboarding.saving
-                ? 'Saving…'
+                ? copy('common.button.saving')
                 : currentStep === 'caloriePreview'
-                  ? 'Save & continue'
-                  : 'Continue'}
-            </button>
+                  ? copy('common.button.saveContinue')
+                  : copy('common.button.continue')}
+            </PrimaryButton>
           )}
         </div>
       )}

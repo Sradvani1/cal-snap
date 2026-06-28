@@ -1,11 +1,22 @@
 'use client';
 
+import { PrimaryButton, SecondaryButton } from '@/components/design/PrimaryButton';
 import type { EditableFoodItem } from '@/lib/scanner/editable-food-item';
 import type { MealScannerState } from '@/lib/scanner/use-meal-scanner';
+import { copy } from '@/lib/copy';
+import { typography } from '@/lib/design/typography';
+import { cn } from '@/lib/utils/cn';
 
 interface ManualMealEntryViewProps {
   scanner: MealScannerState;
 }
+
+const MACRO_FIELDS = [
+  { field: 'proteinG' as const, labelKey: 'common.macro.protein' as const },
+  { field: 'carbsG' as const, labelKey: 'common.macro.carbs' as const },
+  { field: 'fatG' as const, labelKey: 'common.macro.fat' as const },
+  { field: 'fiberG' as const, labelKey: 'common.macro.fiber' as const },
+];
 
 function ManualItemCard({
   item,
@@ -19,34 +30,30 @@ function ManualItemCard({
   onRemove: () => void;
 }) {
   return (
-    <div className="space-y-3 rounded-xl border border-neutral-200 bg-white p-4">
+    <div className="space-y-3 rounded-xl border border-cs-border bg-cs-surface p-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium text-neutral-900">Food item</h3>
+        <h3 className={cn(typography.csBody, 'font-medium')}>{copy('scanner.manual.foodItem')}</h3>
         {canRemove && (
-          <button
-            type="button"
-            onClick={onRemove}
-            className="text-sm text-red-600"
-          >
-            Remove
+          <button type="button" onClick={onRemove} className="text-sm text-cs-danger">
+            {copy('scanner.manual.remove')}
           </button>
         )}
       </div>
 
       <label className="block">
-        <span className="mb-1 block text-xs text-neutral-500">Name</span>
+        <span className={cn(typography.csCaption, 'mb-1 block')}>{copy('common.label.name')}</span>
         <input
           type="text"
           value={item.name}
           onChange={(event) => onUpdate({ name: event.target.value })}
-          className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm"
-          placeholder="e.g. Grilled chicken"
+          className="w-full rounded-lg border border-cs-border bg-cs-surface px-3 py-2 text-sm text-cs-foreground"
+          placeholder={copy('scanner.manual.namePlaceholder')}
         />
       </label>
 
       <div className="grid grid-cols-2 gap-3">
         <label className="block">
-          <span className="mb-1 block text-xs text-neutral-500">Weight (g)</span>
+          <span className={cn(typography.csCaption, 'mb-1 block')}>{copy('scanner.manual.weight')}</span>
           <input
             type="number"
             min={0}
@@ -54,11 +61,11 @@ function ManualItemCard({
             onChange={(event) =>
               onUpdate({ weightG: Number.parseFloat(event.target.value) || 0 })
             }
-            className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm tabular-nums"
+            className="w-full rounded-lg border border-cs-border bg-cs-surface px-3 py-2 text-sm tabular-nums text-cs-foreground"
           />
         </label>
         <label className="block">
-          <span className="mb-1 block text-xs text-neutral-500">Calories</span>
+          <span className={cn(typography.csCaption, 'mb-1 block')}>{copy('scanner.manual.calories')}</span>
           <input
             type="number"
             min={0}
@@ -66,20 +73,20 @@ function ManualItemCard({
             onChange={(event) =>
               onUpdate({ calories: Number.parseInt(event.target.value, 10) || 0 })
             }
-            className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm tabular-nums"
+            className="w-full rounded-lg border border-cs-border bg-cs-surface px-3 py-2 text-sm tabular-nums text-cs-foreground"
           />
         </label>
       </div>
 
       <details>
-        <summary className="cursor-pointer text-xs font-medium text-neutral-600">
-          Optional macros
+        <summary className={cn(typography.csCaption, 'cursor-pointer font-medium')}>
+          {copy('scanner.manual.optionalMacros')}
         </summary>
         <div className="mt-3 grid grid-cols-2 gap-3">
-          {(['proteinG', 'carbsG', 'fatG', 'fiberG'] as const).map((field) => (
+          {MACRO_FIELDS.map(({ field, labelKey }) => (
             <label key={field} className="block">
-              <span className="mb-1 block text-xs text-neutral-500">
-                {field.replace('G', ' (g)').replace('protein', 'Protein').replace('carbs', 'Carbs').replace('fat', 'Fat').replace('fiber', 'Fiber')}
+              <span className={cn(typography.csCaption, 'mb-1 block')}>
+                {copy(labelKey)} ({copy('common.macro.grams')})
               </span>
               <input
                 type="number"
@@ -89,7 +96,7 @@ function ManualItemCard({
                 onChange={(event) =>
                   onUpdate({ [field]: Number.parseFloat(event.target.value) || 0 })
                 }
-                className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm tabular-nums"
+                className="w-full rounded-lg border border-cs-border bg-cs-surface px-3 py-2 text-sm tabular-nums text-cs-foreground"
               />
             </label>
           ))}
@@ -112,22 +119,24 @@ export function ManualMealEntryView({ scanner }: ManualMealEntryViewProps) {
         />
       ))}
 
-      <button
+      <SecondaryButton
         type="button"
         onClick={scanner.addManualItem}
-        className="min-h-11 w-full rounded-lg border border-dashed border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700"
+        fullWidth
+        className="min-h-11 border-dashed"
       >
-        Add item
-      </button>
+        {copy('scanner.manual.addItem')}
+      </SecondaryButton>
 
-      <button
+      <PrimaryButton
         type="button"
         disabled={!scanner.canFinishManual}
         onClick={scanner.finishManualEntry}
-        className="min-h-11 w-full rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+        fullWidth
+        className="min-h-11"
       >
-        Continue
-      </button>
+        {copy('common.button.continue')}
+      </PrimaryButton>
     </div>
   );
 }

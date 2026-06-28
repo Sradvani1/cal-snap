@@ -1,6 +1,7 @@
 'use client';
 
 import { useMutation } from '@tanstack/react-query';
+import { notSignedInError } from '@/lib/copy/errors';
 import { fetchAllMeals } from '@/lib/repositories/meals';
 import { fetchAllWeighIns } from '@/lib/repositories/weigh-ins';
 import {
@@ -13,7 +14,7 @@ export function useExportData(uid: string | undefined, displayName: string) {
   return useMutation({
     mutationFn: async (): Promise<void> => {
       if (!uid) {
-        throw new Error('Not signed in');
+        throw notSignedInError();
       }
       const [meals, weighIns] = await Promise.all([
         fetchAllMeals(uid, true),

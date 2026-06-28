@@ -11,11 +11,17 @@ import {
   kgFromDisplayWeight,
   snappedDisplayWeight,
 } from '@/lib/utilities/unit-formatters';
+import { copy } from '@/lib/copy';
+import { typography } from '@/lib/design/typography';
+import { cn } from '@/lib/utils/cn';
 
 interface GoalSetupStepProps {
   draft: ProfileDraft;
   onUpdate: (update: (draft: ProfileDraft) => void) => void;
 }
+
+const inputClassName =
+  'rounded-lg border border-cs-border bg-cs-surface px-3 py-2 text-sm text-cs-foreground';
 
 export function GoalSetupStep({ draft, onUpdate }: GoalSetupStepProps) {
   const displayGoalWeight = displayWeight(draft.goalWeightKg, draft.useLbsGoalWeight);
@@ -23,13 +29,13 @@ export function GoalSetupStep({ draft, onUpdate }: GoalSetupStepProps) {
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <h2 className="text-xl font-semibold text-neutral-900">Your goal</h2>
-        <p className="mt-1 text-sm text-neutral-600">Where do you want to be?</p>
+        <h2 className={typography.csCardTitle}>{copy('onboarding.goal.title')}</h2>
+        <p className={`${typography.csCaption} mt-1`}>{copy('onboarding.goal.subtitle')}</p>
       </div>
 
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-neutral-700">Goal weight</span>
+          <span className={typography.csMacroLabel}>{copy('onboarding.goal.weight')}</span>
           <button
             type="button"
             onClick={() =>
@@ -37,9 +43,9 @@ export function GoalSetupStep({ draft, onUpdate }: GoalSetupStepProps) {
                 d.useLbsGoalWeight = !d.useLbsGoalWeight;
               })
             }
-            className="text-xs font-medium text-neutral-600 underline"
+            className={`${typography.csCaption} font-medium underline`}
           >
-            {draft.useLbsGoalWeight ? 'Use kg' : 'Use lbs'}
+            {draft.useLbsGoalWeight ? copy('common.units.useKg') : copy('common.units.useLbs')}
           </button>
         </div>
         <input
@@ -55,12 +61,12 @@ export function GoalSetupStep({ draft, onUpdate }: GoalSetupStepProps) {
               d.goalWeightKg = kgFromDisplayWeight(snapped, d.useLbsGoalWeight);
             })
           }
-          className="rounded-lg border border-neutral-300 px-3 py-2 text-sm"
+          className={inputClassName}
         />
       </div>
 
-      <label className="flex flex-col gap-1 text-sm">
-        <span className="font-medium text-neutral-700">Target date</span>
+      <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
+        {copy('onboarding.goal.targetDate')}
         <input
           type="date"
           value={toLocalDateInputValue(draft.goalTargetDate)}
@@ -69,22 +75,23 @@ export function GoalSetupStep({ draft, onUpdate }: GoalSetupStepProps) {
               d.goalTargetDate = dateFromLocalDateInput(event.target.value);
             })
           }
-          className="rounded-lg border border-neutral-300 px-3 py-2"
+          className={inputClassName}
         />
-        <span className="text-xs text-neutral-500">At least 2 weeks from today</span>
+        <span className={typography.csCaption}>{copy('onboarding.goal.minWeeksHint')}</span>
       </label>
 
       <fieldset className="flex flex-col gap-2">
-        <legend className="text-sm font-medium text-neutral-700">Activity level</legend>
+        <legend className={typography.csMacroLabel}>{copy('common.label.activityLevel')}</legend>
         <div className="flex flex-col gap-2">
           {ACTIVITY_LEVEL_OPTIONS.map((option) => (
             <label
               key={option.value}
-              className={`flex cursor-pointer flex-col rounded-lg border px-3 py-2 text-sm ${
+              className={cn(
+                'flex cursor-pointer flex-col rounded-lg border px-3 py-2 text-sm',
                 draft.activityLevel === option.value
-                  ? 'border-neutral-900 bg-neutral-50'
-                  : 'border-neutral-200'
-              }`}
+                  ? 'border-cs-primary bg-cs-primary/10'
+                  : 'border-cs-border',
+              )}
             >
               <span className="flex items-center gap-2 font-medium">
                 <input
@@ -99,7 +106,7 @@ export function GoalSetupStep({ draft, onUpdate }: GoalSetupStepProps) {
                 />
                 {option.label}
               </span>
-              <span className="ml-6 text-neutral-500">{option.description}</span>
+              <span className={cn(typography.csCaption, 'ml-6')}>{option.description}</span>
             </label>
           ))}
         </div>

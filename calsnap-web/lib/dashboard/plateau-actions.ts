@@ -1,3 +1,4 @@
+import { copy } from '@/lib/copy';
 import {
   applyDietBreakTargets,
   maintenanceModeEndDate,
@@ -27,7 +28,7 @@ export async function executePlateauDietBreak(
   } catch (err) {
     return {
       ok: false,
-      error: err instanceof Error ? err.message : 'Failed to save profile',
+      error: err instanceof Error ? err.message : copy('dashboard.plateau.error.saveFailed'),
     };
   }
 }

@@ -1,7 +1,11 @@
 'use client';
 
 import { useRef } from 'react';
+import { PrimaryButton, SecondaryButton } from '@/components/design/PrimaryButton';
 import type { MealScannerState } from '@/lib/scanner/use-meal-scanner';
+import { copy } from '@/lib/copy';
+import { typography } from '@/lib/design/typography';
+import { cn } from '@/lib/utils/cn';
 
 interface MealScannerCaptureViewProps {
   scanner: MealScannerState;
@@ -40,66 +44,68 @@ export function MealScannerCaptureView({ scanner }: MealScannerCaptureViewProps)
       />
 
       {scanner.previewUrl ? (
-        <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
+        <div className="overflow-hidden rounded-xl border border-cs-border bg-cs-surface">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={scanner.previewUrl}
-            alt="Selected meal"
+            alt={copy('scanner.capture.photoAlt')}
             className="aspect-[4/3] w-full object-cover"
           />
         </div>
       ) : (
-        <div className="flex aspect-[4/3] flex-col items-center justify-center rounded-xl border-2 border-dashed border-neutral-300 bg-white p-6 text-center">
-          <p className="text-sm text-neutral-600">Take a photo or choose from gallery</p>
+        <div className="flex aspect-[4/3] flex-col items-center justify-center rounded-xl border-2 border-dashed border-cs-border bg-cs-surface p-6 text-center">
+          <p className={typography.csCaption}>{copy('scanner.capture.prompt')}</p>
         </div>
       )}
 
       <div className="flex flex-wrap gap-2">
-        <button
+        <SecondaryButton
           type="button"
           onClick={() => cameraInputRef.current?.click()}
-          className="min-h-11 flex-1 rounded-lg border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-neutral-900"
+          className="min-h-11 flex-1"
         >
-          Camera
-        </button>
-        <button
+          {copy('scanner.capture.camera')}
+        </SecondaryButton>
+        <SecondaryButton
           type="button"
           onClick={() => galleryInputRef.current?.click()}
-          className="min-h-11 flex-1 rounded-lg border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-neutral-900"
+          className="min-h-11 flex-1"
         >
-          Gallery
-        </button>
+          {copy('scanner.capture.gallery')}
+        </SecondaryButton>
       </div>
 
       <label className="block">
-        <span className="mb-1 block text-sm font-medium text-neutral-700">
-          Description (optional)
+        <span className={cn(typography.csBody, 'mb-1 block font-medium')}>
+          {copy('scanner.capture.description')}
         </span>
         <textarea
           value={scanner.textDescription}
           onChange={(event) => scanner.setTextDescription(event.target.value)}
           rows={3}
-          placeholder="e.g. homemade pasta with olive oil"
-          className="w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-900"
+          placeholder={copy('scanner.capture.descriptionPlaceholder')}
+          className="w-full rounded-lg border border-cs-border bg-cs-surface px-3 py-2 text-sm text-cs-foreground"
         />
       </label>
 
       <div className="flex flex-col gap-2">
-        <button
+        <PrimaryButton
           type="button"
           disabled={!scanner.canAnalyze}
           onClick={() => void scanner.analyze()}
-          className="min-h-11 w-full rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+          fullWidth
+          className="min-h-11"
         >
-          Analyze
-        </button>
-        <button
+          {copy('scanner.capture.analyze')}
+        </PrimaryButton>
+        <SecondaryButton
           type="button"
           onClick={scanner.enterManualEntry}
-          className="min-h-11 w-full rounded-lg border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-neutral-900"
+          fullWidth
+          className="min-h-11"
         >
-          Enter manually
-        </button>
+          {copy('scanner.capture.manualEntry')}
+        </SecondaryButton>
       </div>
     </div>
   );

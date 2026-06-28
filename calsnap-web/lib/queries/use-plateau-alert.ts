@@ -2,6 +2,7 @@
 
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
+import { copy } from '@/lib/copy';
 import { executePlateauDietBreak } from '@/lib/dashboard/plateau-actions';
 import {
   applySmallReductionTargets,
@@ -77,7 +78,7 @@ export function usePlateauAlert(uid: string | undefined) {
       setPlateauDismissed(true);
       await invalidateProfile();
     } catch (err) {
-      setActionError(err instanceof Error ? err.message : 'Failed to save profile');
+      setActionError(err instanceof Error ? err.message : copy('dashboard.plateau.error.saveFailed'));
     }
   }, [uid, profile, invalidateProfile]);
 

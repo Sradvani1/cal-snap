@@ -1,21 +1,23 @@
+import { copy } from '@/lib/copy';
+
 export function dashboardGreeting(name: string | undefined, now: Date = new Date()): string {
   if (!name?.trim()) {
-    return 'Today';
+    return copy('dashboard.greeting.today');
   }
 
   const hour = now.getHours();
-  let prefix: string;
-  if (hour >= 5 && hour < 12) {
-    prefix = 'Good morning';
-  } else if (hour >= 12 && hour < 17) {
-    prefix = 'Good afternoon';
-  } else if (hour >= 17 && hour < 22) {
-    prefix = 'Good evening';
-  } else {
-    prefix = 'Hello';
-  }
+  const trimmed = name.trim();
 
-  return `${prefix}, ${name.trim()}`;
+  if (hour >= 5 && hour < 12) {
+    return copy('dashboard.greeting.morning', { name: trimmed });
+  }
+  if (hour >= 12 && hour < 17) {
+    return copy('dashboard.greeting.afternoon', { name: trimmed });
+  }
+  if (hour >= 17 && hour < 22) {
+    return copy('dashboard.greeting.evening', { name: trimmed });
+  }
+  return copy('dashboard.greeting.hello', { name: trimmed });
 }
 
 export function dashboardFormattedDate(now: Date = new Date()): string {

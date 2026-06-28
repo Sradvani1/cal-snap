@@ -1,4 +1,5 @@
 import { AppConstants } from '@/lib/constants';
+import { copy } from '@/lib/copy';
 import { activityMultiplier, type ActivityLevel } from '@/lib/models/activity-level';
 import type { BiologicalSex } from '@/lib/models/biological-sex';
 import type { MacroSplit } from '@/lib/models/macro-split';
@@ -29,12 +30,16 @@ export function dailyTarget(
   if (deficit > AppConstants.Deficit.hardMaxDeficitKcal) {
     deficit = AppConstants.Deficit.hardMaxDeficitKcal;
     warnings.push(
-      `Deficit capped at ${AppConstants.Deficit.hardMaxDeficitKcal} kcal/day for safety.`,
+      copy('onboarding.warning.deficitCapped', {
+        max: AppConstants.Deficit.hardMaxDeficitKcal,
+      }),
     );
   }
   if (deficit > AppConstants.Deficit.maxDeficitKcal) {
     warnings.push(
-      `Deficits above ${AppConstants.Deficit.maxDeficitKcal} kcal/day can trigger metabolic adaptation. Recommend 350 kcal/day.`,
+      copy('onboarding.warning.highDeficit', {
+        max: AppConstants.Deficit.maxDeficitKcal,
+      }),
     );
   }
 
@@ -46,7 +51,9 @@ export function dailyTarget(
   const target = Math.max(rawTarget, minimum);
 
   if (rawTarget < minimum) {
-    warnings.push(`Target floored to ${minimum} kcal/day minimum for safety.`);
+    warnings.push(
+      copy('onboarding.warning.targetFloored', { minimum }),
+    );
   }
 
   return { target, deficit, warnings };

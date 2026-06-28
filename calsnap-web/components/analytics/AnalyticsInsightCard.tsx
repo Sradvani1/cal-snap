@@ -1,6 +1,9 @@
 'use client';
 
-import { AnalyticsSectionCard } from '@/components/analytics/AnalyticsSectionCard';
+import { PrimaryButton } from '@/components/design/PrimaryButton';
+import { SectionCard } from '@/components/design/SectionCard';
+import { copy } from '@/lib/copy';
+import { typography } from '@/lib/design/typography';
 
 interface AnalyticsInsightCardProps {
   hasEnoughData: boolean;
@@ -18,36 +21,36 @@ export function AnalyticsInsightCard({
   onGenerate,
 }: AnalyticsInsightCardProps) {
   return (
-    <AnalyticsSectionCard title="AI insight">
-      <p className="mb-4 text-sm text-neutral-600">
-        Get a short coaching summary based on your aggregated stats — no meal photos sent.
+    <SectionCard title={copy('analytics.section.aiInsight')}>
+      <p className={`${typography.csCaption} mb-4`}>
+        {copy('analytics.insight.description')}
       </p>
 
-      <button
+      <PrimaryButton
         type="button"
         onClick={onGenerate}
         disabled={!hasEnoughData || isGenerating}
-        className="min-h-11 rounded-lg bg-neutral-900 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
+        className="min-h-11 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {isGenerating ? 'Generating…' : 'Generate insight'}
-      </button>
+        {isGenerating ? copy('analytics.insight.generating') : copy('analytics.insight.generate')}
+      </PrimaryButton>
 
       {isGenerating && (
-        <div className="mt-4 flex items-center gap-2 text-sm text-neutral-600">
-          <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-neutral-300 border-t-neutral-900" />
-          Analyzing your trends…
+        <div className={`${typography.csCaption} mt-4 flex items-center gap-2`}>
+          <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-cs-border border-t-cs-foreground" />
+          {copy('analytics.insight.analyzing')}
         </div>
       )}
 
       {insightError && (
-        <p className="mt-4 text-sm text-red-600" role="alert">
+        <p className="mt-4 text-sm text-cs-danger" role="alert">
           {insightError}
         </p>
       )}
 
       {insightText && !isGenerating && (
-        <p className="mt-4 text-sm leading-relaxed text-neutral-800">{insightText}</p>
+        <p className={`${typography.csBody} mt-4 leading-relaxed`}>{insightText}</p>
       )}
-    </AnalyticsSectionCard>
+    </SectionCard>
   );
 }

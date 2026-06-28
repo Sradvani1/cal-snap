@@ -1,22 +1,30 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { ConfirmAlertDialog } from '@/components/design/ConfirmAlertDialog';
 import { MealAnalysisResultView } from '@/components/scanner/MealAnalysisResultView';
 import { MealScannerAnalyzingView } from '@/components/scanner/MealScannerAnalyzingView';
 import { MealScannerCaptureView } from '@/components/scanner/MealScannerCaptureView';
 import { ManualMealEntryView } from '@/components/scanner/ManualMealEntryView';
 import { ScannerErrorBanner } from '@/components/scanner/ScannerErrorBanner';
 import { useAuth } from '@/lib/auth/use-auth';
+import { copy } from '@/lib/copy';
+import { typography } from '@/lib/design/typography';
 import { useLogMeal } from '@/lib/queries/use-log-meal';
 import { useUnsavedWork } from '@/lib/scanner/unsaved-work-context';
 import { useMealScanner } from '@/lib/scanner/use-meal-scanner';
+
+type DiscardPrompt = 'navigation' | 'discard' | null;
 
 export default function ScanPage() {
   const { user } = useAuth();
   const router = useRouter();
   const { setHasUnsavedWork, registerNavigationHandler } = useUnsavedWork();
   const logMealMutation = useLogMeal(user?.uid);
+  const [discardDialogOpen, setDiscardDialogOpen] = useState(false);
+  const [discardPrompt, setDiscardPrompt] = useState<DiscardPrompt>(null);
+  const [pendingHref, setPendingHref] = useState<string | null>(null);
 
   const scanner = useMealScanner({
     userId: user?.uid ?? '',
@@ -25,21 +33,33 @@ export default function ScanPage() {
 
   const { discard } = scanner;
 
-  useEffect(() => {
-    registerNavigationHandler(() => {
-      const confirmed = window.confirm(
-        'Discard unsaved meal scan? Your progress will be lost.',
-      );
-      if (confirmed) {
-        discard();
-      }
-      return confirmed;
+  const openDiscardDialog = (prompt: DiscardPrompt, href?: string) => {
+    setDiscardPrompt(prompt);
+    setPendingHref(href ?? null);
+    setDiscardDialogOpen(true);
+  };
+
+  const handleConfirmDiscard = () => {
+    discard();
+    setHasUnsavedWork(false);
+    setDiscardDialogOpen(false);
+    if (discardPrompt === 'navigation' && pendingHref) {
+      router.push(pendingHref);
+    }
+    setDiscardPrompt(null);
+    setPendingHref(null);
+  };
+
+  useLayoutEffect(() => {
+    registerNavigationHandler((href) => {
+      openDiscardDialog('navigation', href);
+      return false;
     });
     return () => {
       setHasUnsavedWork(false);
       registerNavigationHandler(null);
     };
-  }, [registerNavigationHandler, discard, setHasUnsavedWork]);
+  }, [registerNavigationHandler, setHasUnsavedWork]);
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -54,12 +74,8 @@ export default function ScanPage() {
 
   const handleDiscard = () => {
     if (scanner.hasUnsavedWork) {
-      const confirmed = window.confirm(
-        'Discard unsaved meal scan? Your progress will be lost.',
-      );
-      if (!confirmed) {
-        return;
-      }
+      openDiscardDialog('discard');
+      return;
     }
     scanner.discard();
   };
@@ -82,7 +98,7 @@ export default function ScanPage() {
       router.push('/dashboard');
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : 'Failed to log meal. Try again.';
+        error instanceof Error ? error.message : copy('scanner.error.logFailed');
       scanner.setLogError(message);
     }
   };
@@ -90,14 +106,14 @@ export default function ScanPage() {
   return (
     <div className="mx-auto max-w-lg px-4 py-6">
       <header className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-neutral-900">Scan meal</h1>
+        <h1 className={`${typography.csCardTitle} text-2xl`}>{copy('scanner.title')}</h1>
         {scanner.hasUnsavedWork && scanner.phase !== 'analyzing' && (
           <button
             type="button"
             onClick={handleDiscard}
-            className="text-sm font-medium text-red-600"
+            className="text-sm font-medium text-cs-danger"
           >
-            Discard
+            {copy('scanner.discard')}
           </button>
         )}
       </header>
@@ -128,11 +144,11 @@ export default function ScanPage() {
             onManualEntry={scanner.enterManualEntry}
           />
           {scanner.previewUrl && (
-            <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
+            <div className="overflow-hidden rounded-xl border border-cs-border bg-cs-surface">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={scanner.previewUrl}
-                alt="Selected meal"
+                alt={copy('scanner.capture.photoAlt')}
                 className="aspect-[4/3] w-full object-cover opacity-60"
               />
             </div>
@@ -149,6 +165,16 @@ export default function ScanPage() {
           onDiscard={handleDiscard}
         />
       )}
+
+      <ConfirmAlertDialog
+        open={discardDialogOpen}
+        onOpenChange={setDiscardDialogOpen}
+        title={copy('scanner.confirm.discardTitle')}
+        description={copy('scanner.confirm.discardScan')}
+        confirmLabel={copy('scanner.discard')}
+        destructive
+        onConfirm={handleConfirmDiscard}
+      />
     </div>
   );
 }

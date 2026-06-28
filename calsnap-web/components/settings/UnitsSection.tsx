@@ -1,6 +1,8 @@
 'use client';
 
-import { SettingsSectionCard } from '@/components/settings/SettingsSectionCard';
+import { SectionCard } from '@/components/design/SectionCard';
+import { copy } from '@/lib/copy';
+import { typography } from '@/lib/design/typography';
 
 interface UnitsSectionProps {
   useLbsForWeight: boolean;
@@ -16,10 +18,10 @@ export function UnitsSection({
   onUseImperialHeightChange,
 }: UnitsSectionProps) {
   return (
-    <SettingsSectionCard title="Units">
+    <SectionCard title={copy('settings.section.units')}>
       <div className="flex flex-col gap-3">
-        <label className="flex items-center justify-between text-sm">
-          <span className="font-medium text-neutral-700">Weight in pounds</span>
+        <label className={`${typography.csMacroLabel} flex items-center justify-between`}>
+          {copy('settings.units.weightLbs')}
           <input
             type="checkbox"
             checked={useLbsForWeight}
@@ -27,8 +29,8 @@ export function UnitsSection({
             className="h-4 w-4"
           />
         </label>
-        <label className="flex items-center justify-between text-sm">
-          <span className="font-medium text-neutral-700">Height in feet and inches</span>
+        <label className={`${typography.csMacroLabel} flex items-center justify-between`}>
+          {copy('settings.units.heightImperial')}
           <input
             type="checkbox"
             checked={useImperialForHeight}
@@ -37,6 +39,6 @@ export function UnitsSection({
           />
         </label>
       </div>
-    </SettingsSectionCard>
+    </SectionCard>
   );
 }

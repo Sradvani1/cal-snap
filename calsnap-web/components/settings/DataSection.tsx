@@ -1,6 +1,8 @@
 'use client';
 
-import { SettingsSectionCard } from '@/components/settings/SettingsSectionCard';
+import { SecondaryButton } from '@/components/design/PrimaryButton';
+import { SectionCard } from '@/components/design/SectionCard';
+import { copy } from '@/lib/copy';
 
 interface DataSectionProps {
   onExport: () => void;
@@ -10,24 +12,25 @@ interface DataSectionProps {
 
 export function DataSection({ onExport, onDelete, isExporting }: DataSectionProps) {
   return (
-    <SettingsSectionCard title="Your data">
+    <SectionCard title={copy('settings.section.yourData')}>
       <div className="flex flex-col gap-3">
-        <button
+        <SecondaryButton
           type="button"
           onClick={onExport}
           disabled={isExporting}
-          className="rounded-lg border border-neutral-300 bg-white px-4 py-3 text-sm font-medium text-neutral-700 hover:bg-neutral-50 disabled:opacity-50"
+          fullWidth
+          className="min-h-11 disabled:opacity-50"
         >
-          {isExporting ? 'Exporting…' : 'Export data (CSV)'}
-        </button>
+          {isExporting ? copy('settings.data.exporting') : copy('settings.data.export')}
+        </SecondaryButton>
         <button
           type="button"
           onClick={onDelete}
-          className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700 hover:bg-red-100"
+          className="min-h-11 rounded-lg border border-cs-danger/30 bg-cs-danger/10 px-4 py-3 text-sm font-medium text-cs-danger hover:bg-cs-danger/15"
         >
-          Delete all my data
+          {copy('settings.data.deleteAll')}
         </button>
       </div>
-    </SettingsSectionCard>
+    </SectionCard>
   );
 }

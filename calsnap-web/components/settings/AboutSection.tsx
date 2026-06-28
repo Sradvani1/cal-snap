@@ -1,40 +1,38 @@
 'use client';
 
 import packageJson from '@/package.json';
-import { SettingsSectionCard } from '@/components/settings/SettingsSectionCard';
+import { SectionCard } from '@/components/design/SectionCard';
+import { copy } from '@/lib/copy';
+import { typography } from '@/lib/design/typography';
 
 export function AboutSection() {
   return (
-    <SettingsSectionCard title="About">
-      <div className="flex flex-col gap-3 text-sm text-neutral-600">
+    <SectionCard title={copy('settings.section.about')}>
+      <div className={`${typography.csCaption} flex flex-col gap-3`}>
+        <p>{copy('settings.about.version', { version: packageJson.version })}</p>
         <p>
-          CalSnap version <span className="font-medium text-neutral-900">{packageJson.version}</span>
-        </p>
-        <p>
-          Calorie targets use formulas aligned with the{' '}
+          {copy('settings.about.nih')}{' '}
           <a
             href="https://www.niddk.nih.gov/bwp"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-medium text-neutral-900 underline"
+            className="font-medium text-cs-foreground underline"
           >
-            NIH Body Weight Planner
+            niddk.nih.gov/bwp
           </a>
-          .
         </p>
         <p>
-          Macro guidance follows the{' '}
+          {copy('settings.about.dga')}{' '}
           <a
             href="https://www.dietaryguidelines.gov"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-medium text-neutral-900 underline"
+            className="font-medium text-cs-foreground underline"
           >
-            Dietary Guidelines for Americans
+            dietaryguidelines.gov
           </a>
-          .
         </p>
       </div>
-    </SettingsSectionCard>
+    </SectionCard>
   );
 }

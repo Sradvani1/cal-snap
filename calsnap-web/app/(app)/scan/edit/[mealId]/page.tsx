@@ -1,16 +1,21 @@
 'use client';
 
 import Link from 'next/link';
-import { use, useEffect, useRef } from 'react';
+import { use, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { ConfirmAlertDialog } from '@/components/design/ConfirmAlertDialog';
 import { MealAnalysisResultView } from '@/components/scanner/MealAnalysisResultView';
 import { useAuth } from '@/lib/auth/use-auth';
+import { copy } from '@/lib/copy';
+import { typography } from '@/lib/design/typography';
 import { useMeal } from '@/lib/queries/use-meal';
 import { useUpdateMeal } from '@/lib/queries/use-update-meal';
 import { getMealPhotoDownloadUrl } from '@/lib/repositories/meals';
 import { MealNotFoundError } from '@/lib/repositories/meal-errors';
 import { useUnsavedWork } from '@/lib/scanner/unsaved-work-context';
 import { useMealScanner } from '@/lib/scanner/use-meal-scanner';
+
+type DiscardPrompt = 'navigation' | 'discard' | null;
 
 interface ScanEditPageProps {
   params: Promise<{ mealId: string }>;
@@ -23,6 +28,9 @@ export default function ScanEditPage({ params }: ScanEditPageProps) {
   const { setHasUnsavedWork, registerNavigationHandler } = useUnsavedWork();
   const updateMealMutation = useUpdateMeal(user?.uid);
   const loadedMealIdRef = useRef<string | null>(null);
+  const [discardDialogOpen, setDiscardDialogOpen] = useState(false);
+  const [discardPrompt, setDiscardPrompt] = useState<DiscardPrompt>(null);
+  const [pendingHref, setPendingHref] = useState<string | null>(null);
 
   const mealQuery = useMeal(user?.uid, mealId, { fresh: true });
 
@@ -32,6 +40,25 @@ export default function ScanEditPage({ params }: ScanEditPageProps) {
   });
 
   const { discard, loadForEditing } = scanner;
+
+  const openDiscardDialog = (prompt: DiscardPrompt, href?: string) => {
+    setDiscardPrompt(prompt);
+    setPendingHref(href ?? null);
+    setDiscardDialogOpen(true);
+  };
+
+  const handleConfirmDiscard = () => {
+    discard();
+    setHasUnsavedWork(false);
+    setDiscardDialogOpen(false);
+    if (discardPrompt === 'navigation' && pendingHref) {
+      router.push(pendingHref);
+    } else if (discardPrompt === 'discard') {
+      router.push(`/log/${mealId}`);
+    }
+    setDiscardPrompt(null);
+    setPendingHref(null);
+  };
 
   useEffect(() => {
     loadedMealIdRef.current = null;
@@ -71,20 +98,15 @@ export default function ScanEditPage({ params }: ScanEditPageProps) {
   }, [mealQuery.data, loadForEditing]);
 
   useEffect(() => {
-    registerNavigationHandler(() => {
-      const confirmed = window.confirm(
-        'Discard unsaved edits? Your changes will be lost.',
-      );
-      if (confirmed) {
-        discard();
-      }
-      return confirmed;
+    registerNavigationHandler((href) => {
+      openDiscardDialog('navigation', href);
+      return false;
     });
     return () => {
       setHasUnsavedWork(false);
       registerNavigationHandler(null);
     };
-  }, [registerNavigationHandler, discard, setHasUnsavedWork]);
+  }, [registerNavigationHandler, setHasUnsavedWork]);
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -99,14 +121,9 @@ export default function ScanEditPage({ params }: ScanEditPageProps) {
 
   const handleDiscard = () => {
     if (scanner.hasUnsavedWork) {
-      const confirmed = window.confirm(
-        'Discard unsaved edits? Your changes will be lost.',
-      );
-      if (!confirmed) {
-        return;
-      }
+      openDiscardDialog('discard');
+      return;
     }
-    scanner.discard();
     router.push(`/log/${mealId}`);
   };
 
@@ -129,7 +146,7 @@ export default function ScanEditPage({ params }: ScanEditPageProps) {
       router.push(`/log/${mealId}`);
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : 'Failed to save meal. Try again.';
+        error instanceof Error ? error.message : copy('scanner.error.saveFailed');
       scanner.setLogError(message);
     }
   };
@@ -137,10 +154,10 @@ export default function ScanEditPage({ params }: ScanEditPageProps) {
   if (mealQuery.isLoading) {
     return (
       <div className="mx-auto max-w-lg px-4 py-6">
-        <div className="mb-6 h-8 w-32 animate-pulse rounded bg-neutral-100" />
+        <div className="mb-6 h-8 w-32 animate-pulse rounded bg-cs-muted/20" />
         <div className="space-y-4">
-          <div className="aspect-[4/3] animate-pulse rounded-xl bg-neutral-100" />
-          <div className="h-24 animate-pulse rounded-xl bg-neutral-100" />
+          <div className="aspect-[4/3] animate-pulse rounded-xl bg-cs-muted/20" />
+          <div className="h-24 animate-pulse rounded-xl bg-cs-muted/20" />
         </div>
       </div>
     );
@@ -150,12 +167,12 @@ export default function ScanEditPage({ params }: ScanEditPageProps) {
     const notFound = mealQuery.error instanceof MealNotFoundError;
     return (
       <div className="mx-auto max-w-lg px-4 py-6">
-        <h1 className="mb-4 text-2xl font-bold text-neutral-900">Edit meal</h1>
-        <p className="mb-4 text-sm text-neutral-600">
-          {notFound ? 'Meal not found.' : 'Could not load meal.'}
+        <h1 className={`${typography.csCardTitle} mb-4 text-2xl`}>{copy('scanner.edit.title')}</h1>
+        <p className={`${typography.csCaption} mb-4`}>
+          {notFound ? copy('scanner.error.mealNotFound') : copy('scanner.error.mealLoadFailed')}
         </p>
-        <Link href="/log" className="text-sm font-medium text-neutral-900 underline">
-          Back to log
+        <Link href="/log" className={`${typography.csBody} font-medium underline`}>
+          {copy('scanner.error.backToLog')}
         </Link>
       </div>
     );
@@ -164,8 +181,8 @@ export default function ScanEditPage({ params }: ScanEditPageProps) {
   if (scanner.phase !== 'results') {
     return (
       <div className="mx-auto max-w-lg px-4 py-6">
-        <div className="mb-6 h-8 w-32 animate-pulse rounded bg-neutral-100" />
-        <div className="h-24 animate-pulse rounded-xl bg-neutral-100" />
+        <div className="mb-6 h-8 w-32 animate-pulse rounded bg-cs-muted/20" />
+        <div className="h-24 animate-pulse rounded-xl bg-cs-muted/20" />
       </div>
     );
   }
@@ -173,14 +190,14 @@ export default function ScanEditPage({ params }: ScanEditPageProps) {
   return (
     <div className="mx-auto max-w-lg px-4 py-6">
       <header className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-neutral-900">Edit meal</h1>
+        <h1 className={`${typography.csCardTitle} text-2xl`}>{copy('scanner.edit.title')}</h1>
         {scanner.hasUnsavedWork && (
           <button
             type="button"
             onClick={handleDiscard}
-            className="text-sm font-medium text-red-600"
+            className="text-sm font-medium text-cs-danger"
           >
-            Cancel
+            {copy('common.button.cancel')}
           </button>
         )}
       </header>
@@ -192,6 +209,16 @@ export default function ScanEditPage({ params }: ScanEditPageProps) {
         onReAnalyze={() => {}}
         onDiscard={handleDiscard}
         isEditing
+      />
+
+      <ConfirmAlertDialog
+        open={discardDialogOpen}
+        onOpenChange={setDiscardDialogOpen}
+        title={copy('scanner.confirm.discardTitle')}
+        description={copy('scanner.confirm.discardEdits')}
+        confirmLabel={copy('scanner.discard')}
+        destructive
+        onConfirm={handleConfirmDiscard}
       />
     </div>
   );

@@ -9,6 +9,8 @@ import { SessionErrorBanner } from '@/components/auth/SessionErrorBanner';
 import { PlateauAlertSheet } from '@/components/dashboard/PlateauAlertSheet';
 import { WeighInSheet } from '@/components/progress/WeighInSheet';
 import { WeightProgressView } from '@/components/progress/WeightProgressView';
+import { copy } from '@/lib/copy';
+import { typography } from '@/lib/design/typography';
 
 function ProgressContent({ uid }: { uid: string | undefined }) {
   const plateau = usePlateauAlert(uid);
@@ -21,15 +23,13 @@ function ProgressContent({ uid }: { uid: string | undefined }) {
   return (
     <>
       <div className="mx-auto max-w-lg px-4 py-8 pb-24">
-        {plateau.actionError && (
-          <SessionErrorBanner message={plateau.actionError} />
-        )}
+        {plateau.actionError && <SessionErrorBanner message={plateau.actionError} />}
         <div className="mb-4 flex justify-end">
           <Link
             href="/analytics"
-            className="text-sm font-semibold text-neutral-700 hover:text-neutral-900"
+            className={`${typography.csMacroLabel} text-cs-secondary hover:underline`}
           >
-            Dietary analytics →
+            {copy('progress.link.analytics')}
           </Link>
         </div>
         {uid ? (

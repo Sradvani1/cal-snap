@@ -1,6 +1,7 @@
 'use client';
 
 import { SessionErrorBanner } from '@/components/auth/SessionErrorBanner';
+import { PrimaryButton } from '@/components/design/PrimaryButton';
 import {
   WeightProgressBar,
   WeightProgressBarSkeleton,
@@ -21,6 +22,8 @@ import {
   WeighInHistoryList,
   WeighInHistoryListSkeleton,
 } from '@/components/progress/WeighInHistoryList';
+import { copy } from '@/lib/copy';
+import { typography } from '@/lib/design/typography';
 import { useProgress } from '@/lib/queries/use-progress';
 
 interface WeightProgressViewProps {
@@ -54,7 +57,7 @@ export function WeightProgressView({
         message={
           progress.error instanceof Error
             ? progress.error.message
-            : 'Could not load your progress.'
+            : copy('progress.error.loadFailed')
         }
       />
     );
@@ -70,21 +73,17 @@ export function WeightProgressView({
           message={
             progress.error instanceof Error
               ? progress.error.message
-              : 'Failed to load progress'
+              : copy('progress.error.partialLoad')
           }
         />
       )}
 
       {!isEmbedded && (
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-neutral-900">Progress</h1>
-          <button
-            type="button"
-            onClick={onLogWeighIn}
-            className="min-h-11 rounded-lg bg-neutral-900 px-4 py-2 text-sm font-semibold text-white"
-          >
-            Log weigh-in
-          </button>
+          <h1 className={typography.csCardTitle}>{copy('progress.title')}</h1>
+          <PrimaryButton type="button" onClick={onLogWeighIn} className="min-h-11">
+            {copy('progress.logWeighIn')}
+          </PrimaryButton>
         </div>
       )}
 
@@ -117,8 +116,12 @@ export function WeightProgressView({
       />
 
       <section>
-        <h2 className="mb-3 text-lg font-semibold text-neutral-900">History</h2>
-        <WeighInHistoryList weighIns={progress.weighIns} useLbs={useLbs} />
+        <h2 className={`${typography.csCardTitle} mb-3`}>{copy('progress.history.title')}</h2>
+        <WeighInHistoryList
+          weighIns={progress.weighIns}
+          useLbs={useLbs}
+          onLogWeighIn={onLogWeighIn}
+        />
       </section>
     </div>
   );

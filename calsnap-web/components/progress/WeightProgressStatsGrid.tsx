@@ -1,3 +1,7 @@
+import { copy } from '@/lib/copy';
+import { typography } from '@/lib/design/typography';
+import { cn } from '@/lib/utils/cn';
+
 interface WeightProgressStatsGridProps {
   lostSoFarLabel: string;
   toGoalLabel: string;
@@ -12,23 +16,23 @@ export function WeightProgressStatsGrid({
   projectedDateLabel,
 }: WeightProgressStatsGridProps) {
   const items = [
-    { label: 'Lost so far', value: lostSoFarLabel },
-    { label: 'To goal', value: toGoalLabel },
-    { label: 'Weekly rate', value: weeklyRateLabel },
-    { label: 'Projected goal', value: projectedDateLabel },
+    { labelKey: 'progress.stats.lostSoFar' as const, value: lostSoFarLabel },
+    { labelKey: 'progress.stats.toGoal' as const, value: toGoalLabel },
+    { labelKey: 'progress.stats.weeklyRate' as const, value: weeklyRateLabel },
+    { labelKey: 'progress.stats.projectedGoal' as const, value: projectedDateLabel },
   ];
 
   return (
     <div className="grid grid-cols-2 gap-3">
       {items.map((item) => (
         <div
-          key={item.label}
-          className="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm"
+          key={item.labelKey}
+          className="rounded-2xl border border-cs-border bg-cs-surface p-4 shadow-sm dark:shadow-none"
         >
-          <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
-            {item.label}
+          <p className={cn(typography.csCaption, 'text-xs font-medium uppercase tracking-wide')}>
+            {copy(item.labelKey)}
           </p>
-          <p className="mt-1 text-base font-semibold text-neutral-900">{item.value}</p>
+          <p className={`${typography.csCardTitle} mt-1 text-base`}>{item.value}</p>
         </div>
       ))}
     </div>
@@ -41,7 +45,7 @@ export function WeightProgressStatsGridSkeleton() {
       {[0, 1, 2, 3].map((key) => (
         <div
           key={key}
-          className="h-20 animate-pulse rounded-xl border border-neutral-200 bg-neutral-100"
+          className="h-20 animate-pulse rounded-2xl border border-cs-border bg-cs-muted/20"
         />
       ))}
     </div>

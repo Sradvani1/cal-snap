@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { copy } from '@/lib/copy';
 import { useAuth } from '@/lib/auth/use-auth';
 import { isOnboardingComplete } from '@/lib/repositories/profile';
 
@@ -38,14 +39,14 @@ export default function OnboardingLayout({ children }: { children: React.ReactNo
 
   if (authLoading || checking) {
     return (
-      <div className="flex min-h-full flex-1 items-center justify-center bg-neutral-50">
-        <p className="text-neutral-600">Loading…</p>
+      <div className="flex min-h-full flex-1 items-center justify-center bg-cs-background">
+        <p className="text-cs-muted">{copy('common.loading')}</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-full bg-neutral-50">
+    <div className="min-h-full bg-cs-background">
       {children}
     </div>
   );

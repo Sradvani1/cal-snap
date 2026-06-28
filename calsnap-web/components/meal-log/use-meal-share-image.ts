@@ -2,6 +2,17 @@
 
 import { useCallback, useState } from 'react';
 import html2canvas from 'html2canvas';
+import { copy } from '@/lib/copy';
+
+function shareCardBackgroundColor(): string {
+  if (typeof window === 'undefined') {
+    return '#ffffff';
+  }
+  const surface = getComputedStyle(document.documentElement)
+    .getPropertyValue('--cs-surface')
+    .trim();
+  return surface || '#ffffff';
+}
 
 export function useMealShareImage() {
   const [isSharing, setIsSharing] = useState(false);
@@ -13,7 +24,7 @@ export function useMealShareImage() {
 
     try {
       const canvas = await html2canvas(cardElement, {
-        backgroundColor: '#ffffff',
+        backgroundColor: shareCardBackgroundColor(),
         scale: 2,
         useCORS: true,
       });
@@ -23,7 +34,7 @@ export function useMealShareImage() {
       });
 
       if (!blob) {
-        throw new Error('Failed to generate share image');
+        throw new Error(copy('mealLog.share.error.generate'));
       }
 
       const file = new File([blob], filename, { type: 'image/png' });
@@ -31,7 +42,7 @@ export function useMealShareImage() {
       if (navigator.canShare?.({ files: [file] })) {
         await navigator.share({
           files: [file],
-          title: 'CalSnap meal',
+          title: copy('mealLog.share.title'),
         });
         return;
       }
@@ -47,7 +58,7 @@ export function useMealShareImage() {
         return;
       }
       const message =
-        error instanceof Error ? error.message : 'Failed to share meal card';
+        error instanceof Error ? error.message : copy('mealLog.share.error.failed');
       setShareError(message);
     } finally {
       setIsSharing(false);

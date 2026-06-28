@@ -1,0 +1,102 @@
+import { copy } from '@/lib/copy';
+import { layout } from '@/lib/design/layout';
+import { typography } from '@/lib/design/typography';
+import { cn } from '@/lib/utils/cn';
+
+interface MacroBarViewProps {
+  proteinG: number;
+  carbsG: number;
+  fatG: number;
+  className?: string;
+}
+
+export function MacroBarView({ proteinG, carbsG, fatG, className }: MacroBarViewProps) {
+  const total = proteinG + carbsG + fatG;
+  const { height, radius, legendDot } = layout.macroBar;
+
+  const accessibilitySummary =
+    total > 0
+      ? copy('designSystem.macroBar.accessibility.summary', {
+          protein: Math.round(proteinG),
+          carbs: Math.round(carbsG),
+          fat: Math.round(fatG),
+        })
+      : copy('designSystem.macroBar.noData');
+
+  if (total <= 0) {
+    return (
+      <div className={className} aria-label={accessibilitySummary}>
+        <div
+          className="w-full bg-cs-muted/25"
+          style={{ height, borderRadius: radius }}
+        />
+        <p className={cn(typography.csCaption, 'mt-2')}>
+          {copy('designSystem.macroBar.noData')}
+        </p>
+      </div>
+    );
+  }
+
+  const proteinWidth = (proteinG / total) * 100;
+  const carbsWidth = (carbsG / total) * 100;
+  const fatWidth = (fatG / total) * 100;
+
+  return (
+    <div className={className} aria-label={accessibilitySummary}>
+      <div
+        className="flex w-full overflow-hidden"
+        style={{ height, borderRadius: radius }}
+        aria-hidden
+      >
+        {proteinWidth > 0 && (
+          <div className="bg-cs-protein" style={{ width: `${proteinWidth}%` }} />
+        )}
+        {carbsWidth > 0 && <div className="bg-cs-carbs" style={{ width: `${carbsWidth}%` }} />}
+        {fatWidth > 0 && <div className="bg-cs-fat" style={{ width: `${fatWidth}%` }} />}
+      </div>
+      <div className={cn('mt-2 flex flex-wrap gap-4', typography.csCaption)}>
+        <LegendItem
+          colorClass="bg-cs-protein"
+          label={copy('designSystem.macroBar.protein')}
+          value={Math.round(proteinG)}
+          dotSize={legendDot}
+        />
+        <LegendItem
+          colorClass="bg-cs-carbs"
+          label={copy('designSystem.macroBar.carbs')}
+          value={Math.round(carbsG)}
+          dotSize={legendDot}
+        />
+        <LegendItem
+          colorClass="bg-cs-fat"
+          label={copy('designSystem.macroBar.fat')}
+          value={Math.round(fatG)}
+          dotSize={legendDot}
+        />
+      </div>
+    </div>
+  );
+}
+
+function LegendItem({
+  colorClass,
+  label,
+  value,
+  dotSize,
+}: {
+  colorClass: string;
+  label: string;
+  value: number;
+  dotSize: number;
+}) {
+  return (
+    <span className="inline-flex items-center gap-1">
+      <span
+        className={cn('inline-block rounded-full', colorClass)}
+        style={{ width: dotSize, height: dotSize }}
+        aria-hidden
+      />
+      {copy('designSystem.macroBar.legendFormat', { label, value })}
+    </span>
+  );
+}

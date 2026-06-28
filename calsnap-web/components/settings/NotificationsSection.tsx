@@ -1,22 +1,28 @@
 'use client';
 
+import { SectionCard } from '@/components/design/SectionCard';
 import type { ResolvedReminderPrefs } from '@/lib/progress/reminder-prefs';
-import { SettingsSectionCard } from '@/components/settings/SettingsSectionCard';
+import { copy } from '@/lib/copy';
+import { typography } from '@/lib/design/typography';
+import { cn } from '@/lib/utils/cn';
 
 const WEEKDAY_OPTIONS = [
-  { value: 0, label: 'Sunday' },
-  { value: 1, label: 'Monday' },
-  { value: 2, label: 'Tuesday' },
-  { value: 3, label: 'Wednesday' },
-  { value: 4, label: 'Thursday' },
-  { value: 5, label: 'Friday' },
-  { value: 6, label: 'Saturday' },
+  { value: 0, labelKey: 'common.weekday.sunday' as const },
+  { value: 1, labelKey: 'common.weekday.monday' as const },
+  { value: 2, labelKey: 'common.weekday.tuesday' as const },
+  { value: 3, labelKey: 'common.weekday.wednesday' as const },
+  { value: 4, labelKey: 'common.weekday.thursday' as const },
+  { value: 5, labelKey: 'common.weekday.friday' as const },
+  { value: 6, labelKey: 'common.weekday.saturday' as const },
 ];
 
 interface NotificationsSectionProps {
   reminderPrefs: ResolvedReminderPrefs;
   onChange: (prefs: ResolvedReminderPrefs) => void;
 }
+
+const inputClassName =
+  'rounded-lg border border-cs-border bg-cs-surface px-3 py-2 text-sm text-cs-foreground';
 
 export function NotificationsSection({
   reminderPrefs,
@@ -25,14 +31,14 @@ export function NotificationsSection({
   const timeValue = `${String(reminderPrefs.weighInReminderHour).padStart(2, '0')}:${String(reminderPrefs.weighInReminderMinute).padStart(2, '0')}`;
 
   return (
-    <SettingsSectionCard title="Weigh-in reminder">
+    <SectionCard title={copy('settings.section.weighInReminder')}>
       <div className="flex flex-col gap-4">
-        <p className="text-xs text-neutral-500">
-          Reminder delivery coming in a future update. Preferences are saved with your profile.
+        <p className={cn(typography.csCaption, 'text-xs')}>
+          {copy('settings.reminder.futureNote')}
         </p>
 
-        <label className="flex items-center justify-between text-sm">
-          <span className="font-medium text-neutral-700">Enable weekly reminder</span>
+        <label className={`${typography.csMacroLabel} flex items-center justify-between`}>
+          {copy('settings.reminder.enable')}
           <input
             type="checkbox"
             checked={reminderPrefs.weighInReminderEnabled}
@@ -43,8 +49,8 @@ export function NotificationsSection({
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="font-medium text-neutral-700">Day of week</span>
+        <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
+          {copy('settings.reminder.dayOfWeek')}
           <select
             value={reminderPrefs.weighInReminderWeekday}
             onChange={(event) =>
@@ -53,18 +59,18 @@ export function NotificationsSection({
                 weighInReminderWeekday: Number(event.target.value),
               })
             }
-            className="rounded-lg border border-neutral-300 px-3 py-2"
+            className={inputClassName}
           >
             {WEEKDAY_OPTIONS.map((day) => (
               <option key={day.value} value={day.value}>
-                {day.label}
+                {copy(day.labelKey)}
               </option>
             ))}
           </select>
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="font-medium text-neutral-700">Time</span>
+        <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
+          {copy('settings.reminder.time')}
           <input
             type="time"
             value={timeValue}
@@ -76,10 +82,10 @@ export function NotificationsSection({
                 weighInReminderMinute: minute,
               });
             }}
-            className="rounded-lg border border-neutral-300 px-3 py-2"
+            className={inputClassName}
           />
         </label>
       </div>
-    </SettingsSectionCard>
+    </SectionCard>
   );
 }

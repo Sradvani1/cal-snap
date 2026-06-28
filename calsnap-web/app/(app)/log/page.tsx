@@ -1,70 +1,91 @@
 'use client';
 
+import { useState } from 'react';
+import { ConfirmAlertDialog } from '@/components/design/ConfirmAlertDialog';
+import { EmptyStateView } from '@/components/design/EmptyStateView';
+import { SectionCard, SectionCardSkeleton } from '@/components/design/SectionCard';
+import { MealListSection } from '@/components/meal-log/MealListSection';
 import { useAuth } from '@/lib/auth/use-auth';
 import { aggregateTodaysMeals } from '@/lib/dashboard/aggregate-meals';
 import { dashboardFormattedDate } from '@/lib/dashboard/greeting';
+import { copy } from '@/lib/copy';
+import { typography } from '@/lib/design/typography';
 import { useDeleteMeal } from '@/lib/queries/use-delete-meal';
 import { useTodaysMeals } from '@/lib/queries/use-todays-meals';
-import { MealListSection } from '@/components/meal-log/MealListSection';
 
 export default function LogPage() {
   const { user } = useAuth();
   const now = new Date();
   const mealsQuery = useTodaysMeals(user?.uid, now);
   const deleteMealMutation = useDeleteMeal(user?.uid);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [mealIdToDelete, setMealIdToDelete] = useState<string | null>(null);
 
   const aggregation = aggregateTodaysMeals(mealsQuery.data ?? []);
   const hasMeals = (mealsQuery.data?.length ?? 0) > 0;
 
-  const handleDeleteMeal = async (mealId: string) => {
-    const confirmed = window.confirm('Delete this meal? This cannot be undone.');
-    if (!confirmed) {
+  const handleDeleteMeal = (mealId: string) => {
+    setMealIdToDelete(mealId);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!mealIdToDelete) {
       return;
     }
     try {
-      await deleteMealMutation.mutateAsync(mealId);
+      await deleteMealMutation.mutateAsync(mealIdToDelete);
     } catch {
       // error shown via deleteMealMutation.error below
+    } finally {
+      setMealIdToDelete(null);
     }
   };
 
   return (
     <div className="mx-auto max-w-lg px-4 py-6 pb-24">
       <header className="mb-6">
-        <h1 className="text-2xl font-bold text-neutral-900">Today&apos;s Log</h1>
-        <p className="text-sm text-neutral-500">{dashboardFormattedDate(now)}</p>
+        <h1 className={`${typography.csCardTitle} text-2xl`}>{copy('mealLog.title')}</h1>
+        <p className={typography.csCaption}>{dashboardFormattedDate(now)}</p>
       </header>
 
       {mealsQuery.isLoading ? (
-        <div className="space-y-3">
-          {[1, 2, 3, 4].map((row) => (
-            <div key={row} className="h-16 animate-pulse rounded-xl bg-neutral-100" />
-          ))}
-        </div>
+        <SectionCardSkeleton />
       ) : !hasMeals ? (
-        <div className="rounded-xl border border-neutral-200 bg-white p-6 text-center shadow-sm">
-          <p className="text-sm text-neutral-600">No meals logged today.</p>
-          <p className="mt-2 text-sm text-neutral-500">
-            Scan a meal to start your log.
-          </p>
-        </div>
+        <EmptyStateView
+          icon="🍽️"
+          titleKey="mealLog.empty.title"
+          messageKey="mealLog.empty.subtitle"
+          actionTitleKey="mealLog.empty.action"
+          actionHref="/scan"
+        />
       ) : (
-        <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
+        <SectionCard>
           <MealListSection
             mealsByType={aggregation.mealsByType}
             showRowActions
-            onDeleteMeal={(mealId) => void handleDeleteMeal(mealId)}
+            onDeleteMeal={handleDeleteMeal}
           />
-        </div>
+        </SectionCard>
       )}
 
       {deleteMealMutation.isError && (
-        <p className="mt-3 text-sm text-red-600">
+        <p className="mt-3 text-sm text-cs-danger">
           {deleteMealMutation.error instanceof Error
             ? deleteMealMutation.error.message
-            : 'Failed to delete meal. Try again.'}
+            : copy('mealLog.error.deleteFailed')}
         </p>
       )}
+
+      <ConfirmAlertDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        title={copy('mealLog.confirm.deleteTitle')}
+        description={copy('mealLog.confirm.delete')}
+        confirmLabel={copy('mealLog.confirm.deleteAction')}
+        destructive
+        onConfirm={() => void handleConfirmDelete()}
+      />
     </div>
   );
 }

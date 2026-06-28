@@ -2,6 +2,7 @@
 
 import { useMutation } from '@tanstack/react-query';
 import type { AnalyticsInsightPayload } from '@/lib/analytics/analytics-types';
+import { copy } from '@/lib/copy';
 
 export function useGenerateInsight() {
   return useMutation({
@@ -20,13 +21,13 @@ export function useGenerateInsight() {
 
       if (!response.ok) {
         if (response.status === 503) {
-          throw new Error('Insight unavailable');
+          throw new Error(copy('analytics.insight.unavailable'));
         }
-        throw new Error(body.error ?? 'Failed to generate insight');
+        throw new Error(body.error ?? copy('analytics.insight.error'));
       }
 
       if (!body.insight) {
-        throw new Error('Empty insight response');
+        throw new Error(copy('analytics.insight.empty'));
       }
 
       return body.insight;

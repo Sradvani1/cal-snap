@@ -1,8 +1,12 @@
 'use client';
 
+import { SecondaryButton } from '@/components/design/PrimaryButton';
 import { AppConstants } from '@/lib/constants';
 import type { OnboardingTargets } from '@/lib/onboarding/use-onboarding';
 import { formatMacroGrams } from '@/lib/utilities/unit-formatters';
+import { copy } from '@/lib/copy';
+import { typography } from '@/lib/design/typography';
+import { cn } from '@/lib/utils/cn';
 
 interface CalorieTargetPreviewStepProps {
   targets: OnboardingTargets;
@@ -26,27 +30,31 @@ export function CalorieTargetPreviewStep({
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <h2 className="text-xl font-semibold text-neutral-900">Your calorie target</h2>
-        <p className="mt-1 text-sm text-neutral-600">
-          Based on your profile and activity level.
-        </p>
+        <h2 className={typography.csCardTitle}>{copy('onboarding.calorie.title')}</h2>
+        <p className={`${typography.csCaption} mt-1`}>{copy('onboarding.calorie.subtitle')}</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 rounded-lg bg-neutral-50 p-4 text-sm">
+      <div className="grid grid-cols-2 gap-3 rounded-lg bg-cs-muted/10 p-4 text-sm">
         <div>
-          <p className="text-neutral-500">TDEE</p>
-          <p className="text-lg font-semibold text-neutral-900">{targets.tdee} kcal</p>
+          <p className={typography.csCaption}>{copy('common.macro.tdee')}</p>
+          <p className={typography.csCardTitle}>
+            {targets.tdee} {copy('common.macro.kcal')}
+          </p>
         </div>
         <div>
-          <p className="text-neutral-500">Daily target</p>
-          <p className="text-lg font-semibold text-neutral-900">{targets.target} kcal</p>
+          <p className={typography.csCaption}>{copy('common.macro.dailyTarget')}</p>
+          <p className={typography.csCardTitle}>
+            {targets.target} {copy('common.macro.kcal')}
+          </p>
         </div>
       </div>
 
-      <label className="flex flex-col gap-2 text-sm">
+      <label className={cn(typography.csMacroLabel, 'flex flex-col gap-2')}>
         <div className="flex items-center justify-between">
-          <span className="font-medium text-neutral-700">Daily deficit</span>
-          <span className="font-semibold text-neutral-900">{deficit} kcal</span>
+          <span>{copy('onboarding.calorie.deficit')}</span>
+          <span className="font-semibold">
+            {deficit} {copy('common.macro.kcal')}
+          </span>
         </div>
         <input
           type="range"
@@ -61,61 +69,68 @@ export function CalorieTargetPreviewStep({
           onChange={(event) => onDeficitChange(Number(event.target.value))}
           className="w-full"
         />
-        <span className="text-xs text-neutral-500">
-          Recommended: {AppConstants.Deficit.minDeficitKcal}–{AppConstants.Deficit.maxDeficitKcal} kcal/day
+        <span className={typography.csCaption}>
+          {copy('onboarding.calorie.recommended', {
+            min: AppConstants.Deficit.minDeficitKcal,
+            max: AppConstants.Deficit.maxDeficitKcal,
+          })}
         </span>
       </label>
 
       {targets.warnings.length > 0 && (
-        <ul className="flex flex-col gap-1 text-xs text-amber-700">
+        <ul className="flex flex-col gap-1 text-xs text-cs-warning">
           {targets.warnings.map((warning) => (
             <li key={warning}>{warning}</li>
           ))}
         </ul>
       )}
 
-      <div className="rounded-lg border border-neutral-200 p-4 text-sm">
-        <p className="font-medium text-neutral-900">Macro targets</p>
+      <div className="rounded-lg border border-cs-border p-4 text-sm">
+        <p className={typography.csMacroLabel}>{copy('onboarding.calorie.macroTargets')}</p>
         <div className="mt-2 grid grid-cols-3 gap-2 text-center">
           <div>
-            <p className="text-neutral-500">Protein</p>
+            <p className={typography.csCaption}>{copy('common.macro.protein')}</p>
             <p className="font-semibold">{formatMacroGrams(targets.proteinG, 0)}</p>
           </div>
           <div>
-            <p className="text-neutral-500">Carbs</p>
+            <p className={typography.csCaption}>{copy('common.macro.carbs')}</p>
             <p className="font-semibold">{formatMacroGrams(targets.carbsG, 0)}</p>
           </div>
           <div>
-            <p className="text-neutral-500">Fat</p>
+            <p className={typography.csCaption}>{copy('common.macro.fat')}</p>
             <p className="font-semibold">{formatMacroGrams(targets.fatG, 0)}</p>
           </div>
         </div>
-        <p className="mt-3 text-xs text-neutral-500">
-          Macro split follows evidence-based defaults (28% protein, 47% carbs, 25% fat), within ±15% of common recommendations.
+        <p className={`${typography.csCaption} mt-3`}>
+          {copy('onboarding.calorie.macroDefaultsNote')}
         </p>
       </div>
 
       {showHardDeficitAlert && (
-        <div className="rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm">
-          <p className="font-medium text-amber-900">High deficit warning</p>
-          <p className="mt-1 text-amber-800">
-            Deficits above {AppConstants.Deficit.maxDeficitKcal} kcal/day can trigger metabolic adaptation. Continue only if you understand the risks.
+        <div className="rounded-lg border border-cs-warning/40 bg-cs-warning/10 p-4 text-sm">
+          <p className="font-medium text-cs-foreground">
+            {copy('onboarding.calorie.hardDeficit.title')}
+          </p>
+          <p className={`${typography.csCaption} mt-1`}>
+            {copy('onboarding.calorie.hardDeficit.body', {
+              max: AppConstants.Deficit.maxDeficitKcal,
+            })}
           </p>
           <div className="mt-3 flex gap-2">
             <button
               type="button"
               onClick={onUnlockHardDeficit}
-              className="rounded-lg bg-amber-900 px-3 py-1.5 text-xs font-medium text-white"
+              className="rounded-lg bg-cs-warning px-3 py-1.5 text-xs font-medium text-cs-foreground"
             >
-              I understand, continue
+              {copy('onboarding.calorie.hardDeficit.continue')}
             </button>
-            <button
+            <SecondaryButton
               type="button"
               onClick={onDismissHardDeficitAlert}
-              className="rounded-lg border border-amber-400 px-3 py-1.5 text-xs font-medium text-amber-900"
+              className="px-3 py-1.5 text-xs"
             >
-              Cancel
-            </button>
+              {copy('common.button.cancel')}
+            </SecondaryButton>
           </div>
         </div>
       )}

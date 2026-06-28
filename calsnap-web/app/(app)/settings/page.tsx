@@ -12,6 +12,7 @@ import { queryKeys } from '@/lib/queries/query-keys';
 import { useSaveSettingsProfile } from '@/lib/queries/use-save-settings-profile';
 import { useSettingsForm } from '@/lib/settings/use-settings-form';
 import { SessionErrorBanner } from '@/components/auth/SessionErrorBanner';
+import { PrimaryButton } from '@/components/design/PrimaryButton';
 import { PlateauAlertSheet } from '@/components/dashboard/PlateauAlertSheet';
 import { AboutSection } from '@/components/settings/AboutSection';
 import { AccountSection } from '@/components/settings/AccountSection';
@@ -21,6 +22,8 @@ import { MacroTargetsSection } from '@/components/settings/MacroTargetsSection';
 import { NotificationsSection } from '@/components/settings/NotificationsSection';
 import { ProfileSection } from '@/components/settings/ProfileSection';
 import { UnitsSection } from '@/components/settings/UnitsSection';
+import { copy } from '@/lib/copy';
+import { typography } from '@/lib/design/typography';
 
 interface SettingsContentProps {
   uid: string;
@@ -67,7 +70,9 @@ function SettingsContent({ uid, profileData }: SettingsContentProps) {
         setShowPlateauSheet(true);
       }
     } catch (error) {
-      setSaveError(error instanceof Error ? error.message : 'Failed to save profile');
+      setSaveError(
+        error instanceof Error ? error.message : copy('settings.error.saveFailed'),
+      );
     }
   }, [form, profileData, saveMutation, queryClient, uid]);
 
@@ -112,18 +117,18 @@ function SettingsContent({ uid, profileData }: SettingsContentProps) {
     exportMutation.error instanceof Error
       ? exportMutation.error.message
       : exportMutation.error
-        ? 'Failed to export data'
+        ? copy('settings.error.exportFailed')
         : deleteMutation.error instanceof Error
           ? deleteMutation.error.message
           : deleteMutation.error
-            ? 'Failed to delete data'
+            ? copy('settings.error.deleteFailed')
             : null;
 
   return (
     <>
       <div className="mx-auto flex min-h-full max-w-lg flex-col gap-4 px-4 py-8 pb-28">
         <header>
-          <h1 className="text-2xl font-semibold text-neutral-900">Settings</h1>
+          <h1 className={`${typography.csCardTitle} text-2xl`}>{copy('settings.title')}</h1>
         </header>
 
         {(saveError || saveMutation.error) && (
@@ -132,7 +137,7 @@ function SettingsContent({ uid, profileData }: SettingsContentProps) {
               saveError ??
               (saveMutation.error instanceof Error
                 ? saveMutation.error.message
-                : 'Failed to save')
+                : copy('settings.error.saveGeneric'))
             }
           />
         )}
@@ -182,21 +187,24 @@ function SettingsContent({ uid, profileData }: SettingsContentProps) {
         <AccountSection onSignOut={() => void signOut()} />
 
         {form.validationMessage && form.isDirty && (
-          <p className="text-sm text-red-600">{form.validationMessage}</p>
+          <p className="text-sm text-cs-danger">{form.validationMessage}</p>
         )}
       </div>
 
       {form.isDirty && (
-        <div className="fixed inset-x-0 bottom-16 z-40 border-t border-neutral-200 bg-white/95 px-4 py-3 backdrop-blur sm:bottom-0">
+        <div className="fixed inset-x-0 bottom-16 z-40 border-t border-cs-border bg-cs-surface/95 px-4 py-3 backdrop-blur sm:bottom-0">
           <div className="mx-auto flex max-w-lg gap-3">
-            <button
+            <PrimaryButton
               type="button"
               onClick={() => void handleSave()}
               disabled={!form.canSave || saveMutation.isPending}
-              className="flex-1 rounded-lg bg-neutral-900 px-4 py-3 text-sm font-medium text-white hover:bg-neutral-800 disabled:opacity-50"
+              fullWidth
+              className="min-h-11"
             >
-              {saveMutation.isPending ? 'Saving…' : 'Save profile'}
-            </button>
+              {saveMutation.isPending
+                ? copy('common.button.saving')
+                : copy('settings.saveProfile')}
+            </PrimaryButton>
           </div>
         </div>
       )}
@@ -230,7 +238,7 @@ export default function SettingsPage() {
   if (profileQuery.isLoading) {
     return (
       <div className="mx-auto max-w-lg px-4 py-8">
-        <div className="h-96 animate-pulse rounded-xl bg-neutral-100" />
+        <div className="h-96 animate-pulse rounded-2xl bg-cs-muted/20" />
       </div>
     );
   }
@@ -242,7 +250,7 @@ export default function SettingsPage() {
           message={
             profileQuery.error instanceof Error
               ? profileQuery.error.message
-              : 'Could not load your profile.'
+              : copy('settings.error.profileLoad')
           }
         />
       </div>

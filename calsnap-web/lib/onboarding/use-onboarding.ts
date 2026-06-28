@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo, useState } from 'react';
 import { AppConstants } from '@/lib/constants';
+import { copy } from '@/lib/copy';
 import type { OnboardingStep } from '@/lib/onboarding/onboarding-step';
 import { onboardingProgress } from '@/lib/onboarding/onboarding-step';
 import {
@@ -183,7 +184,7 @@ export function useOnboarding(uid: string) {
       if (currentStep === 'profileSetup' || currentStep === 'goalSetup') {
         setValidationError(validationMessageForStep(currentStep));
       } else {
-        setValidationError('Please complete required fields.');
+        setValidationError(copy('onboarding.validation.requiredFields'));
       }
       return;
     }
@@ -208,7 +209,7 @@ export function useOnboarding(uid: string) {
           setCurrentStep('done');
         } catch (err) {
           setValidationError(
-            err instanceof Error ? err.message : 'Failed to save profile. Please try again.',
+            err instanceof Error ? err.message : copy('onboarding.error.saveFailed'),
           );
         }
         break;

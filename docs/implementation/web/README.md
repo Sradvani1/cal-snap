@@ -22,8 +22,8 @@ Business logic lives in `calsnap-web/lib/`; `app/` stays thin.
 | Weigh-in HealthKit flag | `sourceIsHealthKit` | Omitted in W01; `source: 'manual'` in W06 if needed |
 | Profile relationships | SwiftData `@Relationship` arrays | Firestore subcollections (W02+) |
 | ActivityLevel storage | Codable display strings (`"Moderately Active"`) | camelCase union (`moderatelyActive`, …) |
-| ActivityLevel UI | `localizedTitle`, `systemImage` | W09 copy module |
-| Warning strings | Localized xcstrings | English literals matching iOS catalog keys |
+| ActivityLevel UI | `localizedTitle`, `systemImage` | `lib/copy/` (`common.activity.*`) |
+| Warning strings | Localized xcstrings | `lib/copy/` keys matching iOS catalog |
 
 ## Open decisions
 
@@ -44,7 +44,7 @@ Business logic lives in `calsnap-web/lib/`; `app/` stays thin.
 | W06 | [PR-W06.md](./PR-W06.md) | Implemented |
 | W07 | [PR-W07.md](./PR-W07.md) | Implemented |
 | W08 | [PR-W08.md](./PR-W08.md) | Implemented |
-| W09 | PR-W09.md | Planned |
+| W09 | [PR-W09.md](./PR-W09.md) | Implemented |
 | W10 | PR-W10.md | Planned |
 
 ## Source of truth

@@ -1,12 +1,19 @@
 'use client';
 
-import { ConfidenceBadge } from '@/components/scanner/ConfidenceBadge';
+import { useEffect, useState, type ReactNode } from 'react';
+import { ConfidenceBadge } from '@/components/design/ConfidenceBadge';
+import { NutrientStatRow } from '@/components/design/NutrientStatRow';
+import { PrimaryButton, SecondaryButton } from '@/components/design/PrimaryButton';
 import { EstimationNotesAccordion } from '@/components/scanner/EstimationNotesAccordion';
 import { FoodItemEditSheet } from '@/components/scanner/FoodItemEditSheet';
 import { FoodItemRow } from '@/components/scanner/FoodItemRow';
 import { MealTypeSelector } from '@/components/scanner/MealTypeSelector';
+import { copy } from '@/lib/copy';
+import { SCAN_FADE_MS, SCAN_STAGGER_MS, useReducedMotion } from '@/lib/design/motion';
+import { typography } from '@/lib/design/typography';
 import { confidenceLevelFromScore } from '@/lib/scanner/meal-totals';
 import type { MealScannerState } from '@/lib/scanner/use-meal-scanner';
+import { cn } from '@/lib/utils/cn';
 
 interface MealAnalysisResultViewProps {
   scanner: MealScannerState;
@@ -17,24 +24,43 @@ interface MealAnalysisResultViewProps {
   isEditing?: boolean;
 }
 
-function MacroSummary({
-  label,
-  value,
-  unit,
+function ScanStaggerSection({
+  index,
+  reducedMotion,
+  children,
+  className,
 }: {
-  label: string;
-  value: number;
-  unit: string;
+  index: number;
+  reducedMotion: boolean;
+  children: ReactNode;
+  className?: string;
 }) {
+  const [visible, setVisible] = useState(reducedMotion);
+
+  useEffect(() => {
+    if (reducedMotion) {
+      return;
+    }
+    const timer = window.setTimeout(() => setVisible(true), index * SCAN_STAGGER_MS);
+    return () => window.clearTimeout(timer);
+  }, [index, reducedMotion]);
+
   return (
-    <div className="rounded-lg bg-neutral-50 px-3 py-2 text-center">
-      <p className="text-xs text-neutral-500">{label}</p>
-      <p className="text-sm font-semibold tabular-nums text-neutral-900">
-        {Math.round(value)}
-        {unit}
-      </p>
+    <div
+      className={cn(
+        'transition-opacity motion-reduce:transition-none',
+        visible ? 'opacity-100' : 'opacity-0',
+        className,
+      )}
+      style={reducedMotion ? undefined : { transitionDuration: `${SCAN_FADE_MS}ms` }}
+    >
+      {children}
     </div>
   );
+}
+
+function formatMacroValue(value: number, unit: string): string {
+  return `${Math.round(value)}${unit}`;
 }
 
 export function MealAnalysisResultView({
@@ -45,6 +71,7 @@ export function MealAnalysisResultView({
   onDiscard,
   isEditing = false,
 }: MealAnalysisResultViewProps) {
+  const reducedMotion = useReducedMotion();
   const editingItem =
     scanner.editableItems.find((item) => item.id === scanner.editingItemId) ?? null;
 
@@ -52,102 +79,138 @@ export function MealAnalysisResultView({
     scanner.overallConfidence,
     scanner.isManualEntry,
   );
+  const grams = copy('common.macro.grams');
+
+  let sectionIndex = 0;
 
   return (
     <div className="space-y-4">
       {scanner.previewUrl && (
-        <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={scanner.previewUrl}
-            alt="Meal"
-            className="aspect-[4/3] w-full object-cover"
-          />
-        </div>
+        <ScanStaggerSection index={sectionIndex++} reducedMotion={reducedMotion}>
+          <div className="overflow-hidden rounded-xl border border-cs-border bg-cs-surface">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={scanner.previewUrl}
+              alt={copy('scanner.result.photoAlt')}
+              className="aspect-[4/3] w-full object-cover"
+            />
+          </div>
+        </ScanStaggerSection>
       )}
 
-      <div className="rounded-xl border border-neutral-200 bg-white p-4">
-        <div className="mb-2 flex items-center justify-between gap-2">
-          <h2 className="text-2xl font-bold tabular-nums text-neutral-900">
-            {scanner.totals.totalCalories} kcal
-          </h2>
-          {!scanner.isManualEntry && (
-            <ConfidenceBadge level={confidenceLevel} score={scanner.overallConfidence} />
-          )}
-          {scanner.isManualEntry && <ConfidenceBadge level="manual" />}
-        </div>
+      <ScanStaggerSection index={sectionIndex++} reducedMotion={reducedMotion}>
+        <div className="rounded-xl border border-cs-border bg-cs-surface p-4">
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <h2 className={typography.csLargeCalorie}>
+              {scanner.totals.totalCalories} {copy('common.macro.kcal')}
+            </h2>
+            {!scanner.isManualEntry && (
+              <ConfidenceBadge level={confidenceLevel} score={scanner.overallConfidence} />
+            )}
+            {scanner.isManualEntry && <ConfidenceBadge level="manual" />}
+          </div>
 
-        <div className="grid grid-cols-4 gap-2">
-          <MacroSummary label="Protein" value={scanner.totals.totalProteinG} unit="g" />
-          <MacroSummary label="Carbs" value={scanner.totals.totalCarbsG} unit="g" />
-          <MacroSummary label="Fat" value={scanner.totals.totalFatG} unit="g" />
-          <MacroSummary label="Fiber" value={scanner.totals.totalFiberG} unit="g" />
+          <div className="grid grid-cols-4 gap-2">
+            <NutrientStatRow
+              layout="card"
+              label={copy('common.macro.protein')}
+              value={formatMacroValue(scanner.totals.totalProteinG, grams)}
+            />
+            <NutrientStatRow
+              layout="card"
+              label={copy('common.macro.carbs')}
+              value={formatMacroValue(scanner.totals.totalCarbsG, grams)}
+            />
+            <NutrientStatRow
+              layout="card"
+              label={copy('common.macro.fat')}
+              value={formatMacroValue(scanner.totals.totalFatG, grams)}
+            />
+            <NutrientStatRow
+              layout="card"
+              label={copy('common.macro.fiber')}
+              value={formatMacroValue(scanner.totals.totalFiberG, grams)}
+            />
+          </div>
         </div>
-      </div>
+      </ScanStaggerSection>
 
       {scanner.allItemsFlagged && !scanner.isManualEntry && (
-        <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-          All items have low confidence — review portions carefully before logging.
-        </div>
+        <ScanStaggerSection index={sectionIndex++} reducedMotion={reducedMotion}>
+          <div className="rounded-lg border border-cs-warning/30 bg-cs-warning/10 px-4 py-3 text-sm text-cs-warning">
+            {copy('scanner.result.lowConfidence')}
+          </div>
+        </ScanStaggerSection>
       )}
 
-      <MealTypeSelector value={scanner.mealType} onChange={scanner.setMealType} />
+      <ScanStaggerSection index={sectionIndex++} reducedMotion={reducedMotion}>
+        <MealTypeSelector value={scanner.mealType} onChange={scanner.setMealType} />
+      </ScanStaggerSection>
 
-      <div className="space-y-2">
-        <h3 className="text-sm font-medium text-neutral-700">Items</h3>
-        {scanner.editableItems.map((item) => (
-          <FoodItemRow
-            key={item.id}
-            item={item}
-            onEdit={() => scanner.setEditingItemId(item.id)}
-          />
-        ))}
-      </div>
+      <ScanStaggerSection index={sectionIndex++} reducedMotion={reducedMotion}>
+        <div className="space-y-2">
+          <h3 className={cn(typography.csBody, 'font-medium')}>{copy('scanner.result.items')}</h3>
+          {scanner.editableItems.map((item) => (
+            <FoodItemRow key={item.id} item={item} onEdit={() => scanner.setEditingItemId(item.id)} />
+          ))}
+        </div>
+      </ScanStaggerSection>
 
       {!scanner.isManualEntry && (
-        <EstimationNotesAccordion notes={scanner.estimationNotes} />
+        <ScanStaggerSection index={sectionIndex++} reducedMotion={reducedMotion}>
+          <EstimationNotesAccordion notes={scanner.estimationNotes} />
+        </ScanStaggerSection>
       )}
 
       {scanner.logError && (
-        <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-          {scanner.logError}
-        </p>
+        <ScanStaggerSection index={sectionIndex++} reducedMotion={reducedMotion}>
+          <p
+            className="rounded-lg border border-cs-danger/30 bg-cs-danger/10 px-4 py-3 text-sm text-cs-danger"
+            role="alert"
+          >
+            {scanner.logError}
+          </p>
+        </ScanStaggerSection>
       )}
 
-      <div className="flex flex-col gap-2">
-        <button
-          type="button"
-          disabled={!scanner.canLog || isLogging}
-          onClick={onLog}
-          className="min-h-11 w-full rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
-        >
-          {isLogging
-            ? isEditing
-              ? 'Saving…'
-              : 'Logging…'
-            : isEditing
-              ? 'Save changes'
-              : 'Log this meal'}
-        </button>
-        {!isEditing && (
+      <ScanStaggerSection index={sectionIndex++} reducedMotion={reducedMotion}>
+        <div className="flex flex-col gap-2">
+          <PrimaryButton
+            type="button"
+            disabled={!scanner.canLog || isLogging}
+            onClick={onLog}
+            fullWidth
+            className="min-h-11"
+          >
+            {isLogging
+              ? isEditing
+                ? copy('scanner.result.saving')
+                : copy('scanner.result.logging')
+              : isEditing
+                ? copy('scanner.result.saveChanges')
+                : copy('scanner.result.logMeal')}
+          </PrimaryButton>
+          {!isEditing && (
+            <SecondaryButton
+              type="button"
+              disabled={isLogging}
+              onClick={onReAnalyze}
+              fullWidth
+              className="min-h-11"
+            >
+              {copy('scanner.result.reAnalyze')}
+            </SecondaryButton>
+          )}
           <button
             type="button"
             disabled={isLogging}
-            onClick={onReAnalyze}
-            className="min-h-11 w-full rounded-lg border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-neutral-900"
+            onClick={onDiscard}
+            className="min-h-11 w-full rounded-lg px-4 py-2 text-sm font-medium text-cs-danger disabled:opacity-50"
           >
-            Re-analyze
+            {isEditing ? copy('common.button.cancel') : copy('scanner.result.discard')}
           </button>
-        )}
-        <button
-          type="button"
-          disabled={isLogging}
-          onClick={onDiscard}
-          className="min-h-11 w-full rounded-lg px-4 py-2 text-sm font-medium text-red-600"
-        >
-          {isEditing ? 'Cancel' : 'Discard'}
-        </button>
-      </div>
+        </div>
+      </ScanStaggerSection>
 
       <FoodItemEditSheet
         item={editingItem}

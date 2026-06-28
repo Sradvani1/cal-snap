@@ -12,11 +12,17 @@ import {
   kgFromDisplayWeight,
   snappedDisplayWeight,
 } from '@/lib/utilities/unit-formatters';
+import { copy } from '@/lib/copy';
+import { typography } from '@/lib/design/typography';
+import { cn } from '@/lib/utils/cn';
 
 interface ProfileSetupStepProps {
   draft: ProfileDraft;
   onUpdate: (update: (draft: ProfileDraft) => void) => void;
 }
+
+const inputClassName =
+  'rounded-lg border border-cs-border bg-cs-surface px-3 py-2 text-sm text-cs-foreground';
 
 export function ProfileSetupStep({ draft, onUpdate }: ProfileSetupStepProps) {
   const { feet, inches } = cmToFeetInches(draft.heightCm);
@@ -25,12 +31,12 @@ export function ProfileSetupStep({ draft, onUpdate }: ProfileSetupStepProps) {
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <h2 className="text-xl font-semibold text-neutral-900">About you</h2>
-        <p className="mt-1 text-sm text-neutral-600">Tell us a bit about yourself.</p>
+        <h2 className={typography.csCardTitle}>{copy('onboarding.profile.title')}</h2>
+        <p className={`${typography.csCaption} mt-1`}>{copy('onboarding.profile.subtitle')}</p>
       </div>
 
-      <label className="flex flex-col gap-1 text-sm">
-        <span className="font-medium text-neutral-700">Name (optional)</span>
+      <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
+        {copy('common.label.nameOptional')}
         <input
           type="text"
           value={draft.name}
@@ -39,16 +45,16 @@ export function ProfileSetupStep({ draft, onUpdate }: ProfileSetupStepProps) {
               d.name = event.target.value;
             })
           }
-          className="rounded-lg border border-neutral-300 px-3 py-2"
-          placeholder="Your name"
+          className={inputClassName}
+          placeholder={copy('common.placeholder.yourName')}
         />
       </label>
 
       <fieldset className="flex flex-col gap-2">
-        <legend className="text-sm font-medium text-neutral-700">Sex</legend>
+        <legend className={typography.csMacroLabel}>{copy('common.label.sex')}</legend>
         <div className="flex gap-3">
           {(['male', 'female'] as const).map((sex) => (
-            <label key={sex} className="flex items-center gap-2 text-sm capitalize">
+            <label key={sex} className={cn(typography.csCaption, 'flex items-center gap-2 capitalize')}>
               <input
                 type="radio"
                 name="sex"
@@ -59,14 +65,14 @@ export function ProfileSetupStep({ draft, onUpdate }: ProfileSetupStepProps) {
                   })
                 }
               />
-              {sex}
+              {copy(sex === 'male' ? 'common.sex.male' : 'common.sex.female')}
             </label>
           ))}
         </div>
       </fieldset>
 
-      <label className="flex flex-col gap-1 text-sm">
-        <span className="font-medium text-neutral-700">Date of birth</span>
+      <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
+        {copy('common.label.dateOfBirth')}
         <input
           type="date"
           value={toLocalDateInputValue(draft.dateOfBirth)}
@@ -75,13 +81,13 @@ export function ProfileSetupStep({ draft, onUpdate }: ProfileSetupStepProps) {
               d.dateOfBirth = dateFromLocalDateInput(event.target.value);
             })
           }
-          className="rounded-lg border border-neutral-300 px-3 py-2"
+          className={inputClassName}
         />
       </label>
 
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-neutral-700">Height</span>
+          <span className={typography.csMacroLabel}>{copy('common.label.height')}</span>
           <button
             type="button"
             onClick={() =>
@@ -89,15 +95,15 @@ export function ProfileSetupStep({ draft, onUpdate }: ProfileSetupStepProps) {
                 d.useImperialHeight = !d.useImperialHeight;
               })
             }
-            className="text-xs font-medium text-neutral-600 underline"
+            className={`${typography.csCaption} font-medium underline`}
           >
-            {draft.useImperialHeight ? 'Use cm' : 'Use ft/in'}
+            {draft.useImperialHeight ? copy('common.units.useCm') : copy('common.units.useFtIn')}
           </button>
         </div>
         {draft.useImperialHeight ? (
           <div className="flex gap-3">
-            <label className="flex flex-1 flex-col gap-1 text-sm">
-              <span>Feet</span>
+            <label className={cn(typography.csCaption, 'flex flex-1 flex-col gap-1')}>
+              {copy('common.label.feet')}
               <input
                 type="number"
                 min={4}
@@ -108,11 +114,11 @@ export function ProfileSetupStep({ draft, onUpdate }: ProfileSetupStepProps) {
                     d.heightCm = feetInchesToCm(Number(event.target.value), inches);
                   })
                 }
-                className="rounded-lg border border-neutral-300 px-3 py-2"
+                className={inputClassName}
               />
             </label>
-            <label className="flex flex-1 flex-col gap-1 text-sm">
-              <span>Inches</span>
+            <label className={cn(typography.csCaption, 'flex flex-1 flex-col gap-1')}>
+              {copy('common.label.inches')}
               <input
                 type="number"
                 min={0}
@@ -123,7 +129,7 @@ export function ProfileSetupStep({ draft, onUpdate }: ProfileSetupStepProps) {
                     d.heightCm = feetInchesToCm(feet, Number(event.target.value));
                   })
                 }
-                className="rounded-lg border border-neutral-300 px-3 py-2"
+                className={inputClassName}
               />
             </label>
           </div>
@@ -138,14 +144,14 @@ export function ProfileSetupStep({ draft, onUpdate }: ProfileSetupStepProps) {
                 d.heightCm = Number(event.target.value);
               })
             }
-            className="rounded-lg border border-neutral-300 px-3 py-2 text-sm"
+            className={inputClassName}
           />
         )}
       </div>
 
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-neutral-700">Current weight</span>
+          <span className={typography.csMacroLabel}>{copy('onboarding.profile.currentWeight')}</span>
           <button
             type="button"
             onClick={() =>
@@ -153,9 +159,9 @@ export function ProfileSetupStep({ draft, onUpdate }: ProfileSetupStepProps) {
                 d.useLbsWeight = !d.useLbsWeight;
               })
             }
-            className="text-xs font-medium text-neutral-600 underline"
+            className={`${typography.csCaption} font-medium underline`}
           >
-            {draft.useLbsWeight ? 'Use kg' : 'Use lbs'}
+            {draft.useLbsWeight ? copy('common.units.useKg') : copy('common.units.useLbs')}
           </button>
         </div>
         <input
@@ -171,7 +177,7 @@ export function ProfileSetupStep({ draft, onUpdate }: ProfileSetupStepProps) {
               d.weightKg = kgFromDisplayWeight(snapped, d.useLbsWeight);
             })
           }
-          className="rounded-lg border border-neutral-300 px-3 py-2 text-sm"
+          className={inputClassName}
         />
       </div>
     </div>

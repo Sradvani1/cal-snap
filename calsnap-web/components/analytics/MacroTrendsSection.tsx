@@ -8,10 +8,13 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { AnalyticsSectionCard } from '@/components/analytics/AnalyticsSectionCard';
+import { SectionCard } from '@/components/design/SectionCard';
 import { AppConstants } from '@/lib/constants';
 import type { DailyNutritionSummary } from '@/lib/analytics/analytics-types';
 import type { MacroSplit } from '@/lib/models/macro-split';
+import { copy } from '@/lib/copy';
+import { lightColors } from '@/lib/design/colors';
+import { typography } from '@/lib/design/typography';
 
 interface MacroTrendsSectionProps {
   chartDailySeries: DailyNutritionSummary[];
@@ -31,7 +34,11 @@ function formatAxisDate(date: Date): string {
 }
 
 function macroSplitLabel(split: MacroSplit): string {
-  return `${split.proteinPct}% P · ${split.carbsPct}% C · ${split.fatPct}% F`;
+  return copy('analytics.macro.split', {
+    protein: split.proteinPct,
+    carbs: split.carbsPct,
+    fat: split.fatPct,
+  });
 }
 
 export function MacroTrendsSection({
@@ -46,37 +53,37 @@ export function MacroTrendsSection({
     fatKcal: day.fatG * AppConstants.Nutrition.fatCalPerGram,
   }));
 
-  const ariaLabel = `Macro trends: actual ${macroSplitLabel(actualMacroSplit)}, target ${macroSplitLabel(targetMacroSplit)}`;
+  const ariaLabel = `${copy('analytics.section.macroTrends')}: ${copy('analytics.macro.actual')} ${macroSplitLabel(actualMacroSplit)}, ${copy('analytics.macro.target')} ${macroSplitLabel(targetMacroSplit)}`;
 
   return (
-    <AnalyticsSectionCard title="Macro trends">
+    <SectionCard title={copy('analytics.section.macroTrends')}>
       <div className="mb-4 grid grid-cols-2 gap-3 text-sm">
         <div>
-          <p className="text-neutral-500">Actual</p>
-          <p className="font-semibold text-neutral-900">{macroSplitLabel(actualMacroSplit)}</p>
+          <p className={typography.csCaption}>{copy('analytics.macro.actual')}</p>
+          <p className={typography.csCardTitle}>{macroSplitLabel(actualMacroSplit)}</p>
         </div>
         <div>
-          <p className="text-neutral-500">Target</p>
-          <p className="font-semibold text-neutral-900">{macroSplitLabel(targetMacroSplit)}</p>
+          <p className={typography.csCaption}>{copy('analytics.macro.target')}</p>
+          <p className={typography.csCardTitle}>{macroSplitLabel(targetMacroSplit)}</p>
         </div>
       </div>
 
       <div role="img" aria-label={ariaLabel}>
         <ResponsiveContainer width="100%" height={200}>
           <BarChart data={chartData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" className="stroke-neutral-100" />
+            <CartesianGrid strokeDasharray="3 3" className="stroke-cs-border" />
             <XAxis
               dataKey="dateLabel"
-              tick={{ fontSize: 11, fill: '#737373' }}
+              tick={{ fontSize: 11, fill: lightColors.muted }}
               interval={chartData.length > 14 ? Math.floor(chartData.length / 7) : 0}
             />
-            <YAxis tick={{ fontSize: 11, fill: '#737373' }} width={40} />
-            <Bar dataKey="proteinKcal" stackId="macros" fill="#3b82f6" />
-            <Bar dataKey="carbsKcal" stackId="macros" fill="#22c55e" />
-            <Bar dataKey="fatKcal" stackId="macros" fill="#f59e0b" radius={[4, 4, 0, 0]} />
+            <YAxis tick={{ fontSize: 11, fill: lightColors.muted }} width={40} />
+            <Bar dataKey="proteinKcal" stackId="macros" fill={lightColors.protein} />
+            <Bar dataKey="carbsKcal" stackId="macros" fill={lightColors.carbs} />
+            <Bar dataKey="fatKcal" stackId="macros" fill={lightColors.fat} radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
-    </AnalyticsSectionCard>
+    </SectionCard>
   );
 }

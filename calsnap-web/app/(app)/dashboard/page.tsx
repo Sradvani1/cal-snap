@@ -33,6 +33,7 @@ import {
 import { ScanFab } from '@/components/dashboard/ScanFab';
 import { PlateauAlertSheet } from '@/components/dashboard/PlateauAlertSheet';
 import { WeighInSheet } from '@/components/progress/WeighInSheet';
+import { copy } from '@/lib/copy';
 
 function DashboardContent({ uid }: { uid: string | undefined }) {
   const dashboard = useDashboard(uid);
@@ -68,7 +69,7 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
           message={
             dashboard.error instanceof Error
               ? dashboard.error.message
-              : 'Could not load your profile.'
+              : copy('dashboard.error.profileLoad')
           }
         />
       </div>
@@ -83,7 +84,7 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
             message={
               dashboard.error instanceof Error
                 ? dashboard.error.message
-                : plateau.actionError ?? 'Failed to load dashboard'
+                : plateau.actionError ?? copy('dashboard.error.loadFailed')
             }
           />
         )}

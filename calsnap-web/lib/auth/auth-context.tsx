@@ -20,6 +20,7 @@ import {
   signOut as firebaseSignOut,
   type User,
 } from 'firebase/auth';
+import { copy } from '@/lib/copy';
 import { getFirebaseAuth } from '@/lib/firebase/client';
 
 interface AuthContextValue {
@@ -47,7 +48,7 @@ async function establishSession(user: User): Promise<void> {
   });
   if (!response.ok) {
     const data = (await response.json()) as { error?: string };
-    throw new Error(data.error ?? 'Failed to establish session');
+    throw new Error(data.error ?? copy('auth.session.establishFailed'));
   }
 }
 
@@ -84,7 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setSessionError(null);
           } catch (err) {
             setSessionError(
-              err instanceof Error ? err.message : 'Failed to establish session',
+              err instanceof Error ? err.message : copy('auth.session.establishFailed'),
             );
           }
         } else {
@@ -103,7 +104,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setSessionError(null);
         } catch (err) {
           setSessionError(
-            err instanceof Error ? err.message : 'Failed to refresh session',
+            err instanceof Error ? err.message : copy('auth.session.refreshFailed'),
           );
         }
       });

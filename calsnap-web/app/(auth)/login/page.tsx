@@ -4,7 +4,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormEvent, useState } from 'react';
 import { SessionErrorBanner } from '@/components/auth/SessionErrorBanner';
+import { PrimaryButton, SecondaryButton } from '@/components/design/PrimaryButton';
 import { useAuth } from '@/lib/auth/use-auth';
+import { copy } from '@/lib/copy';
+import { typography } from '@/lib/design/typography';
+import { cn } from '@/lib/utils/cn';
+
+const inputClassName =
+  'rounded-lg border border-cs-border bg-cs-surface px-3 py-2 text-sm text-cs-foreground';
 
 export default function LoginPage() {
   const { signInWithEmail, signInWithGoogle, loading, sessionError } = useAuth();
@@ -22,7 +29,7 @@ export default function LoginPage() {
       await signInWithEmail(email, password);
       router.replace('/');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Sign in failed');
+      setError(err instanceof Error ? err.message : copy('auth.login.error'));
     } finally {
       setSubmitting(false);
     }
@@ -33,73 +40,65 @@ export default function LoginPage() {
     try {
       await signInWithGoogle();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Google sign in failed');
+      setError(err instanceof Error ? err.message : copy('auth.login.googleError'));
     }
   }
 
   if (loading) {
-    return <p className="text-center text-neutral-600">Loading…</p>;
+    return <p className={`${typography.csCaption} text-center`}>{copy('common.loading')}</p>;
   }
 
   return (
     <div className="flex flex-col gap-6">
       <div className="text-center">
-        <h1 className="text-2xl font-semibold text-neutral-900">Sign in</h1>
-        <p className="mt-1 text-sm text-neutral-600">Welcome back to CalSnap</p>
+        <h1 className={`${typography.csCardTitle} text-2xl`}>{copy('auth.login.title')}</h1>
+        <p className={`${typography.csCaption} mt-1`}>{copy('auth.login.subtitle')}</p>
       </div>
 
       <SessionErrorBanner message={sessionError} />
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="font-medium text-neutral-700">Email</span>
+        <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
+          {copy('common.label.email')}
           <input
             type="email"
             required
             autoComplete="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className="rounded-lg border border-neutral-300 px-3 py-2"
+            className={inputClassName}
           />
         </label>
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="font-medium text-neutral-700">Password</span>
+        <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
+          {copy('common.label.password')}
           <input
             type="password"
             required
             autoComplete="current-password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            className="rounded-lg border border-neutral-300 px-3 py-2"
+            className={inputClassName}
           />
         </label>
-        {error && <p className="text-sm text-red-600">{error}</p>}
-        <button
-          type="submit"
-          disabled={submitting}
-          className="rounded-lg bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-50"
-        >
-          {submitting ? 'Signing in…' : 'Sign in'}
-        </button>
+        {error && <p className="text-sm text-cs-danger">{error}</p>}
+        <PrimaryButton type="submit" disabled={submitting} fullWidth className="min-h-11">
+          {submitting ? copy('auth.login.submitting') : copy('auth.login.submit')}
+        </PrimaryButton>
       </form>
 
-      <div className="relative text-center text-sm text-neutral-500">
-        <span className="bg-white px-2">or</span>
-        <div className="absolute inset-x-0 top-1/2 -z-10 border-t border-neutral-200" />
+      <div className={`relative text-center ${typography.csCaption}`}>
+        <span className="bg-cs-background px-2">{copy('common.divider.or')}</span>
+        <div className="absolute inset-x-0 top-1/2 -z-10 border-t border-cs-border" />
       </div>
 
-      <button
-        type="button"
-        onClick={() => void handleGoogle()}
-        className="rounded-lg border border-neutral-300 px-4 py-2.5 text-sm font-medium text-neutral-900"
-      >
-        Continue with Google
-      </button>
+      <SecondaryButton type="button" onClick={() => void handleGoogle()} fullWidth className="min-h-11">
+        {copy('auth.login.google')}
+      </SecondaryButton>
 
-      <p className="text-center text-sm text-neutral-600">
-        No account?{' '}
-        <Link href="/signup" className="font-medium text-neutral-900 underline">
-          Sign up
+      <p className={`${typography.csCaption} text-center`}>
+        {copy('auth.login.noAccount')}{' '}
+        <Link href="/signup" className="font-medium text-cs-foreground underline">
+          {copy('auth.login.signUpLink')}
         </Link>
       </p>
     </div>

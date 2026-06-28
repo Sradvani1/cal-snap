@@ -1,25 +1,14 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/lib/auth/use-auth';
-import {
-  AnalyticsDateRange,
-  normalizeCustomRange,
-  presetToDateRange,
-  type AnalyticsTimeframePreset,
-} from '@/lib/analytics/analytics-types';
-import { useAnalytics } from '@/lib/queries/use-analytics';
-import { useGenerateInsight } from '@/lib/queries/use-generate-insight';
 import { usePlateauAlert } from '@/lib/queries/use-plateau-alert';
 import { useProfile } from '@/lib/queries/use-profile';
 import { SessionErrorBanner } from '@/components/auth/SessionErrorBanner';
+import { EmptyStateView } from '@/components/design/EmptyStateView';
+import { SectionCard, SectionCardSkeleton } from '@/components/design/SectionCard';
 import { AnalyticsCustomRangeSheet } from '@/components/analytics/AnalyticsCustomRangeSheet';
-import { AnalyticsEmptyState } from '@/components/analytics/AnalyticsEmptyState';
 import { AnalyticsInsightCard } from '@/components/analytics/AnalyticsInsightCard';
-import {
-  AnalyticsSectionCard,
-  AnalyticsSectionCardSkeleton,
-} from '@/components/analytics/AnalyticsSectionCard';
 import { AnalyticsTimeframePicker } from '@/components/analytics/AnalyticsTimeframePicker';
 import { CalorieAdherenceSection } from '@/components/analytics/CalorieAdherenceSection';
 import { FiberSection } from '@/components/analytics/FiberSection';
@@ -28,6 +17,16 @@ import { PatternsSection } from '@/components/analytics/PatternsSection';
 import { PlateauAlertSheet } from '@/components/dashboard/PlateauAlertSheet';
 import { WeighInSheet } from '@/components/progress/WeighInSheet';
 import { WeightProgressView } from '@/components/progress/WeightProgressView';
+import {
+  AnalyticsDateRange,
+  normalizeCustomRange,
+  presetToDateRange,
+  type AnalyticsTimeframePreset,
+} from '@/lib/analytics/analytics-types';
+import { useAnalytics } from '@/lib/queries/use-analytics';
+import { useGenerateInsight } from '@/lib/queries/use-generate-insight';
+import { copy } from '@/lib/copy';
+import { typography } from '@/lib/design/typography';
 
 function AnalyticsContent({ uid }: { uid: string | undefined }) {
   const plateau = usePlateauAlert(uid);
@@ -56,10 +55,10 @@ function AnalyticsContent({ uid }: { uid: string | undefined }) {
   const insightText =
     insightState?.contextKey === insightContextKey ? insightState.text : null;
 
-  const clearInsight = useCallback(() => {
+  const clearInsight = () => {
     setInsightState(null);
     setInsightError(null);
-  }, []);
+  };
 
   const handlePresetChange = (preset: AnalyticsTimeframePreset) => {
     if (preset === 'custom') {
@@ -102,7 +101,7 @@ function AnalyticsContent({ uid }: { uid: string | undefined }) {
     } catch (error) {
       setInsightState(null);
       setInsightError(
-        error instanceof Error ? error.message : 'Failed to generate insight',
+        error instanceof Error ? error.message : copy('analytics.insight.error'),
       );
     }
   };
@@ -119,7 +118,7 @@ function AnalyticsContent({ uid }: { uid: string | undefined }) {
   return (
     <>
       <div className="mx-auto max-w-lg px-4 py-8 pb-24">
-        <h1 className="mb-6 text-2xl font-bold text-neutral-900">Analytics</h1>
+        <h1 className={`${typography.csCardTitle} mb-6 text-2xl`}>{copy('analytics.title')}</h1>
 
         <div className="mb-6">
           <AnalyticsTimeframePicker
@@ -136,9 +135,9 @@ function AnalyticsContent({ uid }: { uid: string | undefined }) {
 
         {analyticsQuery.isLoading && (
           <div className="flex flex-col gap-6">
-            <AnalyticsSectionCardSkeleton />
-            <AnalyticsSectionCardSkeleton />
-            <AnalyticsSectionCardSkeleton />
+            <SectionCardSkeleton />
+            <SectionCardSkeleton />
+            <SectionCardSkeleton />
           </div>
         )}
 
@@ -147,7 +146,7 @@ function AnalyticsContent({ uid }: { uid: string | undefined }) {
             message={
               analyticsQuery.error instanceof Error
                 ? analyticsQuery.error.message
-                : 'Failed to load analytics'
+                : copy('analytics.error.loadFailed')
             }
           />
         )}
@@ -189,20 +188,26 @@ function AnalyticsContent({ uid }: { uid: string | undefined }) {
                 />
               </>
             ) : (
-              <AnalyticsEmptyState />
+              <EmptyStateView
+                icon="📊"
+                titleKey="analytics.empty.title"
+                messageKey="analytics.empty.body"
+                actionTitleKey="analytics.empty.action"
+                actionHref="/scan"
+              />
             )}
           </div>
         )}
 
         {uid && (
           <div className={`flex flex-col gap-6 ${snapshot || analyticsQuery.isLoading ? 'mt-6' : ''}`}>
-            <AnalyticsSectionCard title="Weight progress">
+            <SectionCard title={copy('analytics.section.weightProgress')}>
               <WeightProgressView
                 uid={uid}
                 presentation="embedded"
                 onLogWeighIn={() => setShowWeighInSheet(true)}
               />
-            </AnalyticsSectionCard>
+            </SectionCard>
           </div>
         )}
       </div>

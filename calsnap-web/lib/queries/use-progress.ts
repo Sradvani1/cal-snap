@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import { copy } from '@/lib/copy';
 import {
   chartAccessibilitySummary,
   deriveProgressStats,
@@ -32,21 +33,26 @@ export function useProgress(uid: string | undefined, referenceDate: Date = new D
 
   const formatWeeklyRate = (): string => {
     if (!stats?.weeklyRateKg) {
-      return 'Log more weigh-ins';
+      return copy('progress.stats.logMore');
     }
     if (useLbs) {
-      const lbsPerWeek = kgToLbs(stats.weeklyRateKg);
-      return `${lbsPerWeek.toFixed(1)} lbs/week`;
+      return copy('progress.stats.weeklyRateLbs', {
+        rate: kgToLbs(stats.weeklyRateKg).toFixed(1),
+      });
     }
-    return `${stats.weeklyRateKg.toFixed(1)} kg/week`;
+    return copy('progress.stats.weeklyRateKg', {
+      rate: stats.weeklyRateKg.toFixed(1),
+    });
   };
 
   const formatProjectedGoalDate = (): string => {
     if (!profile) {
-      return '—';
+      return copy('common.unavailable');
     }
     if (!stats?.projectedGoalDate) {
-      return profile.deficitKcal === 0 ? 'Maintaining' : '—';
+      return profile.deficitKcal === 0
+        ? copy('progress.stats.maintaining')
+        : copy('common.unavailable');
     }
     return stats.projectedGoalDate.toLocaleDateString(undefined, {
       month: 'short',
@@ -64,11 +70,11 @@ export function useProgress(uid: string | undefined, referenceDate: Date = new D
           profile.goalWeightKg,
           formatWeightDisplay,
         )
-      : 'Weight progress chart';
+      : copy('progress.chart.a11y.label');
 
   const progressAriaValue = stats
     ? progressAccessibilityValue(stats.progressFraction)
-    : '0% toward goal';
+    : copy('progress.bar.a11y', { percent: 0 });
 
   const isLoading = profileQuery.isLoading || weighInsQuery.isLoading;
   const profileLoadFailed =

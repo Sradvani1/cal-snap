@@ -3,11 +3,14 @@
 import Link from 'next/link';
 import { use, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { ConfirmAlertDialog } from '@/components/design/ConfirmAlertDialog';
 import { MealDetailActions } from '@/components/meal-log/MealDetailActions';
 import { MealDetailView } from '@/components/meal-log/MealDetailView';
 import { MealShareCard } from '@/components/meal-log/MealShareCard';
 import { useMealShareImage } from '@/components/meal-log/use-meal-share-image';
 import { useAuth } from '@/lib/auth/use-auth';
+import { copy } from '@/lib/copy';
+import { typography } from '@/lib/design/typography';
 import { useDeleteMeal } from '@/lib/queries/use-delete-meal';
 import { useMeal } from '@/lib/queries/use-meal';
 import { getMealPhotoDownloadUrl } from '@/lib/repositories/meals';
@@ -26,6 +29,7 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
   const { shareCardImage, isSharing, shareError } = useMealShareImage();
   const shareCardRef = useRef<HTMLDivElement>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const meal = mealQuery.data?.entry;
 
@@ -53,12 +57,12 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
     };
   }, [meal?.photoStoragePath]);
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
     if (!meal) {
-      return;
-    }
-    const confirmed = window.confirm('Delete this meal? This cannot be undone.');
-    if (!confirmed) {
       return;
     }
 
@@ -80,8 +84,8 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
   if (mealQuery.isLoading) {
     return (
       <div className="mx-auto max-w-lg px-4 py-6">
-        <div className="mb-6 h-8 w-32 animate-pulse rounded bg-neutral-100" />
-        <div className="aspect-[4/3] animate-pulse rounded-xl bg-neutral-100" />
+        <div className="mb-6 h-8 w-32 animate-pulse rounded bg-cs-muted/20" />
+        <div className="aspect-[4/3] animate-pulse rounded-xl bg-cs-muted/20" />
       </div>
     );
   }
@@ -90,12 +94,12 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
     const notFound = mealQuery.error instanceof MealNotFoundError;
     return (
       <div className="mx-auto max-w-lg px-4 py-6">
-        <h1 className="mb-4 text-2xl font-bold text-neutral-900">Meal detail</h1>
-        <p className="mb-4 text-sm text-neutral-600">
-          {notFound ? 'Meal not found.' : 'Could not load meal.'}
+        <h1 className={`${typography.csCardTitle} mb-4 text-2xl`}>{copy('mealLog.detail.title')}</h1>
+        <p className={`${typography.csCaption} mb-4`}>
+          {notFound ? copy('mealLog.detail.notFound') : copy('mealLog.detail.loadFailed')}
         </p>
-        <Link href="/log" className="text-sm font-medium text-neutral-900 underline">
-          Back to log
+        <Link href="/log" className={`${typography.csBody} font-medium underline`}>
+          {copy('mealLog.detail.backToLog')}
         </Link>
       </div>
     );
@@ -104,7 +108,7 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
   return (
     <div className="mx-auto max-w-lg px-4 py-6 pb-24">
       <header className="mb-6">
-        <h1 className="text-2xl font-bold text-neutral-900">Meal detail</h1>
+        <h1 className={`${typography.csCardTitle} text-2xl`}>{copy('mealLog.detail.title')}</h1>
       </header>
 
       <MealDetailView
@@ -116,23 +120,33 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
         <MealDetailActions
           mealId={meal.id}
           onShare={() => void handleShare()}
-          onDelete={() => void handleDelete()}
+          onDelete={handleDelete}
           isSharing={isSharing}
           isDeleting={deleteMealMutation.isPending}
         />
       </div>
 
       {deleteMealMutation.isError && (
-        <p className="mt-3 text-sm text-red-600">
+        <p className="mt-3 text-sm text-cs-danger">
           {deleteMealMutation.error instanceof Error
             ? deleteMealMutation.error.message
-            : 'Failed to delete meal. Try again.'}
+            : copy('mealLog.error.deleteFailed')}
         </p>
       )}
 
       {shareError && (
-        <p className="mt-3 text-sm text-red-600">{shareError}</p>
+        <p className="mt-3 text-sm text-cs-danger">{shareError}</p>
       )}
+
+      <ConfirmAlertDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        title={copy('mealLog.confirm.deleteTitle')}
+        description={copy('mealLog.confirm.delete')}
+        confirmLabel={copy('mealLog.confirm.deleteAction')}
+        destructive
+        onConfirm={() => void handleConfirmDelete()}
+      />
 
       <div className="pointer-events-none fixed -left-[9999px] top-0" aria-hidden>
         <div ref={shareCardRef}>

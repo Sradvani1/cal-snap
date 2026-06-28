@@ -3,6 +3,7 @@ import {
   validateDateOfBirth,
   validateGoalTargetDate,
 } from '@/lib/onboarding/validation';
+import { copy } from '@/lib/copy';
 import { macroPercentsAreValid } from '@/lib/services/profile-update-service';
 import { WEIGHT_RANGE_KG } from '@/lib/utilities/unit-formatters';
 
@@ -34,16 +35,16 @@ export function settingsValidationMessage(
   currentWeightKg: number,
 ): string | null {
   if (!validateDateOfBirth(draft.dateOfBirth)) {
-    return 'Age must be between 18 and 90 years.';
+    return copy('settings.validation.ageRange');
   }
   if (!validateGoalTargetDate(draft.goalTargetDate)) {
-    return 'Goal date must be 14–730 days from today.';
+    return copy('settings.validation.goalDateRange');
   }
   if (!validateCurrentWeightKg(currentWeightKg)) {
-    return 'Weight must be within a valid range.';
+    return copy('settings.validation.weightRange');
   }
   if (!macroPercentsAreValid(macroPcts.protein, macroPcts.carbs, macroPcts.fat)) {
-    return 'Macro percentages must sum to 100%.';
+    return copy('settings.validation.macroSum');
   }
   return null;
 }

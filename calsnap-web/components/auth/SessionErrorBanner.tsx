@@ -8,7 +8,7 @@ export function SessionErrorBanner({ message }: SessionErrorBannerProps) {
   }
 
   return (
-    <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+    <p className="rounded-lg border border-cs-danger/30 bg-cs-danger/10 px-3 py-2 text-sm text-cs-danger">
       {message}
     </p>
   );

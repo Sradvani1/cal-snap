@@ -1,5 +1,6 @@
 import type { UserProfile } from '@/lib/models/user-profile';
 import type { WeighIn } from '@/lib/models/weigh-in';
+import { copy } from '@/lib/copy';
 import {
   ageFromDateOfBirth,
   projectedGoalDate,
@@ -133,7 +134,7 @@ export function deriveProgressStats(
 
 export function progressAccessibilityValue(progressFractionValue: number): string {
   const percent = Math.round(progressFractionValue * 100);
-  return `${percent}% toward goal`;
+  return copy('progress.bar.a11y', { percent });
 }
 
 export function chartAccessibilitySummary(
@@ -144,7 +145,7 @@ export function chartAccessibilitySummary(
   formatWeight: (kg: number) => string,
 ): string {
   if (weighIns.length === 0) {
-    return 'No weigh-ins logged yet';
+    return copy('progress.chart.a11y.empty');
   }
 
   const current = formatWeight(currentKg);
@@ -153,12 +154,16 @@ export function chartAccessibilitySummary(
 
   let direction: string;
   if (change < -0.1) {
-    direction = `down ${formatWeight(Math.abs(change))}`;
+    direction = copy('progress.chart.a11y.directionDown', {
+      amount: formatWeight(Math.abs(change)),
+    });
   } else if (change > 0.1) {
-    direction = `up ${formatWeight(change)}`;
+    direction = copy('progress.chart.a11y.directionUp', {
+      amount: formatWeight(change),
+    });
   } else {
-    direction = 'unchanged';
+    direction = copy('progress.chart.a11y.unchanged');
   }
 
-  return `Current weight ${current}, ${direction} from start, goal ${goal}`;
+  return copy('progress.chart.a11y.summary', { current, direction, goal });
 }

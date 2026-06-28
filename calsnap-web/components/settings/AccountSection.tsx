@@ -1,6 +1,8 @@
 'use client';
 
-import { SettingsSectionCard } from '@/components/settings/SettingsSectionCard';
+import { SecondaryButton } from '@/components/design/PrimaryButton';
+import { SectionCard } from '@/components/design/SectionCard';
+import { copy } from '@/lib/copy';
 
 interface AccountSectionProps {
   onSignOut: () => void;
@@ -8,14 +10,10 @@ interface AccountSectionProps {
 
 export function AccountSection({ onSignOut }: AccountSectionProps) {
   return (
-    <SettingsSectionCard title="Account">
-      <button
-        type="button"
-        onClick={onSignOut}
-        className="w-full rounded-lg border border-neutral-200 bg-white px-4 py-3 text-sm font-medium text-neutral-700 shadow-sm hover:bg-neutral-50"
-      >
-        Sign out
-      </button>
-    </SettingsSectionCard>
+    <SectionCard title={copy('settings.section.account')}>
+      <SecondaryButton type="button" onClick={onSignOut} fullWidth className="min-h-11">
+        {copy('settings.account.signOut')}
+      </SecondaryButton>
+    </SectionCard>
   );
 }

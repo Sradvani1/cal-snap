@@ -1,13 +1,34 @@
 import type { ActivityLevel } from '@/lib/models/activity-level';
+import { copy } from '@/lib/copy';
 
 export const ACTIVITY_LEVEL_OPTIONS: {
   value: ActivityLevel;
   label: string;
   description: string;
 }[] = [
-  { value: 'sedentary', label: 'Sedentary', description: 'Desk job, little exercise' },
-  { value: 'lightlyActive', label: 'Lightly active', description: '1–3 days/week' },
-  { value: 'moderatelyActive', label: 'Moderately active', description: '3–5 days/week' },
-  { value: 'veryActive', label: 'Very active', description: '6–7 days/week' },
-  { value: 'extraActive', label: 'Extra active', description: 'Athlete or physical job' },
+  {
+    value: 'sedentary',
+    label: copy('common.activity.sedentary.label'),
+    description: copy('common.activity.sedentary.description'),
+  },
+  {
+    value: 'lightlyActive',
+    label: copy('common.activity.lightlyActive.label'),
+    description: copy('common.activity.lightlyActive.description'),
+  },
+  {
+    value: 'moderatelyActive',
+    label: copy('common.activity.moderatelyActive.label'),
+    description: copy('common.activity.moderatelyActive.description'),
+  },
+  {
+    value: 'veryActive',
+    label: copy('common.activity.veryActive.label'),
+    description: copy('common.activity.veryActive.description'),
+  },
+  {
+    value: 'extraActive',
+    label: copy('common.activity.extraActive.label'),
+    description: copy('common.activity.extraActive.description'),
+  },
 ];

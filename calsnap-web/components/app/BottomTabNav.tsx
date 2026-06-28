@@ -2,15 +2,21 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { copy, type CopyKey } from '@/lib/copy';
+import { cn } from '@/lib/utils/cn';
 import { useUnsavedWork } from '@/lib/scanner/unsaved-work-context';
 
 const TABS = [
-  { href: '/dashboard', label: 'Dashboard', icon: DashboardIcon },
-  { href: '/log', label: 'Log', icon: LogIcon },
-  { href: '/scan', label: 'Scan', icon: ScanIcon },
-  { href: '/progress', label: 'Progress', icon: ProgressIcon },
-  { href: '/settings', label: 'Settings', icon: SettingsIcon },
+  { href: '/dashboard', labelKey: 'common.nav.dashboard' as CopyKey, icon: DashboardIcon },
+  { href: '/log', labelKey: 'common.nav.log' as CopyKey, icon: LogIcon },
+  { href: '/scan', labelKey: 'common.nav.scan' as CopyKey, icon: ScanIcon },
+  { href: '/progress', labelKey: 'common.nav.progress' as CopyKey, icon: ProgressIcon },
+  { href: '/settings', labelKey: 'common.nav.settings' as CopyKey, icon: SettingsIcon },
 ] as const;
+
+function iconClass(active: boolean): string {
+  return cn('h-6 w-6', active ? 'text-cs-foreground' : 'text-cs-muted');
+}
 
 function DashboardIcon({ active }: { active: boolean }) {
   return (
@@ -20,7 +26,7 @@ function DashboardIcon({ active }: { active: boolean }) {
       fill="none"
       stroke="currentColor"
       strokeWidth="2"
-      className={`h-6 w-6 ${active ? 'text-neutral-900' : 'text-neutral-400'}`}
+      className={iconClass(active)}
       aria-hidden
     >
       <path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" />
@@ -36,7 +42,7 @@ function LogIcon({ active }: { active: boolean }) {
       fill="none"
       stroke="currentColor"
       strokeWidth="2"
-      className={`h-6 w-6 ${active ? 'text-neutral-900' : 'text-neutral-400'}`}
+      className={iconClass(active)}
       aria-hidden
     >
       <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
@@ -52,7 +58,7 @@ function ScanIcon({ active }: { active: boolean }) {
       fill="none"
       stroke="currentColor"
       strokeWidth="2"
-      className={`h-6 w-6 ${active ? 'text-neutral-900' : 'text-neutral-400'}`}
+      className={iconClass(active)}
       aria-hidden
     >
       <path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3" />
@@ -69,7 +75,7 @@ function ProgressIcon({ active }: { active: boolean }) {
       fill="none"
       stroke="currentColor"
       strokeWidth="2"
-      className={`h-6 w-6 ${active ? 'text-neutral-900' : 'text-neutral-400'}`}
+      className={iconClass(active)}
       aria-hidden
     >
       <path d="M3 3v18h18" />
@@ -86,7 +92,7 @@ function SettingsIcon({ active }: { active: boolean }) {
       fill="none"
       stroke="currentColor"
       strokeWidth="2"
-      className={`h-6 w-6 ${active ? 'text-neutral-900' : 'text-neutral-400'}`}
+      className={iconClass(active)}
       aria-hidden
     >
       <circle cx="12" cy="12" r="3" />
@@ -97,18 +103,19 @@ function SettingsIcon({ active }: { active: boolean }) {
 
 function TabLink({
   href,
-  label,
+  labelKey,
   icon: Icon,
   active,
 }: {
   href: string;
-  label: string;
+  labelKey: CopyKey;
   icon: typeof DashboardIcon;
   active: boolean;
 }) {
   const router = useRouter();
   const pathname = usePathname();
   const { requestNavigation } = useUnsavedWork();
+  const label = copy(labelKey);
 
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     if (pathname === href || pathname.startsWith(`${href}/`)) {
@@ -130,7 +137,7 @@ function TabLink({
       className="flex min-h-11 flex-col items-center justify-center gap-1 px-1 py-2 text-xs font-medium"
     >
       <Icon active={active} />
-      <span className={active ? 'text-neutral-900' : 'text-neutral-400'}>{label}</span>
+      <span className={active ? 'text-cs-primary' : 'text-cs-muted'}>{label}</span>
     </Link>
   );
 }
@@ -140,15 +147,15 @@ export function BottomTabNav() {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-10 border-t border-neutral-200 bg-white"
-      aria-label="Main"
+      className="fixed inset-x-0 bottom-0 z-10 border-t border-cs-border bg-cs-surface"
+      aria-label={copy('common.nav.main')}
     >
       <ul className="mx-auto flex max-w-lg items-stretch justify-around">
-        {TABS.map(({ href, label, icon: Icon }) => {
+        {TABS.map(({ href, labelKey, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(`${href}/`);
           return (
             <li key={href} className="flex-1">
-              <TabLink href={href} label={label} icon={Icon} active={active} />
+              <TabLink href={href} labelKey={labelKey} icon={Icon} active={active} />
             </li>
           );
         })}

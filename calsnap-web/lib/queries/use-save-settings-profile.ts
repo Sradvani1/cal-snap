@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { ProfileExtras } from '@/lib/models/profile-doc';
 import type { UserProfile } from '@/lib/models/user-profile';
 import type { ProfileDraft } from '@/lib/onboarding/profile-draft';
+import { notSignedInError } from '@/lib/copy/errors';
 import type { ResolvedReminderPrefs } from '@/lib/progress/reminder-prefs';
 import { invalidateProfileQueries } from '@/lib/queries/invalidate-profile-queries';
 import {
@@ -32,7 +33,7 @@ export function useSaveSettingsProfile(uid: string | undefined) {
       input: SaveSettingsProfileMutationInput,
     ): Promise<SaveSettingsProfileResult> => {
       if (!uid) {
-        throw new Error('Not signed in');
+        throw notSignedInError();
       }
       return saveSettingsProfile({ uid, ...input });
     },

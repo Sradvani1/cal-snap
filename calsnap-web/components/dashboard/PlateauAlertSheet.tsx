@@ -1,3 +1,10 @@
+'use client';
+
+import { AppDialog } from '@/components/design/AppDialog';
+import { SecondaryButton } from '@/components/design/PrimaryButton';
+import { Button } from '@/components/ui/button';
+import { copy } from '@/lib/copy';
+
 interface PlateauAlertSheetProps {
   open: boolean;
   onDietBreak: () => void;
@@ -11,57 +18,50 @@ export function PlateauAlertSheet({
   onSmallReduction,
   onDismiss,
 }: PlateauAlertSheetProps) {
-  if (!open) {
-    return null;
-  }
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-4 sm:items-center"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="plateau-title"
+    <AppDialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) {
+          onDismiss();
+        }
+      }}
+      title={copy('dashboard.plateau.title')}
+      description={copy('dashboard.plateau.body')}
     >
-      <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
-        <h2 id="plateau-title" className="text-lg font-semibold text-neutral-900">
-          Plateau Detected
-        </h2>
-        <p className="mt-3 text-sm text-neutral-600">
-          Your weight has been stable for about three weeks. This can happen during a deficit.
-        </p>
+      <div className="space-y-3">
+        <SecondaryButton
+          fullWidth
+          type="button"
+          onClick={onDietBreak}
+          className="h-auto flex-col items-start p-4 text-left"
+        >
+          <span className="block font-semibold text-cs-foreground">
+            {copy('dashboard.plateau.dietBreak.title')}
+          </span>
+          <span className="mt-1 block text-xs font-normal text-cs-muted">
+            {copy('dashboard.plateau.dietBreak.description')}
+          </span>
+        </SecondaryButton>
 
-        <div className="mt-5 space-y-3">
-          <button
-            type="button"
-            onClick={onDietBreak}
-            className="w-full rounded-xl bg-neutral-100 p-4 text-left transition hover:bg-neutral-200"
-          >
-            <span className="block font-semibold text-neutral-900">Diet Break</span>
-            <span className="mt-1 block text-xs text-neutral-500">
-              Eat at maintenance for 2 weeks to reset adaptation
-            </span>
-          </button>
+        <SecondaryButton
+          fullWidth
+          type="button"
+          onClick={onSmallReduction}
+          className="h-auto flex-col items-start p-4 text-left"
+        >
+          <span className="block font-semibold text-cs-foreground">
+            {copy('dashboard.plateau.smallReduction.title')}
+          </span>
+          <span className="mt-1 block text-xs font-normal text-cs-muted">
+            {copy('dashboard.plateau.smallReduction.description')}
+          </span>
+        </SecondaryButton>
 
-          <button
-            type="button"
-            onClick={onSmallReduction}
-            className="w-full rounded-xl bg-neutral-100 p-4 text-left transition hover:bg-neutral-200"
-          >
-            <span className="block font-semibold text-neutral-900">Small Reduction</span>
-            <span className="mt-1 block text-xs text-neutral-500">
-              Reduce daily target by 60 kcal
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={onDismiss}
-            className="w-full rounded-lg py-3 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
-          >
-            Remind Me Later
-          </button>
-        </div>
+        <Button type="button" variant="ghost" className="min-h-11 w-full" onClick={onDismiss}>
+          {copy('dashboard.plateau.remindLater')}
+        </Button>
       </div>
-    </div>
+    </AppDialog>
   );
 }

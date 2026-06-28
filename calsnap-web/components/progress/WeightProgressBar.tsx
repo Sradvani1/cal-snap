@@ -1,3 +1,6 @@
+import { copy } from '@/lib/copy';
+import { typography } from '@/lib/design/typography';
+
 interface WeightProgressBarProps {
   progressFraction: number;
   ariaValueText: string;
@@ -11,12 +14,12 @@ export function WeightProgressBar({
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-between text-sm text-neutral-600">
-        <span>Progress to goal</span>
-        <span className="font-medium text-neutral-900">{percent}%</span>
+      <div className={`flex items-center justify-between ${typography.csCaption}`}>
+        <span>{copy('progress.bar.label')}</span>
+        <span className="font-medium text-cs-foreground">{percent}%</span>
       </div>
       <div
-        className="h-2 overflow-hidden rounded-full bg-neutral-100"
+        className="h-2 overflow-hidden rounded-full bg-cs-muted/20"
         role="progressbar"
         aria-valuenow={percent}
         aria-valuemin={0}
@@ -24,7 +27,7 @@ export function WeightProgressBar({
         aria-valuetext={ariaValueText}
       >
         <div
-          className="h-full rounded-full bg-neutral-800 transition-all"
+          className="h-full rounded-full bg-cs-primary transition-all"
           style={{ width: `${percent}%` }}
         />
       </div>
@@ -33,5 +36,5 @@ export function WeightProgressBar({
 }
 
 export function WeightProgressBarSkeleton() {
-  return <div className="h-10 animate-pulse rounded-lg bg-neutral-100" />;
+  return <div className="h-10 animate-pulse rounded-lg bg-cs-muted/20" />;
 }

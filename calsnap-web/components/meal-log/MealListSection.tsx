@@ -5,6 +5,9 @@ import {
   MEAL_TYPE_ORDER,
 } from '@/components/meal-log/meal-type-display';
 import { MealLogRow } from '@/components/meal-log/MealLogRow';
+import { copy } from '@/lib/copy';
+import { typography } from '@/lib/design/typography';
+import { cn } from '@/lib/utils/cn';
 
 interface MealListSectionProps {
   mealsByType: MealsByType;
@@ -23,15 +26,18 @@ export function MealListSection({
         const meals = mealsByType[mealType] ?? [];
         return (
           <div key={mealType}>
-            <h3 className="mb-2 text-sm font-semibold text-neutral-500">
+            <h3 className={cn(typography.csCaption, 'mb-2 font-semibold')}>
               {MEAL_TYPE_LABELS[mealType]}
             </h3>
             {meals.length === 0 ? (
               <Link
                 href="/scan"
-                className="block text-sm text-neutral-500 underline-offset-2 hover:text-neutral-700 hover:underline"
+                className={cn(
+                  typography.csCaption,
+                  'underline-offset-2 hover:text-cs-foreground hover:underline',
+                )}
               >
-                Add {MEAL_TYPE_LABELS[mealType]}
+                {copy('mealLog.addMeal', { mealType: MEAL_TYPE_LABELS[mealType] })}
               </Link>
             ) : (
               <div className="space-y-2">

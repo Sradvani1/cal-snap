@@ -1,4 +1,7 @@
 import type { ScannerErrorKind } from '@/lib/scanner/use-meal-scanner';
+import { copy } from '@/lib/copy';
+import { typography } from '@/lib/design/typography';
+import { cn } from '@/lib/utils/cn';
 
 interface ScannerErrorBannerProps {
   error: ScannerErrorKind;
@@ -6,35 +9,45 @@ interface ScannerErrorBannerProps {
   onManualEntry?: () => void;
 }
 
-const MESSAGES: Record<ScannerErrorKind, string> = {
-  offline: 'You appear to be offline. Check your connection and try again.',
-  api: 'Analysis failed. The service may be unavailable — try again or enter manually.',
-  parse: 'Could not read the analysis response. Try again or enter manually.',
-  unrecognizable: 'Could not identify food in this photo. Try a clearer image or enter manually.',
-  photoPrep: 'Could not prepare this photo. Try a different image.',
-};
+function errorMessage(error: ScannerErrorKind): string {
+  switch (error) {
+    case 'offline':
+      return copy('scanner.error.offline');
+    case 'api':
+      return copy('scanner.error.api');
+    case 'parse':
+      return copy('scanner.error.parse');
+    case 'unrecognizable':
+      return copy('scanner.error.unrecognizable');
+    case 'photoPrep':
+      return copy('scanner.error.photoPrep');
+  }
+}
 
 export function ScannerErrorBanner({ error, onRetry, onManualEntry }: ScannerErrorBannerProps) {
   return (
-    <div className="rounded-xl border border-red-200 bg-red-50 p-4" role="alert">
-      <p className="text-sm text-red-800">{MESSAGES[error]}</p>
+    <div
+      className="rounded-xl border border-cs-danger/30 bg-cs-danger/10 p-4"
+      role="alert"
+    >
+      <p className={cn(typography.csBody, 'text-cs-danger')}>{errorMessage(error)}</p>
       <div className="mt-3 flex flex-wrap gap-2">
         {onRetry && (
           <button
             type="button"
             onClick={onRetry}
-            className="min-h-11 rounded-lg bg-red-800 px-4 py-2 text-sm font-medium text-white"
+            className="min-h-11 rounded-lg bg-cs-danger px-4 py-2 text-sm font-medium text-cs-on-primary"
           >
-            Retry
+            {copy('scanner.error.retry')}
           </button>
         )}
         {onManualEntry && (
           <button
             type="button"
             onClick={onManualEntry}
-            className="min-h-11 rounded-lg border border-red-300 bg-white px-4 py-2 text-sm font-medium text-red-800"
+            className="min-h-11 rounded-lg border border-cs-danger/30 bg-cs-surface px-4 py-2 text-sm font-medium text-cs-danger"
           >
-            Enter manually
+            {copy('scanner.capture.manualEntry')}
           </button>
         )}
       </div>

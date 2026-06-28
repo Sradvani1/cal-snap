@@ -4,6 +4,7 @@ import {
   type Firestore,
 } from 'firebase/firestore';
 import { startOfLocalDay } from '@/lib/dashboard/date-window';
+import { copy } from '@/lib/copy';
 import { getFirestoreDb } from '@/lib/firebase/client';
 import type { WeighIn } from '@/lib/models/weigh-in';
 import { weighInToDoc } from '@/lib/models/weigh-in-doc';
@@ -79,13 +80,13 @@ export function recalculateWeighIn(
 
 function validateWeighInInput(newWeightKg: number, date: Date, now: Date = new Date()): Date {
   if (newWeightKg <= 0 || newWeightKg < WEIGHT_RANGE_KG.min || newWeightKg > WEIGHT_RANGE_KG.max) {
-    throw new WeighInValidationError('Weight must be within a valid range.');
+    throw new WeighInValidationError(copy('progress.validation.weightRange'));
   }
 
   const normalizedDate = startOfLocalDay(date);
   const todayStart = startOfLocalDay(now);
   if (normalizedDate > todayStart) {
-    throw new WeighInValidationError('Weigh-in date cannot be in the future.');
+    throw new WeighInValidationError(copy('progress.validation.futureDate'));
   }
 
   return normalizedDate;

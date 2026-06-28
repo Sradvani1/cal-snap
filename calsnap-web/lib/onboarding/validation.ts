@@ -1,10 +1,11 @@
 import { AppConstants } from '@/lib/constants';
+import { copy } from '@/lib/copy';
 import { ageFromDateOfBirth } from '@/lib/nutrition/calculator';
 
 function startOfDay(date: Date): Date {
-  const copy = new Date(date);
-  copy.setHours(0, 0, 0, 0);
-  return copy;
+  const normalized = new Date(date);
+  normalized.setHours(0, 0, 0, 0);
+  return normalized;
 }
 
 export function validateDateOfBirth(
@@ -35,7 +36,13 @@ export function validationMessageForStep(
   step: 'profileSetup' | 'goalSetup',
 ): string {
   if (step === 'profileSetup') {
-    return `Age must be between ${AppConstants.Onboarding.minAgeYears} and ${AppConstants.Onboarding.maxAgeYears} years.`;
+    return copy('onboarding.validation.ageRange', {
+      min: AppConstants.Onboarding.minAgeYears,
+      max: AppConstants.Onboarding.maxAgeYears,
+    });
   }
-  return `Goal date must be ${AppConstants.Onboarding.minGoalDaysFromToday}–${AppConstants.Onboarding.maxGoalDaysFromToday} days from today.`;
+  return copy('onboarding.validation.goalDateRange', {
+    min: AppConstants.Onboarding.minGoalDaysFromToday,
+    max: AppConstants.Onboarding.maxGoalDaysFromToday,
+  });
 }

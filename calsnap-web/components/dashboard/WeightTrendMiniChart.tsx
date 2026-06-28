@@ -1,6 +1,14 @@
+'use client';
+
 import Link from 'next/link';
+import { PrimaryButton } from '@/components/design/PrimaryButton';
+import { SectionCard } from '@/components/design/SectionCard';
+import { useReducedMotion } from '@/lib/design/motion';
+import { typography } from '@/lib/design/typography';
+import { copy } from '@/lib/copy';
 import { displayWeight, formatWeight } from '@/lib/utilities/unit-formatters';
 import type { WeighIn } from '@/lib/models/weigh-in';
+import { cn } from '@/lib/utils/cn';
 
 interface WeightTrendMiniChartProps {
   weighIns: WeighIn[];
@@ -40,26 +48,27 @@ export function WeightTrendMiniChart({
   useLbs,
   onLogWeighIn,
 }: WeightTrendMiniChartProps) {
+  const reducedMotion = useReducedMotion();
   const chartWidth = 280;
   const chartHeight = 120;
   const points = sparklinePoints(weighIns, useLbs, chartWidth, chartHeight);
   const hasChart = weighIns.length >= 2 && points.length > 0;
 
   return (
-    <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
+    <SectionCard>
       <div className="mb-4 flex items-center justify-between gap-2">
-        <h2 className="text-lg font-semibold text-neutral-900">Weight Trend</h2>
+        <h2 className={typography.csCardTitle}>{copy('dashboard.weight.title')}</h2>
         {onLogWeighIn && (
-          <button
+          <PrimaryButton
             type="button"
             onClick={(event) => {
               event.stopPropagation();
               onLogWeighIn();
             }}
-            className="min-h-11 shrink-0 rounded-lg bg-neutral-900 px-3 py-2 text-xs font-semibold text-white"
+            className="shrink-0 px-3 text-xs"
           >
-            Log weigh-in
-          </button>
+            {copy('dashboard.weight.logWeighIn')}
+          </PrimaryButton>
         )}
       </div>
 
@@ -69,11 +78,14 @@ export function WeightTrendMiniChart({
             viewBox={`0 0 ${chartWidth} ${chartHeight}`}
             className="h-[120px] w-full"
             role="img"
-            aria-label="Seven-day weight trend"
+            aria-label={copy('dashboard.weight.trendA11y')}
           >
             <polyline
               fill="none"
-              className="stroke-neutral-800"
+              className={cn(
+                'stroke-cs-foreground',
+                !reducedMotion && 'animate-[chart-fade-in_700ms_ease-out]',
+              )}
               strokeWidth="2"
               strokeLinejoin="round"
               strokeLinecap="round"
@@ -83,32 +95,28 @@ export function WeightTrendMiniChart({
         </Link>
       ) : (
         <div className="flex flex-col items-center gap-2 py-4 text-center">
-          <p className="text-lg font-medium text-neutral-900">
+          <p className="text-lg font-medium text-cs-foreground">
             {formatWeight(startingWeightKg, useLbs)}
           </p>
-          <p className="text-sm text-neutral-500">Starting weight</p>
+          <p className={typography.csCaption}>{copy('dashboard.weight.startingWeight')}</p>
           {onLogWeighIn ? (
-            <button
-              type="button"
-              onClick={onLogWeighIn}
-              className="min-h-11 rounded-lg bg-neutral-900 px-4 py-2 text-sm font-semibold text-white"
-            >
-              Log your first weigh-in
-            </button>
+            <PrimaryButton type="button" onClick={onLogWeighIn}>
+              {copy('dashboard.weight.firstWeighIn')}
+            </PrimaryButton>
           ) : (
-            <p className="text-xs text-neutral-400">Log weigh-in in Progress</p>
+            <p className="text-xs text-cs-muted">{copy('dashboard.weight.logInProgress')}</p>
           )}
         </div>
       )}
-    </div>
+    </SectionCard>
   );
 }
 
 export function WeightTrendMiniChartSkeleton() {
   return (
-    <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
-      <div className="mb-4 h-6 w-32 animate-pulse rounded bg-neutral-100" />
-      <div className="h-[120px] animate-pulse rounded bg-neutral-100" />
-    </div>
+    <SectionCard>
+      <div className="mb-4 h-6 w-32 animate-pulse rounded bg-cs-muted/20" />
+      <div className="h-[120px] animate-pulse rounded bg-cs-muted/20" />
+    </SectionCard>
   );
 }

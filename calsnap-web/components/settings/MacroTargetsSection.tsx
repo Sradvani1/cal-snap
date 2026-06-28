@@ -1,7 +1,10 @@
 'use client';
 
+import { SectionCard } from '@/components/design/SectionCard';
 import type { MacroKind } from '@/lib/services/profile-update-service';
-import { SettingsSectionCard } from '@/components/settings/SettingsSectionCard';
+import { copy } from '@/lib/copy';
+import { typography } from '@/lib/design/typography';
+import { cn } from '@/lib/utils/cn';
 
 interface MacroTargetsSectionProps {
   proteinPct: number;
@@ -21,28 +24,29 @@ export function MacroTargetsSection({
   const sumValid = macroSum === 100;
 
   return (
-    <SettingsSectionCard title="Macro targets">
+    <SectionCard title={copy('settings.section.macroTargets')}>
       <div className="flex flex-col gap-4">
         <MacroSlider
-          label="Protein"
+          label={copy('common.macro.protein')}
           value={proteinPct}
           onChange={(value) => onAdjust('protein', value)}
         />
         <MacroSlider
-          label="Carbs"
+          label={copy('common.macro.carbs')}
           value={carbsPct}
           onChange={(value) => onAdjust('carbs', value)}
         />
         <MacroSlider
-          label="Fat"
+          label={copy('common.macro.fat')}
           value={fatPct}
           onChange={(value) => onAdjust('fat', value)}
         />
-        <p className={`text-sm ${sumValid ? 'text-neutral-600' : 'text-red-600'}`}>
-          Total: {macroSum}% {sumValid ? '' : '(must equal 100%)'}
+        <p className={cn('text-sm', sumValid ? typography.csCaption : 'text-cs-danger')}>
+          {copy('settings.macro.total', { sum: macroSum })}{' '}
+          {sumValid ? '' : copy('settings.macro.mustEqual100')}
         </p>
       </div>
-    </SettingsSectionCard>
+    </SectionCard>
   );
 }
 
@@ -56,8 +60,8 @@ function MacroSlider({
   onChange: (value: number) => void;
 }) {
   return (
-    <label className="flex flex-col gap-1 text-sm">
-      <span className="flex justify-between font-medium text-neutral-700">
+    <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
+      <span className="flex justify-between">
         <span>{label}</span>
         <span>{value}%</span>
       </span>

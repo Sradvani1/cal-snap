@@ -2,6 +2,7 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { localDayKey } from '@/lib/dashboard/date-window';
+import { notSignedInError } from '@/lib/copy/errors';
 import type { ProfileExtras } from '@/lib/models/profile-doc';
 import type { UserProfile } from '@/lib/models/user-profile';
 import { invalidateWeighInQueries } from '@/lib/queries/invalidate-weigh-ins';
@@ -20,7 +21,7 @@ export function useLogWeighIn(uid: string | undefined) {
   return useMutation({
     mutationFn: async (input: LogWeighInInput): Promise<SaveWeighInResult> => {
       if (!uid) {
-        throw new Error('Not signed in');
+        throw notSignedInError();
       }
       return saveWeighIn({
         uid,

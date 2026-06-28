@@ -9,9 +9,15 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
+import { EmptyStateView } from '@/components/design/EmptyStateView';
 import type { WeighIn } from '@/lib/models/weigh-in';
+import { copy } from '@/lib/copy';
+import { lightColors } from '@/lib/design/colors';
+import { useReducedMotion } from '@/lib/design/motion';
+import { typography } from '@/lib/design/typography';
 import { compareWeighInsChronological } from '@/lib/progress/progress-stats';
 import { displayWeight } from '@/lib/utilities/unit-formatters';
+import { cn } from '@/lib/utils/cn';
 
 interface WeightProgressChartProps {
   weighIns: WeighIn[];
@@ -42,19 +48,29 @@ export function WeightProgressChart({
   ariaLabel,
   onLogWeighIn,
 }: WeightProgressChartProps) {
+  const reducedMotion = useReducedMotion();
+
   if (weighIns.length === 0) {
+    if (onLogWeighIn) {
+      return (
+        <EmptyStateView
+          icon="📈"
+          titleKey="progress.chart.empty"
+          messageKey="progress.history.empty"
+          actionTitleKey="progress.chart.firstWeighIn"
+          onAction={onLogWeighIn}
+        />
+      );
+    }
+
     return (
-      <div className="flex flex-col items-center gap-4 rounded-xl border border-neutral-200 bg-white p-8 text-center shadow-sm">
-        <p className="text-sm text-neutral-600">Track your weight over time</p>
-        {onLogWeighIn && (
-          <button
-            type="button"
-            onClick={onLogWeighIn}
-            className="min-h-11 rounded-xl bg-neutral-900 px-6 py-3 text-sm font-semibold text-white"
-          >
-            Log your first weigh-in
-          </button>
+      <div
+        className={cn(
+          typography.csCaption,
+          'rounded-2xl border border-cs-border bg-cs-surface p-8 text-center shadow-sm dark:shadow-none',
         )}
+      >
+        {copy('progress.chart.empty')}
       </div>
     );
   }
@@ -88,46 +104,53 @@ export function WeightProgressChart({
 
   return (
     <div
-      className="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm"
+      className="rounded-2xl border border-cs-border bg-cs-surface p-4 shadow-sm dark:shadow-none"
       role="img"
       aria-label={ariaLabel}
     >
       <ResponsiveContainer width="100%" height={240}>
         <LineChart data={chartData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" className="stroke-neutral-100" />
+          <CartesianGrid strokeDasharray="3 3" className="stroke-cs-border" />
           <XAxis
             dataKey="dateLabel"
-            tick={{ fontSize: 11, fill: '#737373' }}
+            tick={{ fontSize: 11, fill: lightColors.muted }}
             interval="preserveStartEnd"
           />
           <YAxis
-            tick={{ fontSize: 11, fill: '#737373' }}
+            tick={{ fontSize: 11, fill: lightColors.muted }}
             domain={['auto', 'auto']}
             width={40}
           />
           <ReferenceLine
             y={goalDisplay}
-            stroke="#a3a3a3"
+            stroke={lightColors.muted}
             strokeDasharray="4 4"
-            label={{ value: 'Goal', position: 'insideTopRight', fontSize: 11, fill: '#737373' }}
+            label={{
+              value: copy('progress.chart.goalLabel'),
+              position: 'insideTopRight',
+              fontSize: 11,
+              fill: lightColors.muted,
+            }}
           />
           <Line
             type="monotone"
             dataKey="actual"
-            stroke="#171717"
+            stroke={lightColors.foreground}
             strokeWidth={2}
-            dot={{ r: 4, fill: '#171717' }}
+            dot={{ r: 4, fill: lightColors.foreground }}
             connectNulls={false}
+            isAnimationActive={!reducedMotion}
           />
           {showProjection && (
             <Line
               type="monotone"
               dataKey="projected"
-              stroke="#737373"
+              stroke={lightColors.muted}
               strokeWidth={2}
               strokeDasharray="6 4"
               dot={false}
               connectNulls
+              isAnimationActive={!reducedMotion}
             />
           )}
         </LineChart>
@@ -138,6 +161,6 @@ export function WeightProgressChart({
 
 export function WeightProgressChartSkeleton() {
   return (
-    <div className="h-[272px] animate-pulse rounded-xl border border-neutral-200 bg-neutral-100" />
+    <div className="h-[272px] animate-pulse rounded-2xl border border-cs-border bg-cs-muted/20" />
   );
 }

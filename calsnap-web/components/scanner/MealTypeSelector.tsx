@@ -1,14 +1,11 @@
 import type { MealType } from '@/lib/models/meal-type';
 import { suggestedMealTypeForDate } from '@/lib/models/meal-type';
+import { MEAL_TYPE_LABELS } from '@/components/meal-log/meal-type-display';
+import { copy } from '@/lib/copy';
+import { typography } from '@/lib/design/typography';
+import { cn } from '@/lib/utils/cn';
 
 const MEAL_TYPES: MealType[] = ['breakfast', 'lunch', 'dinner', 'snack'];
-
-const LABELS: Record<MealType, string> = {
-  breakfast: 'Breakfast',
-  lunch: 'Lunch',
-  dinner: 'Dinner',
-  snack: 'Snack',
-};
 
 interface MealTypeSelectorProps {
   value: MealType;
@@ -21,8 +18,10 @@ export function MealTypeSelector({ value, onChange }: MealTypeSelectorProps) {
   return (
     <div>
       <div className="mb-2 flex items-center justify-between">
-        <h3 className="text-sm font-medium text-neutral-700">Meal type</h3>
-        <span className="text-xs text-neutral-500">Suggested: {LABELS[suggested]}</span>
+        <h3 className={cn(typography.csBody, 'font-medium')}>{copy('scanner.mealType.title')}</h3>
+        <span className={typography.csCaption}>
+          {copy('scanner.mealType.suggested', { type: MEAL_TYPE_LABELS[suggested] })}
+        </span>
       </div>
       <div className="flex flex-wrap gap-2">
         {MEAL_TYPES.map((type) => {
@@ -32,13 +31,14 @@ export function MealTypeSelector({ value, onChange }: MealTypeSelectorProps) {
               key={type}
               type="button"
               onClick={() => onChange(type)}
-              className={`min-h-11 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+              className={cn(
+                'min-h-11 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                 active
-                  ? 'bg-neutral-900 text-white'
-                  : 'border border-neutral-200 bg-white text-neutral-700'
-              }`}
+                  ? 'bg-cs-foreground text-cs-surface'
+                  : 'border border-cs-border bg-cs-surface text-cs-foreground',
+              )}
             >
-              {LABELS[type]}
+              {MEAL_TYPE_LABELS[type]}
             </button>
           );
         })}

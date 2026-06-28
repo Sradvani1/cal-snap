@@ -1,4 +1,9 @@
 import type { FiberProgressBand } from '@/lib/dashboard/calorie-progress';
+import { fiberProgressBarClass } from '@/lib/design/colors';
+import { typography } from '@/lib/design/typography';
+import { MacroBarView } from '@/components/design/MacroBarView';
+import { SectionCard, SectionCardSkeleton } from '@/components/design/SectionCard';
+import { copy } from '@/lib/copy';
 
 interface MacroBarCardProps {
   proteinConsumed: number;
@@ -19,17 +24,6 @@ function barWidth(consumed: number, target: number): number {
   return Math.min((consumed / target) * 100, 100);
 }
 
-function fiberBarClass(band: FiberProgressBand): string {
-  switch (band) {
-    case 'onTrack':
-      return 'bg-emerald-500';
-    case 'moderate':
-      return 'bg-amber-500';
-    case 'low':
-      return 'bg-red-500';
-  }
-}
-
 function MacroRow({
   label,
   consumed,
@@ -44,12 +38,12 @@ function MacroRow({
   return (
     <div>
       <div className="mb-1 flex items-center justify-between text-sm">
-        <span className="font-medium text-neutral-700">{label}</span>
-        <span className="tabular-nums text-neutral-500">
+        <span className={typography.csMacroLabel}>{label}</span>
+        <span className="tabular-nums text-cs-muted">
           {Math.round(consumed)}g / {Math.round(target)}g
         </span>
       </div>
-      <div className="h-2 overflow-hidden rounded-full bg-neutral-100">
+      <div className="h-2 overflow-hidden rounded-full bg-cs-muted/20">
         <div
           className={`h-full rounded-full transition-all duration-300 ${barClassName}`}
           style={{ width: `${barWidth(consumed, target)}%` }}
@@ -71,47 +65,43 @@ export function MacroBarCard({
   fiberBand,
 }: MacroBarCardProps) {
   return (
-    <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
-      <h2 className="mb-4 text-lg font-semibold text-neutral-900">Macros</h2>
+    <SectionCard title={copy('dashboard.macros.title')}>
+      <MacroBarView
+        proteinG={proteinConsumed}
+        carbsG={carbsConsumed}
+        fatG={fatConsumed}
+        className="mb-6"
+      />
       <div className="space-y-4">
         <MacroRow
-          label="Protein"
+          label={copy('designSystem.macroBar.protein')}
           consumed={proteinConsumed}
           target={proteinTarget}
-          barClassName="bg-neutral-700"
+          barClassName="bg-cs-protein"
         />
         <MacroRow
-          label="Carbs"
+          label={copy('designSystem.macroBar.carbs')}
           consumed={carbsConsumed}
           target={carbsTarget}
-          barClassName="bg-neutral-500"
+          barClassName="bg-cs-carbs"
         />
         <MacroRow
-          label="Fat"
+          label={copy('designSystem.macroBar.fat')}
           consumed={fatConsumed}
           target={fatTarget}
-          barClassName="bg-neutral-400"
+          barClassName="bg-cs-fat"
         />
         <MacroRow
-          label="Fiber"
+          label={copy('common.macro.fiber')}
           consumed={fiberConsumed}
           target={fiberTarget}
-          barClassName={fiberBarClass(fiberBand)}
+          barClassName={fiberProgressBarClass(fiberBand)}
         />
       </div>
-    </div>
+    </SectionCard>
   );
 }
 
 export function MacroBarCardSkeleton() {
-  return (
-    <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
-      <div className="mb-4 h-6 w-20 animate-pulse rounded bg-neutral-100" />
-      <div className="space-y-4">
-        {[1, 2, 3, 4].map((row) => (
-          <div key={row} className="h-8 animate-pulse rounded bg-neutral-100" />
-        ))}
-      </div>
-    </div>
-  );
+  return <SectionCardSkeleton />;
 }

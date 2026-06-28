@@ -7,6 +7,9 @@ import {
   MEAL_TYPE_ICONS,
   formatMealTime,
 } from '@/components/meal-log/meal-type-display';
+import { copy } from '@/lib/copy';
+import { typography } from '@/lib/design/typography';
+import { cn } from '@/lib/utils/cn';
 
 interface MealLogRowProps {
   meal: MealEntry;
@@ -37,17 +40,17 @@ export function MealLogRow({ meal, showActions = false, onDelete }: MealLogRowPr
   };
 
   return (
-    <div className="flex items-center gap-2 rounded-lg bg-neutral-50 px-3 py-2">
+    <div className="flex items-center gap-2 rounded-lg bg-cs-muted/10 px-3 py-2">
       <Link
         href={`/log/${meal.id}`}
         className="flex min-w-0 flex-1 items-center justify-between"
       >
         <div className="flex items-center gap-2">
           <span aria-hidden>{MEAL_TYPE_ICONS[meal.mealType]}</span>
-          <span className="text-sm text-neutral-600">{formatMealTime(meal.timestamp)}</span>
+          <span className={typography.csCaption}>{formatMealTime(meal.timestamp)}</span>
         </div>
-        <span className="text-sm font-medium tabular-nums text-neutral-900">
-          {meal.totalCalories} kcal
+        <span className={cn(typography.csBody, 'font-medium tabular-nums')}>
+          {meal.totalCalories} {copy('common.macro.kcal')}
         </span>
       </Link>
 
@@ -55,35 +58,35 @@ export function MealLogRow({ meal, showActions = false, onDelete }: MealLogRowPr
         <div className="relative" ref={menuRef}>
           <button
             type="button"
-            aria-label="Meal actions"
+            aria-label={copy('mealLog.row.actions')}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((open) => !open)}
-            className="flex min-h-11 min-w-11 items-center justify-center rounded-lg text-neutral-500 hover:bg-neutral-100"
+            className="flex min-h-11 min-w-11 items-center justify-center rounded-lg text-cs-muted hover:bg-cs-muted/15"
           >
             ⋯
           </button>
           {menuOpen && (
-            <div className="absolute right-0 top-full z-10 mt-1 w-36 rounded-lg border border-neutral-200 bg-white py-1 shadow-lg">
+            <div className="absolute right-0 top-full z-10 mt-1 w-36 rounded-lg border border-cs-border bg-cs-surface py-1 shadow-lg">
               <Link
                 href={`/log/${meal.id}`}
-                className="block px-4 py-2 text-sm text-neutral-900 hover:bg-neutral-50"
+                className="block px-4 py-2 text-sm text-cs-foreground hover:bg-cs-muted/10"
                 onClick={() => setMenuOpen(false)}
               >
-                View
+                {copy('mealLog.row.view')}
               </Link>
               <Link
                 href={`/scan/edit/${meal.id}`}
-                className="block px-4 py-2 text-sm text-neutral-900 hover:bg-neutral-50"
+                className="block px-4 py-2 text-sm text-cs-foreground hover:bg-cs-muted/10"
                 onClick={() => setMenuOpen(false)}
               >
-                Edit
+                {copy('mealLog.row.edit')}
               </Link>
               <button
                 type="button"
-                className="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-neutral-50"
+                className="block w-full px-4 py-2 text-left text-sm text-cs-danger hover:bg-cs-muted/10"
                 onClick={handleDelete}
               >
-                Delete
+                {copy('mealLog.actions.delete')}
               </button>
             </div>
           )}

@@ -6,6 +6,7 @@ import { BottomTabNav } from '@/components/app/BottomTabNav';
 import { SessionErrorBanner } from '@/components/auth/SessionErrorBanner';
 import { useAuth } from '@/lib/auth/use-auth';
 import { isOnboardingComplete } from '@/lib/repositories/profile';
+import { copy } from '@/lib/copy';
 import { UnsavedWorkProvider } from '@/lib/scanner/unsaved-work-context';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -41,15 +42,15 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   if (authLoading || checking) {
     return (
-      <div className="flex min-h-full flex-1 items-center justify-center bg-neutral-50">
-        <p className="text-neutral-600">Loading…</p>
+      <div className="flex min-h-full flex-1 items-center justify-center bg-cs-background">
+        <p className="text-cs-muted">{copy('common.loading')}</p>
       </div>
     );
   }
 
   return (
     <UnsavedWorkProvider>
-      <div className="min-h-full bg-neutral-50 pb-20">
+      <div className="min-h-full bg-cs-background pb-20">
         {sessionError && (
           <div className="mx-auto max-w-lg px-4 pt-4">
             <SessionErrorBanner message={sessionError} />

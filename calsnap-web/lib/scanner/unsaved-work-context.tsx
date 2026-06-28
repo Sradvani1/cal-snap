@@ -34,7 +34,8 @@ export function UnsavedWorkProvider({ children }: { children: ReactNode }) {
       if (navigationHandler) {
         return navigationHandler(href);
       }
-      return window.confirm('Discard unsaved meal scan?');
+      // Navigation blocked — caller should register a handler that shows ConfirmAlertDialog
+      return false;
     },
     [hasUnsavedWork, navigationHandler],
   );

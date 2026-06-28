@@ -1,13 +1,112 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant contrast-more (@media (prefers-contrast: more));
+@custom-variant forced-colors (@media (forced-colors: active));
+
+@theme inline {
+  --color-cs-primary: var(--cs-primary);
+  --color-cs-secondary: var(--cs-secondary);
+  --color-cs-accent: var(--cs-accent);
+  --color-cs-background: var(--cs-background);
+  --color-cs-surface: var(--cs-surface);
+  --color-cs-foreground: var(--cs-foreground);
+  --color-cs-muted: var(--cs-muted);
+  --color-cs-border: var(--cs-border);
+  --color-cs-success: var(--cs-success);
+  --color-cs-warning: var(--cs-warning);
+  --color-cs-danger: var(--cs-danger);
+  --color-cs-protein: var(--cs-protein);
+  --color-cs-carbs: var(--cs-carbs);
+  --color-cs-fat: var(--cs-fat);
+  --color-cs-on-primary: var(--cs-on-primary);
+
+  /* shadcn theme mapping */
+  --color-background: var(--cs-background);
+  --color-foreground: var(--cs-foreground);
+  --color-primary: var(--cs-primary);
+  --color-primary-foreground: var(--cs-on-primary);
+  --color-secondary: var(--cs-secondary);
+  --color-secondary-foreground: var(--cs-on-primary);
+  --color-muted: color-mix(in srgb, var(--cs-muted) 15%, transparent);
+  --color-muted-foreground: var(--cs-muted);
+  --color-accent: color-mix(in srgb, var(--cs-accent) 15%, transparent);
+  --color-accent-foreground: var(--cs-foreground);
+  --color-destructive: var(--cs-danger);
+  --color-destructive-foreground: var(--cs-on-primary);
+  --color-border: var(--cs-border);
+  --color-input: var(--cs-border);
+  --color-ring: var(--cs-primary);
+  --color-popover: var(--cs-surface);
+  --color-popover-foreground: var(--cs-foreground);
+  --color-card: var(--cs-surface);
+  --color-card-foreground: var(--cs-foreground);
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+}
+
 :root {
-  --background: #fafafa;
-  --foreground: #171717;
+  --cs-primary: #3da35d;
+  --cs-secondary: #1a6b6b;
+  --cs-accent: #e6a817;
+  --cs-background: #f2f2f7;
+  --cs-surface: #ffffff;
+  --cs-foreground: #1c1c1e;
+  --cs-muted: #6b7280;
+  --cs-border: #e5e5ea;
+  --cs-success: #34c759;
+  --cs-warning: #ffcc00;
+  --cs-danger: #ff3b30;
+  --cs-protein: #007aff;
+  --cs-carbs: #ff9500;
+  --cs-fat: #af52de;
+  --cs-on-primary: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --cs-primary: #5bc97a;
+    --cs-secondary: #2a9b9b;
+    --cs-accent: #f0c040;
+    --cs-background: #000000;
+    --cs-surface: #1c1c1e;
+    --cs-foreground: #f5f5f7;
+    --cs-muted: #98989d;
+    --cs-border: #38383a;
+    --cs-success: #30d158;
+    --cs-warning: #ffd60a;
+    --cs-danger: #ff453a;
+    --cs-protein: #4099ff;
+    --cs-carbs: #ff9f0a;
+    --cs-fat: #bf5af2;
+    --cs-on-primary: #ffffff;
+  }
+}
+
+/* Snapshot test hook — add class="dark" on html */
+.dark {
+  --cs-primary: #5bc97a;
+  --cs-secondary: #2a9b9b;
+  --cs-accent: #f0c040;
+  --cs-background: #000000;
+  --cs-surface: #1c1c1e;
+  --cs-foreground: #f5f5f7;
+  --cs-muted: #98989d;
+  --cs-border: #38383a;
+  --cs-success: #30d158;
+  --cs-warning: #ffd60a;
+  --cs-danger: #ff453a;
+  --cs-protein: #4099ff;
+  --cs-carbs: #ff9f0a;
+  --cs-fat: #bf5af2;
+  --cs-on-primary: #ffffff;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--cs-background);
+  color: var(--cs-foreground);
   font-family:
     system-ui,
     -apple-system,
@@ -17,4 +116,25 @@ body {
     Helvetica,
     Arial,
     sans-serif;
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --cs-border: #8e8e93;
+  }
+}
+
+@media (forced-colors: active) {
+  :root {
+    --cs-border: CanvasText;
+  }
+}
+
+@keyframes chart-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { notSignedInError } from '@/lib/copy/errors';
 import { localDayKey } from '@/lib/dashboard/date-window';
 import type { MealEntry } from '@/lib/models/meal-entry';
 import { invalidateMealQueries } from '@/lib/queries/invalidate-meals';
@@ -17,7 +18,7 @@ export function useLogMeal(uid: string | undefined) {
   return useMutation({
     mutationFn: async ({ entry, photoBlob }: LogMealInput) => {
       if (!uid) {
-        throw new Error('Not signed in');
+        throw notSignedInError();
       }
 
       let photoStoragePath: string | undefined;

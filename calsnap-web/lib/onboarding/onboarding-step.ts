@@ -1,3 +1,5 @@
+import { copy } from '@/lib/copy';
+
 export const ONBOARDING_STEPS = [
   'welcome',
   'profileSetup',
@@ -9,11 +11,11 @@ export const ONBOARDING_STEPS = [
 export type OnboardingStep = (typeof ONBOARDING_STEPS)[number];
 
 export const ONBOARDING_STEP_TITLES: Record<OnboardingStep, string> = {
-  welcome: 'Welcome',
-  profileSetup: 'Your profile',
-  goalSetup: 'Your goal',
-  caloriePreview: 'Calorie target',
-  done: 'All set',
+  welcome: copy('onboarding.step.welcome'),
+  profileSetup: copy('onboarding.step.profileSetup'),
+  goalSetup: copy('onboarding.step.goalSetup'),
+  caloriePreview: copy('onboarding.step.caloriePreview'),
+  done: copy('onboarding.step.done'),
 };
 
 export function onboardingStepIndex(step: OnboardingStep): number {
