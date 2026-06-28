@@ -158,3 +158,20 @@ export async function getMealPhotoDownloadUrl(path: string): Promise<string> {
   const storageRef = ref(getFirebaseStorage(), path);
   return getDownloadURL(storageRef);
 }
+
+export async function fetchAllMeals(
+  uid: string,
+  sortAscending = true,
+  db: Firestore = getFirestoreDb(),
+): Promise<MealEntry[]> {
+  const mealsRef = collection(db, 'users', uid, 'meals');
+  const mealsQuery = query(
+    mealsRef,
+    orderBy('timestamp', sortAscending ? 'asc' : 'desc'),
+  );
+
+  const snapshot = await getDocs(mealsQuery);
+  return snapshot.docs.map((docSnap) =>
+    docToMealEntry(docSnap.id, docSnap.data() as MealEntryDoc),
+  );
+}
