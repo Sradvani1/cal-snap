@@ -10,23 +10,48 @@ import {
 } from '@/lib/firebase/emulator';
 
 const EMULATOR_FIREBASE_CONFIG = {
-  NEXT_PUBLIC_FIREBASE_API_KEY: 'demo-api-key',
-  NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: 'demo-calsnap.firebaseapp.com',
-  NEXT_PUBLIC_FIREBASE_PROJECT_ID: 'demo-calsnap',
-  NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: 'demo-calsnap.appspot.com',
-  NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: '1234567890',
-  NEXT_PUBLIC_FIREBASE_APP_ID: '1:1234567890:web:abcdef',
+  apiKey: 'demo-api-key',
+  authDomain: 'demo-calsnap.firebaseapp.com',
+  projectId: 'demo-calsnap',
+  storageBucket: 'demo-calsnap.appspot.com',
+  messagingSenderId: '1234567890',
+  appId: '1:1234567890:web:abcdef',
 } as const;
 
-function requireEnv(name: keyof typeof EMULATOR_FIREBASE_CONFIG): string {
-  const value = process.env[name];
-  if (value) {
-    return value;
-  }
+function resolveFirebaseWebConfig() {
   if (shouldUseFirebaseEmulator()) {
-    return EMULATOR_FIREBASE_CONFIG[name];
+    return EMULATOR_FIREBASE_CONFIG;
   }
-  throw new Error(`Missing ${name}`);
+
+  // Static process.env access is required so Next.js inlines NEXT_PUBLIC_* in the client bundle.
+  const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+  const authDomain = process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN;
+  const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+  const storageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
+  const messagingSenderId = process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID;
+  const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID;
+
+  const missing = [
+    !apiKey && 'NEXT_PUBLIC_FIREBASE_API_KEY',
+    !authDomain && 'NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN',
+    !projectId && 'NEXT_PUBLIC_FIREBASE_PROJECT_ID',
+    !storageBucket && 'NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET',
+    !messagingSenderId && 'NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID',
+    !appId && 'NEXT_PUBLIC_FIREBASE_APP_ID',
+  ].filter((name): name is string => Boolean(name));
+
+  if (missing.length > 0) {
+    throw new Error(`Missing ${missing.join(', ')}`);
+  }
+
+  return {
+    apiKey,
+    authDomain,
+    projectId,
+    storageBucket,
+    messagingSenderId,
+    appId,
+  };
 }
 
 let app: FirebaseApp | undefined;
@@ -39,14 +64,7 @@ export function getFirebaseApp(): FirebaseApp {
     app = getApp();
     return app;
   }
-  app = initializeApp({
-    apiKey: requireEnv('NEXT_PUBLIC_FIREBASE_API_KEY'),
-    authDomain: requireEnv('NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN'),
-    projectId: requireEnv('NEXT_PUBLIC_FIREBASE_PROJECT_ID'),
-    storageBucket: requireEnv('NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET'),
-    messagingSenderId: requireEnv('NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID'),
-    appId: requireEnv('NEXT_PUBLIC_FIREBASE_APP_ID'),
-  });
+  app = initializeApp(resolveFirebaseWebConfig());
   return app;
 }
 

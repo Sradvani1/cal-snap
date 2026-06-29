@@ -2,6 +2,8 @@
 
 Mobile-first Next.js app for CalSnap. See the [web implementation docs](../docs/implementation/web/README.md) for stack details and open decisions.
 
+**Deploying?** Follow the phased [Rollout Guide](../docs/implementation/web/ROLLOUT.md): test on emulators first, then wire up Firebase cloud and Vercel.
+
 ## Prerequisites
 
 - Node.js 20+ (`.nvmrc` pins 22)
@@ -78,7 +80,7 @@ firebase deploy --only firestore:rules --project <your-project>
 
 ## Vercel deploy
 
-Set **Root Directory** to `calsnap-web`. Add all env vars from `.env.local.example`.
+See **[docs/implementation/web/ROLLOUT.md](../docs/implementation/web/ROLLOUT.md)** (Phases 4–5) for the full checklist. Summary: set **Root Directory** to `calsnap-web`; add all env vars from `.env.local.example`; set `NEXT_PUBLIC_USE_FIREBASE_EMULATOR=false`.
 
 ## Source of truth
 

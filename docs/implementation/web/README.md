@@ -47,6 +47,10 @@ Business logic lives in `calsnap-web/lib/`; `app/` stays thin.
 | W09 | [PR-W09.md](./PR-W09.md) | Implemented |
 | W10 | [PR-W10.md](./PR-W10.md) | Implemented |
 
+## Rollout & deploy
+
+- **[ROLLOUT.md](./ROLLOUT.md)** — phased guide: emulator testing → real Gemini → Firebase cloud → Vercel
+
 ## Source of truth
 
 - [`docs/technical-spec.md`](../../technical-spec.md) — architecture, models, services

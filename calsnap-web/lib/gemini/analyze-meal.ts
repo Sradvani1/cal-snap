@@ -45,6 +45,7 @@ export async function analyzeMealImage(
   const prompt = buildMealAnalysisPrompt(input.description);
 
   let text: string;
+  let finishReason: string | undefined;
   try {
     const response = await client.models.generateContent({
       model: AppConstants.Gemini.model,
@@ -65,11 +66,13 @@ export async function analyzeMealImage(
       config: {
         maxOutputTokens: AppConstants.Gemini.maxTokens,
         responseMimeType: 'application/json',
-        responseSchema: mealAnalysisJsonSchema(),
+        // Match iOS GeminiRESTClient — pass OpenAPI JSON Schema verbatim.
+        responseJsonSchema: mealAnalysisJsonSchema(),
       },
     });
 
     text = response.text?.trim() ?? '';
+    finishReason = response.candidates?.[0]?.finishReason;
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Gemini request failed';
     throw new GeminiAnalysisError('requestFailed', message);
@@ -81,11 +84,21 @@ export async function analyzeMealImage(
 
   const raw = normalizedJSONData(text);
   if (raw === null) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('[analyze-meal] invalid JSON', {
+        finishReason,
+        textPreview: text.slice(0, 500),
+        textLength: text.length,
+      });
+    }
     throw new GeminiAnalysisError('invalidJSON', 'Could not extract JSON from model response');
   }
 
   const parsed = safeParseMealAnalysisResponse(raw);
   if (!parsed.success) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('[analyze-meal] validation failed', parsed.error.flatten());
+    }
     throw new GeminiAnalysisError('validationFailed', parsed.error.message);
   }
 

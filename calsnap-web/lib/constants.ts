@@ -1,7 +1,7 @@
 export const AppConstants = {
   Gemini: {
     model: 'gemini-2.5-flash',
-    maxTokens: 2048,
+    maxTokens: 4096,
     confidenceThreshold: 0.6,
   },
   Nutrition: {
