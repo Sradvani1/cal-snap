@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { FormEvent, useState } from 'react';
 import { SessionErrorBanner } from '@/components/auth/SessionErrorBanner';
 import { PrimaryButton, SecondaryButton } from '@/components/design/PrimaryButton';
@@ -15,7 +14,6 @@ const inputClassName =
 
 export default function LoginPage() {
   const { signInWithEmail, signInWithGoogle, loading, sessionError } = useAuth();
-  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -27,7 +25,6 @@ export default function LoginPage() {
     setSubmitting(true);
     try {
       await signInWithEmail(email, password);
-      router.replace('/');
     } catch (err) {
       setError(err instanceof Error ? err.message : copy('auth.login.error'));
     } finally {

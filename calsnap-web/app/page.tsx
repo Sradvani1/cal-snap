@@ -16,7 +16,7 @@ export default function Home() {
       return;
     }
     if (!user) {
-      router.replace('/login');
+      // Middleware only serves / when __session is valid; wait for Firebase to restore.
       return;
     }
 

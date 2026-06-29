@@ -25,6 +25,13 @@ const serwist = new Serwist({
       matcher: ({ url }) => url.pathname.startsWith('/api/'),
       handler: new NetworkOnly(),
     },
+    {
+      matcher: ({ url }) =>
+        url.hostname.endsWith('googleapis.com') ||
+        url.hostname.endsWith('firebaseapp.com') ||
+        url.hostname.endsWith('web.app'),
+      handler: new NetworkOnly(),
+    },
     ...defaultCache,
   ],
 });

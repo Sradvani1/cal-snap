@@ -19,6 +19,12 @@ export const authCopy = {
   'auth.signup.googleError': 'Google sign up failed',
   'auth.session.establishFailed': 'Failed to establish session',
   'auth.session.refreshFailed': 'Failed to refresh session',
+  'auth.session.googleRedirectFailed': 'Google sign-in could not be completed. Try again.',
+  'auth.session.googleAccountExists':
+    'An account already exists with this email. Sign in with email and password, then link Google in settings.',
+  'auth.session.googleUnauthorizedDomain':
+    'This site is not authorized for Google sign-in. Add it in Firebase Console → Authentication → Settings → Authorized domains.',
+  'auth.session.googlePopupClosed': 'Google sign-in was cancelled.',
 } as const;
 
 export type AuthCopyKey = keyof typeof authCopy;

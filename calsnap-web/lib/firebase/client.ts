@@ -1,5 +1,12 @@
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
-import { getAuth, type Auth } from 'firebase/auth';
+import {
+  browserLocalPersistence,
+  browserPopupRedirectResolver,
+  getAuth,
+  indexedDBLocalPersistence,
+  initializeAuth,
+  type Auth,
+} from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
 import { getStorage, type FirebaseStorage } from 'firebase/storage';
 import {
@@ -55,6 +62,7 @@ function resolveFirebaseWebConfig() {
 }
 
 let app: FirebaseApp | undefined;
+let auth: Auth | undefined;
 
 export function getFirebaseApp(): FirebaseApp {
   if (app) {
@@ -69,7 +77,20 @@ export function getFirebaseApp(): FirebaseApp {
 }
 
 export function getFirebaseAuth(): Auth {
-  const auth = getAuth(getFirebaseApp());
+  if (auth) {
+    return auth;
+  }
+
+  const firebaseApp = getFirebaseApp();
+  try {
+    auth = initializeAuth(firebaseApp, {
+      persistence: [indexedDBLocalPersistence, browserLocalPersistence],
+      popupRedirectResolver: browserPopupRedirectResolver,
+    });
+  } catch {
+    auth = getAuth(firebaseApp);
+  }
+
   connectAuthToEmulator(auth);
   return auth;
 }
