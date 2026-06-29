@@ -29,7 +29,7 @@ Business logic lives in `calsnap-web/lib/`; `app/` stays thin.
 
 1. **Gemini cost model** — operator-funded (server `GEMINI_API_KEY`) vs per-user billing
 2. **Photo retention** — indefinite Storage vs TTL / cleanup job
-3. **Web Push** — in-app reminder only (W03) vs FCM in W10
+3. **Web Push** — in-app overdue banner (W10); FCM deferred
 4. **Account deletion** — immediate hard delete of user data (meals, weigh-ins, profile, Storage); Firebase Auth account retained; user re-onboards
 
 ## PR index
@@ -45,7 +45,7 @@ Business logic lives in `calsnap-web/lib/`; `app/` stays thin.
 | W07 | [PR-W07.md](./PR-W07.md) | Implemented |
 | W08 | [PR-W08.md](./PR-W08.md) | Implemented |
 | W09 | [PR-W09.md](./PR-W09.md) | Implemented |
-| W10 | PR-W10.md | Planned |
+| W10 | [PR-W10.md](./PR-W10.md) | Implemented |
 
 ## Source of truth
 

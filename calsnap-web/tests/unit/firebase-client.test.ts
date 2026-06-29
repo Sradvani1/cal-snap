@@ -32,4 +32,11 @@ describe('firebase client', () => {
     expect(getFirestoreDb()).toBeDefined();
     expect(getFirebaseStorage()).toBeDefined();
   });
+
+  it('uses demo config when emulator mode is enabled without env vars', async () => {
+    vi.unstubAllEnvs();
+    vi.stubEnv('NEXT_PUBLIC_USE_FIREBASE_EMULATOR', 'true');
+    const { getFirebaseApp } = await import('@/lib/firebase/client');
+    expect(getFirebaseApp().options.projectId).toBe('demo-calsnap');
+  });
 });

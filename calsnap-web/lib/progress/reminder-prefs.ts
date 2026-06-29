@@ -1,5 +1,5 @@
 import { AppConstants } from '@/lib/constants';
-import type { ProfileDoc } from '@/lib/models/profile-doc';
+import type { ProfileDoc, ProfileExtras } from '@/lib/models/profile-doc';
 
 export interface ResolvedReminderPrefs {
   weighInReminderEnabled: boolean;
@@ -15,6 +15,18 @@ export function defaultReminderPrefs(): ResolvedReminderPrefs {
     weighInReminderHour: AppConstants.Notifications.defaultReminderHour,
     weighInReminderMinute: AppConstants.Notifications.defaultReminderMinute,
   };
+}
+
+export function resolveReminderPrefsFromExtras(
+  extras: Pick<
+    ProfileExtras,
+    | 'weighInReminderEnabled'
+    | 'weighInReminderWeekday'
+    | 'weighInReminderHour'
+    | 'weighInReminderMinute'
+  >,
+): ResolvedReminderPrefs {
+  return resolveReminderPrefs(extras as ProfileDoc);
 }
 
 export function resolveReminderPrefs(doc: ProfileDoc): ResolvedReminderPrefs {

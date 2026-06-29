@@ -10,7 +10,7 @@ import { doc, getDoc, Timestamp } from 'firebase/firestore';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { ProfileDoc } from '@/lib/models/profile-doc';
 import { PROFILE_DOC_ID } from '@/lib/models/profile-doc';
-import { saveWeighIn } from '@/lib/services/weigh-in-service';
+import { saveWeighIn, recalculateWeighIn } from '@/lib/services/weigh-in-service';
 import type { UserProfile } from '@/lib/models/user-profile';
 import type { ProfileExtras } from '@/lib/models/profile-doc';
 
@@ -112,7 +112,8 @@ describe('weigh-in Firestore batch save', () => {
     );
 
     expect(result.weighIn.weightKg).toBe(78);
-    expect(result.updatedProfile.tdee).toBeLessThan(profile.tdee);
+    const expected = recalculateWeighIn(profile, 78);
+    expect(result.updatedProfile.tdee).toBe(expected.tdee);
 
     const profileSnap = await getDoc(doc(db, 'users', uid, 'profile', PROFILE_DOC_ID));
     const profileData = profileSnap.data() as ProfileDoc;

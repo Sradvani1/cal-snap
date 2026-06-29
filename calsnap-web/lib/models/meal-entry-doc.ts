@@ -64,8 +64,8 @@ function foodItemToDoc(item: FoodItem): FoodItemDoc {
     fatG: item.fatG,
     fiberG: item.fiberG,
     confidence: item.confidence,
-    usdaFoodId: item.usdaFoodId,
     isFlagged: item.isFlagged,
+    ...(item.usdaFoodId !== undefined ? { usdaFoodId: item.usdaFoodId } : {}),
   };
 }
 
@@ -95,8 +95,6 @@ export function mealEntryToDoc(entry: MealEntry): MealEntryDoc {
     userId: entry.userId,
     timestamp: Timestamp.fromDate(entry.timestamp),
     mealType: entry.mealType,
-    photoStoragePath: entry.photoStoragePath,
-    textDescription: entry.textDescription,
     totalCalories: entry.totalCalories,
     totalProteinG: entry.totalProteinG,
     totalCarbsG: entry.totalCarbsG,
@@ -104,10 +102,12 @@ export function mealEntryToDoc(entry: MealEntry): MealEntryDoc {
     totalFiberG: entry.totalFiberG,
     geminiConfidence: entry.geminiConfidence,
     isManuallyAdjusted: entry.isManuallyAdjusted,
-    estimationNotes: entry.estimationNotes,
     items: entry.items.map(foodItemToDoc),
     createdAt: now,
     updatedAt: now,
+    ...(entry.photoStoragePath !== undefined ? { photoStoragePath: entry.photoStoragePath } : {}),
+    ...(entry.textDescription !== undefined ? { textDescription: entry.textDescription } : {}),
+    ...(entry.estimationNotes !== undefined ? { estimationNotes: entry.estimationNotes } : {}),
   };
 }
 
@@ -120,8 +120,6 @@ export function mealEntryToUpdateDoc(
     userId: entry.userId,
     timestamp: Timestamp.fromDate(entry.timestamp),
     mealType: entry.mealType,
-    photoStoragePath: entry.photoStoragePath,
-    textDescription: entry.textDescription,
     totalCalories: entry.totalCalories,
     totalProteinG: entry.totalProteinG,
     totalCarbsG: entry.totalCarbsG,
@@ -129,9 +127,11 @@ export function mealEntryToUpdateDoc(
     totalFiberG: entry.totalFiberG,
     geminiConfidence: entry.geminiConfidence,
     isManuallyAdjusted: entry.isManuallyAdjusted,
-    estimationNotes: entry.estimationNotes,
     items: entry.items.map(foodItemToDoc),
     createdAt,
     updatedAt: Timestamp.fromDate(new Date()),
+    ...(entry.photoStoragePath !== undefined ? { photoStoragePath: entry.photoStoragePath } : {}),
+    ...(entry.textDescription !== undefined ? { textDescription: entry.textDescription } : {}),
+    ...(entry.estimationNotes !== undefined ? { estimationNotes: entry.estimationNotes } : {}),
   };
 }

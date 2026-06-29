@@ -32,6 +32,11 @@ export function AboutSection() {
             dietaryguidelines.gov
           </a>
         </p>
+        <p>
+          <a href="/privacy" className="font-medium text-cs-foreground underline">
+            {copy('privacy.title')}
+          </a>
+        </p>
       </div>
     </SectionCard>
   );

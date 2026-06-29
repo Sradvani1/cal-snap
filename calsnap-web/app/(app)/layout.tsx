@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { BottomTabNav } from '@/components/app/BottomTabNav';
+import { InstallPromptBanner } from '@/components/pwa/InstallPromptBanner';
 import { SessionErrorBanner } from '@/components/auth/SessionErrorBanner';
 import { useAuth } from '@/lib/auth/use-auth';
 import { isOnboardingComplete } from '@/lib/repositories/profile';
@@ -56,6 +57,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <SessionErrorBanner message={sessionError} />
           </div>
         )}
+        {user && <InstallPromptBanner uid={user.uid} />}
         <main>{children}</main>
         <BottomTabNav />
       </div>

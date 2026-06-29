@@ -82,12 +82,20 @@ export function profileToDoc(
     macroTargetFatPct: profile.macroTargetFatPct,
     useLbsForWeight: extras.useLbsForWeight,
     useImperialForHeight: extras.useImperialForHeight,
-    weighInReminderEnabled: extras.weighInReminderEnabled,
-    weighInReminderWeekday: extras.weighInReminderWeekday,
-    weighInReminderHour: extras.weighInReminderHour,
-    weighInReminderMinute: extras.weighInReminderMinute,
     createdAt: Timestamp.fromDate(profile.createdAt),
     updatedAt: Timestamp.fromDate(profile.updatedAt),
+    ...(extras.weighInReminderEnabled !== undefined
+      ? { weighInReminderEnabled: extras.weighInReminderEnabled }
+      : {}),
+    ...(extras.weighInReminderWeekday !== undefined
+      ? { weighInReminderWeekday: extras.weighInReminderWeekday }
+      : {}),
+    ...(extras.weighInReminderHour !== undefined
+      ? { weighInReminderHour: extras.weighInReminderHour }
+      : {}),
+    ...(extras.weighInReminderMinute !== undefined
+      ? { weighInReminderMinute: extras.weighInReminderMinute }
+      : {}),
   };
 }
 

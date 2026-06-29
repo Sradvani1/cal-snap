@@ -25,12 +25,14 @@ Fill in `.env.local`:
 ## Commands
 
 ```bash
-pnpm dev              # http://localhost:3000
+pnpm dev              # http://localhost:3000 (webpack; required with Serwist)
 pnpm test             # Vitest unit tests (merge gate)
-pnpm test:integration # Firestore rules test via emulators (optional)
+pnpm test:integration # Firestore + Storage rules via emulators (required in CI)
+pnpm test:e2e         # Playwright happy path (required in CI)
+pnpm test:e2e:ui      # Playwright UI mode
 pnpm lint
-pnpm build
-pnpm emulators        # Start Auth + Firestore emulators
+pnpm build            # next build --webpack (Serwist PWA)
+pnpm emulators        # Start Auth + Firestore + Storage emulators
 ```
 
 ## Auth workflow (W02)
@@ -81,4 +83,4 @@ Set **Root Directory** to `calsnap-web`. Add all env vars from `.env.local.examp
 ## Source of truth
 
 - `docs/technical-spec.md` — models, constants, calculator
-- `docs/implementation/web/PR-W02.md` — W02 acceptance checklist
+- `docs/implementation/web/PR-W10.md` — W10 acceptance checklist and QA matrix

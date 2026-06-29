@@ -51,7 +51,7 @@ export const AppConstants = {
   Notifications: {
     weighInCategoryIdentifier: 'WEIGH_IN',
     dailyLogCategoryIdentifier: 'DAILY_LOG',
-    defaultReminderWeekday: 1,
+    defaultReminderWeekday: 0,
     defaultReminderHour: 8,
     defaultReminderMinute: 0,
     defaultDailyLogReminderHour: 20,

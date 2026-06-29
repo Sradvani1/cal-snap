@@ -35,6 +35,11 @@ export const dashboardCopy = {
   'dashboard.plateau.smallReduction.description': 'Reduce daily target by 60 kcal',
   'dashboard.plateau.remindLater': 'Remind Me Later',
   'dashboard.plateau.error.saveFailed': 'Failed to save profile',
+  'dashboard.reminder.title': 'Time for a weigh-in',
+  'dashboard.reminder.body':
+    'It has been at least a week since your last weigh-in. Log your weight to keep your targets accurate.',
+  'dashboard.reminder.logNow': 'Log now',
+  'dashboard.reminder.remindTomorrow': 'Remind me tomorrow',
 } as const;
 
 export type DashboardCopyKey = keyof typeof dashboardCopy;

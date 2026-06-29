@@ -16,6 +16,10 @@ import type { MealEntryDoc } from '@/lib/models/meal-entry-doc';
 import { PROFILE_DOC_ID } from '@/lib/models/profile-doc';
 import { docToMealEntry } from '@/lib/repositories/meals';
 import { weighInSnoozeKey } from '@/lib/progress/weigh-in-snooze';
+import {
+  pwaInstallDismissedKey,
+  pwaInstallEligibleKey,
+} from '@/lib/pwa/install-storage';
 
 const BATCH_SIZE = 450;
 
@@ -84,6 +88,8 @@ export function clearUserLocalStorage(uid: string): void {
     plateauSnoozeKey(uid),
     maintenanceModeKey(uid),
     weighInSnoozeKey(uid),
+    pwaInstallEligibleKey(uid),
+    pwaInstallDismissedKey(uid),
   ];
   for (const key of keys) {
     window.localStorage.removeItem(key);

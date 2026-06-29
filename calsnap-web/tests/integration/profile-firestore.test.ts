@@ -76,4 +76,17 @@ describe('profile Firestore rules', () => {
       setDoc(doc(db, 'users', 'alice', 'profile', PROFILE_DOC_ID), sampleProfileDoc()),
     );
   });
+
+  it('denies unauthenticated read', async () => {
+    const alice = testEnv.authenticatedContext('alice');
+    const aliceDb = alice.firestore();
+    await assertSucceeds(
+      setDoc(doc(aliceDb, 'users', 'alice', 'profile', PROFILE_DOC_ID), sampleProfileDoc()),
+    );
+
+    const unauth = testEnv.unauthenticatedContext();
+    const unauthDb = unauth.firestore();
+
+    await assertFails(getDoc(doc(unauthDb, 'users', 'alice', 'profile', PROFILE_DOC_ID)));
+  });
 });

@@ -99,6 +99,9 @@ function AnalyticsContent({ uid }: { uid: string | undefined }) {
       const text = await generateInsight.mutateAsync(snapshot.insightPayload);
       setInsightState({ text, contextKey: insightContextKey });
     } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        return;
+      }
       setInsightState(null);
       setInsightError(
         error instanceof Error ? error.message : copy('analytics.insight.error'),

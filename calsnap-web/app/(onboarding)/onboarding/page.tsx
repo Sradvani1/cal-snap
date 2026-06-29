@@ -13,6 +13,7 @@ import { useAuth } from '@/lib/auth/use-auth';
 import { ONBOARDING_STEP_TITLES } from '@/lib/onboarding/onboarding-step';
 import { useOnboarding } from '@/lib/onboarding/use-onboarding';
 import { copy } from '@/lib/copy';
+import { markPwaInstallEligible } from '@/lib/pwa/install-storage';
 import { typography } from '@/lib/design/typography';
 
 export default function OnboardingPage() {
@@ -21,8 +22,11 @@ export default function OnboardingPage() {
   const onboarding = useOnboarding(user?.uid ?? '');
 
   const handleDone = useCallback(() => {
+    if (user) {
+      markPwaInstallEligible(user.uid);
+    }
     router.replace('/dashboard');
-  }, [router]);
+  }, [router, user]);
 
   if (loading || !user) {
     return (

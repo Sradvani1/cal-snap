@@ -32,13 +32,16 @@ import {
 } from '@/components/dashboard/DashboardHeader';
 import { ScanFab } from '@/components/dashboard/ScanFab';
 import { PlateauAlertSheet } from '@/components/dashboard/PlateauAlertSheet';
+import { WeighInReminderBanner } from '@/components/dashboard/WeighInReminderBanner';
 import { WeighInSheet } from '@/components/progress/WeighInSheet';
 import { copy } from '@/lib/copy';
+import { useWeighInReminder } from '@/lib/queries/use-weigh-in-reminder';
 
 function DashboardContent({ uid }: { uid: string | undefined }) {
   const dashboard = useDashboard(uid);
   const profileQuery = useProfile(uid);
   const plateau = usePlateauAlert(uid);
+  const reminder = useWeighInReminder(uid);
   const [showWeighInSheet, setShowWeighInSheet] = useState(false);
 
   const profile = profileQuery.data?.profile;
@@ -90,6 +93,13 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
         )}
 
         <DashboardHeader greeting={dashboard.greeting} date={dashboard.formattedDate} />
+
+        {!reminder.isLoading && reminder.shouldShow && uid && (
+          <WeighInReminderBanner
+            uid={uid}
+            onLogNow={() => setShowWeighInSheet(true)}
+          />
+        )}
 
         <CalorieRingCard
           consumed={dashboard.consumed}

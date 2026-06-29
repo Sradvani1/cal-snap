@@ -61,9 +61,20 @@ export function useMealScanner({ userId, onUnsavedWorkChange }: UseMealScannerOp
   const originalItemWeightsRef = useRef<Map<string, number>>(new Map());
   const previewUrlRef = useRef<string | null>(null);
   const analyzeGenerationRef = useRef(createAnalyzeGenerationGuard());
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const invalidateAnalyze = useCallback(() => {
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = null;
     analyzeGenerationRef.current.invalidate();
+  }, []);
+
+  useEffect(() => {
+    const generationGuard = analyzeGenerationRef.current;
+    return () => {
+      abortControllerRef.current?.abort();
+      generationGuard.invalidate();
+    };
   }, []);
 
   const revokePreviewUrl = useCallback(() => {
@@ -212,6 +223,10 @@ export function useMealScanner({ userId, onUnsavedWorkChange }: UseMealScannerOp
     setPhase('analyzing');
     const generation = analyzeGenerationRef.current.start();
 
+    abortControllerRef.current?.abort();
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     const formData = new FormData();
     formData.append('image', preparedPhoto.blob, 'photo.jpg');
     const description = textDescription.trim();
@@ -224,6 +239,7 @@ export function useMealScanner({ userId, onUnsavedWorkChange }: UseMealScannerOp
         method: 'POST',
         body: formData,
         credentials: 'include',
+        signal: controller.signal,
       });
 
       if (!analyzeGenerationRef.current.isCurrent(generation)) {
@@ -256,7 +272,13 @@ export function useMealScanner({ userId, onUnsavedWorkChange }: UseMealScannerOp
         return;
       }
       applyAnalysis(data);
-    } catch {
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        if (!analyzeGenerationRef.current.isCurrent(generation)) {
+          setPhase('capture');
+        }
+        return;
+      }
       if (!analyzeGenerationRef.current.isCurrent(generation)) {
         return;
       }

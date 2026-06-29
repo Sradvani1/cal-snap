@@ -5,6 +5,7 @@ import {
 } from '@/lib/auth/session-edge';
 
 const AUTH_PATHS = ['/login', '/signup'];
+const PUBLIC_PATHS = ['/privacy'];
 const ONBOARDING_PATH = '/onboarding';
 const APP_PATHS = ['/dashboard', '/log', '/scan', '/progress', '/analytics', '/settings'];
 
@@ -32,6 +33,10 @@ export async function middleware(request: NextRequest) {
     if (sessionValid) {
       return NextResponse.redirect(new URL('/', request.url));
     }
+    return NextResponse.next();
+  }
+
+  if (PUBLIC_PATHS.includes(pathname)) {
     return NextResponse.next();
   }
 
@@ -63,5 +68,6 @@ export const config = {
     '/analytics/:path*',
     '/settings',
     '/settings/:path*',
+    '/privacy',
   ],
 };
