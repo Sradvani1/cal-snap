@@ -1,16 +1,17 @@
 'use client';
 
-import type { ProfileDraft } from '@/lib/onboarding/profile-draft';
+import { useMemo } from 'react';
+import { LocalDateInput } from '@/components/design/LocalDateInput';
 import {
-  dateFromLocalDateInput,
-  toLocalDateInputValue,
-} from '@/lib/utilities/date-input';
+  LocalNumberInput,
+  parseIntegerInputValue,
+} from '@/components/design/LocalNumberInput';
+import type { ProfileDraft } from '@/lib/onboarding/profile-draft';
+import { dateOfBirthInputBounds } from '@/lib/utilities/date-input';
 import {
   cmToFeetInches,
-  displayWeight,
   feetInchesToCm,
-  kgFromDisplayWeight,
-  snappedDisplayWeight,
+  weightInputHandlers,
 } from '@/lib/utilities/unit-formatters';
 import { copy } from '@/lib/copy';
 import { typography } from '@/lib/design/typography';
@@ -24,9 +25,16 @@ interface ProfileSetupStepProps {
 const inputClassName =
   'rounded-lg border border-cs-border bg-cs-surface px-3 py-2 text-sm text-cs-foreground';
 
+const clampFeet = (value: number) => Math.min(8, Math.max(4, value));
+const clampInches = (value: number) => Math.min(11, Math.max(0, value));
+
 export function ProfileSetupStep({ draft, onUpdate }: ProfileSetupStepProps) {
+  const dobBounds = useMemo(() => dateOfBirthInputBounds(), []);
   const { feet, inches } = cmToFeetInches(draft.heightCm);
-  const displayWeightValue = displayWeight(draft.weightKg, draft.useLbsWeight);
+  const weightHandlers = useMemo(
+    () => weightInputHandlers(draft.useLbsWeight),
+    [draft.useLbsWeight],
+  );
 
   return (
     <div className="flex flex-col gap-5">
@@ -73,12 +81,13 @@ export function ProfileSetupStep({ draft, onUpdate }: ProfileSetupStepProps) {
 
       <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
         {copy('common.label.dateOfBirth')}
-        <input
-          type="date"
-          value={toLocalDateInputValue(draft.dateOfBirth)}
-          onChange={(event) =>
+        <LocalDateInput
+          value={draft.dateOfBirth}
+          min={dobBounds.min}
+          max={dobBounds.max}
+          onChange={(date) =>
             onUpdate((d) => {
-              d.dateOfBirth = dateFromLocalDateInput(event.target.value);
+              d.dateOfBirth = date;
             })
           }
           className={inputClassName}
@@ -101,17 +110,18 @@ export function ProfileSetupStep({ draft, onUpdate }: ProfileSetupStepProps) {
           </button>
         </div>
         {draft.useImperialHeight ? (
-          <div className="flex gap-3">
+          <div key="imperial" className="flex gap-3">
             <label className={cn(typography.csCaption, 'flex flex-1 flex-col gap-1')}>
               {copy('common.label.feet')}
-              <input
-                type="number"
-                min={4}
-                max={8}
+              <LocalNumberInput
+                inputMode="numeric"
                 value={feet}
-                onChange={(event) =>
+                parseInput={parseIntegerInputValue}
+                commitValue={clampFeet}
+                onChange={(nextFeet) =>
                   onUpdate((d) => {
-                    d.heightCm = feetInchesToCm(Number(event.target.value), inches);
+                    const { inches: currentInches } = cmToFeetInches(d.heightCm);
+                    d.heightCm = feetInchesToCm(nextFeet, currentInches);
                   })
                 }
                 className={inputClassName}
@@ -119,14 +129,15 @@ export function ProfileSetupStep({ draft, onUpdate }: ProfileSetupStepProps) {
             </label>
             <label className={cn(typography.csCaption, 'flex flex-1 flex-col gap-1')}>
               {copy('common.label.inches')}
-              <input
-                type="number"
-                min={0}
-                max={11}
+              <LocalNumberInput
+                inputMode="numeric"
                 value={inches}
-                onChange={(event) =>
+                parseInput={parseIntegerInputValue}
+                commitValue={clampInches}
+                onChange={(nextInches) =>
                   onUpdate((d) => {
-                    d.heightCm = feetInchesToCm(feet, Number(event.target.value));
+                    const { feet: currentFeet } = cmToFeetInches(d.heightCm);
+                    d.heightCm = feetInchesToCm(currentFeet, nextInches);
                   })
                 }
                 className={inputClassName}
@@ -134,14 +145,14 @@ export function ProfileSetupStep({ draft, onUpdate }: ProfileSetupStepProps) {
             </label>
           </div>
         ) : (
-          <input
-            type="number"
-            min={120}
-            max={230}
+          <LocalNumberInput
+            key="metric"
+            inputMode="numeric"
             value={Math.round(draft.heightCm)}
-            onChange={(event) =>
+            commitValue={(value) => Math.min(230, Math.max(120, Math.round(value)))}
+            onChange={(value) =>
               onUpdate((d) => {
-                d.heightCm = Number(event.target.value);
+                d.heightCm = value;
               })
             }
             className={inputClassName}
@@ -164,17 +175,15 @@ export function ProfileSetupStep({ draft, onUpdate }: ProfileSetupStepProps) {
             {draft.useLbsWeight ? copy('common.units.useKg') : copy('common.units.useLbs')}
           </button>
         </div>
-        <input
-          type="number"
-          step={draft.useLbsWeight ? 1 : 0.5}
-          value={displayWeightValue}
-          onChange={(event) =>
+        <LocalNumberInput
+          key={draft.useLbsWeight ? 'lbs' : 'kg'}
+          inputMode="decimal"
+          value={draft.weightKg}
+          formatDisplay={weightHandlers.formatDisplay}
+          commitValue={weightHandlers.commitValue}
+          onChange={(display) =>
             onUpdate((d) => {
-              const snapped = snappedDisplayWeight(
-                Number(event.target.value),
-                d.useLbsWeight,
-              );
-              d.weightKg = kgFromDisplayWeight(snapped, d.useLbsWeight);
+              d.weightKg = weightHandlers.toKg(display);
             })
           }
           className={inputClassName}

@@ -37,6 +37,14 @@ export function kgFromDisplayWeight(display: number, useLbs: boolean): number {
   return useLbs ? lbsToKg(display) : display;
 }
 
+export function weightInputHandlers(useLbs: boolean) {
+  return {
+    formatDisplay: (kg: number) => String(displayWeight(kg, useLbs)),
+    commitValue: (display: number) => snappedDisplayWeight(display, useLbs),
+    toKg: (display: number) => kgFromDisplayWeight(display, useLbs),
+  };
+}
+
 export function cmToFeetInches(cm: number): { feet: number; inches: number } {
   const totalInches = cm / CM_PER_INCH;
   const feet = Math.floor(totalInches / 12);

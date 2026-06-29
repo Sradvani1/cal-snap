@@ -13,6 +13,16 @@ describe('onboarding validation', () => {
     expect(validateDateOfBirth(dob, referenceDate)).toBe(false);
   });
 
+  it('rejects age 15', () => {
+    const dob = new Date(2011, 5, 27);
+    expect(validateDateOfBirth(dob, referenceDate)).toBe(false);
+  });
+
+  it('accepts age 16', () => {
+    const dob = new Date(2010, 5, 27);
+    expect(validateDateOfBirth(dob, referenceDate)).toBe(true);
+  });
+
   it('accepts age 35', () => {
     const dob = new Date(1991, 5, 27);
     expect(validateDateOfBirth(dob, referenceDate)).toBe(true);

@@ -21,6 +21,11 @@ import {
   type User,
 } from 'firebase/auth';
 import { consumeGoogleRedirectResult } from '@/lib/auth/google-redirect';
+import {
+  resolveDeferredAuthUser,
+  shouldClearSessionCookie,
+  type PendingAuthUser,
+} from '@/lib/auth/auth-redirect-state';
 import { shouldUseGoogleRedirect } from '@/lib/auth/google-sign-in-strategy';
 import { navigateAfterAuth } from '@/lib/auth/navigate-after-auth';
 import { copy } from '@/lib/copy';
@@ -80,75 +85,118 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const auth = getFirebaseAuth();
     let cancelled = false;
-    let initialAuthStateResolved = false;
+    let redirectSettled = false;
+    let pendingAuthUser: PendingAuthUser = undefined;
 
-    async function initAuth() {
+    async function applyAuthState(
+      nextUser: User | null,
+      options: { clearSessionWhenSignedOut: boolean; redirectAfterSignIn: boolean },
+    ) {
+      if (cancelled) {
+        return;
+      }
+      setUser(nextUser);
+      if (nextUser) {
+        try {
+          await establishSession(nextUser);
+          setSessionError(null);
+        } catch (err) {
+          setSessionError(
+            err instanceof Error ? err.message : copy('auth.session.establishFailed'),
+          );
+        }
+        setLoading(false);
+        if (
+          options.redirectAfterSignIn &&
+          typeof window !== 'undefined' &&
+          (window.location.pathname === '/login' || window.location.pathname === '/signup')
+        ) {
+          await navigateAfterAuth(nextUser);
+        }
+        return;
+      }
+      if (options.clearSessionWhenSignedOut) {
+        await clearSessionCookie();
+        setSessionError(null);
+      }
+      setLoading(false);
+    }
+
+    const unsubscribeAuth = onAuthStateChanged(auth, (nextUser) => {
+      if (cancelled) {
+        return;
+      }
+      if (!redirectSettled) {
+        pendingAuthUser = nextUser;
+        return;
+      }
+      void applyAuthState(nextUser, {
+        clearSessionWhenSignedOut: shouldClearSessionCookie(true, nextUser),
+        redirectAfterSignIn: true,
+      });
+    });
+
+    const unsubscribeToken = onIdTokenChanged(auth, async (nextUser) => {
+      if (cancelled || !nextUser) {
+        return;
+      }
+      try {
+        await establishSession(nextUser);
+        setSessionError(null);
+      } catch (err) {
+        setSessionError(
+          err instanceof Error ? err.message : copy('auth.session.refreshFailed'),
+        );
+      }
+    });
+
+    void (async () => {
+      let handledRedirectUser = false;
       try {
         const redirectResult = await consumeGoogleRedirectResult(auth);
-        if (redirectResult?.user) {
-          await establishSession(redirectResult.user);
-          if (!cancelled) {
-            setSessionError(null);
-            await navigateAfterAuth(redirectResult.user);
-            return;
-          }
-        }
-      } catch (error) {
-        if (!cancelled) {
-          setSessionError(firebaseAuthErrorMessage(error));
-        }
-      }
+        const redirectUser = redirectResult?.user ?? auth.currentUser;
 
-      const unsubscribeAuth = onAuthStateChanged(auth, async (nextUser) => {
-        if (cancelled) {
-          return;
-        }
-        setUser(nextUser);
-        if (nextUser) {
+        if (!cancelled && redirectUser) {
+          handledRedirectUser = true;
           try {
-            await establishSession(nextUser);
+            await establishSession(redirectUser);
             setSessionError(null);
           } catch (err) {
             setSessionError(
               err instanceof Error ? err.message : copy('auth.session.establishFailed'),
             );
           }
-        } else if (initialAuthStateResolved) {
-          await clearSessionCookie();
-          setSessionError(null);
         }
-        initialAuthStateResolved = true;
-        setLoading(false);
-      });
-
-      const unsubscribeToken = onIdTokenChanged(auth, async (nextUser) => {
-        if (cancelled || !nextUser) {
+      } catch (error) {
+        if (!cancelled) {
+          setSessionError(firebaseAuthErrorMessage(error));
+        }
+      } finally {
+        if (cancelled) {
           return;
         }
-        try {
-          await establishSession(nextUser);
-          setSessionError(null);
-        } catch (err) {
-          setSessionError(
-            err instanceof Error ? err.message : copy('auth.session.refreshFailed'),
-          );
+        redirectSettled = true;
+
+        if (handledRedirectUser && auth.currentUser) {
+          void applyAuthState(auth.currentUser, {
+            clearSessionWhenSignedOut: false,
+            redirectAfterSignIn: true,
+          });
+          return;
         }
-      });
 
-      return () => {
-        unsubscribeAuth();
-        unsubscribeToken();
-      };
-    }
-
-    let unsubscribe: (() => void) | undefined;
-    void initAuth().then((unsub) => {
-      unsubscribe = unsub;
-    });
+        const userToApply = resolveDeferredAuthUser(pendingAuthUser, auth.currentUser);
+        void applyAuthState(userToApply, {
+          clearSessionWhenSignedOut: shouldClearSessionCookie(true, userToApply),
+          redirectAfterSignIn: true,
+        });
+      }
+    })();
 
     return () => {
       cancelled = true;
-      unsubscribe?.();
+      unsubscribeAuth();
+      unsubscribeToken();
     };
   }, []);
 

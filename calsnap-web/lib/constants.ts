@@ -43,7 +43,7 @@ export const AppConstants = {
     demoAPIKey: 'DEMO_KEY',
   },
   Onboarding: {
-    minAgeYears: 18,
+    minAgeYears: 16,
     maxAgeYears: 90,
     minGoalDaysFromToday: 14,
     maxGoalDaysFromToday: 730,

@@ -39,7 +39,7 @@ export const settingsCopy = {
   'settings.about.dga': 'Macro guidance follows the Dietary Guidelines for Americans.',
   'settings.section.account': 'Account',
   'settings.account.signOut': 'Sign out',
-  'settings.validation.ageRange': 'Age must be between 18 and 90 years.',
+  'settings.validation.ageRange': 'Age must be between 16 and 90 years.',
   'settings.validation.goalDateRange': 'Goal date must be 14–730 days from today.',
   'settings.validation.weightRange': 'Weight must be within a valid range.',
   'settings.validation.macroSum': 'Macro percentages must sum to 100%.',

@@ -18,6 +18,10 @@ const serwist = new Serwist({
   navigationPreload: true,
   runtimeCaching: [
     {
+      matcher: ({ url }) => url.pathname.startsWith('/__/auth/'),
+      handler: new NetworkOnly(),
+    },
+    {
       matcher: ({ request }) => request.mode === 'navigate',
       handler: new NetworkOnly(),
     },

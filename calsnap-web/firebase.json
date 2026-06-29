@@ -9,6 +9,19 @@
       "rules": "storage.rules"
     }
   ],
+  "auth": {
+    "providers": {
+      "googleSignIn": {
+        "oAuthBrandDisplayName": "CalSnap",
+        "supportEmail": "sradvani1@gmail.com",
+        "authorizedRedirectUris": [
+          "https://calsnap-web.vercel.app/__/auth/handler",
+          "https://calsnap-web.firebaseapp.com/__/auth/handler",
+          "http://localhost/__/auth/handler"
+        ]
+      }
+    }
+  },
   "emulators": {
     "auth": { "port": 9099 },
     "firestore": { "port": 8080 },

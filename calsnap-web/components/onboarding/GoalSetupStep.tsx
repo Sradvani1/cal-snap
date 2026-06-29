@@ -1,16 +1,11 @@
 'use client';
 
+import { useMemo } from 'react';
+import { LocalDateInput } from '@/components/design/LocalDateInput';
+import { LocalNumberInput } from '@/components/design/LocalNumberInput';
 import { ACTIVITY_LEVEL_OPTIONS } from '@/lib/onboarding/activity-level-options';
 import type { ProfileDraft } from '@/lib/onboarding/profile-draft';
-import {
-  dateFromLocalDateInput,
-  toLocalDateInputValue,
-} from '@/lib/utilities/date-input';
-import {
-  displayWeight,
-  kgFromDisplayWeight,
-  snappedDisplayWeight,
-} from '@/lib/utilities/unit-formatters';
+import { weightInputHandlers } from '@/lib/utilities/unit-formatters';
 import { copy } from '@/lib/copy';
 import { typography } from '@/lib/design/typography';
 import { cn } from '@/lib/utils/cn';
@@ -24,7 +19,10 @@ const inputClassName =
   'rounded-lg border border-cs-border bg-cs-surface px-3 py-2 text-sm text-cs-foreground';
 
 export function GoalSetupStep({ draft, onUpdate }: GoalSetupStepProps) {
-  const displayGoalWeight = displayWeight(draft.goalWeightKg, draft.useLbsGoalWeight);
+  const goalWeightHandlers = useMemo(
+    () => weightInputHandlers(draft.useLbsGoalWeight),
+    [draft.useLbsGoalWeight],
+  );
 
   return (
     <div className="flex flex-col gap-5">
@@ -48,17 +46,15 @@ export function GoalSetupStep({ draft, onUpdate }: GoalSetupStepProps) {
             {draft.useLbsGoalWeight ? copy('common.units.useKg') : copy('common.units.useLbs')}
           </button>
         </div>
-        <input
-          type="number"
-          step={draft.useLbsGoalWeight ? 1 : 0.5}
-          value={displayGoalWeight}
-          onChange={(event) =>
+        <LocalNumberInput
+          key={draft.useLbsGoalWeight ? 'lbs' : 'kg'}
+          inputMode="decimal"
+          value={draft.goalWeightKg}
+          formatDisplay={goalWeightHandlers.formatDisplay}
+          commitValue={goalWeightHandlers.commitValue}
+          onChange={(display) =>
             onUpdate((d) => {
-              const snapped = snappedDisplayWeight(
-                Number(event.target.value),
-                d.useLbsGoalWeight,
-              );
-              d.goalWeightKg = kgFromDisplayWeight(snapped, d.useLbsGoalWeight);
+              d.goalWeightKg = goalWeightHandlers.toKg(display);
             })
           }
           className={inputClassName}
@@ -67,12 +63,11 @@ export function GoalSetupStep({ draft, onUpdate }: GoalSetupStepProps) {
 
       <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
         {copy('onboarding.goal.targetDate')}
-        <input
-          type="date"
-          value={toLocalDateInputValue(draft.goalTargetDate)}
-          onChange={(event) =>
+        <LocalDateInput
+          value={draft.goalTargetDate}
+          onChange={(date) =>
             onUpdate((d) => {
-              d.goalTargetDate = dateFromLocalDateInput(event.target.value);
+              d.goalTargetDate = date;
             })
           }
           className={inputClassName}

@@ -25,16 +25,22 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     }
 
     let cancelled = false;
-    void isOnboardingComplete(user.uid).then((complete) => {
-      if (cancelled) {
-        return;
-      }
-      if (!complete) {
-        router.replace('/onboarding');
-        return;
-      }
-      setChecking(false);
-    });
+    void isOnboardingComplete(user.uid)
+      .then((complete) => {
+        if (cancelled) {
+          return;
+        }
+        if (!complete) {
+          router.replace('/onboarding');
+          return;
+        }
+        setChecking(false);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          router.replace('/onboarding');
+        }
+      });
 
     return () => {
       cancelled = true;

@@ -16,13 +16,17 @@ export default function Home() {
       return;
     }
     if (!user) {
-      // Middleware only serves / when __session is valid; wait for Firebase to restore.
+      router.replace('/login');
       return;
     }
 
-    void isOnboardingComplete(user.uid).then((complete) => {
-      router.replace(complete ? '/dashboard' : '/onboarding');
-    });
+    void isOnboardingComplete(user.uid)
+      .then((complete) => {
+        router.replace(complete ? '/dashboard' : '/onboarding');
+      })
+      .catch(() => {
+        router.replace('/onboarding');
+      });
   }, [loading, user, router]);
 
   return (

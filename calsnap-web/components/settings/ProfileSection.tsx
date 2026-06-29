@@ -1,17 +1,18 @@
 'use client';
 
+import { useMemo } from 'react';
 import { ACTIVITY_LEVEL_OPTIONS } from '@/lib/onboarding/activity-level-options';
-import type { ProfileDraft } from '@/lib/onboarding/profile-draft';
+import { LocalDateInput } from '@/components/design/LocalDateInput';
 import {
-  dateFromLocalDateInput,
-  toLocalDateInputValue,
-} from '@/lib/utilities/date-input';
+  LocalNumberInput,
+  parseIntegerInputValue,
+} from '@/components/design/LocalNumberInput';
+import type { ProfileDraft } from '@/lib/onboarding/profile-draft';
+import { dateOfBirthInputBounds } from '@/lib/utilities/date-input';
 import {
   cmToFeetInches,
-  displayWeight,
   feetInchesToCm,
-  kgFromDisplayWeight,
-  snappedDisplayWeight,
+  weightInputHandlers,
 } from '@/lib/utilities/unit-formatters';
 import { SectionCard } from '@/components/design/SectionCard';
 import { copy } from '@/lib/copy';
@@ -33,6 +34,9 @@ interface ProfileSectionProps {
 const inputClassName =
   'rounded-lg border border-cs-border bg-cs-surface px-3 py-2 text-sm text-cs-foreground';
 
+const clampFeet = (value: number) => Math.min(8, Math.max(4, value));
+const clampInches = (value: number) => Math.min(11, Math.max(0, value));
+
 export function ProfileSection({
   draft,
   onUpdateDraft,
@@ -44,9 +48,16 @@ export function ProfileSection({
   previewTarget,
   minimumCalories,
 }: ProfileSectionProps) {
+  const dobBounds = useMemo(() => dateOfBirthInputBounds(), []);
   const { feet, inches } = cmToFeetInches(draft.heightCm);
-  const displayWeightValue = displayWeight(currentWeightKg, useLbsForWeight);
-  const displayGoalWeight = displayWeight(draft.goalWeightKg, draft.useLbsGoalWeight);
+  const weightHandlers = useMemo(
+    () => weightInputHandlers(useLbsForWeight),
+    [useLbsForWeight],
+  );
+  const goalWeightHandlers = useMemo(
+    () => weightInputHandlers(draft.useLbsGoalWeight),
+    [draft.useLbsGoalWeight],
+  );
   const weightUnit = useLbsForWeight ? copy('common.units.lbs') : copy('common.units.kg');
   const goalWeightUnit = draft.useLbsGoalWeight
     ? copy('common.units.lbs')
@@ -93,12 +104,13 @@ export function ProfileSection({
 
         <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
           {copy('common.label.dateOfBirth')}
-          <input
-            type="date"
-            value={toLocalDateInputValue(draft.dateOfBirth)}
-            onChange={(event) =>
+          <LocalDateInput
+            value={draft.dateOfBirth}
+            min={dobBounds.min}
+            max={dobBounds.max}
+            onChange={(date) =>
               onUpdateDraft((d) => {
-                d.dateOfBirth = dateFromLocalDateInput(event.target.value);
+                d.dateOfBirth = date;
               })
             }
             className={inputClassName}
@@ -108,17 +120,18 @@ export function ProfileSection({
         <div className="flex flex-col gap-2">
           <span className={typography.csMacroLabel}>{copy('common.label.height')}</span>
           {useImperialForHeight ? (
-            <div className="flex gap-3">
+            <div key="imperial" className="flex gap-3">
               <label className={cn(typography.csCaption, 'flex flex-1 flex-col gap-1')}>
                 {copy('common.label.feet')}
-                <input
-                  type="number"
-                  min={4}
-                  max={8}
+                <LocalNumberInput
+                  inputMode="numeric"
                   value={feet}
-                  onChange={(event) =>
+                  parseInput={parseIntegerInputValue}
+                  commitValue={clampFeet}
+                  onChange={(nextFeet) =>
                     onUpdateDraft((d) => {
-                      d.heightCm = feetInchesToCm(Number(event.target.value), inches);
+                      const { inches: currentInches } = cmToFeetInches(d.heightCm);
+                      d.heightCm = feetInchesToCm(nextFeet, currentInches);
                     })
                   }
                   className={inputClassName}
@@ -126,14 +139,15 @@ export function ProfileSection({
               </label>
               <label className={cn(typography.csCaption, 'flex flex-1 flex-col gap-1')}>
                 {copy('common.label.inches')}
-                <input
-                  type="number"
-                  min={0}
-                  max={11}
+                <LocalNumberInput
+                  inputMode="numeric"
                   value={inches}
-                  onChange={(event) =>
+                  parseInput={parseIntegerInputValue}
+                  commitValue={clampInches}
+                  onChange={(nextInches) =>
                     onUpdateDraft((d) => {
-                      d.heightCm = feetInchesToCm(feet, Number(event.target.value));
+                      const { feet: currentFeet } = cmToFeetInches(d.heightCm);
+                      d.heightCm = feetInchesToCm(currentFeet, nextInches);
                     })
                   }
                   className={inputClassName}
@@ -141,14 +155,14 @@ export function ProfileSection({
               </label>
             </div>
           ) : (
-            <input
-              type="number"
-              min={120}
-              max={230}
+            <LocalNumberInput
+              key="metric"
+              inputMode="numeric"
               value={Math.round(draft.heightCm)}
-              onChange={(event) =>
+              commitValue={(value) => Math.min(230, Math.max(120, Math.round(value)))}
+              onChange={(value) =>
                 onUpdateDraft((d) => {
-                  d.heightCm = Number(event.target.value);
+                  d.heightCm = value;
                 })
               }
               className={inputClassName}
@@ -158,17 +172,14 @@ export function ProfileSection({
 
         <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
           {copy('settings.profile.currentWeight', { unit: weightUnit })}
-          <input
-            type="number"
-            step={useLbsForWeight ? 1 : 0.5}
-            value={displayWeightValue}
-            onChange={(event) => {
-              const parsed = Number.parseFloat(event.target.value);
-              if (!Number.isFinite(parsed)) {
-                return;
-              }
-              const snapped = snappedDisplayWeight(parsed, useLbsForWeight);
-              onWeightChange(kgFromDisplayWeight(snapped, useLbsForWeight));
+          <LocalNumberInput
+            key={useLbsForWeight ? 'lbs' : 'kg'}
+            inputMode="decimal"
+            value={currentWeightKg}
+            formatDisplay={weightHandlers.formatDisplay}
+            commitValue={weightHandlers.commitValue}
+            onChange={(display) => {
+              onWeightChange(weightHandlers.toKg(display));
             }}
             className={inputClassName}
           />
@@ -208,17 +219,15 @@ export function ProfileSection({
 
         <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
           {copy('settings.profile.goalWeight', { unit: goalWeightUnit })}
-          <input
-            type="number"
-            step={draft.useLbsGoalWeight ? 1 : 0.5}
-            value={displayGoalWeight}
-            onChange={(event) =>
+          <LocalNumberInput
+            key={draft.useLbsGoalWeight ? 'lbs' : 'kg'}
+            inputMode="decimal"
+            value={draft.goalWeightKg}
+            formatDisplay={goalWeightHandlers.formatDisplay}
+            commitValue={goalWeightHandlers.commitValue}
+            onChange={(display) =>
               onUpdateDraft((d) => {
-                const snapped = snappedDisplayWeight(
-                  Number(event.target.value),
-                  d.useLbsGoalWeight,
-                );
-                d.goalWeightKg = kgFromDisplayWeight(snapped, d.useLbsGoalWeight);
+                d.goalWeightKg = goalWeightHandlers.toKg(display);
               })
             }
             className={inputClassName}
@@ -227,12 +236,11 @@ export function ProfileSection({
 
         <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
           {copy('settings.profile.goalDate')}
-          <input
-            type="date"
-            value={toLocalDateInputValue(draft.goalTargetDate)}
-            onChange={(event) =>
+          <LocalDateInput
+            value={draft.goalTargetDate}
+            onChange={(date) =>
               onUpdateDraft((d) => {
-                d.goalTargetDate = dateFromLocalDateInput(event.target.value);
+                d.goalTargetDate = date;
               })
             }
             className={inputClassName}

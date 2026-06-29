@@ -21,16 +21,22 @@ export default function OnboardingLayout({ children }: { children: React.ReactNo
     }
 
     let cancelled = false;
-    void isOnboardingComplete(user.uid).then((complete) => {
-      if (cancelled) {
-        return;
-      }
-      if (complete) {
-        router.replace('/dashboard');
-        return;
-      }
-      setChecking(false);
-    });
+    void isOnboardingComplete(user.uid)
+      .then((complete) => {
+        if (cancelled) {
+          return;
+        }
+        if (complete) {
+          router.replace('/dashboard');
+          return;
+        }
+        setChecking(false);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setChecking(false);
+        }
+      });
 
     return () => {
       cancelled = true;

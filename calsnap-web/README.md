@@ -47,8 +47,9 @@ pnpm emulators        # Start Auth + Firestore + Storage emulators
 ### Google OAuth setup
 
 1. Enable Google provider in Firebase Console → Authentication
-2. Add authorized domains: `localhost`, your Vercel preview domain
-3. Web uses `signInWithRedirect` only (no popup)
+2. Add authorized domains: `localhost`, `calsnap-web.vercel.app` (and any custom domain)
+3. Mobile Safari requires the `/__/auth/*` reverse proxy in `next.config.ts` and `authDomain` matching your app host (handled automatically via `window.location.host`)
+4. Web uses `signInWithRedirect` on mobile and `signInWithPopup` on desktop
 
 ## Firebase emulators
 
