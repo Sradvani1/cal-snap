@@ -1,1 +1,17 @@
-{ "projects": { "default": "calsnap-web" } }
+{
+  "projects": {
+    "default": "calsnap-web"
+  },
+  "targets": {
+    "calsnap-web": {
+      "storage": {
+        "default": ["calsnap-web.firebasestorage.app"]
+      }
+    },
+    "demo-calsnap": {
+      "storage": {
+        "default": ["demo-calsnap.appspot.com"]
+      }
+    }
+  }
+}

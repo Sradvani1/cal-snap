@@ -32,7 +32,7 @@ Post-build review sprint after the W01–W10 implementation series. Eight sequen
 - [x] Layout/input work landed (`HeightInputFields`, onboarding/settings overflow fixes)
 - [x] ESLint clean on input components
 - [x] `pnpm lint && pnpm test && pnpm build` green
-- [ ] `pnpm test:integration && pnpm test:e2e` — requires Java 21+ locally (CI has Temurin 21)
+- [x] `pnpm test:integration && pnpm test:e2e` green (WR01 — see [PR-WR01.md](./PR-WR01.md))
 
 ---
 
@@ -77,7 +77,8 @@ WR07 comes after functional PRs. WR08 validates production last.
 
 ## WR01 — Foundation, CI & Domain Logic
 
-**Reviews:** W01 scaffold, shared `lib/` domain layer
+**Reviews:** W01 scaffold, shared `lib/` domain layer  
+**Deliverable:** [PR-WR01.md](./PR-WR01.md)
 
 ### Audit scope
 

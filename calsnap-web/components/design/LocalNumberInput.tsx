@@ -3,6 +3,7 @@
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type InputHTMLAttributes,
@@ -80,17 +81,12 @@ export function LocalNumberInput({
   const draftValueRef = useRef(draftValue);
   const commitRef = useRef(commit);
 
-  useEffect(() => {
+  // Layout effect keeps refs aligned before passive unmount cleanup runs.
+  useLayoutEffect(() => {
     isFocusedRef.current = isFocused;
-  }, [isFocused]);
-
-  useEffect(() => {
     draftValueRef.current = draftValue;
-  }, [draftValue]);
-
-  useEffect(() => {
     commitRef.current = commit;
-  }, [commit]);
+  }, [isFocused, draftValue, commit]);
 
   // Step transitions and navigation can unmount the field before blur fires.
   useEffect(() => {
@@ -108,18 +104,22 @@ export function LocalNumberInput({
       value={displayValue}
       onFocus={(event) => {
         setDraftValue(committedDisplay);
+        draftValueRef.current = committedDisplay;
+        isFocusedRef.current = true;
         setIsFocused(true);
         onFocus?.(event);
       }}
       onChange={(event) => {
         const raw = event.target.value;
         setDraftValue(raw);
+        draftValueRef.current = raw;
         const parsed = parseInput(raw);
         if (parsed !== null) {
           onChange(parsed);
         }
       }}
       onBlur={(event) => {
+        isFocusedRef.current = false;
         setIsFocused(false);
         commit(event.target.value);
         onBlur?.(event);
