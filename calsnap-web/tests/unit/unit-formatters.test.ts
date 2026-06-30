@@ -4,7 +4,12 @@ import {
   displayWeight,
   feetInchesToCm,
   kgFromDisplayWeight,
+  lbsToKg,
+  normalizeHeightCm,
+  normalizeWeightKg,
   snappedDisplayWeight,
+  validateHeightCm,
+  validateWeightKg,
   weightInputHandlers,
 } from '@/lib/utilities/unit-formatters';
 
@@ -41,5 +46,26 @@ describe('unit-formatters height', () => {
     const { feet, inches } = cmToFeetInches(cm);
     expect(feet).toBe(6);
     expect(inches).toBe(2);
+  });
+});
+
+describe('unit-formatters normalization', () => {
+  it('clamps partial height entries to the allowed range', () => {
+    expect(normalizeHeightCm(18)).toBe(120);
+    expect(normalizeHeightCm(185)).toBe(185);
+    expect(validateHeightCm(185)).toBe(true);
+    expect(validateHeightCm(18)).toBe(false);
+  });
+
+  it('clamps partial weight entries to the allowed range', () => {
+    expect(normalizeWeightKg(7.7)).toBe(35);
+    expect(normalizeWeightKg(80)).toBe(80);
+    expect(validateWeightKg(80)).toBe(true);
+    expect(validateWeightKg(7.7)).toBe(false);
+  });
+
+  it('normalizes lbs-entered weights through the display unit', () => {
+    const kg = normalizeWeightKg(lbsToKg(200), true);
+    expect(kg).toBeCloseTo(lbsToKg(200), 2);
   });
 });

@@ -55,6 +55,8 @@ export function LocalNumberInput({
 }: LocalNumberInputProps) {
   const [inputValue, setInputValue] = useState(() => formatDisplay(value));
   const focusedRef = useRef(false);
+  const inputValueRef = useRef(inputValue);
+  inputValueRef.current = inputValue;
 
   useEffect(() => {
     if (focusedRef.current) {
@@ -78,6 +80,18 @@ export function LocalNumberInput({
     },
     [commitValue, formatDisplay, onChange, parseInput, value],
   );
+
+  const commitRef = useRef(commit);
+  commitRef.current = commit;
+
+  // Step transitions and navigation can unmount the field before blur fires.
+  useEffect(() => {
+    return () => {
+      if (focusedRef.current) {
+        commitRef.current(inputValueRef.current);
+      }
+    };
+  }, []);
 
   return (
     <input

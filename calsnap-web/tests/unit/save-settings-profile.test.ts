@@ -85,6 +85,30 @@ describe('save-settings-profile', () => {
     expect(mockSaveWeighIn).not.toHaveBeenCalled();
   });
 
+  it('returns normalized values in the save result', async () => {
+    const profile = makeProfile();
+    const extras = makeExtras();
+    const draft = createDefaultProfileDraft();
+    draft.heightCm = 18;
+
+    const result = await saveSettingsProfile({
+      uid: 'user-1',
+      profile,
+      extras,
+      draft,
+      macroProteinPct: 28,
+      macroCarbsPct: 47,
+      macroFatPct: 25,
+      currentWeightKg: 80,
+      savedWeightKg: 80,
+      reminderPrefs: defaultReminderPrefs(),
+      unitPrefs: { useLbsForWeight: false, useImperialForHeight: false },
+    });
+
+    expect(result.savedDraft.heightCm).toBe(120);
+    expect(result.savedCurrentWeightKg).toBe(80);
+  });
+
   it('calls saveWeighIn when weight delta is at least 0.05 kg', async () => {
     const profile = makeProfile();
     const extras = makeExtras();
@@ -107,5 +131,30 @@ describe('save-settings-profile', () => {
 
     expect(mockSaveWeighIn).toHaveBeenCalledOnce();
     expect(mockSaveProfile).not.toHaveBeenCalled();
+  });
+
+  it('persists normalized current weight, not the raw in-progress value', async () => {
+    const profile = makeProfile();
+    const extras = makeExtras();
+    const draft = createDefaultProfileDraft();
+
+    await saveSettingsProfile({
+      uid: 'user-1',
+      profile,
+      extras,
+      draft,
+      macroProteinPct: 28,
+      macroCarbsPct: 47,
+      macroFatPct: 25,
+      currentWeightKg: 7.7,
+      savedWeightKg: 80,
+      reminderPrefs: defaultReminderPrefs(),
+      unitPrefs: { useLbsForWeight: false, useImperialForHeight: false },
+    });
+
+    expect(mockSaveWeighIn).toHaveBeenCalledOnce();
+    const weighInInput = mockSaveWeighIn.mock.calls[0][0];
+    expect(weighInInput.newWeightKg).toBe(35);
+    expect(weighInInput.profileExtras.currentWeightKg).toBe(35);
   });
 });

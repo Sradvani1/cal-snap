@@ -31,6 +31,9 @@ export const onboardingCopy = {
   'onboarding.done.redirecting':
     'Your profile has been saved. Taking you to your dashboard…',
   'onboarding.validation.ageRange': 'Age must be between {{min}} and {{max}} years.',
+  'onboarding.validation.heightRange':
+    'Height must be between {{min}} and {{max}} cm.',
+  'onboarding.validation.weightRange': 'Weight must be within a valid range.',
   'onboarding.validation.goalDateRange':
     'Goal date must be {{min}}–{{max}} days from today.',
   'onboarding.validation.requiredFields': 'Please complete required fields.',

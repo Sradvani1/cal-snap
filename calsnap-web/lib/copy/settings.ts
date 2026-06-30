@@ -41,7 +41,9 @@ export const settingsCopy = {
   'settings.account.signOut': 'Sign out',
   'settings.validation.ageRange': 'Age must be between 16 and 90 years.',
   'settings.validation.goalDateRange': 'Goal date must be 14–730 days from today.',
+  'settings.validation.heightRange': 'Height must be between 120 and 230 cm.',
   'settings.validation.weightRange': 'Weight must be within a valid range.',
+  'settings.validation.goalWeightRange': 'Goal weight must be within a valid range.',
   'settings.validation.macroSum': 'Macro percentages must sum to 100%.',
 } as const;
 

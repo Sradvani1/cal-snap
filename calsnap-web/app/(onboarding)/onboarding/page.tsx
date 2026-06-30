@@ -93,7 +93,7 @@ export default function OnboardingPage() {
           {showContinue && (
             <PrimaryButton
               type="button"
-              disabled={onboarding.saving}
+              disabled={onboarding.saving || !onboarding.canAdvance()}
               onClick={() => void onboarding.advance()}
               fullWidth
               className="min-h-11"

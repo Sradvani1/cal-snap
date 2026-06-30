@@ -11,8 +11,10 @@ import {
   type ProfileDraft,
 } from '@/lib/onboarding/profile-draft';
 import {
-  validateDateOfBirth,
-  validateGoalTargetDate,
+  canAdvanceProfileSetup,
+  canAdvanceGoalSetup,
+  normalizeProfileSetupDraft,
+  normalizeGoalSetupDraft,
   validationMessageForStep,
 } from '@/lib/onboarding/validation';
 import {
@@ -129,9 +131,9 @@ export function useOnboarding(uid: string) {
         case 'welcome':
           return true;
         case 'profileSetup':
-          return validateDateOfBirth(profileDraft.dateOfBirth);
+          return canAdvanceProfileSetup(normalizeProfileSetupDraft(profileDraft));
         case 'goalSetup':
-          return validateGoalTargetDate(profileDraft.goalTargetDate);
+          return canAdvanceGoalSetup(normalizeGoalSetupDraft(profileDraft));
         case 'caloriePreview':
         case 'done':
           return true;
@@ -180,28 +182,38 @@ export function useOnboarding(uid: string) {
 
   const advance = useCallback(async () => {
     setValidationError(null);
-    if (!canAdvance()) {
-      if (currentStep === 'profileSetup' || currentStep === 'goalSetup') {
-        setValidationError(validationMessageForStep(currentStep));
-      } else {
-        setValidationError(copy('onboarding.validation.requiredFields'));
+
+    if (currentStep === 'profileSetup') {
+      const normalized = normalizeProfileSetupDraft(profileDraft);
+      if (!canAdvanceProfileSetup(normalized)) {
+        setValidationError(validationMessageForStep('profileSetup', normalized));
+        return;
       }
+      setProfileDraft(normalized);
+      setCurrentStep('goalSetup');
+      return;
+    }
+
+    if (currentStep === 'goalSetup') {
+      const normalized = normalizeGoalSetupDraft(profileDraft);
+      if (!canAdvanceGoalSetup(normalized)) {
+        setValidationError(validationMessageForStep('goalSetup', normalized));
+        return;
+      }
+      setProfileDraft(normalized);
+      setCurrentStep('caloriePreview');
+      calculateTargets(normalized);
+      return;
+    }
+
+    if (!canAdvance()) {
+      setValidationError(copy('onboarding.validation.requiredFields'));
       return;
     }
 
     switch (currentStep) {
       case 'welcome':
         setCurrentStep('profileSetup');
-        break;
-      case 'profileSetup':
-        updateDraft((draft) => {
-          draft.useLbsGoalWeight = draft.useLbsWeight;
-        });
-        setCurrentStep('goalSetup');
-        break;
-      case 'goalSetup':
-        setCurrentStep('caloriePreview');
-        calculateTargets();
         break;
       case 'caloriePreview':
         try {
@@ -218,7 +230,7 @@ export function useOnboarding(uid: string) {
       default:
         break;
     }
-  }, [canAdvance, currentStep, updateDraft, calculateTargets, saveProfile]);
+  }, [canAdvance, currentStep, profileDraft, calculateTargets, saveProfile]);
 
   return {
     currentStep,

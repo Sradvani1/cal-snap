@@ -221,6 +221,31 @@ export function useSettingsForm(profile: UserProfile, extras: ProfileExtras) {
     reminderPrefs,
   ]);
 
+  const applySavedValues = useCallback(
+    (saved: { draft: ProfileDraft; currentWeightKg: number }) => {
+      setDraft(saved.draft);
+      setCurrentWeightKg(saved.currentWeightKg);
+      setSavedSnapshot({
+        draft: { ...saved.draft },
+        macroProteinPct,
+        macroCarbsPct,
+        macroFatPct,
+        currentWeightKg: saved.currentWeightKg,
+        useLbsForWeight,
+        useImperialForHeight,
+        reminderPrefs: { ...reminderPrefs },
+      });
+    },
+    [
+      macroProteinPct,
+      macroCarbsPct,
+      macroFatPct,
+      useLbsForWeight,
+      useImperialForHeight,
+      reminderPrefs,
+    ],
+  );
+
   return {
     draft,
     updateDraft,
@@ -245,5 +270,6 @@ export function useSettingsForm(profile: UserProfile, extras: ProfileExtras) {
     validationMessage,
     isDirty,
     markSaved,
+    applySavedValues,
   };
 }

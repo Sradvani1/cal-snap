@@ -5,6 +5,7 @@ import { LocalDateInput } from '@/components/design/LocalDateInput';
 import { LocalNumberInput } from '@/components/design/LocalNumberInput';
 import { ACTIVITY_LEVEL_OPTIONS } from '@/lib/onboarding/activity-level-options';
 import type { ProfileDraft } from '@/lib/onboarding/profile-draft';
+import { goalTargetDateInputBounds } from '@/lib/utilities/date-input';
 import { weightInputHandlers } from '@/lib/utilities/unit-formatters';
 import { copy } from '@/lib/copy';
 import { typography } from '@/lib/design/typography';
@@ -19,6 +20,7 @@ const inputClassName =
   'rounded-lg border border-cs-border bg-cs-surface px-3 py-2 text-sm text-cs-foreground';
 
 export function GoalSetupStep({ draft, onUpdate }: GoalSetupStepProps) {
+  const goalDateBounds = useMemo(() => goalTargetDateInputBounds(), []);
   const goalWeightHandlers = useMemo(
     () => weightInputHandlers(draft.useLbsGoalWeight),
     [draft.useLbsGoalWeight],
@@ -65,6 +67,8 @@ export function GoalSetupStep({ draft, onUpdate }: GoalSetupStepProps) {
         {copy('onboarding.goal.targetDate')}
         <LocalDateInput
           value={draft.goalTargetDate}
+          min={goalDateBounds.min}
+          max={goalDateBounds.max}
           onChange={(date) =>
             onUpdate((d) => {
               d.goalTargetDate = date;

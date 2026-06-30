@@ -9,6 +9,8 @@ import {
 import type { ProfileDraft } from '@/lib/onboarding/profile-draft';
 import { dateOfBirthInputBounds } from '@/lib/utilities/date-input';
 import {
+  clampFeet,
+  clampInches,
   cmToFeetInches,
   feetInchesToCm,
   weightInputHandlers,
@@ -24,9 +26,6 @@ interface ProfileSetupStepProps {
 
 const inputClassName =
   'rounded-lg border border-cs-border bg-cs-surface px-3 py-2 text-sm text-cs-foreground';
-
-const clampFeet = (value: number) => Math.min(8, Math.max(4, value));
-const clampInches = (value: number) => Math.min(11, Math.max(0, value));
 
 export function ProfileSetupStep({ draft, onUpdate }: ProfileSetupStepProps) {
   const dobBounds = useMemo(() => dateOfBirthInputBounds(), []);

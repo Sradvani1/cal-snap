@@ -5,15 +5,13 @@ import {
 } from '@/lib/onboarding/validation';
 import { copy } from '@/lib/copy';
 import { macroPercentsAreValid } from '@/lib/services/profile-update-service';
-import { WEIGHT_RANGE_KG } from '@/lib/utilities/unit-formatters';
+import {
+  validateHeightCm,
+  validateWeightKg,
+} from '@/lib/utilities/unit-formatters';
 
 export function validateCurrentWeightKg(weightKg: number): boolean {
-  return (
-    Number.isFinite(weightKg) &&
-    weightKg > 0 &&
-    weightKg >= WEIGHT_RANGE_KG.min &&
-    weightKg <= WEIGHT_RANGE_KG.max
-  );
+  return validateWeightKg(weightKg);
 }
 
 export function canSaveSettings(
@@ -24,7 +22,9 @@ export function canSaveSettings(
   return (
     validateDateOfBirth(draft.dateOfBirth) &&
     validateGoalTargetDate(draft.goalTargetDate) &&
+    validateHeightCm(draft.heightCm) &&
     validateCurrentWeightKg(currentWeightKg) &&
+    validateWeightKg(draft.goalWeightKg) &&
     macroPercentsAreValid(macroPcts.protein, macroPcts.carbs, macroPcts.fat)
   );
 }
@@ -40,8 +40,14 @@ export function settingsValidationMessage(
   if (!validateGoalTargetDate(draft.goalTargetDate)) {
     return copy('settings.validation.goalDateRange');
   }
+  if (!validateHeightCm(draft.heightCm)) {
+    return copy('settings.validation.heightRange');
+  }
   if (!validateCurrentWeightKg(currentWeightKg)) {
     return copy('settings.validation.weightRange');
+  }
+  if (!validateWeightKg(draft.goalWeightKg)) {
+    return copy('settings.validation.goalWeightRange');
   }
   if (!macroPercentsAreValid(macroPcts.protein, macroPcts.carbs, macroPcts.fat)) {
     return copy('settings.validation.macroSum');

@@ -37,4 +37,16 @@ describe('resolveAuthDomain', () => {
       }),
     ).toBe('calsnap-web.firebaseapp.com');
   });
+
+  it('uses firebaseapp.com on localhost because dev server is HTTP-only', () => {
+    expect(
+      resolveAuthDomain({
+        useEmulator: false,
+        emulatorAuthDomain: 'demo-calsnap.firebaseapp.com',
+        browserHost: 'localhost:3000',
+        envAuthDomain: 'calsnap-web.firebaseapp.com',
+        projectId: 'calsnap-web',
+      }),
+    ).toBe('calsnap-web.firebaseapp.com');
+  });
 });

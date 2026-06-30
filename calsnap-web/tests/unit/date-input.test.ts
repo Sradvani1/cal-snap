@@ -3,6 +3,7 @@ import { AppConstants } from '@/lib/constants';
 import {
   dateFromLocalDateInput,
   dateOfBirthInputBounds,
+  goalTargetDateInputBounds,
   isCompleteDateInputValue,
   toLocalDateInputValue,
 } from '@/lib/utilities/date-input';
@@ -43,6 +44,30 @@ describe('date-input', () => {
           referenceDate.getFullYear() - AppConstants.Onboarding.maxAgeYears,
           referenceDate.getMonth(),
           referenceDate.getDate(),
+        ),
+      ),
+    );
+  });
+
+  it('returns goal target date input bounds for 14–730 days', () => {
+    const referenceDate = new Date(2026, 5, 28, 12, 0, 0);
+    const { min, max } = goalTargetDateInputBounds(referenceDate);
+
+    expect(min).toBe(
+      toLocalDateInputValue(
+        new Date(
+          referenceDate.getFullYear(),
+          referenceDate.getMonth(),
+          referenceDate.getDate() + AppConstants.Onboarding.minGoalDaysFromToday,
+        ),
+      ),
+    );
+    expect(max).toBe(
+      toLocalDateInputValue(
+        new Date(
+          referenceDate.getFullYear(),
+          referenceDate.getMonth(),
+          referenceDate.getDate() + AppConstants.Onboarding.maxGoalDaysFromToday,
         ),
       ),
     );

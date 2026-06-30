@@ -64,7 +64,10 @@ function SettingsContent({ uid, profileData }: SettingsContentProps) {
           useImperialForHeight: form.useImperialForHeight,
         },
       });
-      form.markSaved();
+      form.applySavedValues({
+        draft: result.savedDraft,
+        currentWeightKg: result.savedCurrentWeightKg,
+      });
       if (result.didTriggerPlateau) {
         await queryClient.invalidateQueries({ queryKey: queryKeys.profile(uid) });
         setShowPlateauSheet(true);
