@@ -1,6 +1,7 @@
 'use client';
 
 import { SectionCard } from '@/components/design/SectionCard';
+import { formFieldInputClassName } from '@/lib/design/form-field';
 import type { ResolvedReminderPrefs } from '@/lib/progress/reminder-prefs';
 import { copy } from '@/lib/copy';
 import { typography } from '@/lib/design/typography';
@@ -21,8 +22,7 @@ interface NotificationsSectionProps {
   onChange: (prefs: ResolvedReminderPrefs) => void;
 }
 
-const inputClassName =
-  'rounded-lg border border-cs-border bg-cs-surface px-3 py-2 text-sm text-cs-foreground';
+const inputClassName = formFieldInputClassName;
 
 export function NotificationsSection({
   reminderPrefs,
@@ -33,11 +33,16 @@ export function NotificationsSection({
   return (
     <SectionCard title={copy('settings.section.weighInReminder')}>
       <div className="flex flex-col gap-4">
-        <p className={cn(typography.csCaption, 'text-xs')}>
+        <p className={cn(typography.csCaption, 'break-words text-xs')}>
           {copy('settings.reminder.futureNote')}
         </p>
 
-        <label className={`${typography.csMacroLabel} flex items-center justify-between`}>
+        <label
+          className={cn(
+            typography.csMacroLabel,
+            'flex min-w-0 items-center justify-between gap-3',
+          )}
+        >
           {copy('settings.reminder.enable')}
           <input
             type="checkbox"
@@ -45,7 +50,7 @@ export function NotificationsSection({
             onChange={(event) =>
               onChange({ ...reminderPrefs, weighInReminderEnabled: event.target.checked })
             }
-            className="h-4 w-4"
+            className="h-4 w-4 shrink-0"
           />
         </label>
 

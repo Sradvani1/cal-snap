@@ -13,8 +13,10 @@ import { useAuth } from '@/lib/auth/use-auth';
 import { ONBOARDING_STEP_TITLES } from '@/lib/onboarding/onboarding-step';
 import { useOnboarding } from '@/lib/onboarding/use-onboarding';
 import { copy } from '@/lib/copy';
+import { layout } from '@/lib/design/layout';
 import { markPwaInstallEligible } from '@/lib/pwa/install-storage';
 import { typography } from '@/lib/design/typography';
+import { cn } from '@/lib/utils/cn';
 
 export default function OnboardingPage() {
   const { user, loading, sessionError } = useAuth();
@@ -41,7 +43,7 @@ export default function OnboardingPage() {
   const showContinue = currentStep !== 'done';
 
   return (
-    <div className="mx-auto flex min-h-full max-w-lg flex-col px-4 py-8">
+    <div className={cn(layout.pageShell, 'min-h-full gap-5 py-8')}>
       <div className="mb-6">
         <div className={`${typography.csCaption} mb-2 flex items-center justify-between text-xs`}>
           <span>{ONBOARDING_STEP_TITLES[currentStep]}</span>
@@ -57,7 +59,7 @@ export default function OnboardingPage() {
 
       <SessionErrorBanner message={sessionError} />
 
-      <div className="flex-1">
+      <div className="flex-1 min-w-0">
         {currentStep === 'welcome' && <WelcomeStep />}
         {currentStep === 'profileSetup' && (
           <ProfileSetupStep draft={onboarding.profileDraft} onUpdate={onboarding.updateDraft} />

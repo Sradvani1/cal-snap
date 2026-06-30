@@ -7,6 +7,7 @@ import {
   useState,
   type InputHTMLAttributes,
 } from 'react';
+import { cn } from '@/lib/utils/cn';
 
 export interface LocalNumberInputProps
   extends Omit<
@@ -51,6 +52,7 @@ export function LocalNumberInput({
   commitValue,
   inputMode = 'decimal',
   onBlur,
+  className,
   ...rest
 }: LocalNumberInputProps) {
   const [inputValue, setInputValue] = useState(() => formatDisplay(value));
@@ -114,6 +116,7 @@ export function LocalNumberInput({
         commit(event.target.value);
         onBlur?.(event);
       }}
+      className={cn('box-border w-full min-w-0', className)}
       {...rest}
     />
   );

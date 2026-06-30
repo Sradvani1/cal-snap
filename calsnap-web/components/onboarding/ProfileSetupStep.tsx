@@ -1,21 +1,16 @@
 'use client';
 
 import { useMemo } from 'react';
-import { LocalDateInput } from '@/components/design/LocalDateInput';
 import {
-  LocalNumberInput,
-  parseIntegerInputValue,
-} from '@/components/design/LocalNumberInput';
+  HeightInputFields,
+} from '@/components/design/HeightInputFields';
+import { LocalDateInput } from '@/components/design/LocalDateInput';
+import { LocalNumberInput } from '@/components/design/LocalNumberInput';
 import type { ProfileDraft } from '@/lib/onboarding/profile-draft';
 import { dateOfBirthInputBounds } from '@/lib/utilities/date-input';
-import {
-  clampFeet,
-  clampInches,
-  cmToFeetInches,
-  feetInchesToCm,
-  weightInputHandlers,
-} from '@/lib/utilities/unit-formatters';
+import { weightInputHandlers } from '@/lib/utilities/unit-formatters';
 import { copy } from '@/lib/copy';
+import { formFieldInputClassName } from '@/lib/design/form-field';
 import { typography } from '@/lib/design/typography';
 import { cn } from '@/lib/utils/cn';
 
@@ -24,19 +19,15 @@ interface ProfileSetupStepProps {
   onUpdate: (update: (draft: ProfileDraft) => void) => void;
 }
 
-const inputClassName =
-  'rounded-lg border border-cs-border bg-cs-surface px-3 py-2 text-sm text-cs-foreground';
-
 export function ProfileSetupStep({ draft, onUpdate }: ProfileSetupStepProps) {
   const dobBounds = useMemo(() => dateOfBirthInputBounds(), []);
-  const { feet, inches } = cmToFeetInches(draft.heightCm);
   const weightHandlers = useMemo(
     () => weightInputHandlers(draft.useLbsWeight),
     [draft.useLbsWeight],
   );
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex min-w-0 flex-col gap-5">
       <div>
         <h2 className={typography.csCardTitle}>{copy('onboarding.profile.title')}</h2>
         <p className={`${typography.csCaption} mt-1`}>{copy('onboarding.profile.subtitle')}</p>
@@ -52,7 +43,7 @@ export function ProfileSetupStep({ draft, onUpdate }: ProfileSetupStepProps) {
               d.name = event.target.value;
             })
           }
-          className={inputClassName}
+          className={formFieldInputClassName}
           placeholder={copy('common.placeholder.yourName')}
         />
       </label>
@@ -89,78 +80,27 @@ export function ProfileSetupStep({ draft, onUpdate }: ProfileSetupStepProps) {
               d.dateOfBirth = date;
             })
           }
-          className={inputClassName}
+          className={formFieldInputClassName}
         />
       </label>
 
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between">
-          <span className={typography.csMacroLabel}>{copy('common.label.height')}</span>
-          <button
-            type="button"
-            onClick={() =>
-              onUpdate((d) => {
-                d.useImperialHeight = !d.useImperialHeight;
-              })
-            }
-            className={`${typography.csCaption} font-medium underline`}
-          >
-            {draft.useImperialHeight ? copy('common.units.useCm') : copy('common.units.useFtIn')}
-          </button>
-        </div>
-        {draft.useImperialHeight ? (
-          <div key="imperial" className="flex gap-3">
-            <label className={cn(typography.csCaption, 'flex flex-1 flex-col gap-1')}>
-              {copy('common.label.feet')}
-              <LocalNumberInput
-                inputMode="numeric"
-                value={feet}
-                parseInput={parseIntegerInputValue}
-                commitValue={clampFeet}
-                onChange={(nextFeet) =>
-                  onUpdate((d) => {
-                    const { inches: currentInches } = cmToFeetInches(d.heightCm);
-                    d.heightCm = feetInchesToCm(nextFeet, currentInches);
-                  })
-                }
-                className={inputClassName}
-              />
-            </label>
-            <label className={cn(typography.csCaption, 'flex flex-1 flex-col gap-1')}>
-              {copy('common.label.inches')}
-              <LocalNumberInput
-                inputMode="numeric"
-                value={inches}
-                parseInput={parseIntegerInputValue}
-                commitValue={clampInches}
-                onChange={(nextInches) =>
-                  onUpdate((d) => {
-                    const { feet: currentFeet } = cmToFeetInches(d.heightCm);
-                    d.heightCm = feetInchesToCm(currentFeet, nextInches);
-                  })
-                }
-                className={inputClassName}
-              />
-            </label>
-          </div>
-        ) : (
-          <LocalNumberInput
-            key="metric"
-            inputMode="numeric"
-            value={Math.round(draft.heightCm)}
-            commitValue={(value) => Math.min(230, Math.max(120, Math.round(value)))}
-            onChange={(value) =>
-              onUpdate((d) => {
-                d.heightCm = value;
-              })
-            }
-            className={inputClassName}
-          />
-        )}
-      </div>
+      <HeightInputFields
+        heightCm={draft.heightCm}
+        useImperialHeight={draft.useImperialHeight}
+        onHeightCmChange={(heightCm) =>
+          onUpdate((d) => {
+            d.heightCm = heightCm;
+          })
+        }
+        onToggleImperial={() =>
+          onUpdate((d) => {
+            d.useImperialHeight = !d.useImperialHeight;
+          })
+        }
+      />
 
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between">
+      <div className="flex min-w-0 flex-col gap-2">
+        <div className="flex min-w-0 flex-wrap items-center justify-between gap-x-3 gap-y-1">
           <span className={typography.csMacroLabel}>{copy('onboarding.profile.currentWeight')}</span>
           <button
             type="button"
@@ -169,7 +109,7 @@ export function ProfileSetupStep({ draft, onUpdate }: ProfileSetupStepProps) {
                 d.useLbsWeight = !d.useLbsWeight;
               })
             }
-            className={`${typography.csCaption} font-medium underline`}
+            className={cn(typography.csCaption, 'shrink-0 font-medium underline')}
           >
             {draft.useLbsWeight ? copy('common.units.useKg') : copy('common.units.useLbs')}
           </button>
@@ -185,7 +125,7 @@ export function ProfileSetupStep({ draft, onUpdate }: ProfileSetupStepProps) {
               d.weightKg = weightHandlers.toKg(display);
             })
           }
-          className={inputClassName}
+          className={formFieldInputClassName}
         />
       </div>
     </div>

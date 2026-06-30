@@ -13,7 +13,7 @@ export function SectionCard({ title, children, className }: SectionCardProps) {
   return (
     <section
       className={cn(
-        'rounded-2xl border border-cs-border bg-cs-surface p-4 shadow-sm dark:shadow-none sm:p-6',
+        'min-w-0 overflow-hidden rounded-2xl border border-cs-border bg-cs-surface p-4 shadow-sm dark:shadow-none sm:p-6',
         className,
       )}
     >

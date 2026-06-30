@@ -52,7 +52,7 @@ export default function OnboardingLayout({ children }: { children: React.ReactNo
   }
 
   return (
-    <div className="min-h-full bg-cs-background">
+    <div className="min-h-full overflow-x-hidden bg-cs-background">
       {children}
     </div>
   );

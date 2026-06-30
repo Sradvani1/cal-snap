@@ -71,7 +71,7 @@ function MacroSlider({
         max={100}
         value={value}
         onChange={(event) => onChange(Number(event.target.value))}
-        className="w-full"
+        className="box-border w-full min-w-0 max-w-full"
       />
     </label>
   );

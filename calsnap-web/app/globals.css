@@ -104,9 +104,17 @@
   --cs-on-primary: #ffffff;
 }
 
+html {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
 body {
   background: var(--cs-background);
   color: var(--cs-foreground);
+  overflow-x: hidden;
+  max-width: 100%;
+  touch-action: pan-y;
   font-family:
     system-ui,
     -apple-system,

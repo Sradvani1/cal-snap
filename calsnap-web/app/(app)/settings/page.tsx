@@ -23,7 +23,9 @@ import { NotificationsSection } from '@/components/settings/NotificationsSection
 import { ProfileSection } from '@/components/settings/ProfileSection';
 import { UnitsSection } from '@/components/settings/UnitsSection';
 import { copy } from '@/lib/copy';
+import { layout } from '@/lib/design/layout';
 import { typography } from '@/lib/design/typography';
+import { cn } from '@/lib/utils/cn';
 
 interface SettingsContentProps {
   uid: string;
@@ -129,7 +131,7 @@ function SettingsContent({ uid, profileData }: SettingsContentProps) {
 
   return (
     <>
-      <div className="mx-auto flex min-h-full max-w-lg flex-col gap-4 px-4 py-8 pb-28">
+      <div className={cn(layout.pageShell, 'min-h-full gap-4 py-8 pb-28')}>
         <header>
           <h1 className={`${typography.csCardTitle} text-2xl`}>{copy('settings.title')}</h1>
         </header>
@@ -195,8 +197,8 @@ function SettingsContent({ uid, profileData }: SettingsContentProps) {
       </div>
 
       {form.isDirty && (
-        <div className="fixed inset-x-0 bottom-16 z-40 border-t border-cs-border bg-cs-surface/95 px-4 py-3 backdrop-blur sm:bottom-0">
-          <div className="mx-auto flex max-w-lg gap-3">
+        <div className="fixed inset-x-0 bottom-16 z-40 overflow-x-hidden border-t border-cs-border bg-cs-surface/95 px-4 py-3 backdrop-blur sm:bottom-0">
+          <div className="mx-auto flex w-full min-w-0 max-w-lg gap-3">
             <PrimaryButton
               type="button"
               onClick={() => void handleSave()}
@@ -240,7 +242,7 @@ export default function SettingsPage() {
 
   if (profileQuery.isLoading) {
     return (
-      <div className="mx-auto max-w-lg px-4 py-8">
+      <div className={cn(layout.pageShell, 'py-8')}>
         <div className="h-96 animate-pulse rounded-2xl bg-cs-muted/20" />
       </div>
     );
@@ -248,7 +250,7 @@ export default function SettingsPage() {
 
   if (profileQuery.isError || !profileQuery.data) {
     return (
-      <div className="mx-auto max-w-lg px-4 py-8">
+      <div className={cn(layout.pageShell, 'py-8')}>
         <SessionErrorBanner
           message={
             profileQuery.error instanceof Error

@@ -6,6 +6,7 @@ import {
   useState,
   type InputHTMLAttributes,
 } from 'react';
+import { cn } from '@/lib/utils/cn';
 import {
   dateFromLocalDateInput,
   isCompleteDateInputValue,
@@ -58,7 +59,7 @@ export function LocalDateInput({
       min={min}
       max={max}
       onChange={handleChange}
-      className={className}
+      className={cn('box-border w-full min-w-0', className)}
       {...rest}
     />
   );

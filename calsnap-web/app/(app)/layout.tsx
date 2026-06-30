@@ -57,14 +57,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <UnsavedWorkProvider>
-      <div className="min-h-full bg-cs-background pb-20">
+      <div className="min-h-full overflow-x-hidden bg-cs-background pb-20">
         {sessionError && (
           <div className="mx-auto max-w-lg px-4 pt-4">
             <SessionErrorBanner message={sessionError} />
           </div>
         )}
         {user && <InstallPromptBanner uid={user.uid} />}
-        <main>{children}</main>
+        <main className="w-full min-w-0 overflow-x-hidden">{children}</main>
         <BottomTabNav />
       </div>
     </UnsavedWorkProvider>

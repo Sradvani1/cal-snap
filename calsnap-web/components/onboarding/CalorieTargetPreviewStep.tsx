@@ -67,7 +67,7 @@ export function CalorieTargetPreviewStep({
           step={25}
           value={deficit}
           onChange={(event) => onDeficitChange(Number(event.target.value))}
-          className="w-full"
+          className="box-border w-full min-w-0 max-w-full"
         />
         <span className={typography.csCaption}>
           {copy('onboarding.calorie.recommended', {

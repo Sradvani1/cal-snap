@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react';
 import { LocalDateInput } from '@/components/design/LocalDateInput';
+import { formFieldInputClassName } from '@/lib/design/form-field';
 import { LocalNumberInput } from '@/components/design/LocalNumberInput';
 import { ACTIVITY_LEVEL_OPTIONS } from '@/lib/onboarding/activity-level-options';
 import type { ProfileDraft } from '@/lib/onboarding/profile-draft';
@@ -16,8 +17,7 @@ interface GoalSetupStepProps {
   onUpdate: (update: (draft: ProfileDraft) => void) => void;
 }
 
-const inputClassName =
-  'rounded-lg border border-cs-border bg-cs-surface px-3 py-2 text-sm text-cs-foreground';
+const inputClassName = formFieldInputClassName;
 
 export function GoalSetupStep({ draft, onUpdate }: GoalSetupStepProps) {
   const goalDateBounds = useMemo(() => goalTargetDateInputBounds(), []);
@@ -27,7 +27,7 @@ export function GoalSetupStep({ draft, onUpdate }: GoalSetupStepProps) {
   );
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex min-w-0 flex-col gap-5">
       <div>
         <h2 className={typography.csCardTitle}>{copy('onboarding.goal.title')}</h2>
         <p className={`${typography.csCaption} mt-1`}>{copy('onboarding.goal.subtitle')}</p>
@@ -86,13 +86,13 @@ export function GoalSetupStep({ draft, onUpdate }: GoalSetupStepProps) {
             <label
               key={option.value}
               className={cn(
-                'flex cursor-pointer flex-col rounded-lg border px-3 py-2 text-sm',
+                'flex min-w-0 cursor-pointer flex-col rounded-lg border px-3 py-2 text-sm',
                 draft.activityLevel === option.value
                   ? 'border-cs-primary bg-cs-primary/10'
                   : 'border-cs-border',
               )}
             >
-              <span className="flex items-center gap-2 font-medium">
+              <span className="flex min-w-0 items-center gap-2 font-medium">
                 <input
                   type="radio"
                   name="activityLevel"
@@ -105,7 +105,7 @@ export function GoalSetupStep({ draft, onUpdate }: GoalSetupStepProps) {
                 />
                 {option.label}
               </span>
-              <span className={cn(typography.csCaption, 'ml-6')}>{option.description}</span>
+              <span className={cn(typography.csCaption, 'ml-6 break-words')}>{option.description}</span>
             </label>
           ))}
         </div>

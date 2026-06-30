@@ -35,6 +35,8 @@ import { PlateauAlertSheet } from '@/components/dashboard/PlateauAlertSheet';
 import { WeighInReminderBanner } from '@/components/dashboard/WeighInReminderBanner';
 import { WeighInSheet } from '@/components/progress/WeighInSheet';
 import { copy } from '@/lib/copy';
+import { layout } from '@/lib/design/layout';
+import { cn } from '@/lib/utils/cn';
 import { useWeighInReminder } from '@/lib/queries/use-weigh-in-reminder';
 
 function DashboardContent({ uid }: { uid: string | undefined }) {
@@ -54,7 +56,7 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
 
   if (dashboard.isLoading) {
     return (
-      <div className="mx-auto flex max-w-lg flex-col gap-6 px-4 py-8 pb-24">
+      <div className={cn(layout.pageShell, 'gap-6 py-8 pb-24')}>
         <DashboardHeaderSkeleton />
         <CalorieRingCardSkeleton />
         <MacroBarCardSkeleton />
@@ -67,7 +69,7 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
 
   if (dashboard.profileLoadFailed || !dashboard.profile) {
     return (
-      <div className="mx-auto max-w-lg px-4 py-8 pb-24">
+      <div className={cn(layout.pageShell, 'py-8 pb-24')}>
         <SessionErrorBanner
           message={
             dashboard.error instanceof Error
@@ -81,7 +83,7 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
 
   return (
     <>
-      <div className="mx-auto flex max-w-lg flex-col gap-6 px-4 py-8 pb-24">
+      <div className={cn(layout.pageShell, 'gap-6 py-8 pb-24')}>
         {(dashboard.error || plateau.actionError) && (
           <SessionErrorBanner
             message={
