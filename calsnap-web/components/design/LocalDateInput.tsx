@@ -1,11 +1,6 @@
 'use client';
 
-import {
-  useCallback,
-  useEffect,
-  useState,
-  type InputHTMLAttributes,
-} from 'react';
+import { useCallback, useState, type InputHTMLAttributes } from 'react';
 import { cn } from '@/lib/utils/cn';
 import {
   dateFromLocalDateInput,
@@ -32,19 +27,19 @@ export function LocalDateInput({
   className,
   min,
   max,
+  onFocus,
+  onBlur,
   ...rest
 }: LocalDateInputProps) {
-  const [inputValue, setInputValue] = useState(() => toLocalDateInputValue(value));
-
-  useEffect(() => {
-    const fromValue = toLocalDateInputValue(value);
-    setInputValue((current) => (current === fromValue ? current : fromValue));
-  }, [value.getFullYear(), value.getMonth(), value.getDate()]);
+  const committedValue = toLocalDateInputValue(value);
+  const [draftValue, setDraftValue] = useState(committedValue);
+  const [isFocused, setIsFocused] = useState(false);
+  const displayValue = isFocused ? draftValue : committedValue;
 
   const handleChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const next = event.target.value;
-      setInputValue(next);
+      setDraftValue(next);
       if (isCompleteDateInputValue(next)) {
         onChange(dateFromLocalDateInput(next));
       }
@@ -55,9 +50,18 @@ export function LocalDateInput({
   return (
     <input
       type="date"
-      value={inputValue}
+      value={displayValue}
       min={min}
       max={max}
+      onFocus={(event) => {
+        setDraftValue(committedValue);
+        setIsFocused(true);
+        onFocus?.(event);
+      }}
+      onBlur={(event) => {
+        setIsFocused(false);
+        onBlur?.(event);
+      }}
       onChange={handleChange}
       className={cn('box-border w-full min-w-0', className)}
       {...rest}

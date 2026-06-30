@@ -51,6 +51,21 @@ Business logic lives in `calsnap-web/lib/`; `app/` stays thin.
 
 - **[ROLLOUT.md](./ROLLOUT.md)** — phased guide: emulator testing → real Gemini → Firebase cloud → Vercel
 
+## Review sprint (post-build)
+
+- **[REVIEW-MASTER-PLAN.md](./REVIEW-MASTER-PLAN.md)** — WR01–WR08 audit, debug, and polish plan
+
+| PR | Doc | Status |
+|----|-----|--------|
+| WR01 | PR-WR01.md | Pending |
+| WR02 | PR-WR02.md | Pending |
+| WR03 | PR-WR03.md | Pending |
+| WR04 | PR-WR04.md | Pending |
+| WR05 | PR-WR05.md | Pending |
+| WR06 | PR-WR06.md | Pending |
+| WR07 | PR-WR07.md | Pending |
+| WR08 | PR-WR08.md | Pending |
+
 ## Source of truth
 
 - [`docs/technical-spec.md`](../../technical-spec.md) — architecture, models, services

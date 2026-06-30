@@ -52,45 +52,51 @@ export function LocalNumberInput({
   commitValue,
   inputMode = 'decimal',
   onBlur,
+  onFocus,
   className,
   ...rest
 }: LocalNumberInputProps) {
-  const [inputValue, setInputValue] = useState(() => formatDisplay(value));
-  const focusedRef = useRef(false);
-  const inputValueRef = useRef(inputValue);
-  inputValueRef.current = inputValue;
-
-  useEffect(() => {
-    if (focusedRef.current) {
-      return;
-    }
-    const formatted = formatDisplay(value);
-    setInputValue((current) => (current === formatted ? current : formatted));
-  }, [value, formatDisplay]);
+  const committedDisplay = formatDisplay(value);
+  const [draftValue, setDraftValue] = useState(committedDisplay);
+  const [isFocused, setIsFocused] = useState(false);
+  const displayValue = isFocused ? draftValue : committedDisplay;
 
   const commit = useCallback(
     (raw: string) => {
       const parsed = parseInput(raw);
       if (parsed === null) {
-        setInputValue(formatDisplay(value));
+        setDraftValue(formatDisplay(value));
         return;
       }
       const next = commitValue ? commitValue(parsed) : parsed;
       onChange(next);
       // When commitValue is used, `next` is already in display units (e.g. lbs), not `value` units.
-      setInputValue(commitValue ? String(next) : formatDisplay(next));
+      setDraftValue(commitValue ? String(next) : formatDisplay(next));
     },
     [commitValue, formatDisplay, onChange, parseInput, value],
   );
 
+  const isFocusedRef = useRef(isFocused);
+  const draftValueRef = useRef(draftValue);
   const commitRef = useRef(commit);
-  commitRef.current = commit;
+
+  useEffect(() => {
+    isFocusedRef.current = isFocused;
+  }, [isFocused]);
+
+  useEffect(() => {
+    draftValueRef.current = draftValue;
+  }, [draftValue]);
+
+  useEffect(() => {
+    commitRef.current = commit;
+  }, [commit]);
 
   // Step transitions and navigation can unmount the field before blur fires.
   useEffect(() => {
     return () => {
-      if (focusedRef.current) {
-        commitRef.current(inputValueRef.current);
+      if (isFocusedRef.current) {
+        commitRef.current(draftValueRef.current);
       }
     };
   }, []);
@@ -99,20 +105,22 @@ export function LocalNumberInput({
     <input
       type="text"
       inputMode={inputMode}
-      value={inputValue}
-      onFocus={() => {
-        focusedRef.current = true;
+      value={displayValue}
+      onFocus={(event) => {
+        setDraftValue(committedDisplay);
+        setIsFocused(true);
+        onFocus?.(event);
       }}
       onChange={(event) => {
         const raw = event.target.value;
-        setInputValue(raw);
+        setDraftValue(raw);
         const parsed = parseInput(raw);
         if (parsed !== null) {
           onChange(parsed);
         }
       }}
       onBlur={(event) => {
-        focusedRef.current = false;
+        setIsFocused(false);
         commit(event.target.value);
         onBlur?.(event);
       }}
