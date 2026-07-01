@@ -8,6 +8,7 @@ import {
   type AnalyticsDateRange as AnalyticsDateRangeType,
 } from '@/lib/analytics/analytics-types';
 import { buildAnalyticsSnapshot } from '@/lib/analytics/build-analytics-snapshot';
+import { copy } from '@/lib/copy';
 import { endOfLocalDayExclusive } from '@/lib/dashboard/date-window';
 import { fetchMealsInRange } from '@/lib/repositories/meals';
 import { getProfileWithExtras } from '@/lib/repositories/profile';
@@ -26,7 +27,7 @@ export function useAnalytics(
     queryFn: async () => {
       const profileResult = await getProfileWithExtras(uid!);
       if (!profileResult?.profile) {
-        throw new Error('Profile not found');
+        throw new Error(copy('analytics.error.loadFailed'));
       }
       const profile = profileResult.profile;
 

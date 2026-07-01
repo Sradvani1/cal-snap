@@ -37,7 +37,7 @@ export function useGenerateInsight() {
         if (response.status === 503) {
           throw new Error(copy('analytics.insight.unavailable'));
         }
-        throw new Error(body.error ?? copy('analytics.insight.error'));
+        throw new Error(copy('analytics.insight.error'));
       }
 
       if (!body.insight) {

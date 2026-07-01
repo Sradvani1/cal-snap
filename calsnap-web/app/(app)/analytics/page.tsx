@@ -19,6 +19,7 @@ import { WeighInSheet } from '@/components/progress/WeighInSheet';
 import { WeightProgressView } from '@/components/progress/WeightProgressView';
 import {
   AnalyticsDateRange,
+  analyticsRangeKey,
   normalizeCustomRange,
   presetToDateRange,
   type AnalyticsTimeframePreset,
@@ -40,7 +41,10 @@ function AnalyticsContent({ uid }: { uid: string | undefined }) {
     text: string;
     contextKey: string;
   } | null>(null);
-  const [insightError, setInsightError] = useState<string | null>(null);
+  const [insightError, setInsightError] = useState<{
+    message: string;
+    contextKey: string;
+  } | null>(null);
 
   const analyticsQuery = useAnalytics(uid, selectedRange);
   const generateInsight = useGenerateInsight();
@@ -49,11 +53,20 @@ function AnalyticsContent({ uid }: { uid: string | undefined }) {
   const profileExtras = profileQuery.data?.extras;
   const snapshot = analyticsQuery.data?.snapshot;
 
-  const insightContextKey = profile
-    ? `${profile.dailyCalorieTarget}-${profile.updatedAt.getTime()}`
-    : '';
+  const insightContextKey =
+    profile && snapshot
+      ? [
+          profile.dailyCalorieTarget,
+          profile.updatedAt.getTime(),
+          analyticsRangeKey(selectedRange),
+          snapshot.loggedDayCount,
+          snapshot.adherencePct,
+        ].join('-')
+      : '';
   const insightText =
     insightState?.contextKey === insightContextKey ? insightState.text : null;
+  const activeInsightError =
+    insightError?.contextKey === insightContextKey ? insightError.message : null;
 
   const clearInsight = () => {
     setInsightState(null);
@@ -103,9 +116,11 @@ function AnalyticsContent({ uid }: { uid: string | undefined }) {
         return;
       }
       setInsightState(null);
-      setInsightError(
-        error instanceof Error ? error.message : copy('analytics.insight.error'),
-      );
+      setInsightError({
+        message:
+          error instanceof Error ? error.message : copy('analytics.insight.error'),
+        contextKey: insightContextKey,
+      });
     }
   };
 
@@ -145,13 +160,7 @@ function AnalyticsContent({ uid }: { uid: string | undefined }) {
         )}
 
         {analyticsQuery.isError && (
-          <SessionErrorBanner
-            message={
-              analyticsQuery.error instanceof Error
-                ? analyticsQuery.error.message
-                : copy('analytics.error.loadFailed')
-            }
-          />
+          <SessionErrorBanner message={copy('analytics.error.loadFailed')} />
         )}
 
         {!analyticsQuery.isLoading && snapshot && (
@@ -185,7 +194,7 @@ function AnalyticsContent({ uid }: { uid: string | undefined }) {
                 <AnalyticsInsightCard
                   hasEnoughData={snapshot.hasEnoughData}
                   insightText={insightText}
-                  insightError={insightError}
+                  insightError={activeInsightError}
                   isGenerating={generateInsight.isPending}
                   onGenerate={() => void handleGenerateInsight()}
                 />

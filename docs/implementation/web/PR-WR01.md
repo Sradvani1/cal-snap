@@ -170,9 +170,19 @@ Full contract: [PR-WR03.md](./PR-WR03.md) §5 (scanner), [PR-WR04.md](./PR-WR04.
 | `saveWeighIn(page)` | → `Promise<void>` | Click save → dialog hidden |
 | `logWeighInAndExpectLowerTarget(page, newWeightKg)` | → `Promise<void>` | Capture target before → save → assert `newTarget < previousTarget` |
 
+### Analytics (`analytics.ts`) — added in WR05
+
+| Export | Signature | Usage |
+|--------|-----------|-------|
+| `seedMealsOnDistinctDays(credentials, dayCount)` | → `Promise<void>` | Node Auth emulator sign-in → Firestore `createMeal` on distinct local days |
+| `gotoAnalyticsFromProgress(page)` | → `Promise<void>` | Progress tab → dietary analytics link → `/analytics` |
+| `expectAnalyticsEmptyState(page)` | → `Promise<void>` | Empty title + scan CTA |
+| `expectAnalyticsDietarySections(page)` | → `Promise<void>` | Four dietary section titles visible |
+| `expectGenerateInsightUnavailable(page)` | → `Promise<void>` | Generate insight button absent when `<3` logged days |
+
 ### Not in WR01 (downstream PRs)
 
-`mockGenerateInsight`, settings/analytics/viewport helpers. Login returning-user E2E added in WR02 (`login-returning-user.spec.ts`). Scanner error-path E2E added in WR03 (`scanner-error-manual-entry.spec.ts`). Meal edit/delete + weigh-in target E2E added in WR04 (`meal-edit-delete.spec.ts`, `weigh-in-updates-target.spec.ts`).
+`mockGenerateInsight`, settings/viewport helpers. Login returning-user E2E added in WR02 (`login-returning-user.spec.ts`). Scanner error-path E2E added in WR03 (`scanner-error-manual-entry.spec.ts`). Meal edit/delete + weigh-in target E2E added in WR04 (`meal-edit-delete.spec.ts`, `weigh-in-updates-target.spec.ts`). Analytics page E2E added in WR05 (`analytics-page.spec.ts`).
 
 ---
 
@@ -214,7 +224,7 @@ Full contract: [PR-WR03.md](./PR-WR03.md) §5 (scanner), [PR-WR04.md](./PR-WR04.
 | `technical-spec.md` stale AppConstants/NutritionCalculator | Out of WR01 scope |
 | ESLint copy enforcement rule | WR07 |
 | `loginWithEmail` untested in CI until WR02 | WR02 |
-| Domain E2E helpers (scanner, meal-log, weigh-in, settings, analytics, viewport) | WR03–WR07 |
+| Domain E2E helpers (scanner, meal-log, weigh-in, analytics, settings, viewport) | WR03–WR07 |
 
 ---
 

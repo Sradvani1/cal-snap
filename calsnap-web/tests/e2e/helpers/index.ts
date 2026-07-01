@@ -28,6 +28,13 @@ export {
   saveMealEdits,
 } from './meal-log';
 export {
+  expectAnalyticsDietarySections,
+  expectAnalyticsEmptyState,
+  expectGenerateInsightUnavailable,
+  gotoAnalyticsFromProgress,
+  seedMealsOnDistinctDays,
+} from './analytics';
+export {
   fillWeighInWeightKg,
   logWeighInAndExpectLowerTarget,
   openWeighInFromDashboard,
