@@ -144,10 +144,8 @@ export default function ScanEditPage({ params }: ScanEditPageProps) {
       scanner.discard();
       setHasUnsavedWork(false);
       router.push(`/log/${mealId}`);
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : copy('scanner.error.saveFailed');
-      scanner.setLogError(message);
+    } catch {
+      scanner.setLogError(copy('scanner.error.saveFailed'));
     }
   };
 

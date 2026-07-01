@@ -96,10 +96,8 @@ export default function ScanPage() {
       scanner.discard();
       setHasUnsavedWork(false);
       router.push('/dashboard');
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : copy('scanner.error.logFailed');
-      scanner.setLogError(message);
+    } catch {
+      scanner.setLogError(copy('scanner.error.logFailed'));
     }
   };
 

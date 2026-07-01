@@ -70,13 +70,7 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
   if (dashboard.profileLoadFailed || !dashboard.profile) {
     return (
       <div className={cn(layout.pageShell, 'py-8 pb-24')}>
-        <SessionErrorBanner
-          message={
-            dashboard.error instanceof Error
-              ? dashboard.error.message
-              : copy('dashboard.error.profileLoad')
-          }
-        />
+        <SessionErrorBanner message={copy('dashboard.error.profileLoad')} />
       </div>
     );
   }
@@ -86,11 +80,7 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
       <div className={cn(layout.pageShell, 'gap-6 py-8 pb-24')}>
         {(dashboard.error || plateau.actionError) && (
           <SessionErrorBanner
-            message={
-              dashboard.error instanceof Error
-                ? dashboard.error.message
-                : plateau.actionError ?? copy('dashboard.error.loadFailed')
-            }
+            message={plateau.actionError ?? copy('dashboard.error.loadFailed')}
           />
         )}
 

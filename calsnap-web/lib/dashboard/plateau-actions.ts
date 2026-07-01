@@ -25,10 +25,10 @@ export async function executePlateauDietBreak(
     });
     storeDate(maintenanceModeKey(uid), maintenanceModeEndDate());
     return { ok: true };
-  } catch (err) {
+  } catch {
     return {
       ok: false,
-      error: err instanceof Error ? err.message : copy('dashboard.plateau.error.saveFailed'),
+      error: copy('dashboard.plateau.error.saveFailed'),
     };
   }
 }

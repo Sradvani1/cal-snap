@@ -77,8 +77,8 @@ export function usePlateauAlert(uid: string | undefined) {
       });
       setPlateauDismissed(true);
       await invalidateProfile();
-    } catch (err) {
-      setActionError(err instanceof Error ? err.message : copy('dashboard.plateau.error.saveFailed'));
+    } catch {
+      setActionError(copy('dashboard.plateau.error.saveFailed'));
     }
   }, [uid, profile, invalidateProfile]);
 

@@ -1,4 +1,5 @@
 import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
+import { copy } from '@/lib/copy';
 import { executePlateauDietBreak } from '@/lib/dashboard/plateau-actions';
 import {
   isMaintenanceModeActive,
@@ -74,7 +75,7 @@ describe('executePlateauDietBreak', () => {
 
     const result = await executePlateauDietBreak('user-1', profile, updateTargets);
 
-    expect(result).toEqual({ ok: false, error: 'Simulated save failure' });
+    expect(result).toEqual({ ok: false, error: copy('dashboard.plateau.error.saveFailed') });
     expect(readStoredDate(maintenanceModeKey('user-1'))).toBeNull();
     expect(isMaintenanceModeActive('user-1')).toBe(false);
   });

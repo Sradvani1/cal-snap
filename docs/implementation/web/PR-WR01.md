@@ -135,9 +135,20 @@ Import from `tests/e2e/helpers` (or `./helpers` from spec files).
 |--------|-------|
 | `completeOnboarding(page)` | Assumes URL is `/onboarding`; completes 5 steps → dashboard |
 
+### Scanner (`scanner.ts`) — added in WR03
+
+| Export | Signature | Usage |
+|--------|-----------|-------|
+| `assertTestPhotoExists()` | → `void` | Throws if `helpers/test-photo.jpg` missing |
+| `uploadTestPhotoAndAnalyze(page)` | → `Promise<void>` | `/scan` → file input → Analyze (caller waits for result/error) |
+| `fillManualMealItem(page, { name, calories, weightG? })` | → `Promise<void>` | Fill first manual entry card |
+| `logMealAndExpectDashboard(page, expectedCalories)` | → `Promise<void>` | Log → assert `/dashboard` + kcal link |
+
+Full contract: [PR-WR03.md](./PR-WR03.md) §5.
+
 ### Not in WR01 (downstream PRs)
 
-`mockGenerateInsight`, scanner/meal-log/weigh-in/settings/analytics/viewport helpers. Login returning-user E2E added in WR02 (`login-returning-user.spec.ts`).
+`mockGenerateInsight`, meal-log/weigh-in/settings/analytics/viewport helpers. Login returning-user E2E added in WR02 (`login-returning-user.spec.ts`). Scanner error-path E2E added in WR03 (`scanner-error-manual-entry.spec.ts`).
 
 ---
 
