@@ -18,7 +18,8 @@ import {
   type TopFoodEntry,
 } from '@/lib/analytics/analytics-types';
 import { copy } from '@/lib/copy';
-import { lightColors } from '@/lib/design/colors';
+import { useChartColors } from '@/lib/design/use-chart-colors';
+import { useReducedMotion } from '@/lib/design/motion';
 import { typography } from '@/lib/design/typography';
 
 interface PatternsSectionProps {
@@ -46,6 +47,9 @@ export function PatternsSection({
   weekdayAverageCalories,
   topFoods,
 }: PatternsSectionProps) {
+  const chartColors = useChartColors();
+  const reducedMotion = useReducedMotion();
+
   const dowData = WEEKDAY_ORDER.map((weekday) => ({
     label: weekdayShortLabel(weekday),
     calories: dayOfWeekBreakdown[weekday],
@@ -59,40 +63,50 @@ export function PatternsSection({
   return (
     <SectionCard title={copy('analytics.section.patterns')}>
       <div className="flex flex-col gap-6">
-        <div>
+        <div className="min-w-0">
           <h3 className={`${typography.csMacroLabel} mb-2`}>
             {copy('analytics.patterns.caloriesByDow')}
           </h3>
           <ResponsiveContainer width="100%" height={160}>
             <BarChart data={dowData} layout="vertical" margin={{ top: 0, right: 8, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" className="stroke-cs-border" horizontal={false} />
-              <XAxis type="number" tick={{ fontSize: 11, fill: lightColors.muted }} />
+              <XAxis type="number" tick={{ fontSize: 11, fill: chartColors.muted }} />
               <YAxis
                 type="category"
                 dataKey="label"
-                tick={{ fontSize: 11, fill: lightColors.muted }}
+                tick={{ fontSize: 11, fill: chartColors.muted }}
                 width={36}
               />
-              <Bar dataKey="calories" fill={lightColors.foreground} radius={[0, 4, 4, 0]} />
+              <Bar
+                dataKey="calories"
+                fill={chartColors.foreground}
+                radius={[0, 4, 4, 0]}
+                isAnimationActive={!reducedMotion}
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
-        <div>
+        <div className="min-w-0">
           <h3 className={`${typography.csMacroLabel} mb-2`}>
             {copy('analytics.patterns.caloriesByTod')}
           </h3>
           <ResponsiveContainer width="100%" height={140}>
             <BarChart data={todData} layout="vertical" margin={{ top: 0, right: 8, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" className="stroke-cs-border" horizontal={false} />
-              <XAxis type="number" tick={{ fontSize: 11, fill: lightColors.muted }} />
+              <XAxis type="number" tick={{ fontSize: 11, fill: chartColors.muted }} />
               <YAxis
                 type="category"
                 dataKey="label"
-                tick={{ fontSize: 11, fill: lightColors.muted }}
+                tick={{ fontSize: 11, fill: chartColors.muted }}
                 width={64}
               />
-              <Bar dataKey="calories" fill={lightColors.muted} radius={[0, 4, 4, 0]} />
+              <Bar
+                dataKey="calories"
+                fill={chartColors.muted}
+                radius={[0, 4, 4, 0]}
+                isAnimationActive={!reducedMotion}
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>

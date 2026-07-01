@@ -17,7 +17,9 @@ import {
 } from '@/lib/dashboard/calorie-progress';
 import type { DailyNutritionSummary } from '@/lib/analytics/analytics-types';
 import { copy } from '@/lib/copy';
-import { calorieProgressColor, lightColors } from '@/lib/design/colors';
+import { calorieProgressColor } from '@/lib/design/colors';
+import { useChartColors } from '@/lib/design/use-chart-colors';
+import { useReducedMotion } from '@/lib/design/motion';
 import { typography } from '@/lib/design/typography';
 
 interface CalorieAdherenceSectionProps {
@@ -43,6 +45,9 @@ export function CalorieAdherenceSection({
   averageDailyCalories,
   adherencePct,
 }: CalorieAdherenceSectionProps) {
+  const chartColors = useChartColors();
+  const reducedMotion = useReducedMotion();
+
   const chartData: ChartRow[] = chartDailySeries.map((day) => {
     const ratio = calorieTarget > 0 ? day.calories / calorieTarget : 0;
     return {
@@ -75,28 +80,28 @@ export function CalorieAdherenceSection({
         </div>
       </div>
 
-      <div role="img" aria-label={ariaLabel}>
+      <div role="img" aria-label={ariaLabel} className="min-w-0">
         <ResponsiveContainer width="100%" height={200}>
           <BarChart data={chartData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" className="stroke-cs-border" />
             <XAxis
               dataKey="dateLabel"
-              tick={{ fontSize: 11, fill: lightColors.muted }}
+              tick={{ fontSize: 11, fill: chartColors.muted }}
               interval={chartData.length > 14 ? Math.floor(chartData.length / 7) : 0}
             />
-            <YAxis tick={{ fontSize: 11, fill: lightColors.muted }} width={40} />
+            <YAxis tick={{ fontSize: 11, fill: chartColors.muted }} width={40} />
             <ReferenceLine
               y={calorieTarget}
-              stroke={lightColors.muted}
+              stroke={chartColors.muted}
               strokeDasharray="4 4"
               label={{
                 value: copy('analytics.calorie.target'),
                 position: 'insideTopRight',
                 fontSize: 11,
-                fill: lightColors.muted,
+                fill: chartColors.muted,
               }}
             />
-            <Bar dataKey="calories" radius={[4, 4, 0, 0]}>
+            <Bar dataKey="calories" radius={[4, 4, 0, 0]} isAnimationActive={!reducedMotion}>
               {chartData.map((row) => (
                 <Cell key={row.dateLabel} fill={calorieProgressColor(row.band)} />
               ))}

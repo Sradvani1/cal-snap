@@ -7,10 +7,13 @@ import { PrimaryButton, SecondaryButton } from '@/components/design/PrimaryButto
 import { useAuth } from '@/lib/auth/use-auth';
 import { copy } from '@/lib/copy';
 import { typography } from '@/lib/design/typography';
+import { formFieldFocusRingClassName } from '@/lib/design/form-field';
 import { cn } from '@/lib/utils/cn';
 
-const inputClassName =
-  'rounded-lg border border-cs-border bg-cs-surface px-3 py-2 text-sm text-cs-foreground';
+const inputClassName = [
+  'rounded-lg border border-cs-border bg-cs-surface px-3 py-2 text-sm text-cs-foreground',
+  formFieldFocusRingClassName,
+].join(' ');
 
 export default function LoginPage() {
   const { signInWithEmail, signInWithGoogle, loading, sessionError } = useAuth();

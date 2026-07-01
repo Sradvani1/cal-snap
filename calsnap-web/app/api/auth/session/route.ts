@@ -1,5 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { ApiErrorCode } from '@/lib/api/error-codes';
 import { SESSION_COOKIE_NAME } from '@/lib/auth/session-edge';
+import { copy, type CopyKey } from '@/lib/copy';
 import { getAdminAuth } from '@/lib/firebase/admin';
 import { shouldUseFirebaseEmulator } from '@/lib/firebase/emulator';
 
@@ -9,15 +11,56 @@ function isAuthEmulator(): boolean {
   return Boolean(process.env.FIREBASE_AUTH_EMULATOR_HOST) || shouldUseFirebaseEmulator();
 }
 
+function apiError(copyKey: CopyKey, code: (typeof ApiErrorCode)[keyof typeof ApiErrorCode], status: number) {
+  return NextResponse.json({ error: copy(copyKey), code }, { status });
+}
+
+function isAuthServiceUnavailable(error: unknown): boolean {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+  const message = error.message.toLowerCase();
+  return (
+    message.includes('credential') ||
+    message.includes('could not load the default credentials') ||
+    message.includes('enoent') ||
+    message.includes('econnrefused')
+  );
+}
+
+function mapSessionError(error: unknown): {
+  copyKey: CopyKey;
+  code: (typeof ApiErrorCode)[keyof typeof ApiErrorCode];
+  status: number;
+} {
+  if (isAuthServiceUnavailable(error)) {
+    return {
+      copyKey: 'api.session.unavailable',
+      code: ApiErrorCode.AuthUnavailable,
+      status: 503,
+    };
+  }
+  return {
+    copyKey: 'api.session.creationFailed',
+    code: ApiErrorCode.SessionCreationFailed,
+    status: 401,
+  };
+}
+
 export async function POST(request: NextRequest) {
+  let body: { idToken?: string };
   try {
-    const body = (await request.json()) as { idToken?: string };
-    const idToken = body.idToken;
+    body = (await request.json()) as { idToken?: string };
+  } catch {
+    return apiError('api.session.invalidJson', ApiErrorCode.InvalidJsonBody, 400);
+  }
 
-    if (!idToken) {
-      return NextResponse.json({ error: 'Missing idToken' }, { status: 400 });
-    }
+  const idToken = body.idToken;
+  if (!idToken) {
+    return apiError('api.session.missingIdToken', ApiErrorCode.MissingIdToken, 400);
+  }
 
+  try {
     const adminAuth = getAdminAuth();
     await adminAuth.verifyIdToken(idToken);
 
@@ -37,9 +80,8 @@ export async function POST(request: NextRequest) {
     });
     return response;
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Session creation failed';
-    const status = message.includes('Missing') || message.includes('credential') ? 503 : 401;
-    return NextResponse.json({ error: message }, { status });
+    const { copyKey, code, status } = mapSessionError(error);
+    return apiError(copyKey, code, status);
   }
 }
 

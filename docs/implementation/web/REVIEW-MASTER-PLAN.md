@@ -194,7 +194,8 @@ WR07 comes after functional PRs. WR08 validates production last.
 
 ## WR07 — Mobile UX, Accessibility & Performance
 
-**Reviews:** W09 design system + cross-cutting polish
+**Reviews:** W09 design system + cross-cutting polish  
+**Deliverable:** [PR-WR07.md](./PR-WR07.md) — implemented 2026-06-30 (206 unit / 11 integration / 17 E2E; Lighthouse manual §8 pending)
 
 ### Checklist highlights
 

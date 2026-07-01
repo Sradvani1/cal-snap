@@ -1,35 +1,41 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { ApiErrorCode } from '@/lib/api/error-codes';
 import { verifyApiSession } from '@/lib/auth/verify-api-session';
+import { copy, type CopyKey } from '@/lib/copy';
 import {
   generateAnalyticsInsight,
   GeminiInsightError,
 } from '@/lib/gemini/generate-insight';
 import { parseAnalyticsInsightPayload } from '@/lib/gemini/analytics-insight-zod';
 
+function apiError(copyKey: CopyKey, code: (typeof ApiErrorCode)[keyof typeof ApiErrorCode], status: number) {
+  return NextResponse.json({ error: copy(copyKey), code }, { status });
+}
+
 export async function POST(request: NextRequest) {
   const session = await verifyApiSession(request);
   if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return apiError('api.error.unauthorized', ApiErrorCode.Unauthorized, 401);
   }
 
   if (!process.env.GEMINI_API_KEY?.trim()) {
-    return NextResponse.json({ error: 'Insight unavailable' }, { status: 503 });
+    return apiError('api.insight.unavailable', ApiErrorCode.InsightUnavailable, 503);
   }
 
   let body: unknown;
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+    return apiError('api.insight.invalidJson', ApiErrorCode.InvalidJsonBody, 400);
   }
 
   const parsed = parseAnalyticsInsightPayload(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
+    return apiError('api.insight.invalidPayload', ApiErrorCode.InvalidPayload, 400);
   }
 
   if (parsed.data.loggedDayCount < 3) {
-    return NextResponse.json({ error: 'Insufficient logged days' }, { status: 400 });
+    return apiError('api.insight.insufficientDays', ApiErrorCode.InsufficientLoggedDays, 400);
   }
 
   try {
@@ -38,10 +44,10 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (error instanceof GeminiInsightError) {
       if (error.code === 'emptyResponse') {
-        return NextResponse.json({ error: 'Empty insight response' }, { status: 502 });
+        return apiError('api.insight.emptyResponse', ApiErrorCode.EmptyInsightResponse, 502);
       }
-      return NextResponse.json({ error: 'Insight generation failed' }, { status: 502 });
+      return apiError('api.insight.failed', ApiErrorCode.InsightGenerationFailed, 502);
     }
-    return NextResponse.json({ error: 'Insight generation failed' }, { status: 502 });
+    return apiError('api.insight.failed', ApiErrorCode.InsightGenerationFailed, 502);
   }
 }

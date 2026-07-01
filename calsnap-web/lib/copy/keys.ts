@@ -1,4 +1,5 @@
 import { analyticsCopy } from './analytics';
+import { apiCopy } from './api';
 import { authCopy } from './auth';
 import { commonCopy } from './common';
 import { dashboardCopy } from './dashboard';
@@ -14,6 +15,7 @@ import { settingsCopy } from './settings';
 export const COPY_REGISTRY = {
   ...designSystemCopy,
   ...commonCopy,
+  ...apiCopy,
   ...authCopy,
   ...onboardingCopy,
   ...dashboardCopy,

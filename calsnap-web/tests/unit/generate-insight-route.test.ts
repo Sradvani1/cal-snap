@@ -20,6 +20,7 @@ vi.mock('@/lib/gemini/generate-insight', () => ({
 
 import { verifyApiSession } from '@/lib/auth/verify-api-session';
 import { generateAnalyticsInsight } from '@/lib/gemini/generate-insight';
+import { copy } from '@/lib/copy';
 import { POST } from '@/app/api/generate-insight/route';
 
 const mockedVerify = vi.mocked(verifyApiSession);
@@ -82,8 +83,9 @@ describe('POST /api/generate-insight', () => {
     mockedVerify.mockResolvedValue({ uid: 'user-1' });
     const response = await POST(makeRequest({ body: makePayload() }));
     expect(response.status).toBe(503);
-    const body = (await response.json()) as { error: string };
-    expect(body.error).toBe('Insight unavailable');
+    const body = (await response.json()) as { error: string; code: string };
+    expect(body.error).toBe(copy('api.insight.unavailable'));
+    expect(body.code).toBe('insight_unavailable');
   });
 
   it('returns 400 for invalid payload', async () => {

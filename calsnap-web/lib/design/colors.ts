@@ -39,6 +39,8 @@ export const darkColors = {
   onPrimary: '#FFFFFF',
 } as const;
 
+export type ChartColorPalette = typeof lightColors | typeof darkColors;
+
 export function calorieProgressColor(band: CalorieProgressBand): string {
   switch (band) {
     case 'under':

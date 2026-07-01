@@ -19,7 +19,9 @@ vi.mock('@/lib/gemini/analyze-meal', () => ({
 }));
 
 import { verifyApiSession } from '@/lib/auth/verify-api-session';
-import { analyzeMealImage } from '@/lib/gemini/analyze-meal';
+import { analyzeMealImage, GeminiAnalysisError } from '@/lib/gemini/analyze-meal';
+import { copy } from '@/lib/copy';
+import { ApiErrorCode } from '@/lib/api/error-codes';
 import { POST } from '@/app/api/analyze-meal/route';
 
 const mockedVerify = vi.mocked(verifyApiSession);
@@ -70,8 +72,9 @@ describe('POST /api/analyze-meal', () => {
     mockedVerify.mockResolvedValue({ uid: 'user-1' });
     const response = await POST(makeRequest({ formData: makeFormDataWithImage() }));
     expect(response.status).toBe(503);
-    const body = (await response.json()) as { error: string };
-    expect(body.error).toBe('Analysis unavailable');
+    const body = (await response.json()) as { error: string; code: string };
+    expect(body.error).toBe(copy('api.analyze.unavailable'));
+    expect(body.code).toBe(ApiErrorCode.AnalysisUnavailable);
   });
 
   it('returns 200 with mocked analysis response', async () => {
@@ -152,5 +155,16 @@ describe('POST /api/analyze-meal', () => {
 
     const response = await POST(makeRequest({ formData }));
     expect(response.status).toBe(200);
+  });
+
+  it('returns parse_failed code when Gemini validation fails', async () => {
+    mockedVerify.mockResolvedValue({ uid: 'user-1' });
+    mockedAnalyze.mockRejectedValue(new GeminiAnalysisError('validationFailed'));
+
+    const response = await POST(makeRequest({ formData: makeFormDataWithImage() }));
+    expect(response.status).toBe(502);
+    const body = (await response.json()) as { error: string; code: string };
+    expect(body.error).toBe(copy('api.analyze.parseFailed'));
+    expect(body.code).toBe(ApiErrorCode.AnalysisParseFailed);
   });
 });

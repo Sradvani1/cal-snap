@@ -12,6 +12,8 @@ vi.mock('@/lib/firebase/emulator', () => ({
 
 import { getAdminAuth } from '@/lib/firebase/admin';
 import { shouldUseFirebaseEmulator } from '@/lib/firebase/emulator';
+import { copy } from '@/lib/copy';
+import { ApiErrorCode } from '@/lib/api/error-codes';
 import { POST } from '@/app/api/auth/session/route';
 import { verifyApiSession } from '@/lib/auth/verify-api-session';
 
@@ -74,6 +76,41 @@ describe('POST /api/auth/session', () => {
     const response = await POST(makePostRequest('emulator-id-token'));
     expect(mockCreateSessionCookie).not.toHaveBeenCalled();
     expect(response.cookies.get(SESSION_COOKIE_NAME)?.value).toBe('emulator-id-token');
+  });
+
+  it('returns copy-backed error when idToken is missing', async () => {
+    const request = new NextRequest('http://localhost/api/auth/session', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({}),
+    });
+    const response = await POST(request);
+    expect(response.status).toBe(400);
+    const body = (await response.json()) as { error: string; code: string };
+    expect(body.error).toBe(copy('api.session.missingIdToken'));
+    expect(body.code).toBe(ApiErrorCode.MissingIdToken);
+  });
+
+  it('returns copy-backed error when verifyIdToken fails', async () => {
+    mockVerifyIdToken.mockRejectedValue(new Error('invalid token'));
+    const response = await POST(makePostRequest('bad-token'));
+    expect(response.status).toBe(401);
+    const body = (await response.json()) as { error: string; code: string };
+    expect(body.error).toBe(copy('api.session.creationFailed'));
+    expect(body.code).toBe(ApiErrorCode.SessionCreationFailed);
+  });
+
+  it('returns 400 for invalid JSON body', async () => {
+    const request = new NextRequest('http://localhost/api/auth/session', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: '{not-json',
+    });
+    const response = await POST(request);
+    expect(response.status).toBe(400);
+    const body = (await response.json()) as { error: string; code: string };
+    expect(body.error).toBe(copy('api.session.invalidJson'));
+    expect(body.code).toBe(ApiErrorCode.InvalidJsonBody);
   });
 });
 

@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import html2canvas from 'html2canvas';
 import { copy } from '@/lib/copy';
 
 function shareCardBackgroundColor(): string {
@@ -23,6 +22,7 @@ export function useMealShareImage() {
     setShareError(null);
 
     try {
+      const html2canvas = (await import('html2canvas')).default;
       const canvas = await html2canvas(cardElement, {
         backgroundColor: shareCardBackgroundColor(),
         scale: 2,

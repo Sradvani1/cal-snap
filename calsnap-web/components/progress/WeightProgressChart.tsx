@@ -12,7 +12,7 @@ import {
 import { EmptyStateView } from '@/components/design/EmptyStateView';
 import type { WeighIn } from '@/lib/models/weigh-in';
 import { copy } from '@/lib/copy';
-import { lightColors } from '@/lib/design/colors';
+import { useChartColors } from '@/lib/design/use-chart-colors';
 import { useReducedMotion } from '@/lib/design/motion';
 import { typography } from '@/lib/design/typography';
 import { compareWeighInsChronological } from '@/lib/progress/progress-stats';
@@ -48,6 +48,7 @@ export function WeightProgressChart({
   ariaLabel,
   onLogWeighIn,
 }: WeightProgressChartProps) {
+  const chartColors = useChartColors();
   const reducedMotion = useReducedMotion();
 
   if (weighIns.length === 0) {
@@ -113,31 +114,31 @@ export function WeightProgressChart({
           <CartesianGrid strokeDasharray="3 3" className="stroke-cs-border" />
           <XAxis
             dataKey="dateLabel"
-            tick={{ fontSize: 11, fill: lightColors.muted }}
+            tick={{ fontSize: 11, fill: chartColors.muted }}
             interval="preserveStartEnd"
           />
           <YAxis
-            tick={{ fontSize: 11, fill: lightColors.muted }}
+            tick={{ fontSize: 11, fill: chartColors.muted }}
             domain={['auto', 'auto']}
             width={40}
           />
           <ReferenceLine
             y={goalDisplay}
-            stroke={lightColors.muted}
+            stroke={chartColors.muted}
             strokeDasharray="4 4"
             label={{
               value: copy('progress.chart.goalLabel'),
               position: 'insideTopRight',
               fontSize: 11,
-              fill: lightColors.muted,
+              fill: chartColors.muted,
             }}
           />
           <Line
             type="monotone"
             dataKey="actual"
-            stroke={lightColors.foreground}
+            stroke={chartColors.foreground}
             strokeWidth={2}
-            dot={{ r: 4, fill: lightColors.foreground }}
+            dot={{ r: 4, fill: chartColors.foreground }}
             connectNulls={false}
             isAnimationActive={!reducedMotion}
           />
@@ -145,7 +146,7 @@ export function WeightProgressChart({
             <Line
               type="monotone"
               dataKey="projected"
-              stroke={lightColors.muted}
+              stroke={chartColors.muted}
               strokeWidth={2}
               strokeDasharray="6 4"
               dot={false}

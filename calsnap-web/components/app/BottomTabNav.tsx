@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { copy, type CopyKey } from '@/lib/copy';
+import { formFieldFocusRingClassName } from '@/lib/design/form-field';
 import { cn } from '@/lib/utils/cn';
 import { useUnsavedWork } from '@/lib/scanner/unsaved-work-context';
 
@@ -134,7 +135,10 @@ function TabLink({
       href={href}
       onClick={handleClick}
       aria-current={active ? 'page' : undefined}
-      className="flex min-h-11 flex-col items-center justify-center gap-1 px-1 py-2 text-xs font-medium"
+      className={cn(
+        'flex min-h-11 flex-col items-center justify-center gap-1 px-1 py-2 text-xs font-medium',
+        formFieldFocusRingClassName,
+      )}
     >
       <Icon active={active} />
       <span className={active ? 'text-cs-primary' : 'text-cs-muted'}>{label}</span>

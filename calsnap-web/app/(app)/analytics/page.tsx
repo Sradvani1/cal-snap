@@ -1,5 +1,6 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth/use-auth';
 import { usePlateauAlert } from '@/lib/queries/use-plateau-alert';
@@ -10,10 +11,6 @@ import { SectionCard, SectionCardSkeleton } from '@/components/design/SectionCar
 import { AnalyticsCustomRangeSheet } from '@/components/analytics/AnalyticsCustomRangeSheet';
 import { AnalyticsInsightCard } from '@/components/analytics/AnalyticsInsightCard';
 import { AnalyticsTimeframePicker } from '@/components/analytics/AnalyticsTimeframePicker';
-import { CalorieAdherenceSection } from '@/components/analytics/CalorieAdherenceSection';
-import { FiberSection } from '@/components/analytics/FiberSection';
-import { MacroTrendsSection } from '@/components/analytics/MacroTrendsSection';
-import { PatternsSection } from '@/components/analytics/PatternsSection';
 import { PlateauAlertSheet } from '@/components/dashboard/PlateauAlertSheet';
 import { WeighInSheet } from '@/components/progress/WeighInSheet';
 import { WeightProgressView } from '@/components/progress/WeightProgressView';
@@ -28,6 +25,38 @@ import { useAnalytics } from '@/lib/queries/use-analytics';
 import { useGenerateInsight } from '@/lib/queries/use-generate-insight';
 import { copy } from '@/lib/copy';
 import { typography } from '@/lib/design/typography';
+
+const CalorieAdherenceSection = dynamic(
+  () =>
+    import('@/components/analytics/CalorieAdherenceSection').then((m) => ({
+      default: m.CalorieAdherenceSection,
+    })),
+  { ssr: false, loading: () => <SectionCardSkeleton /> },
+);
+
+const MacroTrendsSection = dynamic(
+  () =>
+    import('@/components/analytics/MacroTrendsSection').then((m) => ({
+      default: m.MacroTrendsSection,
+    })),
+  { ssr: false, loading: () => <SectionCardSkeleton /> },
+);
+
+const FiberSection = dynamic(
+  () =>
+    import('@/components/analytics/FiberSection').then((m) => ({
+      default: m.FiberSection,
+    })),
+  { ssr: false, loading: () => <SectionCardSkeleton /> },
+);
+
+const PatternsSection = dynamic(
+  () =>
+    import('@/components/analytics/PatternsSection').then((m) => ({
+      default: m.PatternsSection,
+    })),
+  { ssr: false, loading: () => <SectionCardSkeleton /> },
+);
 
 function AnalyticsContent({ uid }: { uid: string | undefined }) {
   const plateau = usePlateauAlert(uid);

@@ -42,6 +42,12 @@ export {
   saveWeighIn,
 } from './weigh-in';
 export {
+  assertNoHorizontalScroll,
+  assertRouteReady,
+  MOBILE_VIEWPORT,
+  setMobileViewport,
+} from './viewport';
+export {
   changeActivityLevel,
   confirmDeleteAllData,
   gotoDashboardFromTab,

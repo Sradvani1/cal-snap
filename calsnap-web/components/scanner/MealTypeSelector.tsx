@@ -2,6 +2,7 @@ import type { MealType } from '@/lib/models/meal-type';
 import { suggestedMealTypeForDate } from '@/lib/models/meal-type';
 import { MEAL_TYPE_LABELS } from '@/components/meal-log/meal-type-display';
 import { copy } from '@/lib/copy';
+import { formFieldFocusRingClassName } from '@/lib/design/form-field';
 import { typography } from '@/lib/design/typography';
 import { cn } from '@/lib/utils/cn';
 
@@ -33,6 +34,7 @@ export function MealTypeSelector({ value, onChange }: MealTypeSelectorProps) {
               onClick={() => onChange(type)}
               className={cn(
                 'min-h-11 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                formFieldFocusRingClassName,
                 active
                   ? 'bg-cs-foreground text-cs-surface'
                   : 'border border-cs-border bg-cs-surface text-cs-foreground',

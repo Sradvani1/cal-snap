@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ApiErrorCode } from '@/lib/api/error-codes';
 import type { MealAnalysisResponse } from '@/lib/gemini/meal-analysis-types';
 import type { MealEntry } from '@/lib/models/meal-entry';
 import type { MealType } from '@/lib/models/meal-type';
@@ -254,8 +255,8 @@ export function useMealScanner({ userId, onUnsavedWorkChange }: UseMealScannerOp
           errorKind = 'api';
         } else if (response.status === 502) {
           try {
-            const body = (await response.json()) as { error?: string };
-            if (body.error === 'Analysis parse failed') {
+            const body = (await response.json()) as { code?: string };
+            if (body.code === ApiErrorCode.AnalysisParseFailed) {
               errorKind = 'parse';
             }
           } catch {

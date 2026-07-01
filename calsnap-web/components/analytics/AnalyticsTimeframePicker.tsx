@@ -38,7 +38,7 @@ export function AnalyticsTimeframePicker({
             onClick={() => onPresetChange(preset)}
             aria-pressed={isSelected}
             className={cn(
-              'min-h-11 rounded-lg px-4 py-2 text-sm font-semibold transition-colors',
+              'min-h-11 rounded-lg px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cs-primary focus-visible:ring-offset-2',
               isSelected
                 ? 'bg-cs-primary text-cs-on-primary'
                 : 'border border-cs-border bg-cs-surface text-cs-foreground hover:bg-cs-muted/10',
