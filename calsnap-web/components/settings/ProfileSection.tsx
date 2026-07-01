@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import { DeficitSlider } from '@/components/onboarding/DeficitSlider';
 import { ACTIVITY_LEVEL_OPTIONS } from '@/lib/onboarding/activity-level-options';
 import {
   HeightInputFields,
@@ -8,7 +9,8 @@ import {
 import { LocalDateInput } from '@/components/design/LocalDateInput';
 import { LocalNumberInput } from '@/components/design/LocalNumberInput';
 import type { ProfileDraft } from '@/lib/onboarding/profile-draft';
-import { dateOfBirthInputBounds, goalTargetDateInputBounds } from '@/lib/utilities/date-input';
+import { formatEstimatedGoalDate } from '@/lib/nutrition/goal-pathway';
+import { dateOfBirthInputBounds } from '@/lib/utilities/date-input';
 import { weightInputHandlers } from '@/lib/utilities/unit-formatters';
 import { SectionCard } from '@/components/design/SectionCard';
 import { copy } from '@/lib/copy';
@@ -25,6 +27,13 @@ interface ProfileSectionProps {
   useImperialForHeight: boolean;
   previewTDEE: number;
   previewTarget: number;
+  previewDeficit: number;
+  previewGoalTargetDate: Date | null;
+  hardDeficitUnlocked: boolean;
+  showHardDeficitAlert: boolean;
+  onDeficitChange: (value: number) => void;
+  onUnlockHardDeficit: () => void;
+  onDismissHardDeficitAlert: () => void;
   minimumCalories: number;
 }
 
@@ -37,10 +46,16 @@ export function ProfileSection({
   useImperialForHeight,
   previewTDEE,
   previewTarget,
+  previewDeficit,
+  previewGoalTargetDate,
+  hardDeficitUnlocked,
+  showHardDeficitAlert,
+  onDeficitChange,
+  onUnlockHardDeficit,
+  onDismissHardDeficitAlert,
   minimumCalories,
 }: ProfileSectionProps) {
   const dobBounds = useMemo(() => dateOfBirthInputBounds(), []);
-  const goalDateBounds = useMemo(() => goalTargetDateInputBounds(), []);
   const weightHandlers = useMemo(
     () => weightInputHandlers(useLbsForWeight),
     [useLbsForWeight],
@@ -53,6 +68,10 @@ export function ProfileSection({
   const goalWeightUnit = draft.useLbsGoalWeight
     ? copy('common.units.lbs')
     : copy('common.units.kg');
+  const estimatedGoalDateLabel = formatEstimatedGoalDate(
+    previewGoalTargetDate,
+    previewDeficit,
+  );
 
   return (
     <SectionCard title={copy('settings.section.profile')}>
@@ -182,20 +201,19 @@ export function ProfileSection({
           />
         </label>
 
-        <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
-          {copy('settings.profile.goalDate')}
-          <LocalDateInput
-            value={draft.goalTargetDate}
-            min={goalDateBounds.min}
-            max={goalDateBounds.max}
-            onChange={(date) =>
-              onUpdateDraft((d) => {
-                d.goalTargetDate = date;
-              })
-            }
-            className={formFieldInputClassName}
-          />
-        </label>
+        <DeficitSlider
+          deficit={draft.requestedDeficit}
+          hardDeficitUnlocked={hardDeficitUnlocked}
+          showHardDeficitAlert={showHardDeficitAlert}
+          onDeficitChange={onDeficitChange}
+          onUnlockHardDeficit={onUnlockHardDeficit}
+          onDismissHardDeficitAlert={onDismissHardDeficitAlert}
+        />
+
+        <div className="rounded-lg bg-cs-muted/10 p-3 text-sm">
+          <p className={typography.csCaption}>{copy('settings.profile.estimatedGoalDate')}</p>
+          <p className={`${typography.csCardTitle} mt-1 text-base`}>{estimatedGoalDateLabel}</p>
+        </div>
 
         <div className="rounded-lg bg-cs-muted/10 p-3 text-sm">
           <p className={typography.csCaption}>

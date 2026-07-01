@@ -10,6 +10,7 @@ import {
   dailyTarget,
   tdee,
 } from '@/lib/nutrition/calculator';
+import { computeGoalTargetDate } from '@/lib/nutrition/goal-pathway';
 
 export type MacroKind = 'protein' | 'carbs' | 'fat';
 
@@ -56,15 +57,26 @@ export function apply(
     heightCm: draft.heightCm,
     weightKg,
     activityLevel: draft.activityLevel,
-    deficitKcal: profile.deficitKcal,
+    deficitKcal: draft.requestedDeficit,
   });
+
+  const referenceDate = new Date();
 
   profile.name = trimmedName(draft);
   profile.sex = draft.sex;
   profile.dateOfBirth = draft.dateOfBirth;
   profile.heightCm = draft.heightCm;
   profile.goalWeightKg = draft.goalWeightKg;
-  profile.goalTargetDate = draft.goalTargetDate;
+  profile.goalTargetDate = computeGoalTargetDate({
+    currentWeightKg: weightKg,
+    goalWeightKg: draft.goalWeightKg,
+    heightCm: draft.heightCm,
+    dateOfBirth: draft.dateOfBirth,
+    sex: draft.sex,
+    activityLevel: draft.activityLevel,
+    deficitKcal: result.deficitKcal,
+    referenceDate,
+  });
   profile.activityLevel = draft.activityLevel;
   profile.tdee = result.tdee;
   profile.dailyCalorieTarget = result.dailyTarget;

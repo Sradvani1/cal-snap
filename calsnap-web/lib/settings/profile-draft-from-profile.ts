@@ -14,7 +14,6 @@ export function profileDraftFromProfile(
     heightCm: profile.heightCm,
     weightKg: currentWeightKg,
     goalWeightKg: profile.goalWeightKg,
-    goalTargetDate: profile.goalTargetDate,
     activityLevel: profile.activityLevel,
     requestedDeficit: profile.deficitKcal,
     useImperialHeight: extras.useImperialForHeight,

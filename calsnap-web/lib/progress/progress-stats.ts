@@ -15,6 +15,7 @@ export interface ProgressStats {
   progressFraction: number;
   chartWeighInsAscending: WeighIn[];
   weeklyRateKg: number | null;
+  /** Live projection for chart/debug only; UI stat uses stored `profile.goalTargetDate`. */
   projectedGoalDate: Date | null;
   projectionPoints: Array<{ date: Date; weightKg: number }>;
 }

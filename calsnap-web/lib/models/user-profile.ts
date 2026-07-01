@@ -14,7 +14,7 @@ export interface UserProfile {
   startingWeightKg: number;
   /** Goal weight in kilograms. */
   goalWeightKg: number;
-  goalTargetDate: Date;
+  goalTargetDate: Date | null;
   activityLevel: ActivityLevel;
   dailyCalorieTarget: number;
   tdee: number;

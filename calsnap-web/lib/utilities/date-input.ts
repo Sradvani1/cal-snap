@@ -37,23 +37,3 @@ export function dateOfBirthInputBounds(referenceDate: Date = new Date()): {
     max: toLocalDateInputValue(maxDate),
   };
 }
-
-/** Allowed `<input type="date">` bounds for goal target date (14–730 days). */
-export function goalTargetDateInputBounds(referenceDate: Date = new Date()): {
-  min: string;
-  max: string;
-} {
-  const start = new Date(referenceDate);
-  start.setHours(0, 0, 0, 0);
-
-  const minDate = new Date(start);
-  minDate.setDate(minDate.getDate() + AppConstants.Onboarding.minGoalDaysFromToday);
-
-  const maxDate = new Date(start);
-  maxDate.setDate(maxDate.getDate() + AppConstants.Onboarding.maxGoalDaysFromToday);
-
-  return {
-    min: toLocalDateInputValue(minDate),
-    max: toLocalDateInputValue(maxDate),
-  };
-}

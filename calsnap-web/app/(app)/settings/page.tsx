@@ -150,6 +150,13 @@ function SettingsContent({ uid, profileData }: SettingsContentProps) {
           useImperialForHeight={form.useImperialForHeight}
           previewTDEE={form.previewTDEE}
           previewTarget={form.previewTarget}
+          previewDeficit={form.previewDeficit}
+          previewGoalTargetDate={form.previewGoalTargetDate}
+          hardDeficitUnlocked={form.hardDeficitUnlocked}
+          showHardDeficitAlert={form.showHardDeficitAlert}
+          onDeficitChange={form.updateDeficit}
+          onUnlockHardDeficit={form.unlockHardDeficit}
+          onDismissHardDeficitAlert={() => form.setShowHardDeficitAlert(false)}
           minimumCalories={form.minimumCalories}
         />
 

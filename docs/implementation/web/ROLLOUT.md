@@ -2,7 +2,7 @@
 
 Follow this guide in order to test, debug, and deploy CalSnap Web. You do **not** need a Firebase cloud project until **Phase 4**. Phases 1–3 use local Firebase emulators only.
 
-**Related docs:** [PR-W10 QA matrix](./PR-W10.md) · [`calsnap-web/README.md`](../../../calsnap-web/README.md) · [`.env.local.example`](../../../calsnap-web/.env.local.example)
+**Related docs:** [PR-W10 QA matrix](./PR-W10.md) · [PR-WR10 Goal Pathway](./PR-WR10-goal-pathway.md) · [`calsnap-web/README.md`](../../../calsnap-web/README.md) · [`.env.local.example`](../../../calsnap-web/.env.local.example)
 
 ---
 
@@ -252,6 +252,9 @@ With `GEMINI_API_KEY=test-not-used`, scan will fail at analysis — that's expec
 ### Phase 2 checklist
 
 - [ ] Signup → onboarding → dashboard works
+- [ ] Onboarding calorie step shows computed **estimated goal date** (no date picker on goal step)
+- [ ] Settings deficit slider changes estimated goal date preview; save persists updated date
+- [ ] Weigh-in shifts stored estimated goal date
 - [ ] Manual meal log works (without AI)
 - [ ] Meal edit/delete updates dashboard
 - [ ] Weigh-in updates targets

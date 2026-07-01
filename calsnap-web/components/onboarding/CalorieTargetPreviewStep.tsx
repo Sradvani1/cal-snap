@@ -1,12 +1,11 @@
 'use client';
 
-import { SecondaryButton } from '@/components/design/PrimaryButton';
-import { AppConstants } from '@/lib/constants';
+import { DeficitSlider } from '@/components/onboarding/DeficitSlider';
 import type { OnboardingTargets } from '@/lib/onboarding/use-onboarding';
+import { formatEstimatedGoalDate } from '@/lib/nutrition/goal-pathway';
 import { formatMacroGrams } from '@/lib/utilities/unit-formatters';
 import { copy } from '@/lib/copy';
 import { typography } from '@/lib/design/typography';
-import { cn } from '@/lib/utils/cn';
 
 interface CalorieTargetPreviewStepProps {
   targets: OnboardingTargets;
@@ -27,6 +26,11 @@ export function CalorieTargetPreviewStep({
   onUnlockHardDeficit,
   onDismissHardDeficitAlert,
 }: CalorieTargetPreviewStepProps) {
+  const estimatedGoalDateLabel = formatEstimatedGoalDate(
+    targets.goalTargetDate,
+    targets.deficit,
+  );
+
   return (
     <div className="flex flex-col gap-5">
       <div>
@@ -47,35 +51,20 @@ export function CalorieTargetPreviewStep({
             {targets.target} {copy('common.macro.kcal')}
           </p>
         </div>
+        <div className="col-span-2">
+          <p className={typography.csCaption}>{copy('onboarding.calorie.estimatedGoalDate')}</p>
+          <p className={typography.csCardTitle}>{estimatedGoalDateLabel}</p>
+        </div>
       </div>
 
-      <label className={cn(typography.csMacroLabel, 'flex flex-col gap-2')}>
-        <div className="flex items-center justify-between">
-          <span>{copy('onboarding.calorie.deficit')}</span>
-          <span className="font-semibold">
-            {deficit} {copy('common.macro.kcal')}
-          </span>
-        </div>
-        <input
-          type="range"
-          min={AppConstants.Deficit.minDeficitKcal}
-          max={
-            hardDeficitUnlocked
-              ? AppConstants.Deficit.hardMaxDeficitKcal
-              : AppConstants.Deficit.maxDeficitKcal
-          }
-          step={25}
-          value={deficit}
-          onChange={(event) => onDeficitChange(Number(event.target.value))}
-          className="box-border w-full min-w-0 max-w-full"
-        />
-        <span className={typography.csCaption}>
-          {copy('onboarding.calorie.recommended', {
-            min: AppConstants.Deficit.minDeficitKcal,
-            max: AppConstants.Deficit.maxDeficitKcal,
-          })}
-        </span>
-      </label>
+      <DeficitSlider
+        deficit={deficit}
+        hardDeficitUnlocked={hardDeficitUnlocked}
+        showHardDeficitAlert={showHardDeficitAlert}
+        onDeficitChange={onDeficitChange}
+        onUnlockHardDeficit={onUnlockHardDeficit}
+        onDismissHardDeficitAlert={onDismissHardDeficitAlert}
+      />
 
       {targets.warnings.length > 0 && (
         <ul className="flex flex-col gap-1 text-xs text-cs-warning">
@@ -105,35 +94,6 @@ export function CalorieTargetPreviewStep({
           {copy('onboarding.calorie.macroDefaultsNote')}
         </p>
       </div>
-
-      {showHardDeficitAlert && (
-        <div className="rounded-lg border border-cs-warning/40 bg-cs-warning/10 p-4 text-sm">
-          <p className="font-medium text-cs-foreground">
-            {copy('onboarding.calorie.hardDeficit.title')}
-          </p>
-          <p className={`${typography.csCaption} mt-1`}>
-            {copy('onboarding.calorie.hardDeficit.body', {
-              max: AppConstants.Deficit.maxDeficitKcal,
-            })}
-          </p>
-          <div className="mt-3 flex gap-2">
-            <button
-              type="button"
-              onClick={onUnlockHardDeficit}
-              className="rounded-lg bg-cs-warning px-3 py-1.5 text-xs font-medium text-cs-foreground"
-            >
-              {copy('onboarding.calorie.hardDeficit.continue')}
-            </button>
-            <SecondaryButton
-              type="button"
-              onClick={onDismissHardDeficitAlert}
-              className="px-3 py-1.5 text-xs"
-            >
-              {copy('common.button.cancel')}
-            </SecondaryButton>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

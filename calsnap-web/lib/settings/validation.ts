@@ -1,8 +1,6 @@
 import type { ProfileDraft } from '@/lib/onboarding/profile-draft';
-import {
-  validateDateOfBirth,
-  validateGoalTargetDate,
-} from '@/lib/onboarding/validation';
+import { validateDateOfBirth } from '@/lib/onboarding/validation';
+import { validateGoalBelowCurrent } from '@/lib/nutrition/goal-pathway';
 import { copy } from '@/lib/copy';
 import { macroPercentsAreValid } from '@/lib/services/profile-update-service';
 import {
@@ -21,10 +19,10 @@ export function canSaveSettings(
 ): boolean {
   return (
     validateDateOfBirth(draft.dateOfBirth) &&
-    validateGoalTargetDate(draft.goalTargetDate) &&
     validateHeightCm(draft.heightCm) &&
     validateCurrentWeightKg(currentWeightKg) &&
     validateWeightKg(draft.goalWeightKg) &&
+    validateGoalBelowCurrent(draft.goalWeightKg, currentWeightKg) &&
     macroPercentsAreValid(macroPcts.protein, macroPcts.carbs, macroPcts.fat)
   );
 }
@@ -37,9 +35,6 @@ export function settingsValidationMessage(
   if (!validateDateOfBirth(draft.dateOfBirth)) {
     return copy('settings.validation.ageRange');
   }
-  if (!validateGoalTargetDate(draft.goalTargetDate)) {
-    return copy('settings.validation.goalDateRange');
-  }
   if (!validateHeightCm(draft.heightCm)) {
     return copy('settings.validation.heightRange');
   }
@@ -48,6 +43,9 @@ export function settingsValidationMessage(
   }
   if (!validateWeightKg(draft.goalWeightKg)) {
     return copy('settings.validation.goalWeightRange');
+  }
+  if (!validateGoalBelowCurrent(draft.goalWeightKg, currentWeightKg)) {
+    return copy('settings.validation.goalBelowCurrent');
   }
   if (!macroPercentsAreValid(macroPcts.protein, macroPcts.carbs, macroPcts.fat)) {
     return copy('settings.validation.macroSum');

@@ -45,8 +45,6 @@ export const AppConstants = {
   Onboarding: {
     minAgeYears: 16,
     maxAgeYears: 90,
-    minGoalDaysFromToday: 14,
-    maxGoalDaysFromToday: 730,
   },
   Notifications: {
     weighInCategoryIdentifier: 'WEIGH_IN',

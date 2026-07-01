@@ -133,6 +133,62 @@ describe('save-settings-profile', () => {
     expect(mockSaveProfile).not.toHaveBeenCalled();
   });
 
+  it('does not change startingWeightKg on settings save', async () => {
+    const profile = makeProfile({ startingWeightKg: 80 });
+    const extras = makeExtras();
+    const draft = createDefaultProfileDraft();
+    draft.requestedDeficit = 400;
+
+    await saveSettingsProfile({
+      uid: 'user-1',
+      profile,
+      extras,
+      draft,
+      macroProteinPct: 28,
+      macroCarbsPct: 47,
+      macroFatPct: 25,
+      currentWeightKg: 79,
+      savedWeightKg: 80,
+      reminderPrefs: defaultReminderPrefs(),
+      unitPrefs: { useLbsForWeight: false, useImperialForHeight: false },
+    });
+
+    const weighInInput = mockSaveWeighIn.mock.calls[0][0];
+    expect(weighInInput.profile.startingWeightKg).toBe(80);
+  });
+
+  it('recomputes goalTargetDate when deficit changes', async () => {
+    const profile = makeProfile({
+      goalTargetDate: new Date(2026, 11, 27),
+      deficitKcal: 350,
+    });
+    const extras = makeExtras();
+    const draft = createDefaultProfileDraft();
+    draft.requestedDeficit = 400;
+
+    await saveSettingsProfile({
+      uid: 'user-1',
+      profile,
+      extras,
+      draft,
+      macroProteinPct: 28,
+      macroCarbsPct: 47,
+      macroFatPct: 25,
+      currentWeightKg: 80,
+      savedWeightKg: 80,
+      reminderPrefs: defaultReminderPrefs(),
+      unitPrefs: { useLbsForWeight: false, useImperialForHeight: false },
+    });
+
+    expect(mockSaveProfile).toHaveBeenCalledOnce();
+    const savedProfile = mockSaveProfile.mock.calls[0][1] as UserProfile;
+    expect(savedProfile.deficitKcal).toBe(400);
+    expect(savedProfile.goalTargetDate).not.toBeNull();
+    expect(savedProfile.goalTargetDate?.getTime()).not.toBe(
+      profile.goalTargetDate?.getTime(),
+    );
+  });
+
   it('persists normalized current weight, not the raw in-progress value', async () => {
     const profile = makeProfile();
     const extras = makeExtras();

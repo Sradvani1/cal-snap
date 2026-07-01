@@ -1,16 +1,14 @@
 'use client';
 
-import { useMemo } from 'react';
-import { LocalDateInput } from '@/components/design/LocalDateInput';
-import { formFieldInputClassName } from '@/lib/design/form-field';
-import { LocalNumberInput } from '@/components/design/LocalNumberInput';
 import { ACTIVITY_LEVEL_OPTIONS } from '@/lib/onboarding/activity-level-options';
 import type { ProfileDraft } from '@/lib/onboarding/profile-draft';
-import { goalTargetDateInputBounds } from '@/lib/utilities/date-input';
 import { weightInputHandlers } from '@/lib/utilities/unit-formatters';
 import { copy } from '@/lib/copy';
 import { typography } from '@/lib/design/typography';
 import { cn } from '@/lib/utils/cn';
+import { LocalNumberInput } from '@/components/design/LocalNumberInput';
+import { formFieldInputClassName } from '@/lib/design/form-field';
+import { useMemo } from 'react';
 
 interface GoalSetupStepProps {
   draft: ProfileDraft;
@@ -20,7 +18,6 @@ interface GoalSetupStepProps {
 const inputClassName = formFieldInputClassName;
 
 export function GoalSetupStep({ draft, onUpdate }: GoalSetupStepProps) {
-  const goalDateBounds = useMemo(() => goalTargetDateInputBounds(), []);
   const goalWeightHandlers = useMemo(
     () => weightInputHandlers(draft.useLbsGoalWeight),
     [draft.useLbsGoalWeight],
@@ -62,22 +59,6 @@ export function GoalSetupStep({ draft, onUpdate }: GoalSetupStepProps) {
           className={inputClassName}
         />
       </div>
-
-      <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
-        {copy('onboarding.goal.targetDate')}
-        <LocalDateInput
-          value={draft.goalTargetDate}
-          min={goalDateBounds.min}
-          max={goalDateBounds.max}
-          onChange={(date) =>
-            onUpdate((d) => {
-              d.goalTargetDate = date;
-            })
-          }
-          className={inputClassName}
-        />
-        <span className={typography.csCaption}>{copy('onboarding.goal.minWeeksHint')}</span>
-      </label>
 
       <fieldset className="flex flex-col gap-2">
         <legend className={typography.csMacroLabel}>{copy('common.label.activityLevel')}</legend>

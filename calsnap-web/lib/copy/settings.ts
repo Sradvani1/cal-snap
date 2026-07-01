@@ -9,7 +9,7 @@ export const settingsCopy = {
   'settings.section.profile': 'Profile',
   'settings.profile.currentWeight': 'Current weight ({{unit}})',
   'settings.profile.goalWeight': 'Goal weight ({{unit}})',
-  'settings.profile.goalDate': 'Goal date',
+  'settings.profile.estimatedGoalDate': 'Estimated goal date',
   'settings.profile.tdee': 'TDEE: {{value}} kcal',
   'settings.profile.dailyTarget': 'Daily target: {{value}} kcal',
   'settings.profile.minimumIntake': 'Minimum safe intake: {{value}} kcal',
@@ -40,7 +40,8 @@ export const settingsCopy = {
   'settings.section.account': 'Account',
   'settings.account.signOut': 'Sign out',
   'settings.validation.ageRange': 'Age must be between 16 and 90 years.',
-  'settings.validation.goalDateRange': 'Goal date must be 14–730 days from today.',
+  'settings.validation.goalBelowCurrent':
+    'Goal weight must be below your current weight.',
   'settings.validation.heightRange': 'Height must be between 120 and 230 cm.',
   'settings.validation.weightRange': 'Weight must be within a valid range.',
   'settings.validation.goalWeightRange': 'Goal weight must be within a valid range.',

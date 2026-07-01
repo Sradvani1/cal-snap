@@ -98,7 +98,7 @@ export function WeightProgressView({
         lostSoFarLabel={progress.formatWeightDisplay(stats.lostSoFarKg)}
         toGoalLabel={progress.formatWeightDisplay(stats.toGoalKg)}
         weeklyRateLabel={progress.formatWeeklyRate()}
-        projectedDateLabel={progress.formatProjectedGoalDate()}
+        projectedDateLabel={progress.formatEstimatedGoalDate()}
       />
 
       <section>

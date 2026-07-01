@@ -8,12 +8,6 @@ function defaultDateOfBirth(): Date {
   return date;
 }
 
-function defaultGoalTargetDate(): Date {
-  const date = new Date();
-  date.setMonth(date.getMonth() + 6);
-  return date;
-}
-
 export interface ProfileDraft {
   name: string;
   sex: BiologicalSex;
@@ -21,7 +15,6 @@ export interface ProfileDraft {
   heightCm: number;
   weightKg: number;
   goalWeightKg: number;
-  goalTargetDate: Date;
   activityLevel: ActivityLevel;
   requestedDeficit: number;
   useImperialHeight: boolean;
@@ -37,7 +30,6 @@ export function createDefaultProfileDraft(): ProfileDraft {
     heightCm: 175,
     weightKg: 80,
     goalWeightKg: 72,
-    goalTargetDate: defaultGoalTargetDate(),
     activityLevel: 'moderatelyActive',
     requestedDeficit: AppConstants.Deficit.defaultDeficitKcal,
     useImperialHeight: false,

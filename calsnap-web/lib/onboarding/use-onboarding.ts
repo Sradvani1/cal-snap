@@ -24,6 +24,7 @@ import {
   macroTargets,
   tdee,
 } from '@/lib/nutrition/calculator';
+import { computeGoalTargetDate } from '@/lib/nutrition/goal-pathway';
 import { saveProfileFromDraft } from '@/lib/repositories/profile';
 
 export interface OnboardingTargets {
@@ -34,6 +35,7 @@ export interface OnboardingTargets {
   carbsG: number;
   fatG: number;
   warnings: string[];
+  goalTargetDate: Date | null;
 }
 
 export function useOnboarding(uid: string) {
@@ -51,6 +53,7 @@ export function useOnboarding(uid: string) {
     carbsG: 0,
     fatG: 0,
     warnings: [],
+    goalTargetDate: null,
   });
 
   const progress = useMemo(() => onboardingProgress(currentStep), [currentStep]);
@@ -64,7 +67,8 @@ export function useOnboarding(uid: string) {
   }, []);
 
   const calculateTargets = useCallback((draft: ProfileDraft = profileDraft) => {
-    const age = ageFromDateOfBirth(draft.dateOfBirth);
+    const referenceDate = new Date();
+    const age = ageFromDateOfBirth(draft.dateOfBirth, referenceDate);
     const bmrValue = bmr(draft.weightKg, draft.heightCm, age, draft.sex);
     const tdeeValue = tdee(bmrValue, draft.activityLevel);
     const targetResult = dailyTarget(tdeeValue, draft.requestedDeficit, draft.sex);
@@ -74,6 +78,16 @@ export function useOnboarding(uid: string) {
       AppConstants.Nutrition.defaultMacroCarbsPct,
       AppConstants.Nutrition.defaultMacroFatPct,
     );
+    const goalTargetDate = computeGoalTargetDate({
+      currentWeightKg: draft.weightKg,
+      goalWeightKg: draft.goalWeightKg,
+      heightCm: draft.heightCm,
+      dateOfBirth: draft.dateOfBirth,
+      sex: draft.sex,
+      activityLevel: draft.activityLevel,
+      deficitKcal: targetResult.deficit,
+      referenceDate,
+    });
 
     setTargets({
       tdee: Math.round(tdeeValue),
@@ -83,6 +97,7 @@ export function useOnboarding(uid: string) {
       carbsG: macros.carbsG,
       fatG: macros.fatG,
       warnings: targetResult.warnings,
+      goalTargetDate,
     });
   }, [profileDraft]);
 

@@ -15,7 +15,9 @@ import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { ProfileDoc } from '@/lib/models/profile-doc';
 import { PROFILE_DOC_ID } from '@/lib/models/profile-doc';
+import { startOfLocalDay } from '@/lib/dashboard/date-window';
 import { saveWeighIn, recalculateWeighIn } from '@/lib/services/weigh-in-service';
+import { computeGoalTargetDate } from '@/lib/nutrition/goal-pathway';
 import type { UserProfile } from '@/lib/models/user-profile';
 import type { ProfileExtras } from '@/lib/models/profile-doc';
 
@@ -63,7 +65,9 @@ function profileToSeedDoc(profile: UserProfile, extras: ProfileExtras): ProfileD
     startingWeightKg: profile.startingWeightKg,
     currentWeightKg: extras.currentWeightKg,
     goalWeightKg: profile.goalWeightKg,
-    goalTargetDate: Timestamp.fromDate(profile.goalTargetDate),
+    goalTargetDate: profile.goalTargetDate
+      ? Timestamp.fromDate(profile.goalTargetDate)
+      : null,
     activityLevel: profile.activityLevel,
     dailyCalorieTarget: profile.dailyCalorieTarget,
     tdee: profile.tdee,
@@ -120,10 +124,28 @@ describe('weigh-in Firestore batch save', () => {
     const expected = recalculateWeighIn(profile, 78);
     expect(result.updatedProfile.tdee).toBe(expected.tdee);
 
+    const weighInDate = startOfLocalDay(new Date('2026-06-27T12:00:00'));
+    const expectedGoalDate = computeGoalTargetDate({
+      currentWeightKg: 78,
+      goalWeightKg: profile.goalWeightKg,
+      heightCm: profile.heightCm,
+      dateOfBirth: profile.dateOfBirth,
+      sex: profile.sex,
+      activityLevel: profile.activityLevel,
+      deficitKcal: expected.deficitKcal,
+      referenceDate: weighInDate,
+    });
+    expect(result.updatedProfile.goalTargetDate?.getTime()).toBe(
+      expectedGoalDate?.getTime(),
+    );
+
     const profileSnap = await getDoc(doc(db, 'users', uid, 'profile', PROFILE_DOC_ID));
     const profileData = profileSnap.data() as ProfileDoc;
     expect(profileData.currentWeightKg).toBe(78);
     expect(profileData.tdee).toBe(result.updatedProfile.tdee);
+    expect(profileData.goalTargetDate?.toDate().getTime()).toBe(
+      expectedGoalDate?.getTime(),
+    );
 
     const weighInSnap = await getDoc(
       doc(db, 'users', uid, 'weighIns', result.weighIn.id),

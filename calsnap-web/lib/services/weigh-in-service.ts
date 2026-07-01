@@ -21,6 +21,7 @@ import {
   isOnPlateau,
   tdee,
 } from '@/lib/nutrition/calculator';
+import { computeGoalTargetDate } from '@/lib/nutrition/goal-pathway';
 import {
   profileToDoc,
   updateProfileAfterWeighIn,
@@ -102,6 +103,16 @@ export async function saveWeighIn(
 
   const normalizedDate = validateWeighInInput(newWeightKg, date);
   const recalculation = recalculateWeighIn(profile, newWeightKg);
+  const goalTargetDate = computeGoalTargetDate({
+    currentWeightKg: newWeightKg,
+    goalWeightKg: profile.goalWeightKg,
+    heightCm: profile.heightCm,
+    dateOfBirth: profile.dateOfBirth,
+    sex: profile.sex,
+    activityLevel: profile.activityLevel,
+    deficitKcal: recalculation.deficitKcal,
+    referenceDate: normalizedDate,
+  });
   const weighInId = crypto.randomUUID();
   const now = new Date();
 
@@ -122,6 +133,7 @@ export async function saveWeighIn(
     profileExtras,
     newWeightKg,
     recalculation,
+    goalTargetDate,
     now,
   );
 

@@ -6,7 +6,6 @@ import {
   normalizeGoalSetupDraft,
   normalizeProfileSetupDraft,
   validateDateOfBirth,
-  validateGoalTargetDate,
   validationMessageForStep,
 } from '@/lib/onboarding/validation';
 
@@ -33,14 +32,22 @@ describe('onboarding validation', () => {
     expect(validateDateOfBirth(dob, referenceDate)).toBe(true);
   });
 
-  it('rejects goal date 7 days out', () => {
-    const goalDate = new Date(2026, 6, 4);
-    expect(validateGoalTargetDate(goalDate, referenceDate)).toBe(false);
+  it('rejects goal weight at or above current weight', () => {
+    const draft = createDefaultProfileDraft();
+    draft.goalWeightKg = 80;
+    draft.weightKg = 80;
+    expect(canAdvanceGoalSetup(draft)).toBe(false);
+
+    draft.goalWeightKg = 85;
+    expect(canAdvanceGoalSetup(draft)).toBe(false);
+    expect(validationMessageForStep('goalSetup', draft)).toContain('below');
   });
 
-  it('accepts goal date 14 days out', () => {
-    const goalDate = new Date(2026, 6, 11);
-    expect(validateGoalTargetDate(goalDate, referenceDate)).toBe(true);
+  it('accepts goal weight below current weight', () => {
+    const draft = createDefaultProfileDraft();
+    draft.goalWeightKg = 72;
+    draft.weightKg = 80;
+    expect(canAdvanceGoalSetup(draft)).toBe(true);
   });
 
   it('does not require name to advance profile step', () => {

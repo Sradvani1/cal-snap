@@ -135,4 +135,14 @@ describe('model mappers', () => {
 
     expect(restored).toEqual(original);
   });
+
+  it('UserProfile round-trip preserves null goalTargetDate', () => {
+    const original = { ...makeProfile(), goalTargetDate: null };
+    const extras = makeProfileExtras();
+    const doc = profileToDoc(original, extras);
+    const restored = docToProfile(doc, original.id);
+
+    expect(restored.goalTargetDate).toBeNull();
+    expect(restored).toEqual(original);
+  });
 });

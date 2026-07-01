@@ -3,11 +3,13 @@ import { trimmedName } from '@/lib/onboarding/profile-draft';
 import { canSaveSettings, validateCurrentWeightKg } from '@/lib/settings/validation';
 import {
   adjustMacroPercents,
+  apply,
   macroPercentsAreValid,
   normalizedMacroPercents,
   preview,
 } from '@/lib/services/profile-update-service';
 import { createDefaultProfileDraft } from '@/lib/onboarding/profile-draft';
+import type { UserProfile } from '@/lib/models/user-profile';
 
 describe('profile-update-service', () => {
   it('macro slider validation', () => {
@@ -66,6 +68,36 @@ describe('profile-update-service', () => {
     expect(
       canSaveSettings(draft, { protein: 28, carbs: 47, fat: 25 }, draft.weightKg),
     ).toBe(true);
+  });
+
+  it('apply uses requestedDeficit and recomputes goalTargetDate', () => {
+    const profile: UserProfile = {
+      id: 'user-1',
+      name: 'Alex',
+      sex: 'male',
+      dateOfBirth: new Date(1991, 5, 14),
+      heightCm: 178,
+      startingWeightKg: 80,
+      goalWeightKg: 72,
+      goalTargetDate: null,
+      activityLevel: 'moderatelyActive',
+      dailyCalorieTarget: 2285,
+      tdee: 2635,
+      deficitKcal: 350,
+      macroTargetProteinPct: 0.28,
+      macroTargetCarbsPct: 0.47,
+      macroTargetFatPct: 0.25,
+      createdAt: new Date('2026-01-01'),
+      updatedAt: new Date('2026-01-01'),
+    };
+    const draft = createDefaultProfileDraft();
+    draft.requestedDeficit = 400;
+
+    apply(profile, draft, 78);
+
+    expect(profile.deficitKcal).toBe(400);
+    expect(profile.goalTargetDate).not.toBeNull();
+    expect(profile.dailyCalorieTarget).toBeLessThan(profile.tdee);
   });
 
   it('rejects invalid current weight', () => {

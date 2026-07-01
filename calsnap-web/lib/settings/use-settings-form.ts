@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
+import { AppConstants } from '@/lib/constants';
 import type { ProfileExtras } from '@/lib/models/profile-doc';
 import type { UserProfile } from '@/lib/models/user-profile';
 import type { ProfileDraft } from '@/lib/onboarding/profile-draft';
@@ -15,6 +16,7 @@ import {
   preview,
   type MacroKind,
 } from '@/lib/services/profile-update-service';
+import { computeGoalTargetDate } from '@/lib/nutrition/goal-pathway';
 import {
   defaultReminderPrefs,
   type ResolvedReminderPrefs,
@@ -105,6 +107,10 @@ export function useSettingsForm(profile: UserProfile, extras: ProfileExtras) {
   const [reminderPrefs, setReminderPrefs] = useState(
     () => savedSnapshot.reminderPrefs,
   );
+  const [hardDeficitUnlocked, setHardDeficitUnlocked] = useState(
+    () => savedSnapshot.draft.requestedDeficit > AppConstants.Deficit.maxDeficitKcal,
+  );
+  const [showHardDeficitAlert, setShowHardDeficitAlert] = useState(false);
 
   const savedWeightKg = savedSnapshot.currentWeightKg;
 
@@ -116,10 +122,67 @@ export function useSettingsForm(profile: UserProfile, extras: ProfileExtras) {
         heightCm: draft.heightCm,
         weightKg: currentWeightKg,
         activityLevel: draft.activityLevel,
-        deficitKcal: profile.deficitKcal,
+        deficitKcal: draft.requestedDeficit,
       }),
-    [profile.deficitKcal, draft, currentWeightKg],
+    [draft, currentWeightKg],
   );
+
+  const previewGoalTargetDate = useMemo(
+    () =>
+      computeGoalTargetDate({
+        currentWeightKg,
+        goalWeightKg: draft.goalWeightKg,
+        heightCm: draft.heightCm,
+        dateOfBirth: draft.dateOfBirth,
+        sex: draft.sex,
+        activityLevel: draft.activityLevel,
+        deficitKcal: previewResult.deficitKcal,
+        referenceDate: new Date(),
+      }),
+    [draft, currentWeightKg, previewResult.deficitKcal],
+  );
+
+  const updateDeficit = useCallback(
+    (value: number) => {
+      const maxAllowed = hardDeficitUnlocked
+        ? AppConstants.Deficit.hardMaxDeficitKcal
+        : AppConstants.Deficit.maxDeficitKcal;
+
+      if (
+        value > AppConstants.Deficit.maxDeficitKcal &&
+        !hardDeficitUnlocked
+      ) {
+        setShowHardDeficitAlert(true);
+        return;
+      }
+
+      setDraft((prev) => ({
+        ...prev,
+        requestedDeficit: Math.min(
+          Math.max(value, AppConstants.Deficit.minDeficitKcal),
+          maxAllowed,
+        ),
+      }));
+    },
+    [hardDeficitUnlocked],
+  );
+
+  const unlockHardDeficit = useCallback(() => {
+    setHardDeficitUnlocked(true);
+    setShowHardDeficitAlert(false);
+    setDraft((prev) => {
+      if (prev.requestedDeficit <= AppConstants.Deficit.maxDeficitKcal) {
+        return prev;
+      }
+      return {
+        ...prev,
+        requestedDeficit: Math.min(
+          prev.requestedDeficit,
+          AppConstants.Deficit.hardMaxDeficitKcal,
+        ),
+      };
+    });
+  }, []);
 
   const updateDraft = useCallback((update: (d: ProfileDraft) => void) => {
     setDraft((prev) => {
@@ -265,7 +328,14 @@ export function useSettingsForm(profile: UserProfile, extras: ProfileExtras) {
     setReminderPrefs,
     previewTDEE: previewResult.tdee,
     previewTarget: previewResult.dailyTarget,
+    previewDeficit: previewResult.deficitKcal,
+    previewGoalTargetDate,
     minimumCalories: previewResult.minimumCalories,
+    hardDeficitUnlocked,
+    showHardDeficitAlert,
+    setShowHardDeficitAlert,
+    updateDeficit,
+    unlockHardDeficit,
     canSave,
     validationMessage,
     isDirty,

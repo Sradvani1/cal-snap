@@ -23,6 +23,7 @@ import {
   dailyTarget,
   tdee,
 } from '@/lib/nutrition/calculator';
+import { computeGoalTargetDate } from '@/lib/nutrition/goal-pathway';
 import {
   defaultReminderPrefs,
   resolveReminderPrefs,
@@ -46,7 +47,16 @@ export function makeProfileFromDraft(
     heightCm: draft.heightCm,
     startingWeightKg: draft.weightKg,
     goalWeightKg: draft.goalWeightKg,
-    goalTargetDate: draft.goalTargetDate,
+    goalTargetDate: computeGoalTargetDate({
+      currentWeightKg: draft.weightKg,
+      goalWeightKg: draft.goalWeightKg,
+      heightCm: draft.heightCm,
+      dateOfBirth: draft.dateOfBirth,
+      sex: draft.sex,
+      activityLevel: draft.activityLevel,
+      deficitKcal: targetResult.deficit,
+      referenceDate: now,
+    }),
     activityLevel: draft.activityLevel,
     dailyCalorieTarget: targetResult.target,
     tdee: Math.round(tdeeValue),
@@ -72,7 +82,9 @@ export function profileToDoc(
     startingWeightKg: profile.startingWeightKg,
     currentWeightKg: extras.currentWeightKg,
     goalWeightKg: profile.goalWeightKg,
-    goalTargetDate: Timestamp.fromDate(profile.goalTargetDate),
+    goalTargetDate: profile.goalTargetDate
+      ? Timestamp.fromDate(profile.goalTargetDate)
+      : null,
     activityLevel: profile.activityLevel,
     dailyCalorieTarget: profile.dailyCalorieTarget,
     tdee: profile.tdee,
@@ -108,7 +120,7 @@ export function docToProfile(docData: ProfileDoc, uid: string): UserProfile {
     heightCm: docData.heightCm,
     startingWeightKg: docData.startingWeightKg,
     goalWeightKg: docData.goalWeightKg,
-    goalTargetDate: docData.goalTargetDate.toDate(),
+    goalTargetDate: docData.goalTargetDate?.toDate() ?? null,
     activityLevel: docData.activityLevel,
     dailyCalorieTarget: docData.dailyCalorieTarget,
     tdee: docData.tdee,
@@ -193,11 +205,22 @@ export async function updateCalorieTargets(
   }
 
   const profile = docToProfile(docData, uid);
+  const referenceDate = new Date();
   const updatedProfile: UserProfile = {
     ...profile,
     dailyCalorieTarget: targets.dailyCalorieTarget,
     deficitKcal: targets.deficitKcal,
-    updatedAt: new Date(),
+    goalTargetDate: computeGoalTargetDate({
+      currentWeightKg: docData.currentWeightKg,
+      goalWeightKg: profile.goalWeightKg,
+      heightCm: profile.heightCm,
+      dateOfBirth: profile.dateOfBirth,
+      sex: profile.sex,
+      activityLevel: profile.activityLevel,
+      deficitKcal: targets.deficitKcal,
+      referenceDate,
+    }),
+    updatedAt: referenceDate,
   };
 
   await saveProfile(uid, updatedProfile, {
@@ -230,6 +253,7 @@ export function updateProfileAfterWeighIn(
   extras: ProfileExtras,
   newWeightKg: number,
   recalculation: WeighInProfileRecalculation,
+  goalTargetDate: Date | null,
   updatedAt: Date = new Date(),
 ): ProfileAfterWeighInUpdate {
   return {
@@ -238,6 +262,7 @@ export function updateProfileAfterWeighIn(
       tdee: recalculation.tdee,
       dailyCalorieTarget: recalculation.dailyTarget,
       deficitKcal: recalculation.deficitKcal,
+      goalTargetDate,
       updatedAt,
     },
     extras: {

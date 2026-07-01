@@ -12,7 +12,7 @@ export const progressCopy = {
   'progress.stats.lostSoFar': 'Lost so far',
   'progress.stats.toGoal': 'To goal',
   'progress.stats.weeklyRate': 'Weekly rate',
-  'progress.stats.projectedGoal': 'Projected goal',
+  'progress.stats.estimatedGoalDate': 'Estimated goal date',
   'progress.stats.logMore': 'Log more weigh-ins',
   'progress.stats.maintaining': 'Maintaining',
   'progress.stats.weeklyRateKg': '{{rate}} kg/week',

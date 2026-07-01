@@ -3,6 +3,7 @@ import type { ProfileExtras } from '@/lib/models/profile-doc';
 import type { UserProfile } from '@/lib/models/user-profile';
 import type { WeighIn } from '@/lib/models/weigh-in';
 import { bmi, projectedGoalDate, projectionPoints, weeklyLossRateKg } from '@/lib/nutrition/calculator';
+import { computeGoalTargetDate } from '@/lib/nutrition/goal-pathway';
 import { updateProfileAfterWeighIn } from '@/lib/repositories/profile';
 import {
   recalculateWeighIn,
@@ -127,15 +128,44 @@ describe('weigh-in service', () => {
     expect(result.updatedProfile.tdee).toBe(result.weighIn.calculatedTDEE);
   });
 
-  it('updateProfileAfterWeighIn sets current weight and targets', () => {
+  it('updateProfileAfterWeighIn sets current weight, targets, and goal date', () => {
     const profile = makeProfile();
     const extras = makeExtras();
     const recalc = recalculateWeighIn(profile, 78);
-    const updated = updateProfileAfterWeighIn(profile, extras, 78, recalc);
+    const weighInDate = new Date('2026-06-20T12:00:00');
+    const goalTargetDate = computeGoalTargetDate({
+      currentWeightKg: 78,
+      goalWeightKg: profile.goalWeightKg,
+      heightCm: profile.heightCm,
+      dateOfBirth: profile.dateOfBirth,
+      sex: profile.sex,
+      activityLevel: profile.activityLevel,
+      deficitKcal: recalc.deficitKcal,
+      referenceDate: weighInDate,
+    });
+    const updated = updateProfileAfterWeighIn(
+      profile,
+      extras,
+      78,
+      recalc,
+      goalTargetDate,
+    );
 
     expect(updated.extras.currentWeightKg).toBe(78);
     expect(updated.profile.tdee).toBe(recalc.tdee);
     expect(updated.profile.dailyCalorieTarget).toBe(recalc.dailyTarget);
+    expect(updated.profile.goalTargetDate?.getTime()).toBe(goalTargetDate?.getTime());
+  });
+
+  it('updateProfileAfterWeighIn clears goalTargetDate at goal weight', () => {
+    const profile = makeProfile({ goalWeightKg: 72 });
+    const extras = makeExtras();
+    const recalc = recalculateWeighIn(profile, 72);
+
+    const updated = updateProfileAfterWeighIn(profile, extras, 72, recalc, null);
+
+    expect(updated.profile.goalTargetDate).toBeNull();
+    expect(updated.profile.startingWeightKg).toBe(profile.startingWeightKg);
   });
 });
 

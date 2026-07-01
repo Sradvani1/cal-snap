@@ -12,12 +12,12 @@ export const onboardingCopy = {
   'onboarding.profile.subtitle': 'Tell us a bit about yourself.',
   'onboarding.profile.currentWeight': 'Current weight',
   'onboarding.goal.title': 'Your goal',
-  'onboarding.goal.subtitle': 'Where do you want to be?',
+  'onboarding.goal.subtitle':
+    'Set your goal weight and pace — we’ll estimate when you’ll get there. The date updates when you weigh in.',
   'onboarding.goal.weight': 'Goal weight',
-  'onboarding.goal.targetDate': 'Target date',
-  'onboarding.goal.minWeeksHint': 'At least 2 weeks from today',
   'onboarding.calorie.title': 'Your calorie target',
   'onboarding.calorie.subtitle': 'Based on your profile and activity level.',
+  'onboarding.calorie.estimatedGoalDate': 'Estimated goal date',
   'onboarding.calorie.deficit': 'Daily deficit',
   'onboarding.calorie.recommended': 'Recommended: {{min}}–{{max}} kcal/day',
   'onboarding.calorie.macroTargets': 'Macro targets',
@@ -34,8 +34,8 @@ export const onboardingCopy = {
   'onboarding.validation.heightRange':
     'Height must be between {{min}} and {{max}} cm.',
   'onboarding.validation.weightRange': 'Weight must be within a valid range.',
-  'onboarding.validation.goalDateRange':
-    'Goal date must be {{min}}–{{max}} days from today.',
+  'onboarding.validation.goalBelowCurrent':
+    'Goal weight must be below your current weight.',
   'onboarding.validation.requiredFields': 'Please complete required fields.',
   'onboarding.error.saveFailed': 'Failed to save profile. Please try again.',
   'onboarding.warning.deficitCapped': 'Deficit capped at {{max}} kcal/day for safety.',

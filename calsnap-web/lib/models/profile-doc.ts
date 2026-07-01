@@ -13,7 +13,7 @@ export interface ProfileDoc {
   startingWeightKg: number;
   currentWeightKg: number;
   goalWeightKg: number;
-  goalTargetDate: Timestamp;
+  goalTargetDate: Timestamp | null;
   activityLevel: ActivityLevel;
 
   dailyCalorieTarget: number;

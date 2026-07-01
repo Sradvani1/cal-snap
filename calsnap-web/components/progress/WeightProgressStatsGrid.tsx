@@ -19,7 +19,7 @@ export function WeightProgressStatsGrid({
     { labelKey: 'progress.stats.lostSoFar' as const, value: lostSoFarLabel },
     { labelKey: 'progress.stats.toGoal' as const, value: toGoalLabel },
     { labelKey: 'progress.stats.weeklyRate' as const, value: weeklyRateLabel },
-    { labelKey: 'progress.stats.projectedGoal' as const, value: projectedDateLabel },
+    { labelKey: 'progress.stats.estimatedGoalDate' as const, value: projectedDateLabel },
   ];
 
   return (

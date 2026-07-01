@@ -11,6 +11,7 @@ import {
   makeProfileFromDraft,
   profileToDoc,
 } from '@/lib/repositories/profile';
+import { computeGoalTargetDate } from '@/lib/nutrition/goal-pathway';
 import { defaultReminderPrefs } from '@/lib/progress/reminder-prefs';
 
 function fixedDraft(): ProfileDraft {
@@ -21,7 +22,6 @@ function fixedDraft(): ProfileDraft {
     heightCm: 178,
     weightKg: 80,
     goalWeightKg: 72,
-    goalTargetDate: new Date(2026, 11, 27),
     activityLevel: 'moderatelyActive',
     requestedDeficit: 350,
     useImperialHeight: false,
@@ -64,6 +64,23 @@ describe('profile repository', () => {
     expect(profile.tdee).toBe(Math.round(tdeeValue));
     expect(profile.dailyCalorieTarget).toBe(targetResult.target);
     expect(profile.deficitKcal).toBe(targetResult.deficit);
+  });
+
+  it('makeProfileFromDraft computes goalTargetDate from draft inputs', () => {
+    const draft = fixedDraft();
+    const profile = makeProfileFromDraft(draft, 'user-1');
+    const expected = computeGoalTargetDate({
+      currentWeightKg: draft.weightKg,
+      goalWeightKg: draft.goalWeightKg,
+      heightCm: draft.heightCm,
+      dateOfBirth: draft.dateOfBirth,
+      sex: draft.sex,
+      activityLevel: draft.activityLevel,
+      deficitKcal: profile.deficitKcal,
+      referenceDate: profile.createdAt,
+    });
+
+    expect(profile.goalTargetDate?.getTime()).toBe(expected?.getTime());
   });
 
   it('profileToDoc preserves useImperialForHeight and heightCm from draft', () => {

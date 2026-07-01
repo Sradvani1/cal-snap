@@ -2,6 +2,7 @@ import { AppConstants } from '@/lib/constants';
 import { copy } from '@/lib/copy';
 import type { ProfileDraft } from '@/lib/onboarding/profile-draft';
 import { ageFromDateOfBirth } from '@/lib/nutrition/calculator';
+import { validateGoalBelowCurrent } from '@/lib/nutrition/goal-pathway';
 import {
   HEIGHT_RANGE_CM,
   normalizeHeightCm,
@@ -9,12 +10,6 @@ import {
   validateHeightCm,
   validateWeightKg,
 } from '@/lib/utilities/unit-formatters';
-
-function startOfDay(date: Date): Date {
-  const normalized = new Date(date);
-  normalized.setHours(0, 0, 0, 0);
-  return normalized;
-}
 
 export function validateDateOfBirth(
   date: Date,
@@ -25,19 +20,6 @@ export function validateDateOfBirth(
     age >= AppConstants.Onboarding.minAgeYears &&
     age <= AppConstants.Onboarding.maxAgeYears
   );
-}
-
-export function validateGoalTargetDate(
-  date: Date,
-  referenceDate: Date = new Date(),
-): boolean {
-  const start = startOfDay(referenceDate);
-  const target = startOfDay(date);
-  const minDate = new Date(start);
-  minDate.setDate(minDate.getDate() + AppConstants.Onboarding.minGoalDaysFromToday);
-  const maxDate = new Date(start);
-  maxDate.setDate(maxDate.getDate() + AppConstants.Onboarding.maxGoalDaysFromToday);
-  return target >= minDate && target <= maxDate;
 }
 
 export function normalizeProfileSetupDraft(draft: ProfileDraft): ProfileDraft {
@@ -66,8 +48,8 @@ export function canAdvanceProfileSetup(draft: ProfileDraft): boolean {
 
 export function canAdvanceGoalSetup(draft: ProfileDraft): boolean {
   return (
-    validateGoalTargetDate(draft.goalTargetDate) &&
-    validateWeightKg(draft.goalWeightKg)
+    validateWeightKg(draft.goalWeightKg) &&
+    validateGoalBelowCurrent(draft.goalWeightKg, draft.weightKg)
   );
 }
 
@@ -94,14 +76,11 @@ export function validationMessageForStep(
     return copy('onboarding.validation.requiredFields');
   }
 
-  if (draft && !validateGoalTargetDate(draft.goalTargetDate)) {
-    return copy('onboarding.validation.goalDateRange', {
-      min: AppConstants.Onboarding.minGoalDaysFromToday,
-      max: AppConstants.Onboarding.maxGoalDaysFromToday,
-    });
-  }
   if (draft && !validateWeightKg(draft.goalWeightKg)) {
     return copy('onboarding.validation.weightRange');
+  }
+  if (draft && !validateGoalBelowCurrent(draft.goalWeightKg, draft.weightKg)) {
+    return copy('onboarding.validation.goalBelowCurrent');
   }
   return copy('onboarding.validation.requiredFields');
 }

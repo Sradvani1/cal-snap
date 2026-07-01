@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react';
 import { copy } from '@/lib/copy';
+import { formatEstimatedGoalDate } from '@/lib/nutrition/goal-pathway';
 import {
   chartAccessibilitySummary,
   deriveProgressStats,
@@ -45,20 +46,11 @@ export function useProgress(uid: string | undefined, referenceDate: Date = new D
     });
   };
 
-  const formatProjectedGoalDate = (): string => {
+  const formatEstimatedGoalDateLabel = (): string => {
     if (!profile) {
       return copy('common.unavailable');
     }
-    if (!stats?.projectedGoalDate) {
-      return profile.deficitKcal === 0
-        ? copy('progress.stats.maintaining')
-        : copy('common.unavailable');
-    }
-    return stats.projectedGoalDate.toLocaleDateString(undefined, {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
+    return formatEstimatedGoalDate(profile.goalTargetDate, profile.deficitKcal);
   };
 
   const chartAriaLabel =
@@ -93,7 +85,7 @@ export function useProgress(uid: string | undefined, referenceDate: Date = new D
     stats,
     formatWeightDisplay,
     formatWeeklyRate,
-    formatProjectedGoalDate,
+    formatEstimatedGoalDate: formatEstimatedGoalDateLabel,
     chartAriaLabel,
     progressAriaValue,
   };
