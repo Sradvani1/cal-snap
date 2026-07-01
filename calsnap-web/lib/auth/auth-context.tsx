@@ -28,6 +28,7 @@ import {
 } from '@/lib/auth/auth-redirect-state';
 import { shouldUseGoogleRedirect } from '@/lib/auth/google-sign-in-strategy';
 import { navigateAfterAuth } from '@/lib/auth/navigate-after-auth';
+import { mapFirebaseAuthError } from '@/lib/auth/firebase-auth-errors';
 import { copy } from '@/lib/copy';
 import { getFirebaseAuth } from '@/lib/firebase/client';
 
@@ -42,22 +43,6 @@ interface AuthContextValue {
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
-
-function firebaseAuthErrorMessage(error: unknown): string {
-  if (error && typeof error === 'object' && 'code' in error) {
-    const code = String(error.code);
-    if (code === 'auth/account-exists-with-different-credential') {
-      return copy('auth.session.googleAccountExists');
-    }
-    if (code === 'auth/unauthorized-domain') {
-      return copy('auth.session.googleUnauthorizedDomain');
-    }
-    if (code === 'auth/popup-closed-by-user') {
-      return copy('auth.session.googlePopupClosed');
-    }
-  }
-  return error instanceof Error ? error.message : copy('auth.session.googleRedirectFailed');
-}
 
 async function clearSessionCookie(): Promise<void> {
   await fetch('/api/auth/session', { method: 'DELETE', credentials: 'same-origin' });
@@ -169,7 +154,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       } catch (error) {
         if (!cancelled) {
-          setSessionError(firebaseAuthErrorMessage(error));
+          setSessionError(mapFirebaseAuthError(error, 'auth.session.googleRedirectFailed'));
         }
       } finally {
         if (cancelled) {
@@ -202,18 +187,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signInWithEmail = useCallback(async (email: string, password: string) => {
     const auth = getFirebaseAuth();
-    const credential = await signInWithEmailAndPassword(auth, email, password);
-    await establishSession(credential.user);
-    setSessionError(null);
-    await navigateAfterAuth(credential.user);
+    try {
+      const credential = await signInWithEmailAndPassword(auth, email, password);
+      await establishSession(credential.user);
+      setSessionError(null);
+      await navigateAfterAuth(credential.user);
+    } catch (error) {
+      throw new Error(mapFirebaseAuthError(error, 'auth.login.error'));
+    }
   }, []);
 
   const signUpWithEmail = useCallback(async (email: string, password: string) => {
     const auth = getFirebaseAuth();
-    const credential = await createUserWithEmailAndPassword(auth, email, password);
-    await establishSession(credential.user);
-    setSessionError(null);
-    await navigateAfterAuth(credential.user);
+    try {
+      const credential = await createUserWithEmailAndPassword(auth, email, password);
+      await establishSession(credential.user);
+      setSessionError(null);
+      await navigateAfterAuth(credential.user);
+    } catch (error) {
+      throw new Error(mapFirebaseAuthError(error, 'auth.signup.error'));
+    }
   }, []);
 
   const signInWithGoogle = useCallback(async () => {
@@ -231,8 +224,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSessionError(null);
       await navigateAfterAuth(credential.user);
     } catch (error) {
-      setSessionError(firebaseAuthErrorMessage(error));
-      throw error;
+      throw new Error(mapFirebaseAuthError(error, 'auth.session.googleRedirectFailed'));
     }
   }, []);
 

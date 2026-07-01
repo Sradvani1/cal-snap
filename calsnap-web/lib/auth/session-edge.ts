@@ -14,34 +14,33 @@ function getProjectId(): string {
   return process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ?? 'demo-calsnap';
 }
 
-export async function verifySessionToken(
+function verifyEmulatorToken(token: string, projectId: string): JWTPayload | null {
+  const parts = token.split('.');
+  if (parts.length !== 3) {
+    return null;
+  }
+  const payload = JSON.parse(
+    Buffer.from(parts[1], 'base64url').toString('utf8'),
+  ) as JWTPayload;
+  if (payload.aud !== projectId || payload.iss !== `https://securetoken.google.com/${projectId}`) {
+    return null;
+  }
+  const now = Math.floor(Date.now() / 1000);
+  if (typeof payload.exp === 'number' && payload.exp < now) {
+    return null;
+  }
+  return payload;
+}
+
+async function verifyProductionJwt(
   token: string,
+  issuer: string,
+  audience: string,
 ): Promise<JWTPayload | null> {
-  const projectId = getProjectId();
-  const useEmulator = process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === 'true';
-
   try {
-    if (useEmulator) {
-      const parts = token.split('.');
-      if (parts.length !== 3) {
-        return null;
-      }
-      const payload = JSON.parse(
-        Buffer.from(parts[1], 'base64url').toString('utf8'),
-      ) as JWTPayload;
-      if (payload.aud !== projectId || payload.iss !== `https://securetoken.google.com/${projectId}`) {
-        return null;
-      }
-      const now = Math.floor(Date.now() / 1000);
-      if (typeof payload.exp === 'number' && payload.exp < now) {
-        return null;
-      }
-      return payload;
-    }
-
     const { payload } = await jwtVerify(token, FIREBASE_JWKS, {
-      issuer: `https://securetoken.google.com/${projectId}`,
-      audience: projectId,
+      issuer,
+      audience,
     });
     return payload;
   } catch {
@@ -49,8 +48,45 @@ export async function verifySessionToken(
   }
 }
 
+export async function verifySessionToken(
+  token: string,
+): Promise<JWTPayload | null> {
+  const projectId = getProjectId();
+  const useEmulator = process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === 'true';
+
+  if (useEmulator) {
+    return verifyEmulatorToken(token, projectId);
+  }
+
+  return verifyProductionJwt(
+    token,
+    `https://securetoken.google.com/${projectId}`,
+    projectId,
+  );
+}
+
 export async function verifySessionCookieValue(
   sessionCookie: string,
 ): Promise<JWTPayload | null> {
-  return verifySessionToken(sessionCookie);
+  const projectId = getProjectId();
+  const useEmulator = process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === 'true';
+
+  if (useEmulator) {
+    return verifyEmulatorToken(sessionCookie, projectId);
+  }
+
+  const sessionPayload = await verifyProductionJwt(
+    sessionCookie,
+    `https://session.firebase.google.com/${projectId}`,
+    projectId,
+  );
+  if (sessionPayload) {
+    return sessionPayload;
+  }
+
+  return verifyProductionJwt(
+    sessionCookie,
+    `https://securetoken.google.com/${projectId}`,
+    projectId,
+  );
 }

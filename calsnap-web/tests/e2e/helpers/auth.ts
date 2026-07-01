@@ -1,6 +1,7 @@
 import { expect, type Page } from '@playwright/test';
 import { copy } from '@/lib/copy';
 import { completeOnboarding } from './onboarding';
+import { gotoAppRoute } from './navigation';
 
 export const E2E_TEST_PASSWORD = 'test-password-123';
 
@@ -44,4 +45,10 @@ export async function createOnboardedUser(
   const credentials = await signUpWithEmail(page);
   await completeOnboarding(page);
   return credentials;
+}
+
+export async function signOut(page: Page): Promise<void> {
+  await gotoAppRoute(page, '/settings');
+  await page.getByRole('button', { name: copy('settings.account.signOut') }).click();
+  await expect(page).toHaveURL(/\/login/, { timeout: 15_000 });
 }

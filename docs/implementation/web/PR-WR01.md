@@ -105,8 +105,9 @@ Import from `tests/e2e/helpers` (or `./helpers` from spec files).
 | `E2E_TEST_PASSWORD` | `'test-password-123'` | Default password for all E2E accounts |
 | `uniqueTestEmail()` | `() => string` | `e2e-{timestamp}@example.com` |
 | `signUpWithEmail(page, email?, password?)` | → `{ email, password }` | Signup form submit; waits for onboarding URL |
-| `loginWithEmail(page, email, password?)` | → `void` | Login form submit; waits for `/dashboard` or `/onboarding`; **WR02** adds first CI spec |
+| `loginWithEmail(page, email, password?)` | → `void` | Login form submit; waits for `/dashboard` or `/onboarding` |
 | `createOnboardedUser(page)` | → `{ email, password }` | Signup + `completeOnboarding` → dashboard |
+| `signOut(page)` | → `void` | Settings → Sign out → `/login` (**added WR02**) |
 
 ### API mocks (`api-mocks.ts`)
 
@@ -136,7 +137,7 @@ Import from `tests/e2e/helpers` (or `./helpers` from spec files).
 
 ### Not in WR01 (downstream PRs)
 
-`mockGenerateInsight`, scanner/meal-log/weigh-in/settings/analytics/viewport helpers, login E2E spec.
+`mockGenerateInsight`, scanner/meal-log/weigh-in/settings/analytics/viewport helpers. Login returning-user E2E added in WR02 (`login-returning-user.spec.ts`).
 
 ---
 

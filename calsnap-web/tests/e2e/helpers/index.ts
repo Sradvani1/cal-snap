@@ -2,6 +2,7 @@ export {
   createOnboardedUser,
   E2E_TEST_PASSWORD,
   loginWithEmail,
+  signOut,
   signUpWithEmail,
   uniqueTestEmail,
 } from './auth';

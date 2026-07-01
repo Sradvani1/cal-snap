@@ -7,7 +7,11 @@ import {
   dailyTarget,
   tdee,
 } from '@/lib/nutrition/calculator';
-import { makeProfileFromDraft } from '@/lib/repositories/profile';
+import {
+  makeProfileFromDraft,
+  profileToDoc,
+} from '@/lib/repositories/profile';
+import { defaultReminderPrefs } from '@/lib/progress/reminder-prefs';
 
 function fixedDraft(): ProfileDraft {
   return {
@@ -60,5 +64,23 @@ describe('profile repository', () => {
     expect(profile.tdee).toBe(Math.round(tdeeValue));
     expect(profile.dailyCalorieTarget).toBe(targetResult.target);
     expect(profile.deficitKcal).toBe(targetResult.deficit);
+  });
+
+  it('profileToDoc preserves useImperialForHeight and heightCm from draft', () => {
+    const draft = { ...fixedDraft(), useImperialHeight: true, heightCm: 175 };
+    const profile = makeProfileFromDraft(draft, 'user-1');
+
+    expect(profile.heightCm).toBe(175);
+
+    const doc = profileToDoc(profile, {
+      onboardingCompleted: true,
+      currentWeightKg: draft.weightKg,
+      useLbsForWeight: draft.useLbsWeight,
+      useImperialForHeight: draft.useImperialHeight,
+      ...defaultReminderPrefs(),
+    });
+
+    expect(doc.useImperialForHeight).toBe(true);
+    expect(doc.heightCm).toBe(175);
   });
 });

@@ -1,8 +1,13 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { getAdminAuth } from '@/lib/firebase/admin';
 import { SESSION_COOKIE_NAME } from '@/lib/auth/session-edge';
+import { getAdminAuth } from '@/lib/firebase/admin';
+import { shouldUseFirebaseEmulator } from '@/lib/firebase/emulator';
 
 const SESSION_EXPIRY_MS = 5 * 24 * 60 * 60 * 1000; // 5 days
+
+function isAuthEmulator(): boolean {
+  return Boolean(process.env.FIREBASE_AUTH_EMULATOR_HOST) || shouldUseFirebaseEmulator();
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,10 +21,14 @@ export async function POST(request: NextRequest) {
     const adminAuth = getAdminAuth();
     await adminAuth.verifyIdToken(idToken);
 
+    const cookieValue = isAuthEmulator()
+      ? idToken
+      : await adminAuth.createSessionCookie(idToken, { expiresIn: SESSION_EXPIRY_MS });
+
     const response = NextResponse.json({ status: 'ok' });
     response.cookies.set({
       name: SESSION_COOKIE_NAME,
-      value: idToken,
+      value: cookieValue,
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',

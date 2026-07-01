@@ -14,13 +14,24 @@ export async function verifyApiSession(
     return null;
   }
 
+  const adminAuth = getAdminAuth();
+
   try {
-    const decoded = await getAdminAuth().verifyIdToken(token);
+    const decoded = await adminAuth.verifySessionCookie(token, true);
     if (!decoded.uid) {
       return null;
     }
     return { uid: decoded.uid };
   } catch {
-    return null;
+    // Emulator stores raw ID tokens; legacy pre-migration cookies may still hold ID tokens (~1h).
+    try {
+      const decoded = await adminAuth.verifyIdToken(token);
+      if (!decoded.uid) {
+        return null;
+      }
+      return { uid: decoded.uid };
+    } catch {
+      return null;
+    }
   }
 }

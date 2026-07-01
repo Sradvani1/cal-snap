@@ -25,6 +25,11 @@ export const authCopy = {
   'auth.session.googleUnauthorizedDomain':
     'This site is not authorized for Google sign-in. Add it in Firebase Console → Authentication → Settings → Authorized domains.',
   'auth.session.googlePopupClosed': 'Google sign-in was cancelled.',
+  'auth.errors.invalidCredential': 'Incorrect email or password.',
+  'auth.errors.emailAlreadyInUse': 'An account with this email already exists.',
+  'auth.errors.weakPassword': 'Password must be at least 6 characters.',
+  'auth.errors.tooManyRequests': 'Too many attempts. Please wait and try again.',
+  'auth.errors.networkRequestFailed': 'Network error. Check your connection and try again.',
 } as const;
 
 export type AuthCopyKey = keyof typeof authCopy;
