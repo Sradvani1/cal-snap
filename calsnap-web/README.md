@@ -37,19 +37,28 @@ pnpm build            # next build --webpack (Serwist PWA)
 pnpm emulators        # Start Auth + Firestore + Storage emulators
 ```
 
-## Auth workflow (W02)
+## Auth workflow (WR09)
 
-1. User signs in via email/password or Google redirect
-2. Client POSTs ID token to `/api/auth/session` → httpOnly `__session` cookie
-3. `middleware.ts` verifies session for protected routes
-4. Onboarding gate: `(app)/layout` reads Firestore profile; incomplete → `/onboarding`
+1. User signs in via email/password or Google redirect (`signInWithRedirect` only)
+2. Firebase Auth SDK holds client session; no httpOnly cookies or middleware
+3. Protected routes: `(app)/layout` uses `useRequireAuth()` + `useProfile()` for onboarding gate
+4. Gemini API routes (`/api/analyze-meal`, `/api/generate-insight`) verify `Authorization: Bearer` ID tokens server-side
 
 ### Google OAuth setup
 
 1. Enable Google provider in Firebase Console → Authentication
-2. Add authorized domains: `localhost`, `calsnap-web.vercel.app` (and any custom domain)
-3. Mobile Safari requires the `/__/auth/*` reverse proxy in `next.config.ts` and `authDomain` matching your app host (handled automatically via `window.location.host`)
-4. Web uses `signInWithRedirect` on mobile and `signInWithPopup` on desktop
+2. Add authorized domains: `localhost`, your Vercel URL, and any custom domain
+3. Mobile Safari requires the `/__/auth/*` reverse proxy in `next.config.ts` and `authDomain` matching your app host (handled via `resolve-auth-domain.ts`)
+4. Start Google sign-in from `/login` — redirect returns to the same URL
+
+### Production env (Vercel)
+
+- `FIREBASE_ADMIN_CLIENT_EMAIL` + `FIREBASE_ADMIN_PRIVATE_KEY` — required for Bearer token verification on API routes
+- `NEXT_PUBLIC_USE_FIREBASE_EMULATOR=false`
+- `GEMINI_API_KEY`
+- Redeploy after env changes
+
+See [PR-WR09-auth-reset.md](../docs/implementation/web/PR-WR09-auth-reset.md) and [ROLLOUT.md](../docs/implementation/web/ROLLOUT.md) §4.4, §5.2.
 
 ## Firebase emulators
 

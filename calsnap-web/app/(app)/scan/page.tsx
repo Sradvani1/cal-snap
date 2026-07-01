@@ -8,7 +8,7 @@ import { MealScannerAnalyzingView } from '@/components/scanner/MealScannerAnalyz
 import { MealScannerCaptureView } from '@/components/scanner/MealScannerCaptureView';
 import { ManualMealEntryView } from '@/components/scanner/ManualMealEntryView';
 import { ScannerErrorBanner } from '@/components/scanner/ScannerErrorBanner';
-import { useAuth } from '@/lib/auth/use-auth';
+import { useAuth } from '@/lib/auth/auth-context';
 import { copy } from '@/lib/copy';
 import { typography } from '@/lib/design/typography';
 import { useLogMeal } from '@/lib/queries/use-log-meal';

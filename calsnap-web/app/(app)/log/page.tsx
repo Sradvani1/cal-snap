@@ -5,7 +5,7 @@ import { ConfirmAlertDialog } from '@/components/design/ConfirmAlertDialog';
 import { EmptyStateView } from '@/components/design/EmptyStateView';
 import { SectionCard, SectionCardSkeleton } from '@/components/design/SectionCard';
 import { MealListSection } from '@/components/meal-log/MealListSection';
-import { useAuth } from '@/lib/auth/use-auth';
+import { useAuth } from '@/lib/auth/auth-context';
 import { aggregateTodaysMeals } from '@/lib/dashboard/aggregate-meals';
 import { dashboardFormattedDate } from '@/lib/dashboard/greeting';
 import { copy } from '@/lib/copy';

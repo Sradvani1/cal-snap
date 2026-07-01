@@ -1,6 +1,6 @@
 'use client';
 
-import { SessionErrorBanner } from '@/components/auth/SessionErrorBanner';
+import { InlineErrorMessage } from '@/components/design/InlineErrorMessage';
 import { PrimaryButton } from '@/components/design/PrimaryButton';
 import {
   WeightProgressBar,
@@ -52,7 +52,7 @@ export function WeightProgressView({
   }
 
   if (progress.profileLoadFailed || !progress.profile || !progress.stats) {
-    return <SessionErrorBanner message={copy('progress.error.loadFailed')} />;
+    return <InlineErrorMessage message={copy('progress.error.loadFailed')} />;
   }
 
   const { profile, stats, useLbs } = progress;
@@ -61,7 +61,7 @@ export function WeightProgressView({
   return (
     <div className="flex flex-col gap-6">
       {progress.error && (
-        <SessionErrorBanner message={copy('progress.error.partialLoad')} />
+        <InlineErrorMessage message={copy('progress.error.partialLoad')} />
       )}
 
       {!isEmbedded && (

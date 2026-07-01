@@ -11,6 +11,9 @@ const firebaseProjectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ?? 'calsna
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ['firebase-admin'],
+  async redirects() {
+    return [{ source: '/', destination: '/dashboard', permanent: false }];
+  },
   async rewrites() {
     // Safari 16.1+ blocks cross-origin storage for the default firebaseapp.com auth
     // helper. Proxy /__/auth/* so authDomain can match this deployment host.

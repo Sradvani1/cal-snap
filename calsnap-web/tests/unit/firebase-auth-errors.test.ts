@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { mapFirebaseAuthError } from '@/lib/auth/firebase-auth-errors';
+import { mapFirebaseAuthError } from '@/lib/auth/auth-context';
 import { copy } from '@/lib/copy';
 
 function firebaseError(code: string): { code: string } {

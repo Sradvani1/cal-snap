@@ -1,9 +1,8 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { NextRequest } from 'next/server';
-import { SESSION_COOKIE_NAME } from '@/lib/auth/session-edge';
 
-vi.mock('@/lib/auth/verify-api-session', () => ({
-  verifyApiSession: vi.fn(),
+vi.mock('@/lib/auth/verify-bearer-token', () => ({
+  verifyBearerToken: vi.fn(),
 }));
 
 vi.mock('@/lib/gemini/generate-insight', () => ({
@@ -18,12 +17,12 @@ vi.mock('@/lib/gemini/generate-insight', () => ({
   },
 }));
 
-import { verifyApiSession } from '@/lib/auth/verify-api-session';
+import { verifyBearerToken } from '@/lib/auth/verify-bearer-token';
 import { generateAnalyticsInsight } from '@/lib/gemini/generate-insight';
 import { copy } from '@/lib/copy';
 import { POST } from '@/app/api/generate-insight/route';
 
-const mockedVerify = vi.mocked(verifyApiSession);
+const mockedVerify = vi.mocked(verifyBearerToken);
 const mockedGenerate = vi.mocked(generateAnalyticsInsight);
 
 function makePayload(overrides: Record<string, unknown> = {}) {
@@ -46,12 +45,12 @@ function makePayload(overrides: Record<string, unknown> = {}) {
 }
 
 function makeRequest(options: {
-  cookie?: string;
+  bearerToken?: string;
   body?: unknown;
 }): NextRequest {
   const headers = new Headers({ 'Content-Type': 'application/json' });
-  if (options.cookie) {
-    headers.set('cookie', `${SESSION_COOKIE_NAME}=${options.cookie}`);
+  if (options.bearerToken) {
+    headers.set('Authorization', `Bearer ${options.bearerToken}`);
   }
   return new NextRequest('http://localhost/api/generate-insight', {
     method: 'POST',
@@ -72,7 +71,7 @@ describe('POST /api/generate-insight', () => {
     process.env.GEMINI_API_KEY = originalApiKey;
   });
 
-  it('returns 401 without valid session', async () => {
+  it('returns 401 without valid bearer token', async () => {
     mockedVerify.mockResolvedValue(null);
     const response = await POST(makeRequest({ body: makePayload() }));
     expect(response.status).toBe(401);

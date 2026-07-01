@@ -2,7 +2,7 @@
 
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
-import { useAuth } from '@/lib/auth/use-auth';
+import { useAuth } from '@/lib/auth/auth-context';
 import type { ProfileWithExtras } from '@/lib/repositories/profile';
 import { useDeleteAllData } from '@/lib/queries/use-delete-all-data';
 import { useExportData } from '@/lib/queries/use-export-data';
@@ -11,7 +11,7 @@ import { useProfile } from '@/lib/queries/use-profile';
 import { queryKeys } from '@/lib/queries/query-keys';
 import { useSaveSettingsProfile } from '@/lib/queries/use-save-settings-profile';
 import { useSettingsForm } from '@/lib/settings/use-settings-form';
-import { SessionErrorBanner } from '@/components/auth/SessionErrorBanner';
+import { InlineErrorMessage } from '@/components/design/InlineErrorMessage';
 import { PrimaryButton } from '@/components/design/PrimaryButton';
 import { PlateauAlertSheet } from '@/components/dashboard/PlateauAlertSheet';
 import { AboutSection } from '@/components/settings/AboutSection';
@@ -132,14 +132,14 @@ function SettingsContent({ uid, profileData }: SettingsContentProps) {
         </header>
 
         {(saveError || saveMutation.isError) && (
-          <SessionErrorBanner
+          <InlineErrorMessage
             message={
               saveMutation.isError ? copy('settings.error.saveGeneric') : saveError!
             }
           />
         )}
 
-        {dataErrorMessage && <SessionErrorBanner message={dataErrorMessage} />}
+        {dataErrorMessage && <InlineErrorMessage message={dataErrorMessage} />}
 
         <ProfileSection
           draft={form.draft}
@@ -243,7 +243,7 @@ export default function SettingsPage() {
   if (profileQuery.isError || !profileQuery.data) {
     return (
       <div className={cn(layout.pageShell, 'py-8')}>
-        <SessionErrorBanner message={copy('settings.error.profileLoad')} />
+        <InlineErrorMessage message={copy('settings.error.profileLoad')} />
       </div>
     );
   }

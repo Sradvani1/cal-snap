@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import type { AnalyticsInsightPayload } from '@/lib/analytics/analytics-types';
 import { copy } from '@/lib/copy';
+import { getFirebaseAuth } from '@/lib/firebase/client';
 
 export function useGenerateInsight() {
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -20,10 +21,18 @@ export function useGenerateInsight() {
       const controller = new AbortController();
       abortControllerRef.current = controller;
 
+      const currentUser = getFirebaseAuth().currentUser;
+      if (!currentUser) {
+        throw new Error(copy('analytics.insight.error'));
+      }
+
+      const idToken = await currentUser.getIdToken();
       const response = await fetch('/api/generate-insight', {
         method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${idToken}`,
+        },
         body: JSON.stringify(payload),
         signal: controller.signal,
       });

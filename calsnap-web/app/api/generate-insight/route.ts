@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ApiErrorCode } from '@/lib/api/error-codes';
-import { verifyApiSession } from '@/lib/auth/verify-api-session';
+import { verifyBearerToken } from '@/lib/auth/verify-bearer-token';
 import { copy, type CopyKey } from '@/lib/copy';
 import {
   generateAnalyticsInsight,
@@ -13,7 +13,7 @@ function apiError(copyKey: CopyKey, code: (typeof ApiErrorCode)[keyof typeof Api
 }
 
 export async function POST(request: NextRequest) {
-  const session = await verifyApiSession(request);
+  const session = await verifyBearerToken(request);
   if (!session) {
     return apiError('api.error.unauthorized', ApiErrorCode.Unauthorized, 401);
   }

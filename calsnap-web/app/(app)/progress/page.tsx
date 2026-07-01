@@ -2,10 +2,10 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { useAuth } from '@/lib/auth/use-auth';
+import { useAuth } from '@/lib/auth/auth-context';
 import { usePlateauAlert } from '@/lib/queries/use-plateau-alert';
 import { useProfile } from '@/lib/queries/use-profile';
-import { SessionErrorBanner } from '@/components/auth/SessionErrorBanner';
+import { InlineErrorMessage } from '@/components/design/InlineErrorMessage';
 import { PlateauAlertSheet } from '@/components/dashboard/PlateauAlertSheet';
 import { WeighInSheet } from '@/components/progress/WeighInSheet';
 import { WeightProgressView } from '@/components/progress/WeightProgressView';
@@ -23,7 +23,7 @@ function ProgressContent({ uid }: { uid: string | undefined }) {
   return (
     <>
       <div className="mx-auto max-w-lg px-4 py-8 pb-24">
-        {plateau.actionError && <SessionErrorBanner message={plateau.actionError} />}
+        {plateau.actionError && <InlineErrorMessage message={plateau.actionError} />}
         <div className="mb-4 flex justify-end">
           <Link
             href="/analytics"

@@ -5,7 +5,7 @@ import { use, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ConfirmAlertDialog } from '@/components/design/ConfirmAlertDialog';
 import { MealAnalysisResultView } from '@/components/scanner/MealAnalysisResultView';
-import { useAuth } from '@/lib/auth/use-auth';
+import { useAuth } from '@/lib/auth/auth-context';
 import { copy } from '@/lib/copy';
 import { typography } from '@/lib/design/typography';
 import { useMeal } from '@/lib/queries/use-meal';

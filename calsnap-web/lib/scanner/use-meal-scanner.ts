@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ApiErrorCode } from '@/lib/api/error-codes';
+import { getFirebaseAuth } from '@/lib/firebase/client';
 import type { MealAnalysisResponse } from '@/lib/gemini/meal-analysis-types';
 import type { MealEntry } from '@/lib/models/meal-entry';
 import type { MealType } from '@/lib/models/meal-type';
@@ -236,10 +237,18 @@ export function useMealScanner({ userId, onUnsavedWorkChange }: UseMealScannerOp
     }
 
     try {
+      const currentUser = getFirebaseAuth().currentUser;
+      if (!currentUser) {
+        setScannerError('api');
+        setPhase('error');
+        return;
+      }
+
+      const idToken = await currentUser.getIdToken();
       const response = await fetch('/api/analyze-meal', {
         method: 'POST',
+        headers: { Authorization: `Bearer ${idToken}` },
         body: formData,
-        credentials: 'include',
         signal: controller.signal,
       });
 

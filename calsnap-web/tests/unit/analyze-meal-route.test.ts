@@ -1,9 +1,8 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { NextRequest } from 'next/server';
-import { SESSION_COOKIE_NAME } from '@/lib/auth/session-edge';
 
-vi.mock('@/lib/auth/verify-api-session', () => ({
-  verifyApiSession: vi.fn(),
+vi.mock('@/lib/auth/verify-bearer-token', () => ({
+  verifyBearerToken: vi.fn(),
 }));
 
 vi.mock('@/lib/gemini/analyze-meal', () => ({
@@ -18,22 +17,22 @@ vi.mock('@/lib/gemini/analyze-meal', () => ({
   },
 }));
 
-import { verifyApiSession } from '@/lib/auth/verify-api-session';
+import { verifyBearerToken } from '@/lib/auth/verify-bearer-token';
 import { analyzeMealImage, GeminiAnalysisError } from '@/lib/gemini/analyze-meal';
 import { copy } from '@/lib/copy';
 import { ApiErrorCode } from '@/lib/api/error-codes';
 import { POST } from '@/app/api/analyze-meal/route';
 
-const mockedVerify = vi.mocked(verifyApiSession);
+const mockedVerify = vi.mocked(verifyBearerToken);
 const mockedAnalyze = vi.mocked(analyzeMealImage);
 
 function makeRequest(options: {
-  cookie?: string;
+  bearerToken?: string;
   formData?: FormData;
 }): NextRequest {
   const headers = new Headers();
-  if (options.cookie) {
-    headers.set('cookie', `${SESSION_COOKIE_NAME}=${options.cookie}`);
+  if (options.bearerToken) {
+    headers.set('Authorization', `Bearer ${options.bearerToken}`);
   }
   return new NextRequest('http://localhost/api/analyze-meal', {
     method: 'POST',
@@ -61,7 +60,7 @@ describe('POST /api/analyze-meal', () => {
     process.env.GEMINI_API_KEY = originalApiKey;
   });
 
-  it('returns 401 without valid session', async () => {
+  it('returns 401 without valid bearer token', async () => {
     mockedVerify.mockResolvedValue(null);
     const response = await POST(makeRequest({ formData: makeFormDataWithImage() }));
     expect(response.status).toBe(401);

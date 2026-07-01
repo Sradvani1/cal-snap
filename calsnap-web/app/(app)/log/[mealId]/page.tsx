@@ -8,7 +8,7 @@ import { MealDetailActions } from '@/components/meal-log/MealDetailActions';
 import { MealDetailView } from '@/components/meal-log/MealDetailView';
 import { MealShareCard } from '@/components/meal-log/MealShareCard';
 import { useMealShareImage } from '@/components/meal-log/use-meal-share-image';
-import { useAuth } from '@/lib/auth/use-auth';
+import { useAuth } from '@/lib/auth/auth-context';
 import { copy } from '@/lib/copy';
 import { typography } from '@/lib/design/typography';
 import { useDeleteMeal } from '@/lib/queries/use-delete-meal';

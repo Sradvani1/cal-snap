@@ -246,7 +246,7 @@ With `GEMINI_API_KEY=test-not-used`, scan will fail at analysis — that's expec
 
 - **Emulator UI** (http://localhost:4000): inspect Auth users, Firestore docs, Storage files
 - **Reset data:** stop emulators (Ctrl+C) and restart `pnpm emulators`
-- **Session issues:** clear site cookies for `localhost:3000`; sign in again
+- **Auth issues:** sign out and sign in again; for Google redirect failures, start from `/login`
 - **Permission denied:** rules are enforced — check you're signed in as the doc owner
 
 ### Phase 2 checklist
@@ -351,7 +351,7 @@ NEXT_PUBLIC_FIREBASE_APP_ID=<from-console>
 GEMINI_API_KEY=<your-real-key>
 ```
 
-### 4.4 Service account (required for session cookies + API routes)
+### 4.4 Service account (required for Bearer token verification on API routes)
 
 1. Project Settings → **Service accounts** → **Generate new private key**
 2. From the downloaded JSON:
@@ -403,7 +403,7 @@ Repeat abbreviated Phase 2 + Phase 3 checks:
 ### Phase 4 checklist
 
 - [ ] Rules deployed (not default permissive rules)
-- [ ] Session cookie flow works with admin credentials
+- [ ] Meal scan + insight generation work with Bearer auth (`FIREBASE_ADMIN_*` set)
 - [ ] Data visible in Firebase Console (Firestore + Storage)
 - [ ] Google sign-in works on localhost
 
@@ -438,7 +438,7 @@ Add for **Production** and **Preview**:
 | `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | From config |
 | `NEXT_PUBLIC_FIREBASE_APP_ID` | From config |
 | `NEXT_PUBLIC_USE_FIREBASE_EMULATOR` | `false` |
-| `FIREBASE_ADMIN_PROJECT_ID` | Service account |
+| `FIREBASE_ADMIN_PROJECT_ID` | Service account (Bearer verification on `/api/analyze-meal`, `/api/generate-insight`) |
 | `FIREBASE_ADMIN_CLIENT_EMAIL` | Service account |
 | `FIREBASE_ADMIN_PRIVATE_KEY` | Private key with `\n` |
 | `GEMINI_API_KEY` | Google AI Studio key |

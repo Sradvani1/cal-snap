@@ -7,9 +7,8 @@ import { GoalSetupStep } from '@/components/onboarding/GoalSetupStep';
 import { OnboardingDoneStep } from '@/components/onboarding/OnboardingDoneStep';
 import { ProfileSetupStep } from '@/components/onboarding/ProfileSetupStep';
 import { WelcomeStep } from '@/components/onboarding/WelcomeStep';
-import { SessionErrorBanner } from '@/components/auth/SessionErrorBanner';
 import { PrimaryButton, SecondaryButton } from '@/components/design/PrimaryButton';
-import { useAuth } from '@/lib/auth/use-auth';
+import { useAuth } from '@/lib/auth/auth-context';
 import { ONBOARDING_STEP_TITLES } from '@/lib/onboarding/onboarding-step';
 import { useOnboarding } from '@/lib/onboarding/use-onboarding';
 import { copy } from '@/lib/copy';
@@ -19,7 +18,7 @@ import { typography } from '@/lib/design/typography';
 import { cn } from '@/lib/utils/cn';
 
 export default function OnboardingPage() {
-  const { user, loading, sessionError } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
   const onboarding = useOnboarding(user?.uid ?? '');
 
@@ -56,8 +55,6 @@ export default function OnboardingPage() {
           />
         </div>
       </div>
-
-      <SessionErrorBanner message={sessionError} />
 
       <div className="flex-1 min-w-0">
         {currentStep === 'welcome' && <WelcomeStep />}

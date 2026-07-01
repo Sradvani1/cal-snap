@@ -1,8 +1,8 @@
-interface SessionErrorBannerProps {
+interface InlineErrorMessageProps {
   message: string | null;
 }
 
-export function SessionErrorBanner({ message }: SessionErrorBannerProps) {
+export function InlineErrorMessage({ message }: InlineErrorMessageProps) {
   if (!message) {
     return null;
   }

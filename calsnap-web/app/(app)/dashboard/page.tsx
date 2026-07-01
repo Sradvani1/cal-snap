@@ -1,11 +1,11 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useAuth } from '@/lib/auth/use-auth';
+import { useAuth } from '@/lib/auth/auth-context';
 import { useDashboard } from '@/lib/queries/use-dashboard';
 import { usePlateauAlert } from '@/lib/queries/use-plateau-alert';
 import { useProfile } from '@/lib/queries/use-profile';
-import { SessionErrorBanner } from '@/components/auth/SessionErrorBanner';
+import { InlineErrorMessage } from '@/components/design/InlineErrorMessage';
 import {
   CalorieRingCard,
   CalorieRingCardSkeleton,
@@ -70,7 +70,7 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
   if (dashboard.profileLoadFailed || !dashboard.profile) {
     return (
       <div className={cn(layout.pageShell, 'py-8 pb-24')}>
-        <SessionErrorBanner message={copy('dashboard.error.profileLoad')} />
+        <InlineErrorMessage message={copy('dashboard.error.profileLoad')} />
       </div>
     );
   }
@@ -79,7 +79,7 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
     <>
       <div className={cn(layout.pageShell, 'gap-6 py-8 pb-24')}>
         {(dashboard.error || plateau.actionError) && (
-          <SessionErrorBanner
+          <InlineErrorMessage
             message={plateau.actionError ?? copy('dashboard.error.loadFailed')}
           />
         )}

@@ -1,13 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { FormEvent, useState } from 'react';
-import { SessionErrorBanner } from '@/components/auth/SessionErrorBanner';
+import { FormEvent, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { PrimaryButton, SecondaryButton } from '@/components/design/PrimaryButton';
-import { useAuth } from '@/lib/auth/use-auth';
+import { useAuth } from '@/lib/auth/auth-context';
 import { copy } from '@/lib/copy';
 import { typography } from '@/lib/design/typography';
 import { formFieldFocusRingClassName } from '@/lib/design/form-field';
+import { useProfile } from '@/lib/queries/use-profile';
 import { cn } from '@/lib/utils/cn';
 
 const inputClassName = [
@@ -16,11 +17,22 @@ const inputClassName = [
 ].join(' ');
 
 export default function LoginPage() {
-  const { signInWithEmail, signInWithGoogle, loading, sessionError } = useAuth();
+  const { user, loading, authError, signInWithEmail, signInWithGoogle } = useAuth();
+  const profile = useProfile(user?.uid);
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (loading || !user || profile.isLoading) {
+      return;
+    }
+    router.replace(
+      profile.data?.extras.onboardingCompleted === true ? '/dashboard' : '/onboarding',
+    );
+  }, [user, loading, profile.isLoading, profile.data, router]);
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -44,7 +56,7 @@ export default function LoginPage() {
     }
   }
 
-  if (loading) {
+  if (loading || user) {
     return <p className={`${typography.csCaption} text-center`}>{copy('common.loading')}</p>;
   }
 
@@ -55,7 +67,7 @@ export default function LoginPage() {
         <p className={`${typography.csCaption} mt-1`}>{copy('auth.login.subtitle')}</p>
       </div>
 
-      <SessionErrorBanner message={sessionError} />
+      {authError && <p className="text-sm text-cs-danger">{authError}</p>}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>

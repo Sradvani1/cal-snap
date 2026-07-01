@@ -2,10 +2,8 @@
 
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
-import { useAuth } from '@/lib/auth/use-auth';
-import { usePlateauAlert } from '@/lib/queries/use-plateau-alert';
-import { useProfile } from '@/lib/queries/use-profile';
-import { SessionErrorBanner } from '@/components/auth/SessionErrorBanner';
+import { InlineErrorMessage } from '@/components/design/InlineErrorMessage';
+import { useAuth } from '@/lib/auth/auth-context';
 import { EmptyStateView } from '@/components/design/EmptyStateView';
 import { SectionCard, SectionCardSkeleton } from '@/components/design/SectionCard';
 import { AnalyticsCustomRangeSheet } from '@/components/analytics/AnalyticsCustomRangeSheet';
@@ -23,6 +21,8 @@ import {
 } from '@/lib/analytics/analytics-types';
 import { useAnalytics } from '@/lib/queries/use-analytics';
 import { useGenerateInsight } from '@/lib/queries/use-generate-insight';
+import { usePlateauAlert } from '@/lib/queries/use-plateau-alert';
+import { useProfile } from '@/lib/queries/use-profile';
 import { copy } from '@/lib/copy';
 import { typography } from '@/lib/design/typography';
 
@@ -176,7 +176,7 @@ function AnalyticsContent({ uid }: { uid: string | undefined }) {
 
         {plateau.actionError && (
           <div className="mb-4">
-            <SessionErrorBanner message={plateau.actionError} />
+            <InlineErrorMessage message={plateau.actionError} />
           </div>
         )}
 
@@ -189,7 +189,7 @@ function AnalyticsContent({ uid }: { uid: string | undefined }) {
         )}
 
         {analyticsQuery.isError && (
-          <SessionErrorBanner message={copy('analytics.error.loadFailed')} />
+          <InlineErrorMessage message={copy('analytics.error.loadFailed')} />
         )}
 
         {!analyticsQuery.isLoading && snapshot && (
