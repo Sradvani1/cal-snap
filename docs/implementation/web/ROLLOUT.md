@@ -370,8 +370,10 @@ Use literal `\n` in the private key string (the app converts them).
 cd calsnap-web
 pnpm exec firebase login
 pnpm exec firebase use <your-project-id>
-pnpm exec firebase deploy --only firestore:rules,storage:rules --project <your-project-id>
+pnpm exec firebase deploy --only firestore:rules,storage --project <your-project-id>
 ```
+
+Use `storage` (not `storage:rules`) — the CLI interprets `storage:rules` as a bucket target named `rules`, which does not exist.
 
 Rules files: `firestore.rules`, `storage.rules` (user-scoped under `users/{uid}/...`).
 
@@ -509,7 +511,7 @@ pnpm emulators          # terminal 1
 pnpm dev                # terminal 2
 
 # Phase 4
-pnpm exec firebase deploy --only firestore:rules,storage:rules --project <id>
+pnpm exec firebase deploy --only firestore:rules,storage --project <id>
 
 # Phase 5
 npx vercel

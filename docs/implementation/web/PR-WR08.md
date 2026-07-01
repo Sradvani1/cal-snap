@@ -42,7 +42,7 @@
 | Cross-user deny — meals | Integration test | **Fixed** — WR08-RULE-01 |
 | Cross-user deny — weighIns | Integration test | **Fixed** — WR08-RULE-02 |
 | Invalid storage path default deny | Firebase default deny | **Pass** — documented |
-| Rules deployed to prod | Operator checklist | **Pending** — §8 |
+| Rules deployed to prod | Operator checklist | **Done** — SA 2026-07-01 (`calsnap-web`) |
 
 ### 1.4 Environment (`.env.local.example` vs ROLLOUT 5.2)
 
@@ -181,7 +181,7 @@ pnpm lint && pnpm test && pnpm build && pnpm test:integration && pnpm test:e2e
 | Maskable PWA icons | P3 — add if Android Lighthouse installability fails |
 | Delete-all Storage prefix warnings | P3 — best-effort wipe; user-visible data cleared via per-meal delete + prefix |
 | Log-meal compensating delete | P3 — `deleteMealPhoto` swallows Storage errors; orphan may remain if cleanup fails after Firestore write failure |
-| Rules deploy drift | Operator must run `firebase deploy --only firestore:rules,storage:rules` to same `projectId` as Vercel |
+| Rules deploy drift | Operator must run `firebase deploy --only firestore:rules,storage` to same `projectId` as Vercel |
 | Google OAuth | Production custom domain only — email auth OK on preview |
 | Real Gemini in CI | Never — manual production smoke only |
 | Lighthouse scores | Manual §8; fix P0/P1 a11y only; scores not CI-gated |
@@ -202,7 +202,7 @@ pnpm lint && pnpm test && pnpm build && pnpm test:integration && pnpm test:e2e
 | Vercel production env complete ([ROLLOUT 5.2](./ROLLOUT.md)) | Pending |
 | `NEXT_PUBLIC_USE_FIREBASE_EMULATOR=false` on Vercel | Pending |
 | Firebase authorized domains include production Vercel URL | Pending |
-| Rules deployed: `pnpm exec firebase deploy --only firestore:rules,storage:rules` | Pending |
+| Rules deployed: `pnpm exec firebase deploy --only firestore:rules,storage` | **Done** — SA 2026-07-01 (`calsnap-web`; rules already matched repo) |
 | `GEMINI_API_KEY` set on Vercel; redeploy if changed | Pending |
 
 ### Core flows (production URL)

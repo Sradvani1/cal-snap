@@ -59,7 +59,7 @@ isProject: false
 | 7 | New E2E specs | **None merge-blocking** unless audit finds P0/P1 automation gap. Keep **17 E2E green**. Optional best-effort: unauthenticated `/privacy` loads (not merge-blocking). |
 | 8 | Lighthouse scores | **Manual only** in WR08 §8 — consolidate WR07 §4 pending rows. **Fix P0/P1 a11y only** (locked); record all scores even if Perf &lt;70 or A11y &lt;90. Not CI-gated. |
 | 9 | Production smoke environment | **Live Vercel production URL** for Google OAuth + PWA HTTPS. Email/password OK on preview; Google sign-off on production domain per [ROLLOUT 5.4](docs/implementation/web/ROLLOUT.md). |
-| 10 | Rules deploy verification | **Operator checklist** in PR-WR08 §8 — confirm `firebase deploy --only firestore:rules,storage:rules` to same `projectId` as Vercel `NEXT_PUBLIC_FIREBASE_PROJECT_ID`. Integration tests prove rule *logic*; prod deploy is manual gate. |
+| 10 | Rules deploy verification | **Operator checklist** in PR-WR08 §8 — confirm `firebase deploy --only firestore:rules,storage` to same `projectId` as Vercel `NEXT_PUBLIC_FIREBASE_PROJECT_ID`. Integration tests prove rule *logic*; prod deploy is manual gate. |
 | 11 | Real Gemini in CI | **Never** — production smoke manual only (locked). |
 | 12 | Sprint close-out | Update [README.md](docs/implementation/web/README.md) WR02–WR08 statuses; mark WR08 complete in REVIEW-MASTER-PLAN success criteria when §8 signed off. |
 | 13 | Gemini 503 on production | **Unit test + code audit only (locked).** Do not unset `GEMINI_API_KEY` on prod/preview. WR03 E2E mock 503 + `analyze-meal-route.test.ts` suffice for sign-off. |
@@ -218,7 +218,7 @@ Consolidates pending sign-offs from WR02 §8, WR03 §8, WR04 §8, WR05 §8, WR06
 - [ ] Vercel production env complete ([ROLLOUT 5.2](docs/implementation/web/ROLLOUT.md))
 - [ ] `NEXT_PUBLIC_USE_FIREBASE_EMULATOR=false`
 - [ ] Firebase authorized domains include production Vercel URL
-- [ ] Rules deployed: `pnpm exec firebase deploy --only firestore:rules,storage:rules`
+- [x] Rules deployed: `pnpm exec firebase deploy --only firestore:rules,storage` (SA 2026-07-01)
 - [ ] `GEMINI_API_KEY` set on Vercel; redeploy if changed
 
 ### Core flows (production URL)
