@@ -60,10 +60,8 @@ function WeighInSheetForm({
       });
       onSaved?.(result);
       onClose();
-    } catch (err) {
-      setSaveError(
-        err instanceof Error ? err.message : copy('progress.weighIn.error.saveFailed'),
-      );
+    } catch {
+      setSaveError(copy('progress.weighIn.error.saveFailed'));
     }
   };
 

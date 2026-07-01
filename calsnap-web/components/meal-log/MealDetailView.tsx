@@ -57,7 +57,7 @@ export function MealDetailView({ meal, photoUrl }: MealDetailViewProps) {
 
       <div className="rounded-xl border border-cs-border bg-cs-surface p-4">
         <div className="mb-2 flex items-center justify-between gap-2">
-          <p className={typography.csLargeCalorie}>
+          <p className={typography.csLargeCalorie} data-testid="meal-detail-total-calories">
             {meal.totalCalories} {copy('common.macro.kcal')}
           </p>
           {isManualEntry ? (

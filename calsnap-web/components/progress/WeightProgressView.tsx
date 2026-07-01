@@ -52,15 +52,7 @@ export function WeightProgressView({
   }
 
   if (progress.profileLoadFailed || !progress.profile || !progress.stats) {
-    return (
-      <SessionErrorBanner
-        message={
-          progress.error instanceof Error
-            ? progress.error.message
-            : copy('progress.error.loadFailed')
-        }
-      />
-    );
+    return <SessionErrorBanner message={copy('progress.error.loadFailed')} />;
   }
 
   const { profile, stats, useLbs } = progress;
@@ -69,13 +61,7 @@ export function WeightProgressView({
   return (
     <div className="flex flex-col gap-6">
       {progress.error && (
-        <SessionErrorBanner
-          message={
-            progress.error instanceof Error
-              ? progress.error.message
-              : copy('progress.error.partialLoad')
-          }
-        />
+        <SessionErrorBanner message={copy('progress.error.partialLoad')} />
       )}
 
       {!isEmbedded && (

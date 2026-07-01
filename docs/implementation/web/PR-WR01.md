@@ -144,11 +144,35 @@ Import from `tests/e2e/helpers` (or `./helpers` from spec files).
 | `fillManualMealItem(page, { name, calories, weightG? })` | → `Promise<void>` | Fill first manual entry card |
 | `logMealAndExpectDashboard(page, expectedCalories)` | → `Promise<void>` | Log → assert `/dashboard` + kcal link |
 
-Full contract: [PR-WR03.md](./PR-WR03.md) §5.
+Full contract: [PR-WR03.md](./PR-WR03.md) §5 (scanner), [PR-WR04.md](./PR-WR04.md) §5 (meal-log + weigh-in).
+
+### Meal log (`meal-log.ts`) — added in WR04
+
+| Export | Signature | Usage |
+|--------|-----------|-------|
+| `gotoMealLog(page)` | → `Promise<void>` | Bottom tab → `/log`; wait for `mealLog.title` |
+| `openMealRowActions(page, calories)` | → `Promise<void>` | ⋯ on row matching `{calories} kcal` |
+| `openMealEditFromLog(page, calories)` | → `Promise<void>` | Menu → Edit → wait `/scan/edit/` |
+| `editScannedItemWeight(page, itemName, newWeightG)` | → `Promise<void>` | Item row → `FoodItemEditSheet` → fill weight → Save |
+| `saveMealEdits(page)` | → `Promise<void>` | Click Save changes → expect `/log/[mealId]` |
+| `expectMealCaloriesChanged(page, previousCalories)` | → `Promise<void>` | Assert kcal link where `N !== previousCalories` |
+| `expectMealCaloriesChangedOnSurfaces(page, previousCalories)` | → `Promise<void>` | Detail → `/log` tab → dashboard |
+| `deleteMealFromLogList(page, calories)` | → `Promise<void>` | ⋯ → Delete → confirm → wait until kcal link absent (sole E2E delete entry) |
+| `expectMealAbsent(page, calories)` | → `Promise<void>` | `{calories} kcal` link not visible on current page |
+
+### Weigh-in (`weigh-in.ts`) — added in WR04
+
+| Export | Signature | Usage |
+|--------|-----------|-------|
+| `readDashboardCalorieTarget(page)` | → `Promise<number>` | Parse `designSystem.calorieRing.ofGoal` text |
+| `openWeighInFromDashboard(page)` | → `Promise<void>` | Click Log weigh-in → expect dialog |
+| `fillWeighInWeightKg(page, weightKg)` | → `Promise<void>` | Convert kg → lbs internally; fill dialog input |
+| `saveWeighIn(page)` | → `Promise<void>` | Click save → dialog hidden |
+| `logWeighInAndExpectLowerTarget(page, newWeightKg)` | → `Promise<void>` | Capture target before → save → assert `newTarget < previousTarget` |
 
 ### Not in WR01 (downstream PRs)
 
-`mockGenerateInsight`, meal-log/weigh-in/settings/analytics/viewport helpers. Login returning-user E2E added in WR02 (`login-returning-user.spec.ts`). Scanner error-path E2E added in WR03 (`scanner-error-manual-entry.spec.ts`).
+`mockGenerateInsight`, settings/analytics/viewport helpers. Login returning-user E2E added in WR02 (`login-returning-user.spec.ts`). Scanner error-path E2E added in WR03 (`scanner-error-manual-entry.spec.ts`). Meal edit/delete + weigh-in target E2E added in WR04 (`meal-edit-delete.spec.ts`, `weigh-in-updates-target.spec.ts`).
 
 ---
 

@@ -57,9 +57,7 @@ export function useMealShareImage() {
       if (error instanceof DOMException && error.name === 'AbortError') {
         return;
       }
-      const message =
-        error instanceof Error ? error.message : copy('mealLog.share.error.failed');
-      setShareError(message);
+      setShareError(copy('mealLog.share.error.failed'));
     } finally {
       setIsSharing(false);
     }

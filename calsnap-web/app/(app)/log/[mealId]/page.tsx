@@ -127,11 +127,7 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
       </div>
 
       {deleteMealMutation.isError && (
-        <p className="mt-3 text-sm text-cs-danger">
-          {deleteMealMutation.error instanceof Error
-            ? deleteMealMutation.error.message
-            : copy('mealLog.error.deleteFailed')}
-        </p>
+        <p className="mt-3 text-sm text-cs-danger">{copy('mealLog.error.deleteFailed')}</p>
       )}
 
       {shareError && (

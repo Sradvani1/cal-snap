@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { SecondaryButton } from '@/components/design/PrimaryButton';
+import { buttonVariants } from '@/components/ui/button';
 import { copy } from '@/lib/copy';
 import { cn } from '@/lib/utils/cn';
 
@@ -22,10 +23,14 @@ export function MealDetailActions({
 }: MealDetailActionsProps) {
   return (
     <div className="flex gap-2">
-      <Link href={`/scan/edit/${mealId}`} className="flex-1">
-        <SecondaryButton type="button" fullWidth className="min-h-11">
-          {copy('mealLog.actions.edit')}
-        </SecondaryButton>
+      <Link
+        href={`/scan/edit/${mealId}`}
+        className={cn(
+          buttonVariants({ variant: 'outline', size: 'default' }),
+          'min-h-11 w-full flex-1 text-center',
+        )}
+      >
+        {copy('mealLog.actions.edit')}
       </Link>
       <SecondaryButton
         type="button"

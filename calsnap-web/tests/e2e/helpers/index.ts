@@ -16,3 +16,21 @@ export {
   logMealAndExpectDashboard,
   uploadTestPhotoAndAnalyze,
 } from './scanner';
+export {
+  deleteMealFromLogList,
+  editScannedItemWeight,
+  expectMealAbsent,
+  expectMealCaloriesChanged,
+  expectMealCaloriesChangedOnSurfaces,
+  gotoMealLog,
+  openMealEditFromLog,
+  openMealRowActions,
+  saveMealEdits,
+} from './meal-log';
+export {
+  fillWeighInWeightKg,
+  logWeighInAndExpectLowerTarget,
+  openWeighInFromDashboard,
+  readDashboardCalorieTarget,
+  saveWeighIn,
+} from './weigh-in';
