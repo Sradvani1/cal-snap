@@ -22,6 +22,7 @@ import {
 } from 'firebase/auth';
 import { consumeGoogleRedirectResult } from '@/lib/auth/google-redirect';
 import {
+  resolveBootstrapAuthUser,
   resolveDeferredAuthUser,
   shouldClearSessionCookie,
   type PendingAuthUser,
@@ -120,7 +121,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
       void applyAuthState(nextUser, {
-        clearSessionWhenSignedOut: shouldClearSessionCookie(true, nextUser),
+        clearSessionWhenSignedOut: nextUser === null,
         redirectAfterSignIn: true,
       });
     });
@@ -174,9 +175,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return;
         }
 
-        const userToApply = resolveDeferredAuthUser(pendingAuthUser, auth.currentUser);
+        const userToApply = await resolveBootstrapAuthUser(
+          auth,
+          pendingAuthUser,
+        );
+        const bootstrapPending: PendingAuthUser =
+          pendingAuthUser !== undefined ? pendingAuthUser : userToApply;
         void applyAuthState(userToApply, {
-          clearSessionWhenSignedOut: shouldClearSessionCookie(true, userToApply),
+          clearSessionWhenSignedOut: shouldClearSessionCookie(
+            true,
+            userToApply,
+            bootstrapPending,
+          ),
           redirectAfterSignIn: true,
         });
       }
