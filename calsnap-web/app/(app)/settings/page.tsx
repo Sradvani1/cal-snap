@@ -74,10 +74,8 @@ function SettingsContent({ uid, profileData }: SettingsContentProps) {
         await queryClient.invalidateQueries({ queryKey: queryKeys.profile(uid) });
         setShowPlateauSheet(true);
       }
-    } catch (error) {
-      setSaveError(
-        error instanceof Error ? error.message : copy('settings.error.saveFailed'),
-      );
+    } catch {
+      setSaveError(copy('settings.error.saveFailed'));
     }
   }, [form, profileData, saveMutation, queryClient, uid]);
 
@@ -106,7 +104,7 @@ function SettingsContent({ uid, profileData }: SettingsContentProps) {
     try {
       await exportMutation.mutateAsync();
     } catch {
-      // Error surfaced via exportMutation.error below.
+      // Error surfaced via exportMutation.isError below.
     }
   }, [exportMutation]);
 
@@ -114,20 +112,17 @@ function SettingsContent({ uid, profileData }: SettingsContentProps) {
     try {
       await deleteMutation.mutateAsync();
     } catch {
-      // Error surfaced via deleteMutation.error; dialog stays open.
+      // Error surfaced via deleteMutation.isError; dialog stays open.
     }
   }, [deleteMutation]);
 
-  const dataErrorMessage =
-    exportMutation.error instanceof Error
-      ? exportMutation.error.message
-      : exportMutation.error
-        ? copy('settings.error.exportFailed')
-        : deleteMutation.error instanceof Error
-          ? deleteMutation.error.message
-          : deleteMutation.error
-            ? copy('settings.error.deleteFailed')
-            : null;
+  const exportError = exportMutation.isError
+    ? copy('settings.error.exportFailed')
+    : null;
+  const deleteError = deleteMutation.isError
+    ? copy('settings.error.deleteFailed')
+    : null;
+  const dataErrorMessage = exportError ?? deleteError;
 
   return (
     <>
@@ -136,13 +131,10 @@ function SettingsContent({ uid, profileData }: SettingsContentProps) {
           <h1 className={`${typography.csCardTitle} text-2xl`}>{copy('settings.title')}</h1>
         </header>
 
-        {(saveError || saveMutation.error) && (
+        {(saveError || saveMutation.isError) && (
           <SessionErrorBanner
             message={
-              saveError ??
-              (saveMutation.error instanceof Error
-                ? saveMutation.error.message
-                : copy('settings.error.saveGeneric'))
+              saveMutation.isError ? copy('settings.error.saveGeneric') : saveError!
             }
           />
         )}
@@ -251,13 +243,7 @@ export default function SettingsPage() {
   if (profileQuery.isError || !profileQuery.data) {
     return (
       <div className={cn(layout.pageShell, 'py-8')}>
-        <SessionErrorBanner
-          message={
-            profileQuery.error instanceof Error
-              ? profileQuery.error.message
-              : copy('settings.error.profileLoad')
-          }
-        />
+        <SessionErrorBanner message={copy('settings.error.profileLoad')} />
       </div>
     );
   }

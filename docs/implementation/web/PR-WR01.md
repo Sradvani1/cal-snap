@@ -180,9 +180,22 @@ Full contract: [PR-WR03.md](./PR-WR03.md) §5 (scanner), [PR-WR04.md](./PR-WR04.
 | `expectAnalyticsDietarySections(page)` | → `Promise<void>` | Four dietary section titles visible |
 | `expectGenerateInsightUnavailable(page)` | → `Promise<void>` | Generate insight button absent when `<3` logged days |
 
+### Settings (`settings.ts`) — added in WR06
+
+| Export | Signature | Usage |
+|--------|-----------|-------|
+| `gotoSettings(page)` | → `Promise<void>` | Navigate to `/settings`; assert `settings.title` heading |
+| `changeActivityLevel(page, level)` | `level: ActivityLevel` → `Promise<void>` | Check activity radio by copy label |
+| `saveSettingsProfile(page)` | → `Promise<void>` | Scroll Save into view → click → wait save bar hidden |
+| `openDeleteAllDialog(page)` | → `Promise<void>` | Click delete-all → assert `alertdialog` + title |
+| `confirmDeleteAllData(page)` | → `Promise<void>` | Confirm delete in alertdialog → `/onboarding` |
+| `gotoDashboardFromTab(page)` | → `Promise<void>` | Bottom tab nav → Dashboard link → `/dashboard` |
+
+Reuses `readDashboardCalorieTarget` from `weigh-in.ts` for settings-save E2E.
+
 ### Not in WR01 (downstream PRs)
 
-`mockGenerateInsight`, settings/viewport helpers. Login returning-user E2E added in WR02 (`login-returning-user.spec.ts`). Scanner error-path E2E added in WR03 (`scanner-error-manual-entry.spec.ts`). Meal edit/delete + weigh-in target E2E added in WR04 (`meal-edit-delete.spec.ts`, `weigh-in-updates-target.spec.ts`). Analytics page E2E added in WR05 (`analytics-page.spec.ts`).
+`mockGenerateInsight`, viewport helpers. Login returning-user E2E added in WR02 (`login-returning-user.spec.ts`). Scanner error-path E2E added in WR03 (`scanner-error-manual-entry.spec.ts`). Meal edit/delete + weigh-in target E2E added in WR04 (`meal-edit-delete.spec.ts`, `weigh-in-updates-target.spec.ts`). Analytics page E2E added in WR05 (`analytics-page.spec.ts`). Settings save + delete-all E2E added in WR06 (`settings-save-updates-target.spec.ts`, `delete-all-reonboard.spec.ts`).
 
 ---
 

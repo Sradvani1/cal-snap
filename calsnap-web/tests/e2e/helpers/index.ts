@@ -41,3 +41,11 @@ export {
   readDashboardCalorieTarget,
   saveWeighIn,
 } from './weigh-in';
+export {
+  changeActivityLevel,
+  confirmDeleteAllData,
+  gotoDashboardFromTab,
+  gotoSettings,
+  openDeleteAllDialog,
+  saveSettingsProfile,
+} from './settings';
