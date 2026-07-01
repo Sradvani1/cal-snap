@@ -143,15 +143,19 @@ export async function deleteMeal(
   await deleteDoc(docRef);
 
   if (entry.photoStoragePath) {
-    try {
-      const storageRef = ref(getFirebaseStorage(), entry.photoStoragePath);
-      await deleteObject(storageRef);
-    } catch (error) {
-      console.warn('Failed to delete meal photo from Storage:', error);
-    }
+    await deleteMealPhoto(entry.photoStoragePath);
   }
 
   return entry;
+}
+
+export async function deleteMealPhoto(path: string): Promise<void> {
+  try {
+    const storageRef = ref(getFirebaseStorage(), path);
+    await deleteObject(storageRef);
+  } catch (error) {
+    console.warn('Failed to delete meal photo from Storage:', error);
+  }
 }
 
 export async function getMealPhotoDownloadUrl(path: string): Promise<string> {

@@ -28,6 +28,11 @@ export default function PrivacyPage() {
         </section>
 
         <section>
+          <h2 className={typography.csCardTitle}>{copy('privacy.section.session.title')}</h2>
+          <p className="mt-2">{copy('privacy.section.session.body')}</p>
+        </section>
+
+        <section>
           <h2 className={typography.csCardTitle}>{copy('privacy.section.notCollected.title')}</h2>
           <p className="mt-2">{copy('privacy.section.notCollected.body')}</p>
         </section>

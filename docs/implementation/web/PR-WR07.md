@@ -211,7 +211,7 @@ pnpm lint && pnpm test && pnpm build && pnpm test:integration && pnpm test:e2e
 | ESLint copy guard rule | P3 — defer to future PR |
 | `button` `sm` (36px) on desktop-only surfaces | Accept unless mobile-visible |
 | Settings save bar only when `isDirty` | Viewport test asserts title, not save CTA |
-| Delete-all Storage warnings | WR08 (unchanged) |
+| Delete-all Storage warnings | WR08 defer P3 (PR-WR08 §7) |
 | Reminder prefs vs banner | WR04 residual (unchanged) |
 
 ---

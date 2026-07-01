@@ -5,8 +5,13 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { initializeTestEnvironment, type RulesTestEnvironment } from '@firebase/rules-unit-testing';
-import { doc, getDoc, Timestamp } from 'firebase/firestore';
+import {
+  assertFails,
+  assertSucceeds,
+  initializeTestEnvironment,
+  type RulesTestEnvironment,
+} from '@firebase/rules-unit-testing';
+import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { ProfileDoc } from '@/lib/models/profile-doc';
 import { PROFILE_DOC_ID } from '@/lib/models/profile-doc';
@@ -126,5 +131,36 @@ describe('weigh-in Firestore batch save', () => {
     expect(weighInSnap.exists()).toBe(true);
     expect(weighInSnap.data()?.weightKg).toBe(78);
     expect(weighInSnap.data()?.source).toBe('manual');
+  });
+
+  it('denies cross-uid write on weighIns', async () => {
+    const bob = testEnv.authenticatedContext('bob');
+    const db = bob.firestore();
+
+    await assertFails(
+      setDoc(doc(db, 'users', 'alice', 'weighIns', 'weigh-in-1'), {
+        weightKg: 75,
+        date: Timestamp.fromDate(new Date('2026-06-27T12:00:00')),
+        source: 'manual',
+        createdAt: Timestamp.now(),
+      }),
+    );
+  });
+
+  it('denies cross-uid read on weighIns', async () => {
+    const alice = testEnv.authenticatedContext('alice');
+    const aliceDb = alice.firestore();
+    await assertSucceeds(
+      setDoc(doc(aliceDb, 'users', 'alice', 'weighIns', 'weigh-in-read'), {
+        weightKg: 75,
+        date: Timestamp.fromDate(new Date('2026-06-27T12:00:00')),
+        source: 'manual',
+        createdAt: Timestamp.now(),
+      }),
+    );
+
+    const bob = testEnv.authenticatedContext('bob');
+    const bobDb = bob.firestore();
+    await assertFails(getDoc(doc(bobDb, 'users', 'alice', 'weighIns', 'weigh-in-read')));
   });
 });

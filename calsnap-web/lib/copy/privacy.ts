@@ -12,6 +12,9 @@ export const privacyCopy = {
   'privacy.section.storage.title': 'Where data is stored',
   'privacy.section.storage.body':
     'Firebase Authentication (sign-in), Cloud Firestore (profile, meals, weigh-ins), and Firebase Storage (meal photos). Data is scoped to your account and protected by Firebase security rules.',
+  'privacy.section.session.title': 'Session cookies',
+  'privacy.section.session.body':
+    'After sign-in, CalSnap sets an HTTP-only __session cookie on this site (up to 5 days) to keep you logged in. The cookie is used only for authentication — not for advertising or third-party analytics.',
   'privacy.section.notCollected.title': 'What we do not collect',
   'privacy.section.notCollected.body':
     'HealthKit data, precise location, advertising identifiers, or third-party tracking for ads. CalSnap Web does not sell your data.',

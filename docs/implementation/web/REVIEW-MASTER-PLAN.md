@@ -214,17 +214,27 @@ WR07 comes after functional PRs. WR08 validates production last.
 
 ## WR08 — Production, PWA & Security
 
-**Reviews:** W10 PWA + ROLLOUT Phases 4–5 against **live Firebase + Vercel**
+**Reviews:** W10 PWA + ROLLOUT Phases 4–5 against **live Firebase + Vercel**  
+**Deliverable:** [PR-WR08.md](./PR-WR08.md) — implemented 2026-06-30 (211 unit / 15 integration / 17 E2E; production smoke §8 pending operator)
 
 ### Checklist highlights
 
 - PWA manifest, SW, install prompt; standalone dashboard
-- `/privacy` accuracy
-- Firestore + Storage rules audit
-- Vercel env vars; session cookie on production
-- Full production smoke test (email + Google, real Gemini, PWA on devices)
+- `/privacy` accuracy (session cookie disclosure)
+- Firestore + Storage rules audit + cross-user deny tests
+- Vercel env vars; compensating Storage delete on log failure
+- Full production smoke matrix consolidated in PR-WR08 §8
 
 ---
+
+## Review sprint status (2026-06-30)
+
+| PR | Doc | Code / CI | Operator manual QA |
+|----|-----|-----------|-------------------|
+| WR01–WR07 | PR-WR01 … PR-WR07 | Done | Partial — consolidated in PR-WR08 §8 |
+| WR08 | [PR-WR08.md](./PR-WR08.md) | Done (211 / 15 / 17) | Pending — PR-WR08 §8 |
+
+**Sprint code complete.** Operator sign-off for ROLLOUT Phases 4–5, real Gemini, PWA install, and Lighthouse remains open in PR-WR08 §8.
 
 ## Test gap inventory
 
@@ -256,11 +266,14 @@ WR07 comes after functional PRs. WR08 validates production last.
 
 ## Success criteria (sprint complete)
 
-1. ROLLOUT Phases 1–5 manual QA signed off
-2. CI merge gate green on `main`
-3. E2E covers signup, login, onboarding, scan (mocked), log, edit, delete, weigh-in, settings
-4. Real Gemini scan + insight on production Firebase + Vercel
-5. Lighthouse baseline documented; no open P0/P1 a11y issues
-6. PWA install on iOS Safari + Android Chrome
-7. Zero open P0/P1 vs W01–W10 acceptance criteria
-8. Each `PR-WR0N.md` has findings matrix + residual risks
+**Code + CI (2026-06-30):** items 2, 3, 7, and 8 satisfied.  
+**Operator manual QA:** items 1, 4, 5, and 6 — runbook in [PR-WR08.md](./PR-WR08.md) §8.
+
+1. ROLLOUT Phases 1–5 manual QA signed off — **Pending operator** (PR-WR08 §8)
+2. CI merge gate green on `main` — **Done** (211 unit / 15 integration / 17 E2E)
+3. E2E covers signup, login, onboarding, scan (mocked), log, edit, delete, weigh-in, settings — **Done**
+4. Real Gemini scan + insight on production Firebase + Vercel — **Pending operator**
+5. Lighthouse baseline documented; no open P0/P1 a11y issues — **Pending operator**
+6. PWA install on iOS Safari + Android Chrome — **Pending operator**
+7. Zero open P0/P1 vs W01–W10 acceptance criteria — **Done**
+8. Each `PR-WR0N.md` has findings matrix + residual risks — **Done**

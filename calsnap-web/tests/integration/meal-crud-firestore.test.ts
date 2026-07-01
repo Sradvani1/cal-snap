@@ -5,9 +5,16 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { initializeTestEnvironment, type RulesTestEnvironment } from '@firebase/rules-unit-testing';
+import {
+  assertFails,
+  assertSucceeds,
+  initializeTestEnvironment,
+  type RulesTestEnvironment,
+} from '@firebase/rules-unit-testing';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { MealEntry } from '@/lib/models/meal-entry';
+import { mealEntryToDoc } from '@/lib/models/meal-entry-doc';
 import {
   createMeal,
   deleteMeal,
@@ -81,5 +88,28 @@ describe('meal CRUD Firestore', () => {
     const uid = 'meal-crud-missing';
     const db = testEnv.authenticatedContext(uid).firestore();
     await expect(deleteMeal(uid, 'missing-meal', db)).rejects.toThrow(MealNotFoundError);
+  });
+
+  it('denies cross-uid write on meals', async () => {
+    const bob = testEnv.authenticatedContext('bob');
+    const db = bob.firestore();
+    const entry = makeEntry({ userId: 'alice', id: 'alice-meal' });
+
+    await assertFails(
+      setDoc(doc(db, 'users', 'alice', 'meals', entry.id), mealEntryToDoc(entry)),
+    );
+  });
+
+  it('denies cross-uid read on meals', async () => {
+    const alice = testEnv.authenticatedContext('alice');
+    const aliceDb = alice.firestore();
+    const entry = makeEntry({ userId: 'alice', id: 'alice-meal-read' });
+    await assertSucceeds(
+      setDoc(doc(aliceDb, 'users', 'alice', 'meals', entry.id), mealEntryToDoc(entry)),
+    );
+
+    const bob = testEnv.authenticatedContext('bob');
+    const bobDb = bob.firestore();
+    await assertFails(getDoc(doc(bobDb, 'users', 'alice', 'meals', entry.id)));
   });
 });
