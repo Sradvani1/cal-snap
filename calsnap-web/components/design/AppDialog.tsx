@@ -39,7 +39,7 @@ export function AppDialog({
       <DialogContent
         className={cn(
           sheet &&
-            'top-auto bottom-0 max-h-[90vh] translate-y-0 rounded-b-none sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 sm:rounded-2xl',
+            'top-auto bottom-0 max-h-[90vh] translate-y-0 rounded-b-none pb-sheet-safe sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 sm:rounded-2xl sm:pb-6',
           className,
         )}
       >

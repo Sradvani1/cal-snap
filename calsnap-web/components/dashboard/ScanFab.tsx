@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { copy } from '@/lib/copy';
+import { layout } from '@/lib/design/layout';
+import { cn } from '@/lib/utils/cn';
 
 interface ScanFabProps {
   href: string;
@@ -10,7 +12,10 @@ export function ScanFab({ href }: ScanFabProps) {
   return (
     <Button
       asChild
-      className="fixed bottom-20 right-4 z-20 h-14 min-w-14 rounded-full px-5 shadow-lg"
+      className={cn(
+        'fixed right-4 z-20 h-14 min-w-14 rounded-full px-5 shadow-lg',
+        layout.fixed.aboveTabBar,
+      )}
     >
       <Link href={href} aria-label={copy('dashboard.scanFab.label')}>
         <svg

@@ -24,7 +24,9 @@ import { useGenerateInsight } from '@/lib/queries/use-generate-insight';
 import { usePlateauAlert } from '@/lib/queries/use-plateau-alert';
 import { useProfile } from '@/lib/queries/use-profile';
 import { copy } from '@/lib/copy';
+import { layout } from '@/lib/design/layout';
 import { typography } from '@/lib/design/typography';
+import { cn } from '@/lib/utils/cn';
 
 const CalorieAdherenceSection = dynamic(
   () =>
@@ -164,7 +166,7 @@ function AnalyticsContent({ uid }: { uid: string | undefined }) {
 
   return (
     <>
-      <div className="mx-auto max-w-lg px-4 py-8 pb-24">
+      <div className={cn(layout.pageShell, 'py-8', layout.content.bottomPadding)}>
         <h1 className={`${typography.csCardTitle} mb-6 text-2xl`}>{copy('analytics.title')}</h1>
 
         <div className="mb-6">

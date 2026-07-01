@@ -10,7 +10,9 @@ import { MealShareCard } from '@/components/meal-log/MealShareCard';
 import { useMealShareImage } from '@/components/meal-log/use-meal-share-image';
 import { useAuth } from '@/lib/auth/auth-context';
 import { copy } from '@/lib/copy';
+import { layout } from '@/lib/design/layout';
 import { typography } from '@/lib/design/typography';
+import { cn } from '@/lib/utils/cn';
 import { useDeleteMeal } from '@/lib/queries/use-delete-meal';
 import { useMeal } from '@/lib/queries/use-meal';
 import { getMealPhotoDownloadUrl } from '@/lib/repositories/meals';
@@ -83,7 +85,7 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
 
   if (mealQuery.isLoading) {
     return (
-      <div className="mx-auto max-w-lg px-4 py-6">
+      <div className={cn(layout.pageShell, 'py-6', layout.content.bottomPadding)}>
         <div className="mb-6 h-8 w-32 animate-pulse rounded bg-cs-muted/20" />
         <div className="aspect-[4/3] animate-pulse rounded-xl bg-cs-muted/20" />
       </div>
@@ -93,7 +95,7 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
   if (mealQuery.isError || !meal) {
     const notFound = mealQuery.error instanceof MealNotFoundError;
     return (
-      <div className="mx-auto max-w-lg px-4 py-6">
+      <div className={cn(layout.pageShell, 'py-6', layout.content.bottomPadding)}>
         <h1 className={`${typography.csCardTitle} mb-4 text-2xl`}>{copy('mealLog.detail.title')}</h1>
         <p className={`${typography.csCaption} mb-4`}>
           {notFound ? copy('mealLog.detail.notFound') : copy('mealLog.detail.loadFailed')}
@@ -106,7 +108,7 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
   }
 
   return (
-    <div className="mx-auto max-w-lg px-4 py-6 pb-24">
+    <div className={cn(layout.pageShell, 'py-6', layout.content.bottomPadding)}>
       <header className="mb-6">
         <h1 className={`${typography.csCardTitle} text-2xl`}>{copy('mealLog.detail.title')}</h1>
       </header>

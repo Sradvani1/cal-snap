@@ -80,7 +80,7 @@ export function InstallPromptBanner({ uid }: InstallPromptBannerProps) {
   return (
     <div
       role="status"
-      className="mx-auto mb-4 max-w-lg rounded-2xl border border-cs-border bg-cs-surface p-4 shadow-sm"
+      className="pt-safe mx-auto mb-4 max-w-lg rounded-2xl border border-cs-border bg-cs-surface p-4 shadow-sm"
     >
       <p className={typography.csCardTitle}>{copy('pwa.install.title')}</p>
       <p className={`${typography.csCaption} mt-1`}>

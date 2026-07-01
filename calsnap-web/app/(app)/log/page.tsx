@@ -9,7 +9,9 @@ import { useAuth } from '@/lib/auth/auth-context';
 import { aggregateTodaysMeals } from '@/lib/dashboard/aggregate-meals';
 import { dashboardFormattedDate } from '@/lib/dashboard/greeting';
 import { copy } from '@/lib/copy';
+import { layout } from '@/lib/design/layout';
 import { typography } from '@/lib/design/typography';
+import { cn } from '@/lib/utils/cn';
 import { useDeleteMeal } from '@/lib/queries/use-delete-meal';
 import { useTodaysMeals } from '@/lib/queries/use-todays-meals';
 
@@ -43,7 +45,7 @@ export default function LogPage() {
   };
 
   return (
-    <div className="mx-auto max-w-lg px-4 py-6 pb-24">
+    <div className={cn(layout.pageShell, 'py-6', layout.content.bottomPadding)}>
       <header className="mb-6">
         <h1 className={`${typography.csCardTitle} text-2xl`}>{copy('mealLog.title')}</h1>
         <p className={typography.csCaption}>{dashboardFormattedDate(now)}</p>

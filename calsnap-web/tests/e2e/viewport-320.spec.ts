@@ -35,6 +35,16 @@ test.describe('320px viewport — no horizontal scroll', () => {
         name: copy('designSystem.calorieRing.accessibility.label'),
       }),
     ).toBeVisible();
+    await expect(
+      page.getByRole('navigation', { name: copy('common.nav.main') }),
+    ).toBeVisible();
+  });
+
+  test('log page fits at 320px', async ({ page }) => {
+    await createOnboardedUser(page);
+    await gotoAppRoute(page, '/log');
+    await assertNoHorizontalScroll(page);
+    await expect(page.getByRole('heading', { name: copy('mealLog.title') })).toBeVisible();
   });
 
   test('settings fits at 320px', async ({ page }) => {

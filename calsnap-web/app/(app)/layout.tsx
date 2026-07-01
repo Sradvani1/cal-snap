@@ -19,7 +19,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <UnsavedWorkProvider>
-      <div className="min-h-full overflow-x-hidden bg-cs-background pb-20">
+      <div className="min-h-full overflow-x-hidden bg-cs-background">
         <InstallPromptBanner uid={user.uid} />
         <main className="w-full min-w-0 overflow-x-hidden">{children}</main>
         <BottomTabNav />

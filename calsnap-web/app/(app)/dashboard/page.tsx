@@ -56,7 +56,7 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
 
   if (dashboard.isLoading) {
     return (
-      <div className={cn(layout.pageShell, 'gap-6 py-8 pb-24')}>
+      <div className={cn(layout.pageShell, 'gap-6 py-8', layout.content.bottomPadding)}>
         <DashboardHeaderSkeleton />
         <CalorieRingCardSkeleton />
         <MacroBarCardSkeleton />
@@ -69,7 +69,7 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
 
   if (dashboard.profileLoadFailed || !dashboard.profile) {
     return (
-      <div className={cn(layout.pageShell, 'py-8 pb-24')}>
+      <div className={cn(layout.pageShell, 'py-8', layout.content.bottomPadding)}>
         <InlineErrorMessage message={copy('dashboard.error.profileLoad')} />
       </div>
     );
@@ -77,7 +77,7 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
 
   return (
     <>
-      <div className={cn(layout.pageShell, 'gap-6 py-8 pb-24')}>
+      <div className={cn(layout.pageShell, 'gap-6 py-8', layout.content.bottomPadding)}>
         {(dashboard.error || plateau.actionError) && (
           <InlineErrorMessage
             message={plateau.actionError ?? copy('dashboard.error.loadFailed')}

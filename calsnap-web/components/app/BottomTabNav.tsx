@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { copy, type CopyKey } from '@/lib/copy';
 import { formFieldFocusRingClassName } from '@/lib/design/form-field';
+import { layout } from '@/lib/design/layout';
 import { cn } from '@/lib/utils/cn';
 import { useUnsavedWork } from '@/lib/scanner/unsaved-work-context';
 
@@ -150,10 +151,7 @@ export function BottomTabNav() {
   const pathname = usePathname();
 
   return (
-    <nav
-      className="fixed inset-x-0 bottom-0 z-10 border-t border-cs-border bg-cs-surface"
-      aria-label={copy('common.nav.main')}
-    >
+    <nav className={layout.tabBar.nav} aria-label={copy('common.nav.main')}>
       <ul className="mx-auto flex max-w-lg items-stretch justify-around">
         {TABS.map(({ href, labelKey, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(`${href}/`);

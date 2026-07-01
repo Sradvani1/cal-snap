@@ -10,7 +10,9 @@ import { ManualMealEntryView } from '@/components/scanner/ManualMealEntryView';
 import { ScannerErrorBanner } from '@/components/scanner/ScannerErrorBanner';
 import { useAuth } from '@/lib/auth/auth-context';
 import { copy } from '@/lib/copy';
+import { layout } from '@/lib/design/layout';
 import { typography } from '@/lib/design/typography';
+import { cn } from '@/lib/utils/cn';
 import { useLogMeal } from '@/lib/queries/use-log-meal';
 import { useUnsavedWork } from '@/lib/scanner/unsaved-work-context';
 import { useMealScanner } from '@/lib/scanner/use-meal-scanner';
@@ -102,7 +104,7 @@ export default function ScanPage() {
   };
 
   return (
-    <div className="mx-auto max-w-lg px-4 py-6">
+    <div className={cn(layout.pageShell, 'py-6', layout.content.bottomPadding)}>
       <header className="mb-6 flex items-center justify-between">
         <h1 className={`${typography.csCardTitle} text-2xl`}>{copy('scanner.title')}</h1>
         {scanner.hasUnsavedWork && scanner.phase !== 'analyzing' && (
