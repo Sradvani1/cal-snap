@@ -82,16 +82,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       setUser(nextUser);
       if (nextUser) {
+        let sessionOk = false;
         try {
           await establishSession(nextUser);
           setSessionError(null);
+          sessionOk = true;
         } catch (err) {
+          await clearSessionCookie();
           setSessionError(
             err instanceof Error ? err.message : copy('auth.session.establishFailed'),
           );
         }
         setLoading(false);
         if (
+          sessionOk &&
           options.redirectAfterSignIn &&
           typeof window !== 'undefined' &&
           (window.location.pathname === '/login' || window.location.pathname === '/signup')
