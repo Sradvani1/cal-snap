@@ -23,7 +23,7 @@ export async function saveSettingsProfile(page: Page): Promise<void> {
   const btn = page.getByRole('button', { name: copy('settings.saveProfile') });
   await btn.scrollIntoViewIfNeeded();
   await btn.click();
-  await expect(btn).toBeHidden({ timeout: 15_000 });
+  await expect(btn).toBeDisabled({ timeout: 15_000 });
 }
 
 export async function openDeleteAllDialog(page: Page): Promise<void> {

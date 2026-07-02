@@ -5,12 +5,14 @@ import { describe, expect, it } from 'vitest';
 import { layout } from '@/lib/design/layout';
 
 describe('layout safe-area tokens', () => {
-  it('exports tabBar, content, and fixed token groups', () => {
+  it('exports tabBar and content token groups', () => {
     expect(layout.tabBar.height).toBe('var(--app-tab-bar-content-height)');
     expect(layout.tabBar.nav).toContain('pb-safe');
-    expect(layout.content.bottomPadding).toBe('pb-tab-content');
-    expect(layout.content.bottomPaddingWithSaveBar).toBe('pb-tab-content-with-save-bar');
-    expect(layout.fixed.aboveTabBar).toBe('bottom-above-tab-bar');
+    expect(layout.tabBar.nav).toContain('shrink-0');
+    expect(layout.tabBar.nav).not.toContain('fixed');
+    expect(layout.content.bottomPadding).toBe('pb-6');
+    expect(layout.content.mainScrollClass).toBe('app-main');
+    expect(layout.content.onboardingMainScrollClass).toBe('onboarding-main');
   });
 
   it('references safe-area CSS variables in globals.css', () => {
@@ -18,15 +20,13 @@ describe('layout safe-area tokens', () => {
 
     expect(globals).toContain('--safe-area-top: env(safe-area-inset-top, 0px)');
     expect(globals).toContain('--safe-area-bottom: env(safe-area-inset-bottom, 0px)');
-    expect(globals).toContain('--app-tab-bar-height: calc(var(--app-tab-bar-content-height) + var(--safe-area-bottom))');
-    expect(globals).toContain('--app-save-bar-height: calc(2.75rem + 1.5rem + 1px)');
-    expect(globals).toContain(
-      '--app-content-bottom-padding: calc(var(--app-tab-bar-height) + 1rem)',
-    );
-    expect(globals).toContain('.pb-tab-content');
+    expect(globals).toContain('--app-tab-bar-content-height: calc(2.75rem + 1rem + 1px)');
+    expect(globals).toContain("input[type='date']");
+    expect(globals).toContain('.app-shell:has(> [role=\'status\']) .app-main');
     expect(globals).toContain('.pb-sheet-safe');
-    expect(globals).toContain('.bottom-above-tab-bar');
     expect(globals).toContain('.pt-safe');
+    expect(globals).not.toContain('.pb-tab-content');
+    expect(globals).not.toContain('.bottom-above-tab-bar');
   });
 
   it('uses 0px fallbacks when safe-area env vars are unavailable', () => {
@@ -41,14 +41,18 @@ describe('layout safe-area tokens', () => {
     expect(layout.tabBar.nav).toContain('backdrop-blur-md');
   });
 
-  it('exports FAB elevation token', () => {
-    expect(layout.elevation.fab).toBe('shadow-lg dark:shadow-lg');
+  it('applies standalone-only top safe-area inset on main scroll shells', () => {
+    const globals = readFileSync(resolve(process.cwd(), 'app/globals.css'), 'utf8');
+
+    expect(globals).toContain('@media (display-mode: standalone)');
+    expect(globals).toContain('.app-main');
+    expect(globals).toContain('.onboarding-main');
+    expect(globals).toContain('padding-top: var(--safe-area-top)');
   });
 
   it('disables vertical overscroll in standalone display mode only', () => {
     const globals = readFileSync(resolve(process.cwd(), 'app/globals.css'), 'utf8');
 
-    expect(globals).toContain('@media (display-mode: standalone)');
     expect(globals).toContain('overscroll-behavior-y: none');
   });
 

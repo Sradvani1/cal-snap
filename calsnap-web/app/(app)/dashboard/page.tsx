@@ -30,7 +30,6 @@ import {
   DashboardHeader,
   DashboardHeaderSkeleton,
 } from '@/components/dashboard/DashboardHeader';
-import { ScanFab } from '@/components/dashboard/ScanFab';
 import { PlateauAlertSheet } from '@/components/dashboard/PlateauAlertSheet';
 import { WeighInReminderBanner } from '@/components/dashboard/WeighInReminderBanner';
 import { WeighInSheet } from '@/components/progress/WeighInSheet';
@@ -132,8 +131,6 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
           onLogWeighIn={() => setShowWeighInSheet(true)}
         />
       </div>
-
-      <ScanFab href="/scan" />
 
       {sheetReady && profile && profileExtras && uid && (
         <WeighInSheet

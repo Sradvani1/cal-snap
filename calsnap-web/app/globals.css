@@ -56,12 +56,6 @@
   --safe-area-left: env(safe-area-inset-left, 0px);
   /* Tab row: min-h-11 (2.75rem) + py-2 (1rem) + border-t (1px) */
   --app-tab-bar-content-height: calc(2.75rem + 1rem + 1px);
-  --app-tab-bar-height: calc(var(--app-tab-bar-content-height) + var(--safe-area-bottom));
-  --app-save-bar-height: calc(2.75rem + 1.5rem + 1px);
-  --app-content-bottom-padding: calc(var(--app-tab-bar-height) + 1rem);
-  --app-content-bottom-padding-with-save-bar: calc(
-    var(--app-tab-bar-height) + var(--app-save-bar-height) + 1rem
-  );
 
   --cs-primary: #3da35d;
   --cs-secondary: #1a6b6b;
@@ -171,16 +165,9 @@ body {
   padding-bottom: calc(1.5rem + var(--safe-area-bottom));
 }
 
-.pb-tab-content {
-  padding-bottom: var(--app-content-bottom-padding);
-}
-
-.pb-tab-content-with-save-bar {
-  padding-bottom: var(--app-content-bottom-padding-with-save-bar);
-}
-
-.bottom-above-tab-bar {
-  bottom: var(--app-tab-bar-height);
+input[type='date'] {
+  max-width: 100%;
+  min-width: 0;
 }
 
 @keyframes chart-fade-in {
@@ -224,5 +211,15 @@ body {
 @media (display-mode: standalone) {
   body {
     overscroll-behavior-y: none;
+  }
+
+  .app-main,
+  .onboarding-main {
+    padding-top: var(--safe-area-top);
+  }
+
+  /* Install banner already applies pt-safe; avoid double top inset on main. */
+  .app-shell:has(> [role='status']) .app-main {
+    padding-top: 0;
   }
 }

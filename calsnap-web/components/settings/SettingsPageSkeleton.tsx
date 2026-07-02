@@ -9,7 +9,7 @@ export function SettingsPageSkeleton() {
   return (
     <div
       aria-busy="true"
-      className={cn(layout.pageShell, 'min-h-full gap-4 py-8', layout.content.bottomPadding)}
+      className={cn(layout.pageShell, 'gap-4 py-8', layout.content.bottomPadding)}
     >
       <header>
         <Skeleton className="h-8 w-32" />

@@ -80,6 +80,14 @@ Sprint plan: [OPTIMIZATION-MASTER-PLAN.md](./OPTIMIZATION-MASTER-PLAN.md) · [PE
 
 **Optimization sprint code-complete; operator manual QA Pending** (WR07/WR08/WO05 §8).
 
+## Post-sprint device fixes
+
+| PR | Doc | Status |
+|----|-----|--------|
+| iPhone PWA + Settings UX | [PR-IPHONE-SAFARI-UX.md](./PR-IPHONE-SAFARI-UX.md) | Complete (code) — §8 Pending |
+
+Supersedes WO01 fixed tab bar / save-bar padding model, WO03 ScanFab elevation, WO05 settings floating save bar. Plan: [.cursor/plans/iphone_safari_ux_fixes_3637e941.plan.md](../../.cursor/plans/iphone_safari_ux_fixes_3637e941.plan.md).
+
 ## Source of truth
 
 - [`docs/technical-spec.md`](../../technical-spec.md) — architecture, models, services

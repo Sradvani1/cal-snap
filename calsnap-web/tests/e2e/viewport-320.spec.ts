@@ -51,6 +51,11 @@ test.describe('320px viewport — no horizontal scroll', () => {
     await createOnboardedUser(page);
     await gotoSettings(page);
     await assertNoHorizontalScroll(page);
+
+    const dobInput = page.getByLabel(copy('common.label.dateOfBirth'));
+    const box = await dobInput.boundingBox();
+    expect(box).not.toBeNull();
+    expect(box!.width).toBeLessThanOrEqual(320);
   });
 
   test('scan page fits at 320px', async ({ page }) => {

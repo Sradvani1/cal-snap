@@ -23,8 +23,6 @@ export const dashboardCopy = {
   'dashboard.weight.firstWeighIn': 'Log your first weigh-in',
   'dashboard.weight.logInProgress': 'Log weigh-in in Progress',
   'dashboard.weight.trendA11y': 'Seven-day weight trend',
-  'dashboard.scanFab.label': 'Scan meal',
-  'dashboard.scanFab.button': 'Scan',
   'dashboard.plateau.title': 'Plateau Detected',
   'dashboard.plateau.body':
     'Your weight has been stable for about three weeks. This can happen during a deficit.',

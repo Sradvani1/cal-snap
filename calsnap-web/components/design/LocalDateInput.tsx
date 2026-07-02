@@ -48,23 +48,25 @@ export function LocalDateInput({
   );
 
   return (
-    <input
-      type="date"
-      value={displayValue}
-      min={min}
-      max={max}
-      onFocus={(event) => {
-        setDraftValue(committedValue);
-        setIsFocused(true);
-        onFocus?.(event);
-      }}
-      onBlur={(event) => {
-        setIsFocused(false);
-        onBlur?.(event);
-      }}
-      onChange={handleChange}
-      className={cn('box-border w-full min-w-0', className)}
-      {...rest}
-    />
+    <div className="max-w-full min-w-0 overflow-hidden">
+      <input
+        type="date"
+        value={displayValue}
+        min={min}
+        max={max}
+        onFocus={(event) => {
+          setDraftValue(committedValue);
+          setIsFocused(true);
+          onFocus?.(event);
+        }}
+        onBlur={(event) => {
+          setIsFocused(false);
+          onBlur?.(event);
+        }}
+        onChange={handleChange}
+        className={cn('box-border w-full min-w-0 max-w-full', className)}
+        {...rest}
+      />
+    </div>
   );
 }

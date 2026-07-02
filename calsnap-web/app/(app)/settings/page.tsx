@@ -133,26 +133,25 @@ function SettingsContent({ uid, profileData }: SettingsContentProps) {
   return (
     <>
       <div
-        className={cn(
-          layout.pageShell,
-          'min-h-full gap-4 overflow-y-auto py-8',
-          form.isDirty ? layout.content.bottomPaddingWithSaveBar : layout.content.bottomPadding,
-        )}
+        className={cn(layout.pageShell, 'gap-4 py-8', layout.content.bottomPadding)}
         style={
           keyboardInset > 0
-            ? {
-                paddingBottom: `calc(${
-                  form.isDirty
-                    ? 'var(--app-content-bottom-padding-with-save-bar)'
-                    : 'var(--app-content-bottom-padding)'
-                } + ${keyboardInset}px)`,
-              }
+            ? { paddingBottom: `calc(1.5rem + ${keyboardInset}px)` }
             : undefined
         }
         onFocusCapture={scrollFormFieldIntoView}
       >
-        <header>
+        <header className="flex items-center justify-between gap-3">
           <h1 className={`${typography.csCardTitle} text-2xl`}>{copy('settings.title')}</h1>
+          <PrimaryButton
+            type="button"
+            onClick={() => void handleSave()}
+            disabled={!form.isDirty || !form.canSave || saveMutation.isPending}
+            aria-label={copy('settings.saveProfile')}
+            className="min-h-11 shrink-0 px-4"
+          >
+            {saveMutation.isPending ? copy('common.button.saving') : copy('settings.save')}
+          </PrimaryButton>
         </header>
 
         {(saveError || saveMutation.isError) && (
@@ -218,34 +217,6 @@ function SettingsContent({ uid, profileData }: SettingsContentProps) {
           <p className="text-sm text-cs-danger-text" role="alert">{form.validationMessage}</p>
         )}
       </div>
-
-      {form.isDirty && (
-        <div
-          className={cn(
-            'fixed inset-x-0 z-40 overflow-x-hidden border-t border-cs-border bg-cs-surface/95 px-4 py-3 backdrop-blur',
-            keyboardInset === 0 && layout.fixed.aboveTabBar,
-          )}
-          style={
-            keyboardInset > 0
-              ? { bottom: `calc(var(--app-tab-bar-height) + ${keyboardInset}px)` }
-              : undefined
-          }
-        >
-          <div className="mx-auto flex w-full min-w-0 max-w-lg gap-3">
-            <PrimaryButton
-              type="button"
-              onClick={() => void handleSave()}
-              disabled={!form.canSave || saveMutation.isPending}
-              fullWidth
-              className="min-h-11"
-            >
-              {saveMutation.isPending
-                ? copy('common.button.saving')
-                : copy('settings.saveProfile')}
-            </PrimaryButton>
-          </div>
-        </div>
-      )}
 
       <DeleteDataDialog
         open={showDeleteDialog}

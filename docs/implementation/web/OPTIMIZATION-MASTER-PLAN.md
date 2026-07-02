@@ -97,6 +97,19 @@ pnpm lint && pnpm test && pnpm build && pnpm test:integration && pnpm test:e2e
 
 ---
 
+## Post-sprint: iPhone PWA + Settings UX
+
+Device QA on iPhone 17 (2026-07-01) found standalone-PWA shell bugs while Safari browser mode was already correct. Follow-up PR documented in [PR-IPHONE-SAFARI-UX.md](./PR-IPHONE-SAFARI-UX.md):
+
+- Flex-footer tab bar (replaces fixed positioning)
+- Standalone-only top safe-area on scroll shells
+- Settings header Save + DOB overflow fixes
+- ScanFab removed
+
+**WO05 final counts (pre–iPhone fix):** 232 unit tests, 18 E2E. **Post–iPhone fix:** 236 unit tests (+4), 18 E2E unchanged.
+
+---
+
 ## Related docs
 
 - [REVIEW-MASTER-PLAN.md](./REVIEW-MASTER-PLAN.md) — WR01–WR08 review sprint

@@ -4,7 +4,9 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { OnboardingStepSkeleton } from '@/components/onboarding/OnboardingStepSkeleton';
 import { useAuth } from '@/lib/auth/auth-context';
+import { layout } from '@/lib/design/layout';
 import { useProfile } from '@/lib/queries/use-profile';
+import { cn } from '@/lib/utils/cn';
 
 export default function OnboardingLayout({ children }: { children: React.ReactNode }) {
   const { user, loading: authLoading } = useAuth();
@@ -31,14 +33,25 @@ export default function OnboardingLayout({ children }: { children: React.ReactNo
 
   if (loading) {
     return (
-      <main aria-busy="true" className="min-h-full overflow-x-hidden bg-cs-background">
+      <main
+        aria-busy="true"
+        className={cn(
+          layout.content.onboardingMainScrollClass,
+          'min-h-dvh overflow-x-hidden bg-cs-background',
+        )}
+      >
         <OnboardingStepSkeleton />
       </main>
     );
   }
 
   return (
-    <div className="min-h-full overflow-x-hidden bg-cs-background">
+    <div
+      className={cn(
+        layout.content.onboardingMainScrollClass,
+        'min-h-dvh overflow-x-hidden bg-cs-background',
+      )}
+    >
       {children}
     </div>
   );

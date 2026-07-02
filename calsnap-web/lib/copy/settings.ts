@@ -1,5 +1,6 @@
 export const settingsCopy = {
   'settings.title': 'Settings',
+  'settings.save': 'Save',
   'settings.saveProfile': 'Save profile',
   'settings.error.saveFailed': 'Failed to save profile',
   'settings.error.saveGeneric': 'Failed to save',

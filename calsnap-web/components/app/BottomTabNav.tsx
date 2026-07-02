@@ -157,7 +157,12 @@ export function BottomTabNav() {
           const active = pathname === href || pathname.startsWith(`${href}/`);
           return (
             <li key={href} className="flex-1">
-              <TabLink href={href} labelKey={labelKey} icon={Icon} active={active} />
+              <TabLink
+                href={href}
+                labelKey={labelKey}
+                icon={Icon}
+                active={active}
+              />
             </li>
           );
         })}

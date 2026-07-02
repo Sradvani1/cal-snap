@@ -1,6 +1,6 @@
 # PR WO03: App Chrome, Tab Bar & Sheets
 
-**Status:** Complete — merged to `main` (`6e1a511`). Merge gate: lint/unit/build green (216 tests); integration/E2E pending clean emulator env or CI (§2). §8 manual sign-off Pending (operator).  
+**Status:** Complete — merged to `main` (`6e1a511`). **ScanFab removed** in [PR-IPHONE-SAFARI-UX.md](./PR-IPHONE-SAFARI-UX.md). Merge gate: lint/unit/build green (216 tests); integration/E2E pending clean emulator env or CI (§2). §8 manual sign-off Pending (operator).  
 **Sprint:** Optimization WO03 ([web optimization sprint plan](../../.cursor/plans/web_optimization_sprint_68cb0f71.plan.md))  
 **Depends on:** WO01 (`4ea0500`) + WO02 (`c2ab40f`) merged to `main`
 **Plan:** [.cursor/plans/wo03_app_chrome_sheets_24159170.plan.md](../../.cursor/plans/wo03_app_chrome_sheets_24159170.plan.md)

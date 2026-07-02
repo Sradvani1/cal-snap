@@ -1,6 +1,6 @@
 # PR WO05: Forms, Keyboard & Performance Sign-off
 
-**Status:** Complete — lint/unit/build green (232 tests). Integration/E2E pending clean emulator env or CI (§2). Lighthouse scores pending Vercel preview capture (§6). §8 manual sign-off Pending (operator).  
+**Status:** Complete — lint/unit/build green (232 tests). **Settings floating save bar superseded** by header Save in [PR-IPHONE-SAFARI-UX.md](./PR-IPHONE-SAFARI-UX.md). Integration/E2E pending clean emulator env or CI (§2). Lighthouse scores pending Vercel preview capture (§6). §8 manual sign-off Pending (operator).  
 **Sprint:** Optimization WO05 ([OPTIMIZATION-MASTER-PLAN.md](./OPTIMIZATION-MASTER-PLAN.md))  
 **Depends on:** WO01 (`4ea0500`) + WO02 (`c2ab40f`) + WO03 (`6e1a511`) + WO04 merged to `main`  
 **Plan:** [.cursor/plans/pr_wo05_forms_keyboard_perf.plan.md](../../.cursor/plans/pr_wo05_forms_keyboard_perf.plan.md)
@@ -237,7 +237,7 @@ Reference full matrix rows 1–20 + pre-flight; all **Pending** except row 12 (C
 | Scenario | Environment | Pass criteria | Signed off |
 |----------|-------------|---------------|------------|
 | iOS Safari input zoom | iPhone Safari 320px | No page zoom on settings/onboarding numeric focus | Pending |
-| Settings keyboard | iPhone Safari 320px | Lower profile fields visible; save bar reachable above keyboard | Pending |
+| Settings keyboard | iPhone Safari 320px | Lower profile fields visible; header Save reachable (floating bar superseded — [PR-IPHONE-SAFARI-UX.md](./PR-IPHONE-SAFARI-UX.md)) | Pending |
 | Weigh-in keyboard | iPhone standalone | Weight input visible; save CTA reachable | Pending |
 | Tab switch no spinner | iOS PWA | Dashboard ↔ Log ↔ Settings within 30s — no refetch flash | Pending |
 

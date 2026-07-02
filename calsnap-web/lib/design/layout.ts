@@ -20,17 +20,17 @@ export const layout = {
   tabBar: {
     /** Documented content row height before safe-area inset (min-h-11 + py-2 + border). */
     height: 'var(--app-tab-bar-content-height)',
-    nav: 'fixed inset-x-0 bottom-0 z-10 border-t border-cs-border bg-cs-surface/80 backdrop-blur-md pb-safe',
+    nav: 'shrink-0 z-10 border-t border-cs-border bg-cs-surface/80 backdrop-blur-md pb-safe',
   },
   content: {
-    bottomPadding: 'pb-tab-content',
-    bottomPaddingWithSaveBar: 'pb-tab-content-with-save-bar',
-  },
-  fixed: {
-    aboveTabBar: 'bottom-above-tab-bar',
-  },
-  elevation: {
-    fab: 'shadow-lg dark:shadow-lg',
+    /** Tab bar is an in-flow flex footer — content only needs modest bottom padding. */
+    bottomPadding: 'pb-6',
+    /**
+     * Top safe-area for standalone PWA: apply `app-main` (or `onboarding-main`) on the
+     * scroll shell; inset is applied via `@media (display-mode: standalone)` in globals.css.
+     */
+    mainScrollClass: 'app-main',
+    onboardingMainScrollClass: 'onboarding-main',
   },
   touchTarget: 'min-h-11 min-w-11',
 } as const;
