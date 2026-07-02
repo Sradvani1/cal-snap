@@ -1,8 +1,8 @@
 # PR WO03: App Chrome, Tab Bar & Sheets
 
-**Status:** Complete — code + review close-out. Merge gate: lint/unit/build green (216 tests); integration/E2E pending clean emulator env or CI (§2). §8 manual sign-off Pending (operator).
-**Sprint:** Optimization WO03 ([OPTIMIZATION-MASTER-PLAN.md](./OPTIMIZATION-MASTER-PLAN.md) — pending)  
-**Depends on:** WO01 + WO02 merged to `main`  
+**Status:** Complete — merged to `main` (`6e1a511`). Merge gate: lint/unit/build green (216 tests); integration/E2E pending clean emulator env or CI (§2). §8 manual sign-off Pending (operator).  
+**Sprint:** Optimization WO03 ([OPTIMIZATION-MASTER-PLAN.md](./OPTIMIZATION-MASTER-PLAN.md))  
+**Depends on:** WO01 (`4ea0500`) + WO02 (`c2ab40f`) merged to `main`
 **Plan:** [.cursor/plans/wo03_app_chrome_sheets_24159170.plan.md](../../.cursor/plans/wo03_app_chrome_sheets_24159170.plan.md)
 
 ---
@@ -236,6 +236,7 @@ Recorded 2026-07-01:
 **New**
 
 - `docs/implementation/web/PR-WO03.md`
+- `docs/implementation/web/OPTIMIZATION-MASTER-PLAN.md` (sprint index; WO03 close-out)
 
 **Modified**
 

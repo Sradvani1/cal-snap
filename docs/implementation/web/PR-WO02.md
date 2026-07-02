@@ -1,7 +1,7 @@
 # PR WO02: PWA Launch & Install Polish
 
 **Status:** Complete — merged to `main`. Merge gate: lint/unit/build/integration green; E2E pre-existing onboarding flake (§2, CI run 28554632629). §8 manual sign-off Pending (operator).
-**Sprint:** Optimization WO02 ([OPTIMIZATION-MASTER-PLAN.md](./OPTIMIZATION-MASTER-PLAN.md) — pending)  
+**Sprint:** Optimization WO02 ([OPTIMIZATION-MASTER-PLAN.md](./OPTIMIZATION-MASTER-PLAN.md))  
 **Depends on:** WO01 merged to `main` (`4ea0500`); WR08 complete  
 **Plan:** [.cursor/plans/pr_wo02_pwa_launch_install.plan.md](../../.cursor/plans/pr_wo02_pwa_launch_install.plan.md)
 
@@ -136,7 +136,7 @@ Recorded 2026-07-01 after WO02 implementation:
 | `lib/copy/pwa.ts` | **No change by default** — refine only if §8 QA notes confusion | Optional post-QA |
 | `tests/unit/manifest-pwa.test.ts` | **New** — manifest JSON + 5 PNG `existsSync` + maskable src | WO02-TEST-01 |
 
-**Out of scope:** `app/sw.ts`, Serwist config, tab blur (WO03), skeletons (WO04), new E2E specs, Playwright install automation, offline authenticated pages.
+**Out of scope:** `app/sw.ts`, Serwist config, skeletons (WO04), new E2E specs, Playwright install automation, offline authenticated pages. Tab bar blur / sheets → WO03 (complete).
 
 ---
 
@@ -250,7 +250,7 @@ Plus WO02-specific rows in §8 below (cold splash, banner hidden in standalone).
 | Android maskable QA | Best-effort if no device; iOS primary |
 | Startup media query drift | Apple viewport changes — regen script + docs |
 | Script vs `colors.ts` drift | Mitigated by unit test importing `colors.ts` |
-| Tab bar blur / sheet polish | WO03 |
+| Tab bar blur / sheet polish | **Closed WO03** (`6e1a511`) — [PR-WO03.md](./PR-WO03.md) |
 
 ---
 

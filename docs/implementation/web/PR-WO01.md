@@ -1,7 +1,7 @@
 # PR WO01: Native Shell & Safe Areas
 
-**Status:** Implementation complete (merge gate: lint/unit/build/integration green; E2E flaky in local env — see §2)  
-**Sprint:** Optimization WO01 ([OPTIMIZATION-MASTER-PLAN.md](./OPTIMIZATION-MASTER-PLAN.md) — pending)  
+**Status:** Complete — merged to `main` (`4ea0500`). Merge gate: lint/unit/build/integration green; E2E flaky in local env — see §2. §8 manual sign-off Pending (operator).  
+**Sprint:** Optimization WO01 ([OPTIMIZATION-MASTER-PLAN.md](./OPTIMIZATION-MASTER-PLAN.md))  
 **Depends on:** WR10 (goal-pathway) merged to `main`; WR08 complete  
 **Plan:** [.cursor/plans/pr_wo01_native_shell_safe_areas.plan.md](../../.cursor/plans/pr_wo01_native_shell_safe_areas.plan.md)
 
@@ -198,8 +198,8 @@ Login, onboarding, dashboard (extended), settings — WR07 contract preserved.
 |------|-------|
 | Playwright cannot verify real safe areas | Manual iPhone standalone required |
 | Android Chrome PWA | Best-effort documented in §8 |
-| AppDialog uses `children` not `footer` | WO01 pads sheet `DialogContent`; WO03 verifies CTAs |
-| Tab bar blur / drag handle | WO03 |
+| AppDialog uses `children` not `footer` | WO01 pads sheet `DialogContent`; **closed WO03** — CTAs verified |
+| Tab bar blur / drag handle | **Closed WO03** (`6e1a511`) |
 | Onboarding top inset | Deferred until iPhone QA |
 | ESLint spacing rule | Deferred; manual grep only |
 | Centered alert dialogs | Out of scope |

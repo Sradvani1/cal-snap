@@ -66,6 +66,18 @@ Business logic lives in `calsnap-web/lib/`; `app/` stays thin.
 | WR07 | [PR-WR07.md](./PR-WR07.md) | Implemented |
 | WR08 | [PR-WR08.md](./PR-WR08.md) | Implemented |
 
+## Optimization sprint (native-feel polish)
+
+- **[OPTIMIZATION-MASTER-PLAN.md](./OPTIMIZATION-MASTER-PLAN.md)** — WO01–WO05 safe areas, PWA launch, chrome/sheets, loading, keyboard/perf
+
+| PR | Doc | Status |
+|----|-----|--------|
+| WO01 | [PR-WO01.md](./PR-WO01.md) | Complete (`4ea0500`) |
+| WO02 | [PR-WO02.md](./PR-WO02.md) | Complete (`c2ab40f`) |
+| WO03 | [PR-WO03.md](./PR-WO03.md) | Complete (`6e1a511`) |
+| WO04 | — | Pending |
+| WO05 | — | Pending |
+
 ## Source of truth
 
 - [`docs/technical-spec.md`](../../technical-spec.md) — architecture, models, services
