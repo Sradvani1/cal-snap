@@ -44,7 +44,11 @@ export function scrollFormFieldIntoView(event: FocusEvent<HTMLElement>): void {
   const reducedMotion =
     typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  event.currentTarget.scrollIntoView({
+  const focusedElement = event.target as { scrollIntoView?: (options?: ScrollIntoViewOptions) => void } | null;
+  if (!focusedElement || typeof focusedElement.scrollIntoView !== 'function') {
+    return;
+  }
+  focusedElement.scrollIntoView({
     block: 'nearest',
     behavior: reducedMotion ? 'instant' : 'smooth',
   });

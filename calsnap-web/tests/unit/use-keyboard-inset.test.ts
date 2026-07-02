@@ -69,27 +69,47 @@ describe('scrollFormFieldIntoView', () => {
     vi.unstubAllGlobals();
   });
 
-  it('scrolls the focused element with smooth behavior by default', () => {
-    const scrollIntoView = vi.fn();
+  it('scrolls the focused field instead of the wrapper by default', () => {
+    const wrapperScrollIntoView = vi.fn();
+    const targetScrollIntoView = vi.fn();
     const matchMedia = vi.fn().mockReturnValue({ matches: false });
     vi.stubGlobal('window', { matchMedia });
 
     scrollFormFieldIntoView({
-      currentTarget: { scrollIntoView },
+      currentTarget: { scrollIntoView: wrapperScrollIntoView },
+      target: { scrollIntoView: targetScrollIntoView },
     } as unknown as FocusEvent<HTMLElement>);
 
-    expect(scrollIntoView).toHaveBeenCalledWith({ block: 'nearest', behavior: 'smooth' });
+    expect(targetScrollIntoView).toHaveBeenCalledWith({
+      block: 'nearest',
+      behavior: 'smooth',
+    });
+    expect(wrapperScrollIntoView).not.toHaveBeenCalled();
   });
 
   it('uses instant scroll when reduced motion is preferred', () => {
-    const scrollIntoView = vi.fn();
+    const targetScrollIntoView = vi.fn();
     const matchMedia = vi.fn().mockReturnValue({ matches: true });
     vi.stubGlobal('window', { matchMedia });
 
     scrollFormFieldIntoView({
-      currentTarget: { scrollIntoView },
+      target: { scrollIntoView: targetScrollIntoView },
     } as unknown as FocusEvent<HTMLElement>);
 
-    expect(scrollIntoView).toHaveBeenCalledWith({ block: 'nearest', behavior: 'instant' });
+    expect(targetScrollIntoView).toHaveBeenCalledWith({
+      block: 'nearest',
+      behavior: 'instant',
+    });
+  });
+
+  it('no-ops when the focus target is not an element', () => {
+    const matchMedia = vi.fn().mockReturnValue({ matches: false });
+    vi.stubGlobal('window', { matchMedia });
+
+    expect(() =>
+      scrollFormFieldIntoView({
+        target: null,
+      } as unknown as FocusEvent<HTMLElement>),
+    ).not.toThrow();
   });
 });
