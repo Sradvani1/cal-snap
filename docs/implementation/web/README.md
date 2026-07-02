@@ -73,7 +73,7 @@ Business logic lives in `calsnap-web/lib/`; `app/` stays thin.
 | WO01 | [PR-WO01.md](./PR-WO01.md) | Complete (`4ea0500`) |
 | WO02 | [PR-WO02.md](./PR-WO02.md) | Complete (`c2ab40f`) |
 | WO03 | [PR-WO03.md](./PR-WO03.md) | Complete (`6e1a511`) |
-| WO04 | — | Pending |
+| WO04 | [PR-WO04.md](./PR-WO04.md) | Complete |
 | WO05 | — | Pending |
 
 Sprint plan: [.cursor/plans/web_optimization_sprint_68cb0f71.plan.md](../../.cursor/plans/web_optimization_sprint_68cb0f71.plan.md)

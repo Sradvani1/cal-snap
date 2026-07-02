@@ -2,8 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { OnboardingStepSkeleton } from '@/components/onboarding/OnboardingStepSkeleton';
 import { useAuth } from '@/lib/auth/auth-context';
-import { copy } from '@/lib/copy';
 import { useProfile } from '@/lib/queries/use-profile';
 
 export default function OnboardingLayout({ children }: { children: React.ReactNode }) {
@@ -31,9 +31,9 @@ export default function OnboardingLayout({ children }: { children: React.ReactNo
 
   if (loading) {
     return (
-      <div className="flex min-h-full flex-1 items-center justify-center bg-cs-background">
-        <p className="text-cs-muted">{copy('common.loading')}</p>
-      </div>
+      <main aria-busy="true" className="min-h-full overflow-x-hidden bg-cs-background">
+        <OnboardingStepSkeleton />
+      </main>
     );
   }
 

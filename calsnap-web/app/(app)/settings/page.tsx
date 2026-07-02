@@ -14,6 +14,7 @@ import { useSettingsForm } from '@/lib/settings/use-settings-form';
 import { InlineErrorMessage } from '@/components/design/InlineErrorMessage';
 import { PrimaryButton } from '@/components/design/PrimaryButton';
 import { PlateauAlertSheet } from '@/components/dashboard/PlateauAlertSheet';
+import { SettingsPageSkeleton } from '@/components/settings/SettingsPageSkeleton';
 import { AboutSection } from '@/components/settings/AboutSection';
 import { AccountSection } from '@/components/settings/AccountSection';
 import { DataSection } from '@/components/settings/DataSection';
@@ -251,11 +252,7 @@ export default function SettingsPage() {
   const profileQuery = useProfile(uid);
 
   if (profileQuery.isLoading) {
-    return (
-      <div className={cn(layout.pageShell, 'py-8', layout.content.bottomPadding)}>
-        <div className="h-96 animate-pulse rounded-2xl bg-cs-muted/20" />
-      </div>
-    );
+    return <SettingsPageSkeleton />;
   }
 
   if (profileQuery.isError || !profileQuery.data) {

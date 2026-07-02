@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
+import { OnboardingStepSkeleton } from '@/components/onboarding/OnboardingStepSkeleton';
 import { CalorieTargetPreviewStep } from '@/components/onboarding/CalorieTargetPreviewStep';
 import { GoalSetupStep } from '@/components/onboarding/GoalSetupStep';
 import { OnboardingDoneStep } from '@/components/onboarding/OnboardingDoneStep';
@@ -30,11 +31,7 @@ export default function OnboardingPage() {
   }, [router, user]);
 
   if (loading || !user) {
-    return (
-      <div className="flex min-h-full items-center justify-center">
-        <p className={typography.csCaption}>{copy('common.loading')}</p>
-      </div>
-    );
+    return <OnboardingStepSkeleton />;
   }
 
   const { currentStep } = onboarding;

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { use, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ConfirmAlertDialog } from '@/components/design/ConfirmAlertDialog';
+import { MealDetailSkeleton } from '@/components/meal-log/MealDetailSkeleton';
 import { MealAnalysisResultView } from '@/components/scanner/MealAnalysisResultView';
 import { useAuth } from '@/lib/auth/auth-context';
 import { copy } from '@/lib/copy';
@@ -152,15 +153,7 @@ export default function ScanEditPage({ params }: ScanEditPageProps) {
   };
 
   if (mealQuery.isLoading) {
-    return (
-      <div className={cn(layout.pageShell, 'py-6', layout.content.bottomPadding)}>
-        <div className="mb-6 h-8 w-32 animate-pulse rounded bg-cs-muted/20" />
-        <div className="space-y-4">
-          <div className="aspect-[4/3] animate-pulse rounded-xl bg-cs-muted/20" />
-          <div className="h-24 animate-pulse rounded-xl bg-cs-muted/20" />
-        </div>
-      </div>
-    );
+    return <MealDetailSkeleton variant="edit" showPhoto />;
   }
 
   if (mealQuery.isError) {
@@ -179,12 +172,7 @@ export default function ScanEditPage({ params }: ScanEditPageProps) {
   }
 
   if (scanner.phase !== 'results') {
-    return (
-      <div className={cn(layout.pageShell, 'py-6', layout.content.bottomPadding)}>
-        <div className="mb-6 h-8 w-32 animate-pulse rounded bg-cs-muted/20" />
-        <div className="h-24 animate-pulse rounded-xl bg-cs-muted/20" />
-      </div>
-    );
+    return <MealDetailSkeleton variant="edit" showPhoto={false} />;
   }
 
   return (

@@ -170,8 +170,8 @@ export function useRequireAuth() {
   const profile = useProfile(user?.uid);
   const router = useRouter();
 
-  const profileLoading = Boolean(user) && profile.isLoading;
-  const loading = authLoading || profileLoading;
+  const profileBootstrapping = Boolean(user) && profile.isPending;
+  const loading = authLoading || profileBootstrapping;
 
   useEffect(() => {
     if (authLoading) {
@@ -181,18 +181,18 @@ export function useRequireAuth() {
       router.replace('/login');
       return;
     }
-    if (profile.isLoading) {
+    if (profile.isPending) {
       return;
     }
     if (profile.data?.extras.onboardingCompleted !== true) {
       router.replace('/onboarding');
     }
-  }, [authLoading, user, profile.isLoading, profile.data, router]);
+  }, [authLoading, user, profile.isPending, profile.data, router]);
 
   const ready =
     !authLoading &&
     user != null &&
-    !profile.isLoading &&
+    !profile.isPending &&
     profile.data?.extras.onboardingCompleted === true;
 
   return { user, loading, ready };

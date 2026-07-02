@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { FormEvent, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { AuthFormSkeleton } from '@/components/auth/AuthFormSkeleton';
 import { PrimaryButton, SecondaryButton } from '@/components/design/PrimaryButton';
 import { useAuth } from '@/lib/auth/auth-context';
 import { copy } from '@/lib/copy';
@@ -57,7 +58,7 @@ export default function SignupPage() {
   }
 
   if (loading || user) {
-    return <p className={`${typography.csCaption} text-center`}>{copy('common.loading')}</p>;
+    return <AuthFormSkeleton />;
   }
 
   return (

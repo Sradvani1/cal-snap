@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { use, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ConfirmAlertDialog } from '@/components/design/ConfirmAlertDialog';
+import { MealDetailSkeleton } from '@/components/meal-log/MealDetailSkeleton';
 import { MealDetailActions } from '@/components/meal-log/MealDetailActions';
 import { MealDetailView } from '@/components/meal-log/MealDetailView';
 import { MealShareCard } from '@/components/meal-log/MealShareCard';
@@ -84,12 +85,7 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
   };
 
   if (mealQuery.isLoading) {
-    return (
-      <div className={cn(layout.pageShell, 'py-6', layout.content.bottomPadding)}>
-        <div className="mb-6 h-8 w-32 animate-pulse rounded bg-cs-muted/20" />
-        <div className="aspect-[4/3] animate-pulse rounded-xl bg-cs-muted/20" />
-      </div>
-    );
+    return <MealDetailSkeleton variant="detail" />;
   }
 
   if (mealQuery.isError || !meal) {
