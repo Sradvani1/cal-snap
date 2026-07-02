@@ -37,12 +37,19 @@ export function AppDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
+        sheet={sheet}
         className={cn(
           sheet &&
-            'top-auto bottom-0 max-h-[90vh] translate-y-0 rounded-b-none pb-sheet-safe sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 sm:rounded-2xl sm:pb-6',
+            'top-auto bottom-0 max-h-[90vh] translate-y-0 rounded-t-2xl rounded-b-none pb-sheet-safe sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 sm:rounded-2xl sm:pb-6',
           className,
         )}
       >
+        {sheet ? (
+          <div
+            className="mx-auto mb-3 h-1 w-10 rounded-full bg-cs-border sm:hidden"
+            aria-hidden="true"
+          />
+        ) : null}
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           {description ? <DialogDescription>{description}</DialogDescription> : null}

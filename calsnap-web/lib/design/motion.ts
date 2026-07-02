@@ -9,6 +9,9 @@ export const RING_SPRING_EASING = 'cubic-bezier(0.34, 1.56, 0.64, 1)';
 export const SCAN_STAGGER_MS = 50;
 export const SCAN_FADE_MS = 300;
 
+export const SHEET_SLIDE_MS = 300;
+export const SHEET_SLIDE_EASING = 'ease-out';
+
 function subscribeReducedMotion(onStoreChange: () => void): () => void {
   const media = window.matchMedia('(prefers-reduced-motion: reduce)');
   media.addEventListener('change', onStoreChange);

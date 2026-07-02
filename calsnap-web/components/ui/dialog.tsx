@@ -30,14 +30,24 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
 const DialogContent = React.forwardRef<
   React.ComponentRef<typeof DialogPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & {
+    sheet?: boolean;
+  }
+>(({ className, children, sheet, ...props }, ref) => (
   <DialogPortal>
-    <DialogOverlay />
+    <DialogOverlay className={sheet ? 'bg-black/30' : undefined} />
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        'fixed left-1/2 top-1/2 z-50 grid w-full max-w-md -translate-x-1/2 -translate-y-1/2 gap-4 rounded-2xl border border-cs-border bg-cs-surface p-6 shadow-xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:max-h-[90vh] sm:overflow-y-auto',
+        'fixed left-1/2 -translate-x-1/2 z-50 grid w-full max-w-md gap-4 border border-cs-border bg-cs-surface p-6 shadow-xl duration-200 sm:max-h-[90vh] sm:overflow-y-auto',
+        sheet
+          ? [
+              'max-sm:data-[state=open]:animate-sheet-slide-in max-sm:data-[state=closed]:animate-sheet-slide-out max-sm:motion-reduce:animate-none',
+              'sm:top-1/2 sm:-translate-y-1/2 sm:rounded-2xl sm:data-[state=open]:animate-in sm:data-[state=closed]:animate-out sm:data-[state=closed]:fade-out-0 sm:data-[state=open]:fade-in-0 sm:data-[state=closed]:zoom-out-95 sm:data-[state=open]:zoom-in-95',
+            ]
+          : [
+              'top-1/2 -translate-y-1/2 rounded-2xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
+            ],
         className,
       )}
       {...props}

@@ -13,7 +13,8 @@ export function ScanFab({ href }: ScanFabProps) {
     <Button
       asChild
       className={cn(
-        'fixed right-4 z-20 h-14 min-w-14 rounded-full px-5 shadow-lg',
+        'fixed right-4 z-20 h-14 min-w-14 rounded-full px-5',
+        layout.elevation.fab,
         layout.fixed.aboveTabBar,
       )}
     >

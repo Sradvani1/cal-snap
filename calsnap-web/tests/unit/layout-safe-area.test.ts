@@ -35,4 +35,29 @@ describe('layout safe-area tokens', () => {
     expect(globals).toMatch(/env\(safe-area-inset-top,\s*0px\)/);
     expect(globals).toMatch(/env\(safe-area-inset-bottom,\s*0px\)/);
   });
+
+  it('tab bar nav uses translucent blur material', () => {
+    expect(layout.tabBar.nav).toContain('bg-cs-surface/80');
+    expect(layout.tabBar.nav).toContain('backdrop-blur-md');
+  });
+
+  it('exports FAB elevation token', () => {
+    expect(layout.elevation.fab).toBe('shadow-lg dark:shadow-lg');
+  });
+
+  it('disables vertical overscroll in standalone display mode only', () => {
+    const globals = readFileSync(resolve(process.cwd(), 'app/globals.css'), 'utf8');
+
+    expect(globals).toContain('@media (display-mode: standalone)');
+    expect(globals).toContain('overscroll-behavior-y: none');
+  });
+
+  it('defines sheet slide keyframes for mobile bottom sheets', () => {
+    const globals = readFileSync(resolve(process.cwd(), 'app/globals.css'), 'utf8');
+
+    expect(globals).toContain('@keyframes sheet-slide-in');
+    expect(globals).toContain('@keyframes sheet-slide-out');
+    expect(globals).toContain('.animate-sheet-slide-in');
+    expect(globals).toContain('.animate-sheet-slide-out');
+  });
 });

@@ -183,3 +183,38 @@ body {
     opacity: 1;
   }
 }
+
+@keyframes sheet-slide-in {
+  from {
+    transform: translate(-50%, 100%);
+  }
+  to {
+    transform: translate(-50%, 0);
+  }
+}
+
+@keyframes sheet-slide-out {
+  from {
+    transform: translate(-50%, 0);
+  }
+  to {
+    transform: translate(-50%, 100%);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Duration must match SHEET_SLIDE_MS in lib/design/motion.ts */
+  .animate-sheet-slide-in {
+    animation: sheet-slide-in 300ms ease-out both;
+  }
+
+  .animate-sheet-slide-out {
+    animation: sheet-slide-out 300ms ease-out both;
+  }
+}
+
+@media (display-mode: standalone) {
+  body {
+    overscroll-behavior-y: none;
+  }
+}

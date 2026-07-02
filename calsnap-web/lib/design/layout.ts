@@ -20,7 +20,7 @@ export const layout = {
   tabBar: {
     /** Documented content row height before safe-area inset (min-h-11 + py-2 + border). */
     height: 'var(--app-tab-bar-content-height)',
-    nav: 'fixed inset-x-0 bottom-0 z-10 border-t border-cs-border bg-cs-surface pb-safe',
+    nav: 'fixed inset-x-0 bottom-0 z-10 border-t border-cs-border bg-cs-surface/80 backdrop-blur-md pb-safe',
   },
   content: {
     bottomPadding: 'pb-tab-content',
@@ -28,6 +28,9 @@ export const layout = {
   },
   fixed: {
     aboveTabBar: 'bottom-above-tab-bar',
+  },
+  elevation: {
+    fab: 'shadow-lg dark:shadow-lg',
   },
   touchTarget: 'min-h-11 min-w-11',
 } as const;
