@@ -106,7 +106,7 @@ enum AppConstants {
     }
     enum Deficit {
         static let defaultDeficitKcal: Int = 350
-        static let minDeficitKcal: Int = 250
+        static let minDeficitKcal: Int = 100
         static let maxDeficitKcal: Int = 500
         static let hardMaxDeficitKcal: Int = 750  // requires user acknowledgment
         static let minCaloriesMale: Int = 1500
@@ -810,7 +810,7 @@ Screen sequence:
 1. **Welcome** — App name, tagline ("Eat smart. Lose weight. No obsession."), brief on-device/local-storage note (no name fields)
 2. **Profile Setup** — Sex picker, date of birth (date picker, 18–90 years), height (ft/in picker with cm toggle), current weight (lbs/kg toggle). No required display name.
 3. **Goal Setup** — Goal weight, target date (date picker, 2 weeks minimum from today, 2 years maximum), activity level (card-style picker with description and icon per level)
-4. **Calorie Target Preview** — Shows calculated TDEE, recommended deficit, daily calorie target, macro targets in a summary card. Science blurb: "This estimate has a natural ±15% variance. Your real number reveals itself over 2–3 weeks of tracking." Deficit slider (250–500, with 750 unlockable via toggle + acknowledgment alert)
+4. **Calorie Target Preview** — Shows calculated TDEE, recommended deficit, daily calorie target, macro targets in a summary card. Science blurb: "This estimate has a natural ±15% variance. Your real number reveals itself over 2–3 weeks of tracking." Deficit slider (100–500, with 750 unlockable via toggle + acknowledgment alert)
 5. **HealthKit Permission** — Request HealthKit authorization with brief explanation
 6. **API Key Setup** — Gemini API key input (secure text field → Keychain), test button that fires a trivial Gemini call to validate key, success/failure indicator. USDA API key input (optional, defaults to demo key)
 7. **Done** → navigate to Dashboard

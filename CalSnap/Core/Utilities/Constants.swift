@@ -82,7 +82,7 @@ enum AppConstants {
 
     enum Deficit {
         static let defaultDeficitKcal: Int = 350
-        static let minDeficitKcal: Int = 250
+        static let minDeficitKcal: Int = 100
         static let maxDeficitKcal: Int = 500
         static let hardMaxDeficitKcal: Int = 750
         static let minCaloriesMale: Int = 1500
