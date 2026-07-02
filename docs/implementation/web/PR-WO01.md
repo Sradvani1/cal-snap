@@ -1,7 +1,7 @@
 # PR WO01: Native Shell & Safe Areas
 
 **Status:** Complete — merged to `main` (`4ea0500`). Merge gate: lint/unit/build/integration green; E2E flaky in local env — see §2. §8 manual sign-off Pending (operator).  
-**Sprint:** Optimization WO01 ([OPTIMIZATION-MASTER-PLAN.md](./OPTIMIZATION-MASTER-PLAN.md))  
+**Sprint:** Optimization WO01 ([web optimization sprint plan](../../.cursor/plans/web_optimization_sprint_68cb0f71.plan.md))  
 **Depends on:** WR10 (goal-pathway) merged to `main`; WR08 complete  
 **Plan:** [.cursor/plans/pr_wo01_native_shell_safe_areas.plan.md](../../.cursor/plans/pr_wo01_native_shell_safe_areas.plan.md)
 

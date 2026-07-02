@@ -1,7 +1,7 @@
 # PR WO02: PWA Launch & Install Polish
 
 **Status:** Complete — merged to `main`. Merge gate: lint/unit/build/integration green; E2E pre-existing onboarding flake (§2, CI run 28554632629). §8 manual sign-off Pending (operator).
-**Sprint:** Optimization WO02 ([OPTIMIZATION-MASTER-PLAN.md](./OPTIMIZATION-MASTER-PLAN.md))  
+**Sprint:** Optimization WO02 ([web optimization sprint plan](../../.cursor/plans/web_optimization_sprint_68cb0f71.plan.md))  
 **Depends on:** WO01 merged to `main` (`4ea0500`); WR08 complete  
 **Plan:** [.cursor/plans/pr_wo02_pwa_launch_install.plan.md](../../.cursor/plans/pr_wo02_pwa_launch_install.plan.md)
 

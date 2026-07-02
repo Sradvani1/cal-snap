@@ -68,8 +68,6 @@ Business logic lives in `calsnap-web/lib/`; `app/` stays thin.
 
 ## Optimization sprint (native-feel polish)
 
-- **[OPTIMIZATION-MASTER-PLAN.md](./OPTIMIZATION-MASTER-PLAN.md)** — WO01–WO05 safe areas, PWA launch, chrome/sheets, loading, keyboard/perf
-
 | PR | Doc | Status |
 |----|-----|--------|
 | WO01 | [PR-WO01.md](./PR-WO01.md) | Complete (`4ea0500`) |
@@ -77,6 +75,8 @@ Business logic lives in `calsnap-web/lib/`; `app/` stays thin.
 | WO03 | [PR-WO03.md](./PR-WO03.md) | Complete (`6e1a511`) |
 | WO04 | — | Pending |
 | WO05 | — | Pending |
+
+Sprint plan: [.cursor/plans/web_optimization_sprint_68cb0f71.plan.md](../../.cursor/plans/web_optimization_sprint_68cb0f71.plan.md)
 
 ## Source of truth
 
