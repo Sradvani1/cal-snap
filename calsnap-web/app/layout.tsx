@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { AppProviders } from '@/components/providers/AppProviders';
+import { PwaStartupImages } from '@/components/pwa/PwaStartupImages';
 import { copy } from '@/lib/copy';
 import { darkColors, lightColors } from '@/lib/design/colors';
 import './globals.css';
@@ -31,6 +32,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full antialiased">
+      <head>
+        <PwaStartupImages />
+      </head>
       <body className="min-h-full flex flex-col font-sans">
         <AppProviders>{children}</AppProviders>
       </body>

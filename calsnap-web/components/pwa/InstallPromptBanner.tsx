@@ -4,6 +4,8 @@ import { useEffect, useState, useSyncExternalStore } from 'react';
 import { PrimaryButton, SecondaryButton } from '@/components/design/PrimaryButton';
 import { copy } from '@/lib/copy';
 import { typography } from '@/lib/design/typography';
+import { SCAN_FADE_MS, useReducedMotion } from '@/lib/design/motion';
+import { cn } from '@/lib/utils/cn';
 import {
   dismissPwaInstall,
   isBeforeInstallPromptEvent,
@@ -22,6 +24,59 @@ function detectIosUserAgent(): boolean {
     return false;
   }
   return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+}
+
+interface InstallPromptBannerPanelProps {
+  isIos: boolean;
+  deferredPrompt: BeforeInstallPromptEvent | null;
+  onDismiss: () => void;
+  onInstall: () => void;
+}
+
+function InstallPromptBannerPanel({
+  isIos,
+  deferredPrompt,
+  onDismiss,
+  onInstall,
+}: InstallPromptBannerPanelProps) {
+  const reducedMotion = useReducedMotion();
+  const [animatedVisible, setAnimatedVisible] = useState(false);
+  const visible = reducedMotion || animatedVisible;
+
+  useEffect(() => {
+    if (reducedMotion) {
+      return;
+    }
+    const frame = requestAnimationFrame(() => setAnimatedVisible(true));
+    return () => cancelAnimationFrame(frame);
+  }, [reducedMotion]);
+
+  return (
+    <div
+      role="status"
+      className={cn(
+        'pt-safe mx-auto mb-4 max-w-lg rounded-2xl border border-cs-border bg-cs-surface p-4 shadow-sm',
+        'transition-opacity motion-reduce:transition-none',
+        visible ? 'opacity-100' : 'opacity-0',
+      )}
+      style={reducedMotion ? undefined : { transitionDuration: `${SCAN_FADE_MS}ms` }}
+    >
+      <p className={typography.csCardTitle}>{copy('pwa.install.title')}</p>
+      <p className={`${typography.csCaption} mt-1`}>
+        {isIos ? copy('pwa.install.body.ios') : copy('pwa.install.body.android')}
+      </p>
+      <div className="mt-4 flex flex-wrap gap-2">
+        {deferredPrompt && (
+          <PrimaryButton type="button" onClick={onInstall} className="min-h-11 flex-1">
+            {copy('pwa.install.cta')}
+          </PrimaryButton>
+        )}
+        <SecondaryButton type="button" onClick={onDismiss} className="min-h-11 flex-1">
+          {copy('pwa.install.dismiss')}
+        </SecondaryButton>
+      </div>
+    </div>
+  );
 }
 
 export function InstallPromptBanner({ uid }: InstallPromptBannerProps) {
@@ -78,24 +133,11 @@ export function InstallPromptBanner({ uid }: InstallPromptBannerProps) {
   };
 
   return (
-    <div
-      role="status"
-      className="pt-safe mx-auto mb-4 max-w-lg rounded-2xl border border-cs-border bg-cs-surface p-4 shadow-sm"
-    >
-      <p className={typography.csCardTitle}>{copy('pwa.install.title')}</p>
-      <p className={`${typography.csCaption} mt-1`}>
-        {isIos ? copy('pwa.install.body.ios') : copy('pwa.install.body.android')}
-      </p>
-      <div className="mt-4 flex flex-wrap gap-2">
-        {deferredPrompt && (
-          <PrimaryButton type="button" onClick={() => void handleInstall()} className="min-h-11 flex-1">
-            {copy('pwa.install.cta')}
-          </PrimaryButton>
-        )}
-        <SecondaryButton type="button" onClick={handleDismiss} className="min-h-11 flex-1">
-          {copy('pwa.install.dismiss')}
-        </SecondaryButton>
-      </div>
-    </div>
+    <InstallPromptBannerPanel
+      isIos={isIos}
+      deferredPrompt={deferredPrompt}
+      onDismiss={handleDismiss}
+      onInstall={() => void handleInstall()}
+    />
   );
 }

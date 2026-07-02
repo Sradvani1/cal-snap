@@ -15,7 +15,8 @@
     "test:integration": "firebase emulators:exec --only firestore,auth,storage --project demo-calsnap 'vitest run tests/integration'",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "emulators": "firebase emulators:start --project demo-calsnap"
+    "emulators": "firebase emulators:start --project demo-calsnap",
+    "generate:pwa-assets": "node scripts/generate-pwa-assets.mjs"
   },
   "dependencies": {
     "@google/genai": "^1.30.0",
@@ -48,6 +49,7 @@
     "eslint-config-next": "16.2.9",
     "firebase-tools": "^14.17.0",
     "serwist": "^9.2.1",
+    "sharp": "^0.34.5",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.1.9"
