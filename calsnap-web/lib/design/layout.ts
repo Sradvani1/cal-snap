@@ -20,6 +20,7 @@ export const layout = {
   tabBar: {
     /** Documented content row height before safe-area inset (min-h-11 + py-2 + border). */
     height: 'var(--app-tab-bar-content-height)',
+    /** In-flow flex footer — parent shell must be h-dvh overflow-hidden so only main scrolls. */
     nav: 'shrink-0 z-10 border-t border-cs-border bg-cs-surface/80 backdrop-blur-md pb-safe',
   },
   content: {

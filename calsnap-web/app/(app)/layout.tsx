@@ -45,7 +45,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <UnsavedWorkProvider>
-      <div className="app-shell flex min-h-dvh flex-col overflow-x-hidden bg-cs-background">
+      <div className="app-shell flex h-dvh max-h-dvh flex-col overflow-hidden bg-cs-background">
         <InstallPromptBanner uid={user!.uid} />
         <main
           ref={mainScrollRef}
