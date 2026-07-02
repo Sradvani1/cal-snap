@@ -177,16 +177,17 @@ export async function saveProfileFromDraft(
   uid: string,
   draft: ProfileDraft,
   db: Firestore = getFirestoreDb(),
-): Promise<UserProfile> {
+): Promise<ProfileWithExtras> {
   const profile = makeProfileFromDraft(draft, uid);
-  await saveProfile(uid, profile, {
+  const extras: ProfileExtras = {
     onboardingCompleted: true,
     currentWeightKg: draft.weightKg,
     useLbsForWeight: draft.useLbsWeight,
     useImperialForHeight: draft.useImperialHeight,
     ...defaultReminderPrefs(),
-  }, db);
-  return profile;
+  };
+  await saveProfile(uid, profile, extras, db);
+  return { profile, extras };
 }
 
 export interface CalorieTargetUpdate {

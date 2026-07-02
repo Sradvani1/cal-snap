@@ -1,5 +1,6 @@
 'use client';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { AppConstants } from '@/lib/constants';
 import { copy } from '@/lib/copy';
@@ -25,6 +26,7 @@ import {
   tdee,
 } from '@/lib/nutrition/calculator';
 import { computeGoalTargetDate } from '@/lib/nutrition/goal-pathway';
+import { queryKeys } from '@/lib/queries/query-keys';
 import { saveProfileFromDraft } from '@/lib/repositories/profile';
 
 export interface OnboardingTargets {
@@ -39,6 +41,7 @@ export interface OnboardingTargets {
 }
 
 export function useOnboarding(uid: string) {
+  const queryClient = useQueryClient();
   const [currentStep, setCurrentStep] = useState<OnboardingStep>('welcome');
   const [profileDraft, setProfileDraft] = useState<ProfileDraft>(createDefaultProfileDraft);
   const [hardDeficitUnlocked, setHardDeficitUnlocked] = useState(false);
@@ -189,11 +192,12 @@ export function useOnboarding(uid: string) {
         ...profileDraft,
         name: trimmedName(profileDraft),
       };
-      await saveProfileFromDraft(uid, draftForSave);
+      const saved = await saveProfileFromDraft(uid, draftForSave);
+      queryClient.setQueryData(queryKeys.profile(uid), saved);
     } finally {
       setSaving(false);
     }
-  }, [uid, profileDraft]);
+  }, [uid, profileDraft, queryClient]);
 
   const advance = useCallback(async () => {
     setValidationError(null);
