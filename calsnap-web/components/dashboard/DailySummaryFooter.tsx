@@ -20,8 +20,8 @@ interface DailySummaryFooterProps {
 
 const FIBER_BAND_COLORS: Record<FiberProgressBand, string> = {
   onTrack: 'text-cs-success',
-  moderate: 'text-cs-warning',
-  low: 'text-cs-danger',
+  moderate: 'text-cs-warning-text',
+  low: 'text-cs-danger-text',
 };
 
 function netCalorieColor(delta: number): string {

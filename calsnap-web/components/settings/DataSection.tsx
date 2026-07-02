@@ -3,6 +3,8 @@
 import { SecondaryButton } from '@/components/design/PrimaryButton';
 import { SectionCard } from '@/components/design/SectionCard';
 import { copy } from '@/lib/copy';
+import { formFieldFocusRingClassName } from '@/lib/design/form-field';
+import { cn } from '@/lib/utils/cn';
 
 interface DataSectionProps {
   onExport: () => void;
@@ -26,7 +28,10 @@ export function DataSection({ onExport, onDelete, isExporting }: DataSectionProp
         <button
           type="button"
           onClick={onDelete}
-          className="min-h-11 rounded-lg border border-cs-danger/30 bg-cs-danger/10 px-4 py-3 text-sm font-medium text-cs-danger hover:bg-cs-danger/15"
+          className={cn(
+            'min-h-11 rounded-lg border border-cs-danger/30 bg-cs-danger/10 px-4 py-3 text-sm font-medium text-cs-danger-text hover:bg-cs-danger/15',
+            formFieldFocusRingClassName,
+          )}
         >
           {copy('settings.data.deleteAll')}
         </button>

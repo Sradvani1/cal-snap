@@ -1,5 +1,6 @@
 import type { ScannerErrorKind } from '@/lib/scanner/use-meal-scanner';
 import { copy } from '@/lib/copy';
+import { formFieldFocusRingClassName } from '@/lib/design/form-field';
 import { typography } from '@/lib/design/typography';
 import { cn } from '@/lib/utils/cn';
 
@@ -30,7 +31,7 @@ export function ScannerErrorBanner({ error, onRetry, onManualEntry }: ScannerErr
       className="rounded-xl border border-cs-danger/30 bg-cs-danger/10 p-4"
       role="alert"
     >
-      <p className={cn(typography.csBody, 'text-cs-danger')}>{errorMessage(error)}</p>
+      <p className={cn(typography.csBody, 'text-cs-danger-text')}>{errorMessage(error)}</p>
       <div className="mt-3 flex flex-wrap gap-2">
         {onRetry && (
           <button
@@ -45,7 +46,10 @@ export function ScannerErrorBanner({ error, onRetry, onManualEntry }: ScannerErr
           <button
             type="button"
             onClick={onManualEntry}
-            className="min-h-11 rounded-lg border border-cs-danger/30 bg-cs-surface px-4 py-2 text-sm font-medium text-cs-danger"
+            className={cn(
+              'min-h-11 rounded-lg border border-cs-danger/30 bg-cs-surface px-4 py-2 text-sm font-medium text-cs-danger-text',
+              formFieldFocusRingClassName,
+            )}
           >
             {copy('scanner.capture.manualEntry')}
           </button>

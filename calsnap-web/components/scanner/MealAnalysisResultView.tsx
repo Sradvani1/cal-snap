@@ -53,6 +53,7 @@ function ScanStaggerSection({
         className,
       )}
       style={reducedMotion ? undefined : { transitionDuration: `${SCAN_FADE_MS}ms` }}
+      inert={!visible ? true : undefined}
     >
       {children}
     </div>
@@ -137,7 +138,7 @@ export function MealAnalysisResultView({
 
       {scanner.allItemsFlagged && !scanner.isManualEntry && (
         <ScanStaggerSection index={sectionIndex++} reducedMotion={reducedMotion}>
-          <div className="rounded-lg border border-cs-warning/30 bg-cs-warning/10 px-4 py-3 text-sm text-cs-warning">
+          <div className="rounded-lg border border-cs-warning/30 bg-cs-warning/10 px-4 py-3 text-sm text-cs-warning-text">
             {copy('scanner.result.lowConfidence')}
           </div>
         </ScanStaggerSection>
@@ -165,7 +166,7 @@ export function MealAnalysisResultView({
       {scanner.logError && (
         <ScanStaggerSection index={sectionIndex++} reducedMotion={reducedMotion}>
           <p
-            className="rounded-lg border border-cs-danger/30 bg-cs-danger/10 px-4 py-3 text-sm text-cs-danger"
+            className="rounded-lg border border-cs-danger/30 bg-cs-danger/10 px-4 py-3 text-sm text-cs-danger-text"
             role="alert"
           >
             {scanner.logError}
@@ -205,7 +206,7 @@ export function MealAnalysisResultView({
             type="button"
             disabled={isLogging}
             onClick={onDiscard}
-            className="min-h-11 w-full rounded-lg px-4 py-2 text-sm font-medium text-cs-danger disabled:opacity-50"
+            className="min-h-11 w-full rounded-lg px-4 py-2 text-sm font-medium text-cs-danger-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cs-primary focus-visible:ring-offset-2 disabled:opacity-50"
           >
             {isEditing ? copy('common.button.cancel') : copy('scanner.result.discard')}
           </button>

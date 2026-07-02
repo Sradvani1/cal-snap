@@ -34,7 +34,7 @@ export function MealListSection({
                 href="/scan"
                 className={cn(
                   typography.csCaption,
-                  'underline-offset-2 hover:text-cs-foreground hover:underline',
+                  'underline underline-offset-2 hover:text-cs-foreground',
                 )}
               >
                 {copy('mealLog.addMeal', { mealType: MEAL_TYPE_LABELS[mealType] })}

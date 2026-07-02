@@ -3,6 +3,7 @@
 import { SectionCard } from '@/components/design/SectionCard';
 import type { MacroKind } from '@/lib/services/profile-update-service';
 import { copy } from '@/lib/copy';
+import { formFieldFocusRingClassName } from '@/lib/design/form-field';
 import { typography } from '@/lib/design/typography';
 import { cn } from '@/lib/utils/cn';
 
@@ -41,7 +42,7 @@ export function MacroTargetsSection({
           value={fatPct}
           onChange={(value) => onAdjust('fat', value)}
         />
-        <p className={cn('text-sm', sumValid ? typography.csCaption : 'text-cs-danger')}>
+        <p className={cn('text-sm', sumValid ? typography.csCaption : 'text-cs-danger-text')}>
           {copy('settings.macro.total', { sum: macroSum })}{' '}
           {sumValid ? '' : copy('settings.macro.mustEqual100')}
         </p>
@@ -71,7 +72,7 @@ function MacroSlider({
         max={100}
         value={value}
         onChange={(event) => onChange(Number(event.target.value))}
-        className="box-border w-full min-w-0 max-w-full"
+        className={cn('box-border w-full min-w-0 max-w-full', formFieldFocusRingClassName)}
       />
     </label>
   );

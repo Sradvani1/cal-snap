@@ -10,6 +10,7 @@ import { ManualMealEntryView } from '@/components/scanner/ManualMealEntryView';
 import { ScannerErrorBanner } from '@/components/scanner/ScannerErrorBanner';
 import { useAuth } from '@/lib/auth/auth-context';
 import { copy } from '@/lib/copy';
+import { formFieldFocusRingClassName } from '@/lib/design/form-field';
 import { layout } from '@/lib/design/layout';
 import { typography } from '@/lib/design/typography';
 import { cn } from '@/lib/utils/cn';
@@ -111,7 +112,10 @@ export default function ScanPage() {
           <button
             type="button"
             onClick={handleDiscard}
-            className="text-sm font-medium text-cs-danger"
+            className={cn(
+              'text-sm font-medium text-cs-danger-text',
+              formFieldFocusRingClassName,
+            )}
           >
             {copy('scanner.discard')}
           </button>

@@ -25,6 +25,10 @@ import { ProfileSection } from '@/components/settings/ProfileSection';
 import { UnitsSection } from '@/components/settings/UnitsSection';
 import { copy } from '@/lib/copy';
 import { layout } from '@/lib/design/layout';
+import {
+  scrollFormFieldIntoView,
+  useKeyboardInset,
+} from '@/lib/hooks/use-keyboard-inset';
 import { typography } from '@/lib/design/typography';
 import { cn } from '@/lib/utils/cn';
 
@@ -45,6 +49,7 @@ function SettingsContent({ uid, profileData }: SettingsContentProps) {
   const [saveError, setSaveError] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showPlateauSheet, setShowPlateauSheet] = useState(false);
+  const keyboardInset = useKeyboardInset();
 
   const handleSave = useCallback(async () => {
     if (!form.canSave) {
@@ -130,9 +135,21 @@ function SettingsContent({ uid, profileData }: SettingsContentProps) {
       <div
         className={cn(
           layout.pageShell,
-          'min-h-full gap-4 py-8',
+          'min-h-full gap-4 overflow-y-auto py-8',
           form.isDirty ? layout.content.bottomPaddingWithSaveBar : layout.content.bottomPadding,
         )}
+        style={
+          keyboardInset > 0
+            ? {
+                paddingBottom: `calc(${
+                  form.isDirty
+                    ? 'var(--app-content-bottom-padding-with-save-bar)'
+                    : 'var(--app-content-bottom-padding)'
+                } + ${keyboardInset}px)`,
+              }
+            : undefined
+        }
+        onFocusCapture={scrollFormFieldIntoView}
       >
         <header>
           <h1 className={`${typography.csCardTitle} text-2xl`}>{copy('settings.title')}</h1>
@@ -198,7 +215,7 @@ function SettingsContent({ uid, profileData }: SettingsContentProps) {
         <AccountSection onSignOut={() => void signOut()} />
 
         {form.validationMessage && form.isDirty && (
-          <p className="text-sm text-cs-danger">{form.validationMessage}</p>
+          <p className="text-sm text-cs-danger-text" role="alert">{form.validationMessage}</p>
         )}
       </div>
 
@@ -206,8 +223,13 @@ function SettingsContent({ uid, profileData }: SettingsContentProps) {
         <div
           className={cn(
             'fixed inset-x-0 z-40 overflow-x-hidden border-t border-cs-border bg-cs-surface/95 px-4 py-3 backdrop-blur',
-            layout.fixed.aboveTabBar,
+            keyboardInset === 0 && layout.fixed.aboveTabBar,
           )}
+          style={
+            keyboardInset > 0
+              ? { bottom: `calc(var(--app-tab-bar-height) + ${keyboardInset}px)` }
+              : undefined
+          }
         >
           <div className="mx-auto flex w-full min-w-0 max-w-lg gap-3">
             <PrimaryButton

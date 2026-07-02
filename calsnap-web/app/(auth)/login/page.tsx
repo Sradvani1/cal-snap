@@ -8,14 +8,9 @@ import { PrimaryButton, SecondaryButton } from '@/components/design/PrimaryButto
 import { useAuth } from '@/lib/auth/auth-context';
 import { copy } from '@/lib/copy';
 import { typography } from '@/lib/design/typography';
-import { formFieldFocusRingClassName } from '@/lib/design/form-field';
+import { formFieldInputClassName } from '@/lib/design/form-field';
 import { useProfile } from '@/lib/queries/use-profile';
 import { cn } from '@/lib/utils/cn';
-
-const inputClassName = [
-  'rounded-lg border border-cs-border bg-cs-surface px-3 py-2 text-sm text-cs-foreground',
-  formFieldFocusRingClassName,
-].join(' ');
 
 export default function LoginPage() {
   const { user, loading, authError, signInWithEmail, signInWithGoogle } = useAuth();
@@ -77,9 +72,11 @@ export default function LoginPage() {
             type="email"
             required
             autoComplete="email"
+            inputMode="email"
+            enterKeyHint="next"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className={inputClassName}
+            className={formFieldInputClassName}
           />
         </label>
         <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
@@ -88,9 +85,10 @@ export default function LoginPage() {
             type="password"
             required
             autoComplete="current-password"
+            enterKeyHint="go"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            className={inputClassName}
+            className={formFieldInputClassName}
           />
         </label>
         {error && <p className="text-sm text-cs-danger">{error}</p>}

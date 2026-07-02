@@ -11,6 +11,11 @@ import { snoozeWeighInUntilTomorrow } from '@/lib/progress/weigh-in-snooze';
 import { useLogWeighIn } from '@/lib/queries/use-log-weigh-in';
 import type { SaveWeighInResult } from '@/lib/services/weigh-in-service';
 import { typography } from '@/lib/design/typography';
+import { formFieldFocusRingClassName, formFieldInputClassName } from '@/lib/design/form-field';
+import {
+  scrollFormFieldIntoView,
+  useKeyboardInset,
+} from '@/lib/hooks/use-keyboard-inset';
 import { cn } from '@/lib/utils/cn';
 
 interface WeighInSheetProps {
@@ -39,6 +44,7 @@ function WeighInSheetForm({
 }: WeighInSheetFormProps) {
   const logMutation = useLogWeighIn(uid);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const keyboardInset = useKeyboardInset();
 
   const form = useWeighInForm(
     profile,
@@ -71,13 +77,18 @@ function WeighInSheetForm({
   };
 
   return (
-    <>
-      <div className="flex rounded-lg border border-cs-border p-1">
+    <div
+      className="overflow-y-auto"
+      style={{ paddingBottom: keyboardInset }}
+      onFocusCapture={scrollFormFieldIntoView}
+    >
+      <div className="flex rounded-lg border border-cs-border p-1" role="group" aria-label={copy('common.label.weight')}>
         <button
           type="button"
+          aria-pressed={!form.useLbs}
           onClick={() => form.setUseLbs(false)}
           className={cn(
-            'min-h-11 flex-1 rounded-md text-sm font-medium',
+            'min-h-11 flex-1 rounded-md text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cs-primary focus-visible:ring-offset-2',
             !form.useLbs
               ? 'bg-cs-primary text-cs-on-primary'
               : 'text-cs-muted',
@@ -87,9 +98,10 @@ function WeighInSheetForm({
         </button>
         <button
           type="button"
+          aria-pressed={form.useLbs}
           onClick={() => form.setUseLbs(true)}
           className={cn(
-            'min-h-11 flex-1 rounded-md text-sm font-medium',
+            'min-h-11 flex-1 rounded-md text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cs-primary focus-visible:ring-offset-2',
             form.useLbs
               ? 'bg-cs-primary text-cs-on-primary'
               : 'text-cs-muted',
@@ -104,12 +116,16 @@ function WeighInSheetForm({
         <input
           type="number"
           inputMode="decimal"
+          enterKeyHint="done"
           min={form.range.min}
           max={form.range.max}
           step={form.step}
           value={form.weightInput}
           onChange={(event) => form.setWeightInput(event.target.value)}
-          className="w-full border-0 bg-transparent text-center text-4xl font-semibold tabular-nums text-cs-foreground outline-none"
+          className={cn(
+            'w-full border-0 bg-transparent text-center text-4xl font-semibold tabular-nums text-cs-foreground',
+            formFieldFocusRingClassName,
+          )}
         />
       </label>
 
@@ -120,7 +136,7 @@ function WeighInSheetForm({
           max={form.maxDateInput}
           value={form.selectedDate}
           onChange={(event) => form.setDateInputValue(event.target.value)}
-          className="w-full rounded-lg border border-cs-border bg-cs-surface px-3 py-2 text-sm text-cs-foreground"
+          className={formFieldInputClassName}
         />
       </label>
 
@@ -134,7 +150,7 @@ function WeighInSheetForm({
       </p>
 
       {saveError && (
-        <p className="mt-3 text-sm text-cs-danger" role="alert">
+        <p className="mt-3 text-sm text-cs-danger-text" role="alert">
           {saveError}
         </p>
       )}
@@ -164,12 +180,12 @@ function WeighInSheetForm({
         <button
           type="button"
           onClick={onClose}
-          className="w-full rounded-lg py-2 text-sm text-cs-muted hover:bg-cs-muted/10"
+          className="w-full rounded-lg py-2 text-sm text-cs-muted hover:bg-cs-muted/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cs-primary focus-visible:ring-offset-2"
         >
           {copy('common.button.cancel')}
         </button>
       </div>
-    </>
+    </div>
   );
 }
 

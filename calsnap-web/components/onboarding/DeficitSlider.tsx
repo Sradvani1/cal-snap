@@ -3,6 +3,7 @@
 import { SecondaryButton } from '@/components/design/PrimaryButton';
 import { AppConstants } from '@/lib/constants';
 import { copy } from '@/lib/copy';
+import { formFieldFocusRingClassName } from '@/lib/design/form-field';
 import { typography } from '@/lib/design/typography';
 import { cn } from '@/lib/utils/cn';
 
@@ -43,7 +44,7 @@ export function DeficitSlider({
           step={25}
           value={deficit}
           onChange={(event) => onDeficitChange(Number(event.target.value))}
-          className="box-border w-full min-w-0 max-w-full"
+          className={cn('box-border w-full min-w-0 max-w-full', formFieldFocusRingClassName)}
         />
         <span className={typography.csCaption}>
           {copy('onboarding.calorie.recommended', {

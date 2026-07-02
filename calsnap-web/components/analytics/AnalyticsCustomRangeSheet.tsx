@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { AppDialog } from '@/components/design/AppDialog';
 import { PrimaryButton, SecondaryButton } from '@/components/design/PrimaryButton';
 import { copy } from '@/lib/copy';
+import { formFieldInputClassName } from '@/lib/design/form-field';
 import { typography } from '@/lib/design/typography';
 import {
   dateFromLocalDateInput,
@@ -41,7 +42,7 @@ function AnalyticsCustomRangeSheetForm({
             type="date"
             value={startValue}
             onChange={(event) => setStartValue(event.target.value)}
-            className="min-h-11 rounded-lg border border-cs-border bg-cs-surface px-3 py-2 text-sm text-cs-foreground"
+            className={cn(formFieldInputClassName, 'min-h-11')}
           />
         </label>
         <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
@@ -50,7 +51,7 @@ function AnalyticsCustomRangeSheetForm({
             type="date"
             value={endValue}
             onChange={(event) => setEndValue(event.target.value)}
-            className="min-h-11 rounded-lg border border-cs-border bg-cs-surface px-3 py-2 text-sm text-cs-foreground"
+            className={cn(formFieldInputClassName, 'min-h-11')}
           />
         </label>
       </div>

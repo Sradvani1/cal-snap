@@ -4,7 +4,7 @@ import {
   LocalNumberInput,
   parseIntegerInputValue,
 } from '@/components/design/LocalNumberInput';
-import { formFieldInputClassName } from '@/lib/design/form-field';
+import { formFieldInputClassName, formFieldFocusRingClassName } from '@/lib/design/form-field';
 import {
   clampFeet,
   clampInches,
@@ -35,12 +35,18 @@ export function HeightInputFields({
   return (
     <div className="flex min-w-0 flex-col gap-2">
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-x-3 gap-y-1">
-        <span className={typography.csMacroLabel}>{copy('common.label.height')}</span>
+        {useImperialHeight ? (
+          <span className={typography.csMacroLabel}>{copy('common.label.height')}</span>
+        ) : null}
         {onToggleImperial && (
           <button
             type="button"
             onClick={onToggleImperial}
-            className={cn(typography.csCaption, 'shrink-0 font-medium underline')}
+            className={cn(
+              typography.csCaption,
+              'shrink-0 font-medium underline',
+              formFieldFocusRingClassName,
+            )}
           >
             {useImperialHeight ? copy('common.units.useCm') : copy('common.units.useFtIn')}
           </button>
@@ -78,14 +84,17 @@ export function HeightInputFields({
           </label>
         </div>
       ) : (
-        <LocalNumberInput
-          key="metric"
-          inputMode="numeric"
-          value={Math.round(heightCm)}
-          commitValue={(value) => Math.min(230, Math.max(120, Math.round(value)))}
-          onChange={onHeightCmChange}
-          className={inputClassName}
-        />
+        <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
+          {copy('common.label.height')}
+          <LocalNumberInput
+            key="metric"
+            inputMode="numeric"
+            value={Math.round(heightCm)}
+            commitValue={(value) => Math.min(230, Math.max(120, Math.round(value)))}
+            onChange={onHeightCmChange}
+            className={inputClassName}
+          />
+        </label>
       )}
     </div>
   );

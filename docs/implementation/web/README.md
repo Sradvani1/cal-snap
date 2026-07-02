@@ -74,9 +74,11 @@ Business logic lives in `calsnap-web/lib/`; `app/` stays thin.
 | WO02 | [PR-WO02.md](./PR-WO02.md) | Complete (`c2ab40f`) |
 | WO03 | [PR-WO03.md](./PR-WO03.md) | Complete (`6e1a511`) |
 | WO04 | [PR-WO04.md](./PR-WO04.md) | Complete |
-| WO05 | — | Pending |
+| WO05 | [PR-WO05.md](./PR-WO05.md) | Complete |
 
-Sprint plan: [.cursor/plans/web_optimization_sprint_68cb0f71.plan.md](../../.cursor/plans/web_optimization_sprint_68cb0f71.plan.md)
+Sprint plan: [OPTIMIZATION-MASTER-PLAN.md](./OPTIMIZATION-MASTER-PLAN.md) · [PERF-BASELINE.md](./PERF-BASELINE.md) · [.cursor/plans/web_optimization_sprint_68cb0f71.plan.md](../../.cursor/plans/web_optimization_sprint_68cb0f71.plan.md)
+
+**Optimization sprint code-complete; operator manual QA Pending** (WR07/WR08/WO05 §8).
 
 ## Source of truth
 

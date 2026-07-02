@@ -5,6 +5,11 @@ import { AppDialog } from '@/components/design/AppDialog';
 import { PrimaryButton, SecondaryButton } from '@/components/design/PrimaryButton';
 import type { EditableFoodItem } from '@/lib/scanner/editable-food-item';
 import { copy } from '@/lib/copy';
+import { formFieldInputClassName } from '@/lib/design/form-field';
+import {
+  scrollFormFieldIntoView,
+  useKeyboardInset,
+} from '@/lib/hooks/use-keyboard-inset';
 import { typography } from '@/lib/design/typography';
 import { cn } from '@/lib/utils/cn';
 
@@ -23,6 +28,7 @@ function FoodItemEditForm({
   onClose: () => void;
   onSave: (id: string, patch: { name: string; weightG: number }) => void;
 }) {
+  const keyboardInset = useKeyboardInset();
   const [name, setName] = useState(item.name);
   const [weightG, setWeightG] = useState(String(item.weightG));
 
@@ -36,14 +42,19 @@ function FoodItemEditForm({
   };
 
   return (
-    <>
+    <div
+      className="overflow-y-auto"
+      style={{ paddingBottom: keyboardInset }}
+      onFocusCapture={scrollFormFieldIntoView}
+    >
       <label className="mb-3 block">
         <span className={cn(typography.csCaption, 'mb-1 block')}>{copy('common.label.name')}</span>
         <input
           type="text"
+          enterKeyHint="next"
           value={name}
           onChange={(event) => setName(event.target.value)}
-          className="w-full rounded-lg border border-cs-border bg-cs-surface px-3 py-2 text-sm text-cs-foreground"
+          className={formFieldInputClassName}
         />
       </label>
 
@@ -53,11 +64,13 @@ function FoodItemEditForm({
         </span>
         <input
           type="number"
+          inputMode="decimal"
+          enterKeyHint="done"
           min={0}
           step={1}
           value={weightG}
           onChange={(event) => setWeightG(event.target.value)}
-          className="w-full rounded-lg border border-cs-border bg-cs-surface px-3 py-2 text-sm tabular-nums text-cs-foreground"
+          className={cn(formFieldInputClassName, 'tabular-nums')}
         />
         <p className={cn(typography.csCaption, 'mt-1')}>{copy('scanner.editSheet.weightHint')}</p>
       </label>
@@ -70,7 +83,7 @@ function FoodItemEditForm({
           {copy('common.button.save')}
         </PrimaryButton>
       </div>
-    </>
+    </div>
   );
 }
 

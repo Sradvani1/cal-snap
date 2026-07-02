@@ -14,6 +14,10 @@ import { ONBOARDING_STEP_TITLES } from '@/lib/onboarding/onboarding-step';
 import { useOnboarding } from '@/lib/onboarding/use-onboarding';
 import { copy } from '@/lib/copy';
 import { layout } from '@/lib/design/layout';
+import {
+  scrollFormFieldIntoView,
+  useKeyboardInset,
+} from '@/lib/hooks/use-keyboard-inset';
 import { markPwaInstallEligible } from '@/lib/pwa/install-storage';
 import { typography } from '@/lib/design/typography';
 import { cn } from '@/lib/utils/cn';
@@ -22,6 +26,7 @@ export default function OnboardingPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const onboarding = useOnboarding(user?.uid ?? '');
+  const keyboardInset = useKeyboardInset();
 
   const handleDone = useCallback(() => {
     if (user) {
@@ -39,7 +44,11 @@ export default function OnboardingPage() {
   const showContinue = currentStep !== 'done';
 
   return (
-    <div className={cn(layout.pageShell, 'min-h-full gap-5 py-8')}>
+    <div
+      className={cn(layout.pageShell, 'min-h-full gap-5 overflow-y-auto py-8')}
+      style={keyboardInset > 0 ? { paddingBottom: keyboardInset } : undefined}
+      onFocusCapture={scrollFormFieldIntoView}
+    >
       <div className="mb-6">
         <div className={`${typography.csCaption} mb-2 flex items-center justify-between text-xs`}>
           <span>{ONBOARDING_STEP_TITLES[currentStep]}</span>
@@ -76,7 +85,7 @@ export default function OnboardingPage() {
       </div>
 
       {onboarding.validationError && (
-        <p className="mt-4 text-sm text-cs-danger">{onboarding.validationError}</p>
+        <p className="mt-4 text-sm text-cs-danger-text" role="alert">{onboarding.validationError}</p>
       )}
 
       {(showBack || showContinue) && (

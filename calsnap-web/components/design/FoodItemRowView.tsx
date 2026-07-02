@@ -50,7 +50,7 @@ export function FoodItemRowView({
             </p>
           )}
           {flagged && (
-            <p className="mt-1 text-xs font-medium text-cs-warning">
+            <p className="mt-1 text-xs font-medium text-cs-warning-text">
               {copy('designSystem.foodItem.flaggedAdjust')}
             </p>
           )}

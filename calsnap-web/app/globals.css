@@ -15,7 +15,9 @@
   --color-cs-border: var(--cs-border);
   --color-cs-success: var(--cs-success);
   --color-cs-warning: var(--cs-warning);
+  --color-cs-warning-text: var(--cs-warning-text);
   --color-cs-danger: var(--cs-danger);
+  --color-cs-danger-text: var(--cs-danger-text);
   --color-cs-protein: var(--cs-protein);
   --color-cs-carbs: var(--cs-carbs);
   --color-cs-fat: var(--cs-fat);
@@ -71,7 +73,9 @@
   --cs-border: #e5e5ea;
   --cs-success: #34c759;
   --cs-warning: #ffcc00;
+  --cs-warning-text: #8a6d00;
   --cs-danger: #ff3b30;
+  --cs-danger-text: #c41e16;
   --cs-protein: #007aff;
   --cs-carbs: #ff9500;
   --cs-fat: #af52de;
@@ -90,7 +94,9 @@
     --cs-border: #38383a;
     --cs-success: #30d158;
     --cs-warning: #ffd60a;
+    --cs-warning-text: #ffd60a;
     --cs-danger: #ff453a;
+    --cs-danger-text: #ff453a;
     --cs-protein: #4099ff;
     --cs-carbs: #ff9f0a;
     --cs-fat: #bf5af2;
@@ -110,7 +116,9 @@
   --cs-border: #38383a;
   --cs-success: #30d158;
   --cs-warning: #ffd60a;
+  --cs-warning-text: #ffd60a;
   --cs-danger: #ff453a;
+  --cs-danger-text: #ff453a;
   --cs-protein: #4099ff;
   --cs-carbs: #ff9f0a;
   --cs-fat: #bf5af2;

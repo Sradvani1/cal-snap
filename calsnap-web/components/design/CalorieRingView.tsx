@@ -19,9 +19,9 @@ function bandTextClass(band: CalorieProgressBand): string {
     case 'under':
       return 'text-cs-success';
     case 'onTrack':
-      return 'text-cs-warning';
+      return 'text-cs-warning-text';
     case 'over':
-      return 'text-cs-danger';
+      return 'text-cs-danger-text';
   }
 }
 

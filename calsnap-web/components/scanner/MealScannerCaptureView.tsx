@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { PrimaryButton, SecondaryButton } from '@/components/design/PrimaryButton';
 import type { MealScannerState } from '@/lib/scanner/use-meal-scanner';
 import { copy } from '@/lib/copy';
+import { formFieldInputClassName } from '@/lib/design/form-field';
 import { typography } from '@/lib/design/typography';
 import { cn } from '@/lib/utils/cn';
 
@@ -84,7 +85,7 @@ export function MealScannerCaptureView({ scanner }: MealScannerCaptureViewProps)
           onChange={(event) => scanner.setTextDescription(event.target.value)}
           rows={3}
           placeholder={copy('scanner.capture.descriptionPlaceholder')}
-          className="w-full rounded-lg border border-cs-border bg-cs-surface px-3 py-2 text-sm text-cs-foreground"
+          className={formFieldInputClassName}
         />
       </label>
 

@@ -97,12 +97,12 @@ export function confidenceBadgeStyles(level: ConfidenceLevel): {
       };
     case 'medium':
       return {
-        container: 'bg-cs-warning/15 text-cs-warning',
+        container: 'bg-cs-warning/15 text-cs-warning-text',
         highContrastBorder: 'border border-cs-warning',
       };
     case 'low':
       return {
-        container: 'bg-cs-danger/15 text-cs-danger',
+        container: 'bg-cs-danger/15 text-cs-danger-text',
         highContrastBorder: 'border border-cs-danger',
       };
     case 'manual':
