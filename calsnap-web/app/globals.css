@@ -165,11 +165,6 @@ body {
   padding-bottom: calc(1.5rem + var(--safe-area-bottom));
 }
 
-input[type='date'] {
-  max-width: 100%;
-  min-width: 0;
-}
-
 @keyframes chart-fade-in {
   from {
     opacity: 0;

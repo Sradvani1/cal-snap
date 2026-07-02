@@ -69,7 +69,7 @@ export function ProfileSetupStep({ draft, onUpdate }: ProfileSetupStepProps) {
         </div>
       </fieldset>
 
-      <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
+      <label className={cn(typography.csMacroLabel, 'flex min-w-0 flex-col gap-1')}>
         {copy('common.label.dateOfBirth')}
         <LocalDateInput
           value={draft.dateOfBirth}

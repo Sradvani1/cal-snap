@@ -21,7 +21,6 @@ describe('layout safe-area tokens', () => {
     expect(globals).toContain('--safe-area-top: env(safe-area-inset-top, 0px)');
     expect(globals).toContain('--safe-area-bottom: env(safe-area-inset-bottom, 0px)');
     expect(globals).toContain('--app-tab-bar-content-height: calc(2.75rem + 1rem + 1px)');
-    expect(globals).toContain("input[type='date']");
     expect(globals).toContain('.app-shell:has(> [role=\'status\']) .app-main');
     expect(globals).toContain('.pb-sheet-safe');
     expect(globals).toContain('.pt-safe');

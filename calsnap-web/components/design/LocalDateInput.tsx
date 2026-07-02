@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState, type InputHTMLAttributes } from 'react';
+import { useCallback, useRef, type InputHTMLAttributes } from 'react';
 import { cn } from '@/lib/utils/cn';
 import {
   dateFromLocalDateInput,
@@ -11,15 +11,30 @@ import {
 export interface LocalDateInputProps
   extends Omit<
     InputHTMLAttributes<HTMLInputElement>,
-    'type' | 'value' | 'defaultValue' | 'onChange'
+    'type' | 'value' | 'defaultValue' | 'onChange' | 'readOnly'
   > {
   value: Date;
   onChange: (date: Date) => void;
 }
 
+function openNativeDatePicker(nativeInput: HTMLInputElement | null): void {
+  if (!nativeInput) {
+    return;
+  }
+  nativeInput.focus({ preventScroll: true });
+  if (typeof nativeInput.showPicker === 'function') {
+    try {
+      nativeInput.showPicker();
+    } catch {
+      // showPicker can throw when not allowed; focus may still open the picker on iOS.
+    }
+  }
+}
+
 /**
- * Date input that keeps a local string value while editing so year/month/day
- * fields can be changed without the controlled input snapping back mid-edit.
+ * Date field styled like other text inputs. Safari gives `type="date"` a fixed
+ * minimum width that CSS cannot shrink, so the visible control is a read-only
+ * text input; a clipped native date input supplies the system picker.
  */
 export function LocalDateInput({
   value,
@@ -29,17 +44,15 @@ export function LocalDateInput({
   max,
   onFocus,
   onBlur,
+  onClick,
   ...rest
 }: LocalDateInputProps) {
-  const committedValue = toLocalDateInputValue(value);
-  const [draftValue, setDraftValue] = useState(committedValue);
-  const [isFocused, setIsFocused] = useState(false);
-  const displayValue = isFocused ? draftValue : committedValue;
+  const nativeRef = useRef<HTMLInputElement>(null);
+  const displayValue = toLocalDateInputValue(value);
 
-  const handleChange = useCallback(
+  const handleNativeChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const next = event.target.value;
-      setDraftValue(next);
       if (isCompleteDateInputValue(next)) {
         onChange(dateFromLocalDateInput(next));
       }
@@ -47,25 +60,37 @@ export function LocalDateInput({
     [onChange],
   );
 
+  const handleFocus = useCallback(
+    (event: React.FocusEvent<HTMLInputElement>) => {
+      openNativeDatePicker(nativeRef.current);
+      onFocus?.(event);
+    },
+    [onFocus],
+  );
+
   return (
-    <div className="max-w-full min-w-0 overflow-hidden">
+    <div className="w-full min-w-0">
       <input
+        type="text"
+        readOnly
+        value={displayValue}
+        onFocus={handleFocus}
+        onClick={onClick}
+        onBlur={onBlur}
+        className={cn('cursor-pointer', className)}
+        autoComplete="bday"
+        {...rest}
+      />
+      <input
+        ref={nativeRef}
         type="date"
+        tabIndex={-1}
+        aria-hidden
         value={displayValue}
         min={min}
         max={max}
-        onFocus={(event) => {
-          setDraftValue(committedValue);
-          setIsFocused(true);
-          onFocus?.(event);
-        }}
-        onBlur={(event) => {
-          setIsFocused(false);
-          onBlur?.(event);
-        }}
-        onChange={handleChange}
-        className={cn('box-border w-full min-w-0 max-w-full', className)}
-        {...rest}
+        onChange={handleNativeChange}
+        className="pointer-events-none fixed h-px w-px overflow-hidden opacity-0"
       />
     </div>
   );
