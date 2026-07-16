@@ -24,6 +24,9 @@ Package.resolved
 !.cursor/rules/
 !.cursor/plans/
 
+# Agents (generated)
+.agents/
+
 # CalSnap Web (Next.js)
 calsnap-web/node_modules/
 calsnap-web/.next/
