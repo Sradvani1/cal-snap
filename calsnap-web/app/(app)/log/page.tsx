@@ -58,13 +58,12 @@ export default function LogPage() {
           icon="🍽️"
           titleKey="mealLog.empty.title"
           messageKey="mealLog.empty.subtitle"
-          actionTitleKey="mealLog.empty.action"
-          actionHref="/scan"
         />
       ) : (
         <SectionCard>
           <MealListSection
             mealsByType={aggregation.mealsByType}
+            showAddButton={false}
             showRowActions
             onDeleteMeal={handleDeleteMeal}
           />

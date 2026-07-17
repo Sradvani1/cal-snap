@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils/cn';
 
 interface MealListSectionProps {
   mealsByType: MealsByType;
+  showAddButton?: boolean;
   showRowActions?: boolean;
   onDeleteMeal?: (mealId: string) => void;
 }
@@ -32,6 +33,7 @@ function AddMealLink({ mealType }: { mealType: MealType }) {
 
 export function MealListSection({
   mealsByType,
+  showAddButton = true,
   showRowActions = false,
   onDeleteMeal,
 }: MealListSectionProps) {
@@ -45,16 +47,18 @@ export function MealListSection({
               <h3 className={cn(typography.csCaption, 'font-semibold')}>
                 {MEAL_TYPE_LABELS[mealType]}
               </h3>
-              <Link
-                href={`/scan?mealType=${mealType}`}
-                aria-label={copy('mealLog.addMeal', { mealType: MEAL_TYPE_LABELS[mealType] })}
-                className="flex h-6 w-6 items-center justify-center rounded-full text-cs-muted hover:bg-cs-muted/15 hover:text-cs-foreground"
-              >
-                +
-              </Link>
+              {showAddButton && (
+                <Link
+                  href={`/scan?mealType=${mealType}`}
+                  aria-label={copy('mealLog.addMeal', { mealType: MEAL_TYPE_LABELS[mealType] })}
+                  className="flex h-6 w-6 items-center justify-center rounded-full text-cs-muted hover:bg-cs-muted/15 hover:text-cs-foreground"
+                >
+                  +
+                </Link>
+              )}
             </div>
             {meals.length === 0 ? (
-              <AddMealLink mealType={mealType} />
+              showAddButton ? <AddMealLink mealType={mealType} /> : null
             ) : (
               <div className="space-y-2">
                 {meals.map((meal) => (
