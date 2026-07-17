@@ -1,6 +1,6 @@
 # CalSnap Web — Implementation Docs
 
-Implementation checklists for the CalSnap Web PR series live here. Each merged PR adds a `PR-W0N.md` file mirroring the iOS format in [`../PR-01.md`](../PR-01.md).
+Implementation checklists for the CalSnap Web PR series live here. Each merged PR adds a `PR-W0N.md` file.
 
 ## Stack (W01 baseline)
 
@@ -90,7 +90,7 @@ Supersedes WO01 fixed tab bar / save-bar padding model, WO03 ScanFab elevation, 
 
 ## Source of truth
 
-- [`docs/technical-spec.md`](../../technical-spec.md) — architecture, models, services
-- [`docs/product-research.md`](../../product-research.md) — product and science
-- [`docs/engineering-rules.md`](../../engineering-rules.md) — scope discipline
+- [`docs/product-research.md`](../../docs/product-research.md) — product and science
 - [`.cursor/plans/calsnap_web_prs_4a5e9349.plan.md`](../../.cursor/plans/calsnap_web_prs_4a5e9349.plan.md) — 10-PR roadmap
+
+The archived iOS technical spec and engineering rules are preserved in `archive/ios/docs/`.

@@ -1,8 +1,6 @@
 # CalSnap
 
-CalSnap is an iOS app for simple calorie and macronutrient tracking from meal photos and optional text descriptions.
-
-**Web app:** see [`calsnap-web/README.md`](calsnap-web/README.md).
+CalSnap is a progressive web app for simple calorie and macronutrient tracking from meal photos and optional text descriptions.
 
 ## Product goals
 - Make calorie tracking fast enough to be sustainable.
@@ -12,28 +10,34 @@ CalSnap is an iOS app for simple calorie and macronutrient tracking from meal ph
 - Track intake against target and show trends over time.
 
 ## Source of truth documents
-- `docs/product-research.md`
-- `docs/technical-spec.md`
-- `docs/engineering-rules.md`
+- [`docs/product-research.md`](docs/product-research.md)
+- [`docs/implementation/README.md`](docs/implementation/README.md)
 
-## Working model
-- The research doc defines product rationale and nutrition science assumptions.
-- The technical spec defines architecture, models, services, views, and PR breakdown.
-- `docs/engineering-rules.md` defines implementation constraints.
-- PR implementation checklists live in `docs/implementation/` (e.g. `PR-01.md` for scaffold).
+## Repository structure
+
+```
+cal-snap/
+├── calsnap-web/          # Main app (Next.js PWA)
+├── docs/                 # Product docs and web implementation plans
+├── archive/ios/          # Archived iOS native app (for future reference)
+├── .github/workflows/    # CI/CD (web)
+└── README.md
+```
+
+## Web app
+
+The main CalSnap app lives in [`calsnap-web/`](calsnap-web/). See the [web README](calsnap-web/README.md) for setup, commands, and architecture.
 
 ## Build and test
 
-Requires Xcode 26.x and iOS 26+ simulator.
-
 ```bash
-# Build and run tests (use Xcode.app, not Command Line Tools alone)
-DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -scheme CalSnap -destination 'platform=iOS Simulator,name=iPhone 16' test
+cd calsnap-web
+pnpm install
+pnpm dev
 ```
 
-Open `CalSnap.xcodeproj` in Xcode and run on an iPhone simulator.
+Requires Node.js 22+ and pnpm. See [`calsnap-web/README.md`](calsnap-web/README.md) for full details.
 
-**Important:** PR2+ changes are maintained directly in `CalSnap.xcodeproj` (SPM packages, entitlements, new sources). Do **not** run `xcodegen generate` until `project.yml` is updated to match—the generator would overwrite PR2 project settings.
+## Archived iOS app
 
-## Build policy
-Do not start coding a PR until its scope section in `docs/technical-spec.md` has been reviewed. Implementation checklists in `docs/implementation/` must not add scope beyond the spec.
+The iOS native app source is preserved in `archive/ios/` for future development. It includes the Xcode project, Swift source, tests, and widget extension.

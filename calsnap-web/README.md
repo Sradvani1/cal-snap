@@ -1,8 +1,8 @@
 # CalSnap Web
 
-Mobile-first Next.js app for CalSnap. See the [web implementation docs](../docs/implementation/web/README.md) for stack details and open decisions.
+Mobile-first Next.js app for CalSnap. See the [web implementation docs](../docs/implementation/README.md) for stack details and open decisions.
 
-**Deploying?** Follow the phased [Rollout Guide](../docs/implementation/web/ROLLOUT.md): test on emulators first, then wire up Firebase cloud and Vercel.
+**Deploying?** Follow the phased [Rollout Guide](../docs/implementation/ROLLOUT.md): test on emulators first, then wire up Firebase cloud and Vercel.
 
 ## Prerequisites
 
@@ -58,7 +58,7 @@ pnpm emulators        # Start Auth + Firestore + Storage emulators
 - `GEMINI_API_KEY`
 - Redeploy after env changes
 
-See [PR-WR09-auth-reset.md](../docs/implementation/web/PR-WR09-auth-reset.md) and [ROLLOUT.md](../docs/implementation/web/ROLLOUT.md) §4.4, §5.2.
+See [PR-WR09-auth-reset.md](../docs/implementation/PR-WR09-auth-reset.md) and [ROLLOUT.md](../docs/implementation/ROLLOUT.md) §4.4, §5.2.
 
 ## Firebase emulators
 
@@ -90,9 +90,9 @@ firebase deploy --only firestore:rules --project <your-project>
 
 ## Vercel deploy
 
-See **[docs/implementation/web/ROLLOUT.md](../docs/implementation/web/ROLLOUT.md)** (Phases 4–5) for the full checklist. Summary: set **Root Directory** to `calsnap-web`; add all env vars from `.env.local.example`; set `NEXT_PUBLIC_USE_FIREBASE_EMULATOR=false`.
+See **[docs/implementation/ROLLOUT.md](../docs/implementation/ROLLOUT.md)** (Phases 4–5) for the full checklist. Summary: set **Root Directory** to `calsnap-web`; add all env vars from `.env.local.example`; set `NEXT_PUBLIC_USE_FIREBASE_EMULATOR=false`.
 
 ## Source of truth
 
-- `docs/technical-spec.md` — models, constants, calculator
-- `docs/implementation/web/PR-W10.md` — W10 acceptance checklist and QA matrix
+- `docs/implementation/README.md` — web implementation docs
+- `docs/implementation/PR-W10.md` — W10 acceptance checklist and QA matrix

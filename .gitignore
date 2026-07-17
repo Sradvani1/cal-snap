@@ -1,21 +1,3 @@
-# Xcode
-DerivedData/
-build/
-xcodebuild*.log
-*.xcuserstate
-xcuserdata/
-*.xcconfig
-*.moved-aside
-*.pbxuser
-*.mode1v3
-*.mode2v3
-*.perspectivev3
-
-# Swift Package Manager
-.build/
-.swiftpm/
-Package.resolved
-
 # macOS
 .DS_Store
 
@@ -33,3 +15,19 @@ calsnap-web/.next/
 calsnap-web/.env.local
 calsnap-web/.vercel
 calsnap-web/coverage/
+
+# Archived iOS (Xcode)
+archive/ios/DerivedData/
+archive/ios/build/
+archive/ios/xcodebuild*.log
+archive/ios/*.xcuserstate
+archive/ios/xcuserdata/
+archive/ios/*.xcconfig
+archive/ios/*.moved-aside
+archive/ios/*.pbxuser
+archive/ios/*.mode1v3
+archive/ios/*.mode2v3
+archive/ios/*.perspectivev3
+archive/ios/.build/
+archive/ios/.swiftpm/
+archive/ios/Package.resolved
