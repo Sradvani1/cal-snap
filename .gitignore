@@ -1,10 +1,8 @@
 # macOS
 .DS_Store
 
-# Cursor (keep rules; ignore plans and other local artifacts)
-.cursor/*
-!.cursor/rules/
-!.cursor/plans/
+# Cursor
+.cursor/
 
 # Agents (generated)
 .agents/
