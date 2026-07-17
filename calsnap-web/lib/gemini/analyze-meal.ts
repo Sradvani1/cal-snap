@@ -27,8 +27,8 @@ export class GeminiAnalysisError extends Error {
 }
 
 export interface AnalyzeMealImageInput {
-  imageBytes: Buffer;
-  mimeType: string;
+  imageBytes?: Buffer;
+  mimeType?: string;
   description?: string;
 }
 
@@ -67,12 +67,28 @@ export async function analyzeMealImage(
   input: AnalyzeMealImageInput,
 ): Promise<MealAnalysisResponse> {
   const client = getGeminiClient();
-  const prompt = buildMealAnalysisPrompt(input.description);
+  const prompt = buildMealAnalysisPrompt({
+    hasImage: Boolean(input.imageBytes),
+    description: input.description,
+  });
 
   return withRetry(
     async () => {
       let text: string;
       let finishReason: string | undefined;
+
+      const parts: Array<{ text: string } | { inlineData: { mimeType: string; data: string } }> = [
+        { text: prompt },
+      ];
+
+      if (input.imageBytes) {
+        parts.push({
+          inlineData: {
+            mimeType: input.mimeType ?? 'image/jpeg',
+            data: input.imageBytes.toString('base64'),
+          },
+        });
+      }
 
       try {
         const response = await client.models.generateContent({
@@ -80,15 +96,7 @@ export async function analyzeMealImage(
           contents: [
             {
               role: 'user',
-              parts: [
-                { text: prompt },
-                {
-                  inlineData: {
-                    mimeType: input.mimeType,
-                    data: input.imageBytes.toString('base64'),
-                  },
-                },
-              ],
+              parts,
             },
           ],
           config: {

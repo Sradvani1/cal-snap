@@ -28,37 +28,42 @@ export async function POST(request: NextRequest) {
     return apiError('api.analyze.invalidFormData', ApiErrorCode.InvalidFormData, 400);
   }
 
-  const imageField = formData.get('image');
-  if (!(imageField instanceof File)) {
-    return apiError('api.analyze.missingImage', ApiErrorCode.MissingImage, 400);
-  }
-
-  const mime = imageField.type;
-  if (
-    mime &&
-    mime !== 'image/jpeg' &&
-    mime !== 'application/octet-stream'
-  ) {
-    return apiError('api.analyze.invalidImageType', ApiErrorCode.InvalidImageType, 400);
-  }
-
-  const maxBytes = AppConstants.MealPhoto.hardMaxBytes + IMAGE_SIZE_BUFFER_BYTES;
-  if (imageField.size > maxBytes) {
-    return apiError('api.analyze.imageTooLarge', ApiErrorCode.ImageTooLarge, 400);
-  }
-
   const descriptionField = formData.get('description');
   const description =
     typeof descriptionField === 'string' && descriptionField.trim().length > 0
       ? descriptionField.trim()
       : undefined;
 
-  const buffer = Buffer.from(await imageField.arrayBuffer());
+  const imageField = formData.get('image');
+  const hasImage = imageField instanceof File;
+
+  if (!hasImage && !description) {
+    return apiError('api.analyze.missingInput', ApiErrorCode.MissingInput, 400);
+  }
+
+  if (hasImage) {
+    const mime = imageField.type;
+    if (
+      mime &&
+      mime !== 'image/jpeg' &&
+      mime !== 'application/octet-stream'
+    ) {
+      return apiError('api.analyze.invalidImageType', ApiErrorCode.InvalidImageType, 400);
+    }
+
+    const maxBytes = AppConstants.MealPhoto.hardMaxBytes + IMAGE_SIZE_BUFFER_BYTES;
+    if (imageField.size > maxBytes) {
+      return apiError('api.analyze.imageTooLarge', ApiErrorCode.ImageTooLarge, 400);
+    }
+  }
+
+  const imageBytes = hasImage ? Buffer.from(await imageField.arrayBuffer()) : undefined;
+  const mimeType = hasImage && imageField.type ? imageField.type : 'image/jpeg';
 
   try {
     const response = await analyzeMealImage({
-      imageBytes: buffer,
-      mimeType: 'image/jpeg',
+      imageBytes,
+      mimeType,
       description,
     });
 

@@ -6,7 +6,6 @@ import { ConfirmAlertDialog } from '@/components/design/ConfirmAlertDialog';
 import { MealAnalysisResultView } from '@/components/scanner/MealAnalysisResultView';
 import { MealScannerAnalyzingView } from '@/components/scanner/MealScannerAnalyzingView';
 import { MealScannerCaptureView } from '@/components/scanner/MealScannerCaptureView';
-import { ManualMealEntryView } from '@/components/scanner/ManualMealEntryView';
 import { ScannerErrorBanner } from '@/components/scanner/ScannerErrorBanner';
 import { useAuth } from '@/lib/auth/auth-context';
 import { copy } from '@/lib/copy';
@@ -142,8 +141,6 @@ function ScanPageContent() {
         <MealScannerAnalyzingView onCancel={scanner.cancelAnalysis} />
       )}
 
-      {scanner.phase === 'manual' && <ManualMealEntryView scanner={scanner} />}
-
       {scanner.phase === 'error' && scanner.scannerError && (
         <div className="space-y-4">
           <ScannerErrorBanner
@@ -159,7 +156,6 @@ function ScanPageContent() {
                     }
                   : scanner.retryAnalyze
             }
-            onManualEntry={scanner.enterManualEntry}
           />
           {scanner.previewUrl && (
             <div className="overflow-hidden rounded-xl border border-cs-border bg-cs-surface">

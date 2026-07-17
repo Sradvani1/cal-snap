@@ -16,8 +16,6 @@ function confidenceLabel(level: ConfidenceLevel): string {
       return copy('scanner.confidence.medium');
     case 'low':
       return copy('scanner.confidence.low');
-    case 'manual':
-      return copy('designSystem.confidence.manualEntry');
   }
 }
 
@@ -27,12 +25,12 @@ export function ConfidenceBadge({ level, score }: ConfidenceBadgeProps) {
   const styles = confidenceBadgeStyles(level);
 
   const displayText =
-    level !== 'manual' && percent !== undefined
+    percent !== undefined
       ? copy('designSystem.confidence.levelWithPercent', { level: label, percent })
       : label;
 
   const ariaLabel =
-    level !== 'manual' && percent !== undefined
+    percent !== undefined
       ? copy('designSystem.confidence.accessibility', { level: label, percent })
       : label;
 

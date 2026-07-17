@@ -13,7 +13,6 @@ export const designSystemCopy = {
   'designSystem.calorieRing.remaining': 'remaining',
   'designSystem.confidence.accessibility': '{{level}}, {{percent}} percent',
   'designSystem.confidence.levelWithPercent': '{{level}} ({{percent}}%)',
-  'designSystem.confidence.manualEntry': 'Manual entry',
   'designSystem.emptyState.actionHint': 'Primary action for this empty state',
   'designSystem.foodItem.accessibility.flagged': 'flagged for review',
   'designSystem.foodItem.accessibility.row': '{{name}}, {{calories}} calories',

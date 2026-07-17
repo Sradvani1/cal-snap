@@ -7,24 +7,23 @@ export const scannerCopy = {
   'scanner.confirm.discardScanShort': 'Discard unsaved meal scan?',
   'scanner.confirm.discardEdits': 'Discard unsaved edits? Your changes will be lost.',
   'scanner.confirm.discardTitle': 'Discard changes?',
-  'scanner.capture.prompt': 'Take a photo or choose from gallery',
+  'scanner.capture.prompt': 'Take a photo, or describe your meal below',
   'scanner.capture.camera': 'Camera',
   'scanner.capture.gallery': 'Gallery',
-  'scanner.capture.description': 'Description (optional)',
-  'scanner.capture.descriptionPlaceholder': 'e.g. homemade pasta with olive oil',
+  'scanner.capture.description': 'Description',
+  'scanner.capture.descriptionPlaceholder': 'e.g. 2 eggs, 2 slices toast, coffee with milk',
   'scanner.capture.analyze': 'Analyze',
-  'scanner.capture.manualEntry': 'Enter manually',
   'scanner.capture.photoAlt': 'Selected meal',
   'scanner.analyzing.title': 'Analyzing your meal…',
   'scanner.analyzing.subtitle': 'This usually takes a few seconds',
   'scanner.error.offline':
     'You appear to be offline. Check your connection and try again.',
   'scanner.error.api':
-    'Analysis failed. The service may be unavailable — try again or enter manually.',
+    'Analysis failed. The service may be unavailable — try again.',
   'scanner.error.parse':
-    'Could not read the analysis response. Try again or enter manually.',
+    'Could not read the analysis response. Try again.',
   'scanner.error.unrecognizable':
-    'Could not identify food in this photo. Try a clearer image or enter manually.',
+    'Could not identify food from this input. Try a different photo or rephrase your description.',
   'scanner.error.photoPrep': 'Could not prepare this photo. Try a different image.',
   'scanner.error.retry': 'Retry',
   'scanner.result.lowConfidence':
@@ -47,7 +46,6 @@ export const scannerCopy = {
   'scanner.confidence.high': 'High confidence',
   'scanner.confidence.medium': 'Medium confidence',
   'scanner.confidence.low': 'Low confidence',
-  'scanner.confidence.manual': 'Manual entry',
   'scanner.item.review': 'Review',
   'scanner.item.edit': 'Edit',
   'scanner.editSheet.title': 'Edit item',
@@ -55,13 +53,6 @@ export const scannerCopy = {
   'scanner.editSheet.weightHint':
     'Calories and macros scale proportionally when weight changes.',
   'scanner.notes.title': 'Estimation notes',
-  'scanner.manual.foodItem': 'Food item',
-  'scanner.manual.remove': 'Remove',
-  'scanner.manual.namePlaceholder': 'e.g. Grilled chicken',
-  'scanner.manual.weight': 'Weight (g)',
-  'scanner.manual.calories': 'Calories',
-  'scanner.manual.optionalMacros': 'Optional macros',
-  'scanner.manual.addItem': 'Add item',
 } as const;
 
 export type ScannerCopyKey = keyof typeof scannerCopy;

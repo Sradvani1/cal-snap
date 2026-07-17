@@ -19,18 +19,6 @@ export async function uploadTestPhotoAndAnalyze(page: Page): Promise<void> {
   await page.getByRole('button', { name: copy('scanner.capture.analyze') }).click();
 }
 
-export async function fillManualMealItem(
-  page: Page,
-  options: { name: string; calories: number; weightG?: number },
-): Promise<void> {
-  const { name, calories, weightG = 100 } = options;
-  const nameInput = page.getByPlaceholder(copy('scanner.manual.namePlaceholder'));
-  await nameInput.fill(name);
-  const card = page.locator('.rounded-xl.border').filter({ has: nameInput });
-  await card.locator('input[type="number"]').nth(0).fill(String(weightG));
-  await card.locator('input[type="number"]').nth(1).fill(String(calories));
-}
-
 export async function logMealAndExpectDashboard(
   page: Page,
   expectedCalories: number,

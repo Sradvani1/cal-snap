@@ -11,7 +11,6 @@ import {
   editableFoodItemFromAnalysisResult,
   editableFoodItemFromFoodItem,
   editableFoodItemToFoodItem,
-  emptyManualEditableFoodItem,
   updateEditableItemWeight,
   type EditableFoodItem,
 } from '@/lib/scanner/editable-food-item';
@@ -34,7 +33,7 @@ import {
   prepareForAnalysisAndStorage,
 } from '@/lib/services/meal-photo-processor';
 
-export type MealScannerPhase = 'capture' | 'analyzing' | 'results' | 'error' | 'manual';
+export type MealScannerPhase = 'capture' | 'analyzing' | 'results' | 'error';
 
 export type ScannerErrorKind = 'offline' | 'api' | 'parse' | 'unrecognizable' | 'photoPrep';
 
@@ -59,7 +58,6 @@ export function useMealScanner({
   );
   const [scannerError, setScannerError] = useState<ScannerErrorKind | null>(null);
   const [estimationNotes, setEstimationNotes] = useState<string | null>(null);
-  const [isManualEntry, setIsManualEntry] = useState(false);
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [logError, setLogError] = useState<string | null>(null);
   const [editingMealId, setEditingMealId] = useState<string | null>(null);
@@ -98,12 +96,10 @@ export function useMealScanner({
 
   const isEditing = editingMealId !== null;
 
-  const computedOverallConfidence = useMemo(() => {
-    if (isManualEntry) {
-      return 0;
-    }
-    return overallConfidence(editableItems);
-  }, [editableItems, isManualEntry]);
+  const computedOverallConfidence = useMemo(
+    () => overallConfidence(editableItems),
+    [editableItems],
+  );
 
   const allFlagged = useMemo(() => allItemsFlagged(editableItems), [editableItems]);
 
@@ -116,14 +112,8 @@ export function useMealScanner({
     [editableItems],
   );
 
-  const canFinishManual = useMemo(
-    () =>
-      editableItems.length > 0 &&
-      editableItems.every((item) => item.name.trim().length > 0 && item.calories > 0),
-    [editableItems],
-  );
-
-  const canAnalyze = Boolean(preparedPhoto) && phase !== 'analyzing';
+  const canAnalyze =
+    (preparedPhoto !== null || textDescription.trim().length > 0) && phase !== 'analyzing';
 
   const hasUnsavedWork = useMemo(() => {
     if (isEditing) {
@@ -143,10 +133,6 @@ export function useMealScanner({
         return true;
       case 'results':
         return editableItems.length > 0;
-      case 'manual':
-        return editableItems.some(
-          (item) => item.name.trim().length > 0 || item.calories > 0,
-        );
       case 'capture':
       case 'error':
         return (
@@ -217,7 +203,8 @@ export function useMealScanner({
   );
 
   const analyze = useCallback(async () => {
-    if (!preparedPhoto) {
+    const description = textDescription.trim();
+    if (!preparedPhoto && !description) {
       return;
     }
 
@@ -228,7 +215,6 @@ export function useMealScanner({
     }
 
     setScannerError(null);
-    setIsManualEntry(false);
     setPhase('analyzing');
     const generation = analyzeGenerationRef.current.start();
 
@@ -237,8 +223,9 @@ export function useMealScanner({
     abortControllerRef.current = controller;
 
     const formData = new FormData();
-    formData.append('image', preparedPhoto.blob, 'photo.jpg');
-    const description = textDescription.trim();
+    if (preparedPhoto) {
+      formData.append('image', preparedPhoto.blob, 'photo.jpg');
+    }
     if (description) {
       formData.append('description', description);
     }
@@ -304,51 +291,6 @@ export function useMealScanner({
     }
   }, [preparedPhoto, textDescription, applyAnalysis]);
 
-  const enterManualEntry = useCallback(() => {
-    invalidateAnalyze();
-    setScannerError(null);
-    setEstimationNotes(null);
-    setIsManualEntry(true);
-    setEditableItems([emptyManualEditableFoodItem()]);
-    originalItemWeightsRef.current = new Map();
-    setPhase('manual');
-  }, [invalidateAnalyze]);
-
-  const addManualItem = useCallback(() => {
-    setEditableItems((items) => [...items, emptyManualEditableFoodItem()]);
-  }, []);
-
-  const removeManualItem = useCallback((id: string) => {
-    setEditableItems((items) => {
-      if (items.length <= 1) {
-        return items;
-      }
-      return items.filter((item) => item.id !== id);
-    });
-  }, []);
-
-  const updateManualItem = useCallback(
-    (id: string, patch: Partial<EditableFoodItem>) => {
-      setEditableItems((items) =>
-        items.map((item) => (item.id === id ? { ...item, ...patch } : item)),
-      );
-    },
-    [],
-  );
-
-  const finishManualEntry = useCallback(() => {
-    if (!canFinishManual) {
-      return;
-    }
-    setEditableItems((items) =>
-      items.map((item) => ({ ...item, confidence: 1.0, isFlagged: false })),
-    );
-    setIsManualEntry(true);
-    setEstimationNotes(null);
-    originalItemWeightsRef.current = new Map();
-    setPhase('results');
-  }, [canFinishManual]);
-
   const updateItemWeight = useCallback((id: string, grams: number) => {
     setEditableItems((items) =>
       items.map((item) =>
@@ -369,7 +311,6 @@ export function useMealScanner({
       const adjusted = hasAdjustedItems(
         editableItems,
         originalItemWeightsRef.current,
-        isManualEntry,
       );
 
       return {
@@ -384,16 +325,15 @@ export function useMealScanner({
         totalCarbsG: totals.totalCarbsG,
         totalFatG: totals.totalFatG,
         totalFiberG: totals.totalFiberG,
-        geminiConfidence: isManualEntry ? 0 : computedOverallConfidence,
-        isManuallyAdjusted: isManualEntry || adjusted,
-        estimationNotes: isManualEntry ? undefined : estimationNotes ?? undefined,
+        geminiConfidence: computedOverallConfidence,
+        isManuallyAdjusted: adjusted,
+        estimationNotes: estimationNotes ?? undefined,
         items: editableItems.map(editableFoodItemToFoodItem),
       };
     },
     [
       textDescription,
       editableItems,
-      isManualEntry,
       editingMealId,
       editingTimestamp,
       existingPhotoStoragePath,
@@ -419,7 +359,6 @@ export function useMealScanner({
       setMealType(meal.mealType);
       setTextDescription(meal.textDescription ?? '');
       setEstimationNotes(meal.estimationNotes ?? null);
-      setIsManualEntry(meal.geminiConfidence === 0);
       setScannerError(null);
       setPreparedPhoto(null);
 
@@ -459,7 +398,6 @@ export function useMealScanner({
     setEditableItems([]);
     setEstimationNotes(null);
     setScannerError(null);
-    setIsManualEntry(false);
     setEditingItemId(null);
     setLogError(null);
     setEditingMealId(null);
@@ -480,7 +418,6 @@ export function useMealScanner({
     setEditableItems([]);
     setEstimationNotes(null);
     setScannerError(null);
-    setIsManualEntry(false);
     originalItemWeightsRef.current = new Map();
     setPhase('capture');
   }, [invalidateAnalyze]);
@@ -509,7 +446,6 @@ export function useMealScanner({
     setMealType,
     scannerError,
     estimationNotes,
-    isManualEntry,
     isEditing,
     editingMealId,
     editingItemId,
@@ -520,17 +456,11 @@ export function useMealScanner({
     overallConfidence: computedOverallConfidence,
     allItemsFlagged: allFlagged,
     canLog,
-    canFinishManual,
     canAnalyze,
     hasUnsavedWork,
     selectPhoto,
     analyze,
     applyAnalysis,
-    enterManualEntry,
-    addManualItem,
-    removeManualItem,
-    updateManualItem,
-    finishManualEntry,
     updateItemWeight,
     editItem,
     makeMealEntry,

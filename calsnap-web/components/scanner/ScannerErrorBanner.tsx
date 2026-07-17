@@ -1,13 +1,11 @@
 import type { ScannerErrorKind } from '@/lib/scanner/use-meal-scanner';
 import { copy } from '@/lib/copy';
-import { formFieldFocusRingClassName } from '@/lib/design/form-field';
 import { typography } from '@/lib/design/typography';
 import { cn } from '@/lib/utils/cn';
 
 interface ScannerErrorBannerProps {
   error: ScannerErrorKind;
   onRetry?: () => void;
-  onManualEntry?: () => void;
 }
 
 function errorMessage(error: ScannerErrorKind): string {
@@ -25,7 +23,7 @@ function errorMessage(error: ScannerErrorKind): string {
   }
 }
 
-export function ScannerErrorBanner({ error, onRetry, onManualEntry }: ScannerErrorBannerProps) {
+export function ScannerErrorBanner({ error, onRetry }: ScannerErrorBannerProps) {
   return (
     <div
       className="rounded-xl border border-cs-danger/30 bg-cs-danger/10 p-4"
@@ -40,18 +38,6 @@ export function ScannerErrorBanner({ error, onRetry, onManualEntry }: ScannerErr
             className="min-h-11 rounded-lg bg-cs-danger px-4 py-2 text-sm font-medium text-cs-on-primary"
           >
             {copy('scanner.error.retry')}
-          </button>
-        )}
-        {onManualEntry && (
-          <button
-            type="button"
-            onClick={onManualEntry}
-            className={cn(
-              'min-h-11 rounded-lg border border-cs-danger/30 bg-cs-surface px-4 py-2 text-sm font-medium text-cs-danger-text',
-              formFieldFocusRingClassName,
-            )}
-          >
-            {copy('scanner.capture.manualEntry')}
           </button>
         )}
       </div>

@@ -78,7 +78,6 @@ export function MealAnalysisResultView({
 
   const confidenceLevel = confidenceLevelFromScore(
     scanner.overallConfidence,
-    scanner.isManualEntry,
   );
   const grams = copy('common.macro.grams');
 
@@ -105,10 +104,7 @@ export function MealAnalysisResultView({
             <h2 className={typography.csLargeCalorie}>
               {scanner.totals.totalCalories} {copy('common.macro.kcal')}
             </h2>
-            {!scanner.isManualEntry && (
-              <ConfidenceBadge level={confidenceLevel} score={scanner.overallConfidence} />
-            )}
-            {scanner.isManualEntry && <ConfidenceBadge level="manual" />}
+            <ConfidenceBadge level={confidenceLevel} score={scanner.overallConfidence} />
           </div>
 
           <div className="grid grid-cols-4 gap-2">
@@ -136,7 +132,7 @@ export function MealAnalysisResultView({
         </div>
       </ScanStaggerSection>
 
-      {scanner.allItemsFlagged && !scanner.isManualEntry && (
+      {scanner.allItemsFlagged && (
         <ScanStaggerSection index={sectionIndex++} reducedMotion={reducedMotion}>
           <div className="rounded-lg border border-cs-warning/30 bg-cs-warning/10 px-4 py-3 text-sm text-cs-warning-text">
             {copy('scanner.result.lowConfidence')}
@@ -157,11 +153,9 @@ export function MealAnalysisResultView({
         </div>
       </ScanStaggerSection>
 
-      {!scanner.isManualEntry && (
-        <ScanStaggerSection index={sectionIndex++} reducedMotion={reducedMotion}>
-          <EstimationNotesAccordion notes={scanner.estimationNotes} />
-        </ScanStaggerSection>
-      )}
+      <ScanStaggerSection index={sectionIndex++} reducedMotion={reducedMotion}>
+        <EstimationNotesAccordion notes={scanner.estimationNotes} />
+      </ScanStaggerSection>
 
       {scanner.logError && (
         <ScanStaggerSection index={sectionIndex++} reducedMotion={reducedMotion}>

@@ -1,12 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import {
   editableFoodItemFromAnalysisResult,
-  emptyManualEditableFoodItem,
   updateEditableItemWeight,
 } from '@/lib/scanner/editable-food-item';
 import {
   allItemsFlagged,
-  confidenceLevelFromScore,
   hasAdjustedItems,
   overallConfidence,
   sumEditableItems,
@@ -63,20 +61,6 @@ describe('overallConfidence', () => {
   });
 });
 
-describe('manual entry semantics', () => {
-  it('emptyManual item has confidence 1.0 and is not flagged', () => {
-    const item = emptyManualEditableFoodItem();
-    expect(item.confidence).toBe(1.0);
-    expect(item.isFlagged).toBe(false);
-    expect(item.weightG).toBe(100);
-    expect(item.calories).toBe(0);
-  });
-
-  it('manual confidence level is manual', () => {
-    expect(confidenceLevelFromScore(0, true)).toBe('manual');
-  });
-});
-
 describe('fromAnalysisResult flagging', () => {
   it('flags items below confidence threshold', () => {
     const item = editableFoodItemFromAnalysisResult(
@@ -117,13 +101,13 @@ describe('hasAdjustedItems', () => {
   it('detects weight delta greater than 0.01g', () => {
     const items = [makeItem({ id: 'a', weightG: 150 })];
     const originals = new Map([['a', 100]]);
-    expect(hasAdjustedItems(items, originals, false)).toBe(true);
+    expect(hasAdjustedItems(items, originals)).toBe(true);
   });
 
-  it('returns false for manual entries', () => {
+  it('returns false when no original weight recorded', () => {
     const items = [makeItem({ id: 'a', weightG: 150 })];
     const originals = new Map([['a', 100]]);
-    expect(hasAdjustedItems(items, originals, true)).toBe(false);
+    expect(hasAdjustedItems(items, originals)).toBe(true);
   });
 });
 

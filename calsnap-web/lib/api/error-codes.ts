@@ -7,7 +7,7 @@ export const ApiErrorCode = {
 
   AnalysisUnavailable: 'analysis_unavailable',
   InvalidFormData: 'invalid_form_data',
-  MissingImage: 'missing_image',
+  MissingInput: 'missing_input',
   InvalidImageType: 'invalid_image_type',
   ImageTooLarge: 'image_too_large',
   Unrecognizable: 'unrecognizable',

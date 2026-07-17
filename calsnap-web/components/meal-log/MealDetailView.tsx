@@ -19,8 +19,7 @@ function formatMacroValue(value: number, unit: string): string {
 }
 
 export function MealDetailView({ meal, photoUrl }: MealDetailViewProps) {
-  const isManualEntry = meal.geminiConfidence === 0;
-  const confidenceLevel = confidenceLevelFromScore(meal.geminiConfidence, isManualEntry);
+  const confidenceLevel = confidenceLevelFromScore(meal.geminiConfidence);
   const grams = copy('common.macro.grams');
 
   return (
@@ -60,11 +59,7 @@ export function MealDetailView({ meal, photoUrl }: MealDetailViewProps) {
           <p className={typography.csLargeCalorie} data-testid="meal-detail-total-calories">
             {meal.totalCalories} {copy('common.macro.kcal')}
           </p>
-          {isManualEntry ? (
-            <ConfidenceBadge level="manual" />
-          ) : (
-            <ConfidenceBadge level={confidenceLevel} score={meal.geminiConfidence} />
-          )}
+          <ConfidenceBadge level={confidenceLevel} score={meal.geminiConfidence} />
         </div>
         <div className="grid grid-cols-3 gap-2">
           <NutrientStatRow
@@ -92,7 +87,7 @@ export function MealDetailView({ meal, photoUrl }: MealDetailViewProps) {
         ))}
       </div>
 
-      {!isManualEntry && meal.estimationNotes && (
+      {meal.estimationNotes && (
         <EstimationNotesAccordion notes={meal.estimationNotes} />
       )}
     </div>

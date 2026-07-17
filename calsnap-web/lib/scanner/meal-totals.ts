@@ -42,11 +42,7 @@ export function allItemsFlagged(items: EditableFoodItem[]): boolean {
 export function hasAdjustedItems(
   items: EditableFoodItem[],
   originalWeights: Map<string, number>,
-  isManual: boolean,
 ): boolean {
-  if (isManual) {
-    return false;
-  }
   return items.some((item) => {
     const original = originalWeights.get(item.id);
     if (original === undefined) {
@@ -56,15 +52,9 @@ export function hasAdjustedItems(
   });
 }
 
-export type ConfidenceLevel = 'high' | 'medium' | 'low' | 'manual';
+export type ConfidenceLevel = 'high' | 'medium' | 'low';
 
-export function confidenceLevelFromScore(
-  score: number,
-  isManual: boolean,
-): ConfidenceLevel {
-  if (isManual) {
-    return 'manual';
-  }
+export function confidenceLevelFromScore(score: number): ConfidenceLevel {
   if (score >= 0.8) {
     return 'high';
   }

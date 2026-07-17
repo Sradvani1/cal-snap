@@ -99,14 +99,6 @@ export function MealScannerCaptureView({ scanner }: MealScannerCaptureViewProps)
         >
           {copy('scanner.capture.analyze')}
         </PrimaryButton>
-        <SecondaryButton
-          type="button"
-          onClick={scanner.enterManualEntry}
-          fullWidth
-          className="min-h-11"
-        >
-          {copy('scanner.capture.manualEntry')}
-        </SecondaryButton>
       </div>
     </div>
   );

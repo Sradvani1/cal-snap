@@ -105,10 +105,5 @@ export function confidenceBadgeStyles(level: ConfidenceLevel): {
         container: 'bg-cs-danger/15 text-cs-danger-text',
         highContrastBorder: 'border border-cs-danger',
       };
-    case 'manual':
-      return {
-        container: 'bg-cs-muted/15 text-cs-muted',
-        highContrastBorder: 'border border-cs-muted',
-      };
   }
 }

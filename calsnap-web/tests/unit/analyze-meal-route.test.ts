@@ -66,6 +66,51 @@ describe('POST /api/analyze-meal', () => {
     expect(response.status).toBe(401);
   });
 
+  it('returns 400 when neither image nor description provided', async () => {
+    mockedVerify.mockResolvedValue({ uid: 'user-1' });
+    const formData = new FormData();
+    const response = await POST(makeRequest({ formData }));
+    expect(response.status).toBe(400);
+    const body = (await response.json()) as { error: string; code: string };
+    expect(body.error).toBe(copy('api.analyze.missingInput'));
+    expect(body.code).toBe(ApiErrorCode.MissingInput);
+  });
+
+  it('returns 200 with description only (no image)', async () => {
+    mockedVerify.mockResolvedValue({ uid: 'user-1' });
+    mockedAnalyze.mockResolvedValue({
+      items: [
+        {
+          name: 'Eggs and toast',
+          estimatedWeightG: 300,
+          calories: 450,
+          proteinG: 22,
+          carbsG: 40,
+          fatG: 18,
+          fiberG: 3,
+          confidence: 0.6,
+        },
+      ],
+      mealTotal: { calories: 450, proteinG: 22, carbsG: 40, fatG: 18, fiberG: 3 },
+      flaggedItems: [],
+      estimationNotes: 'Estimated from description.',
+    });
+
+    const formData = new FormData();
+    formData.set('description', '2 eggs, 2 slices toast, coffee with milk');
+
+    const response = await POST(makeRequest({ formData }));
+    expect(response.status).toBe(200);
+    const body = (await response.json()) as { items: Array<{ name: string }> };
+    expect(body.items[0]?.name).toBe('Eggs and toast');
+    expect(mockedAnalyze).toHaveBeenCalledOnce();
+    expect(mockedAnalyze).toHaveBeenCalledWith({
+      imageBytes: undefined,
+      mimeType: 'image/jpeg',
+      description: '2 eggs, 2 slices toast, coffee with milk',
+    });
+  });
+
   it('returns 503 when GEMINI_API_KEY is missing', async () => {
     process.env.GEMINI_API_KEY = '';
     mockedVerify.mockResolvedValue({ uid: 'user-1' });

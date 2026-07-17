@@ -73,22 +73,6 @@ export function editableFoodItemFromAnalysisResult(
   };
 }
 
-export function emptyManualEditableFoodItem(): EditableFoodItem {
-  return {
-    id: crypto.randomUUID(),
-    name: '',
-    weightG: 100,
-    calories: 0,
-    proteinG: 0,
-    carbsG: 0,
-    fatG: 0,
-    fiberG: 0,
-    confidence: 1.0,
-    isFlagged: false,
-    originalWeightG: 100,
-  };
-}
-
 export function editableFoodItemToFoodItem(item: EditableFoodItem): FoodItem {
   return {
     id: item.id,
