@@ -73,7 +73,7 @@ Deliver dietary habit analytics over user-selected timeframes (7D / 30D / 90D / 
 | `lib/queries/use-plateau-alert.ts` | Invalidates analytics when plateau updates targets |
 | `middleware.ts` | `/analytics` session protection |
 | `lib/gemini/analytics-insight-zod.ts` | String length caps on prompt fields |
-| `docs/implementation/web/README.md` | W07 index → Implemented |
+| `docs/plans/README.md` | W07 index → Implemented |
 
 ---
 

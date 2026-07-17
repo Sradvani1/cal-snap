@@ -1,6 +1,6 @@
-# CalSnap Web — Implementation Docs
+# CalSnap Web — Build Docs
 
-Implementation checklists for the CalSnap Web PR series live here. Each merged PR adds a `PR-W0N.md` file.
+Implementation checklists for the CalSnap Web PR series live in [../plans/](../plans/). This directory holds the build index, rollout, and performance baseline.
 
 ## Stack (W01 baseline)
 
@@ -36,16 +36,16 @@ Business logic lives in `calsnap-web/lib/`; `app/` stays thin.
 
 | PR | Doc | Status |
 |----|-----|--------|
-| W01 | [PR-W01.md](./PR-W01.md) | Implemented |
-| W02 | [PR-W02.md](./PR-W02.md) | Implemented |
-| W03 | [PR-W03.md](./PR-W03.md) | Implemented |
-| W04 | [PR-W04.md](./PR-W04.md) | Implemented |
-| W05 | [PR-W05.md](./PR-W05.md) | Implemented |
-| W06 | [PR-W06.md](./PR-W06.md) | Implemented |
-| W07 | [PR-W07.md](./PR-W07.md) | Implemented |
-| W08 | [PR-W08.md](./PR-W08.md) | Implemented |
-| W09 | [PR-W09.md](./PR-W09.md) | Implemented |
-| W10 | [PR-W10.md](./PR-W10.md) | Implemented |
+| W01 | [PR-W01.md](../plans/PR-W01.md) | Implemented |
+| W02 | [PR-W02.md](../plans/PR-W02.md) | Implemented |
+| W03 | [PR-W03.md](../plans/PR-W03.md) | Implemented |
+| W04 | [PR-W04.md](../plans/PR-W04.md) | Implemented |
+| W05 | [PR-W05.md](../plans/PR-W05.md) | Implemented |
+| W06 | [PR-W06.md](../plans/PR-W06.md) | Implemented |
+| W07 | [PR-W07.md](../plans/PR-W07.md) | Implemented |
+| W08 | [PR-W08.md](../plans/PR-W08.md) | Implemented |
+| W09 | [PR-W09.md](../plans/PR-W09.md) | Implemented |
+| W10 | [PR-W10.md](../plans/PR-W10.md) | Implemented |
 
 ## Rollout & deploy
 
@@ -53,30 +53,30 @@ Business logic lives in `calsnap-web/lib/`; `app/` stays thin.
 
 ## Review sprint (post-build)
 
-- **[REVIEW-MASTER-PLAN.md](./REVIEW-MASTER-PLAN.md)** — WR01–WR08 audit, debug, and polish plan
+- **[REVIEW-MASTER-PLAN.md](../plans/REVIEW-MASTER-PLAN.md)** — WR01–WR08 audit, debug, and polish plan
 
 | PR | Doc | Status |
 |----|-----|--------|
-| WR01 | [PR-WR01.md](./PR-WR01.md) | Implemented |
-| WR02 | [PR-WR02.md](./PR-WR02.md) | Implemented |
-| WR03 | [PR-WR03.md](./PR-WR03.md) | Implemented |
-| WR04 | [PR-WR04.md](./PR-WR04.md) | Implemented |
-| WR05 | [PR-WR05.md](./PR-WR05.md) | Implemented |
-| WR06 | [PR-WR06.md](./PR-WR06.md) | Implemented |
-| WR07 | [PR-WR07.md](./PR-WR07.md) | Implemented |
-| WR08 | [PR-WR08.md](./PR-WR08.md) | Implemented |
+| WR01 | [PR-WR01.md](../plans/PR-WR01.md) | Implemented |
+| WR02 | [PR-WR02.md](../plans/PR-WR02.md) | Implemented |
+| WR03 | [PR-WR03.md](../plans/PR-WR03.md) | Implemented |
+| WR04 | [PR-WR04.md](../plans/PR-WR04.md) | Implemented |
+| WR05 | [PR-WR05.md](../plans/PR-WR05.md) | Implemented |
+| WR06 | [PR-WR06.md](../plans/PR-WR06.md) | Implemented |
+| WR07 | [PR-WR07.md](../plans/PR-WR07.md) | Implemented |
+| WR08 | [PR-WR08.md](../plans/PR-WR08.md) | Implemented |
 
 ## Optimization sprint (native-feel polish)
 
 | PR | Doc | Status |
 |----|-----|--------|
-| WO01 | [PR-WO01.md](./PR-WO01.md) | Complete (`4ea0500`) |
-| WO02 | [PR-WO02.md](./PR-WO02.md) | Complete (`c2ab40f`) |
-| WO03 | [PR-WO03.md](./PR-WO03.md) | Complete (`6e1a511`) |
-| WO04 | [PR-WO04.md](./PR-WO04.md) | Complete |
-| WO05 | [PR-WO05.md](./PR-WO05.md) | Complete |
+| WO01 | [PR-WO01.md](../plans/PR-WO01.md) | Complete (`4ea0500`) |
+| WO02 | [PR-WO02.md](../plans/PR-WO02.md) | Complete (`c2ab40f`) |
+| WO03 | [PR-WO03.md](../plans/PR-WO03.md) | Complete (`6e1a511`) |
+| WO04 | [PR-WO04.md](../plans/PR-WO04.md) | Complete |
+| WO05 | [PR-WO05.md](../plans/PR-WO05.md) | Complete |
 
-Sprint plan: [OPTIMIZATION-MASTER-PLAN.md](./OPTIMIZATION-MASTER-PLAN.md) · [PERF-BASELINE.md](./PERF-BASELINE.md) · [.cursor/plans/web_optimization_sprint_68cb0f71.plan.md](../../.cursor/plans/web_optimization_sprint_68cb0f71.plan.md)
+Sprint plan: [OPTIMIZATION-MASTER-PLAN.md](../plans/OPTIMIZATION-MASTER-PLAN.md) · [PERF-BASELINE.md](./PERF-BASELINE.md)
 
 **Optimization sprint code-complete; operator manual QA Pending** (WR07/WR08/WO05 §8).
 
@@ -84,13 +84,10 @@ Sprint plan: [OPTIMIZATION-MASTER-PLAN.md](./OPTIMIZATION-MASTER-PLAN.md) · [PE
 
 | PR | Doc | Status |
 |----|-----|--------|
-| iPhone PWA + Settings UX | [PR-IPHONE-SAFARI-UX.md](./PR-IPHONE-SAFARI-UX.md) | Complete (code) — §8 Pending |
-
-Supersedes WO01 fixed tab bar / save-bar padding model, WO03 ScanFab elevation, WO05 settings floating save bar. Plan: [.cursor/plans/iphone_safari_ux_fixes_3637e941.plan.md](../../.cursor/plans/iphone_safari_ux_fixes_3637e941.plan.md).
+| iPhone PWA + Settings UX | [PR-IPHONE-SAFARI-UX.md](../plans/PR-IPHONE-SAFARI-UX.md) | Complete (code) — §8 Pending |
 
 ## Source of truth
 
-- [`docs/product-research.md`](../../docs/product-research.md) — product and science
-- [`.cursor/plans/calsnap_web_prs_4a5e9349.plan.md`](../../.cursor/plans/calsnap_web_prs_4a5e9349.plan.md) — 10-PR roadmap
+- [`docs/product-research.md`](../product-research.md) — product and science
 
 The archived iOS technical spec and engineering rules are preserved in `archive/ios/docs/`.

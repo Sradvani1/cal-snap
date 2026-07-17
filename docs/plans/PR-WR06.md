@@ -105,7 +105,7 @@ After freeing port 8080: integration **11** tests (5 files), E2E **8** tests (6 
 | `tests/e2e/settings-save-updates-target.spec.ts` (new) | Activity `moderatelyActive` → `sedentary`; assert starting level; poll `toBeLessThan` | WR06-E2E-01 |
 | `tests/e2e/delete-all-reonboard.spec.ts` (new) | Delete via alertdialog → re-onboard → dashboard | WR06-E2E-02 |
 | `tests/e2e/helpers/index.ts` | Export settings helpers | Barrel |
-| `docs/implementation/web/PR-WR01.md` | Settings helper cross-ref in §5 | Review close-out |
+| `docs/plans/PR-WR01.md` | Settings helper cross-ref in §5 | Review close-out |
 
 ---
 
@@ -178,10 +178,10 @@ Reuses `readDashboardCalorieTarget` from `weigh-in.ts`. See [PR-WR01.md](./PR-WR
 - `tests/e2e/helpers/settings.ts`
 - `tests/e2e/settings-save-updates-target.spec.ts`
 - `tests/e2e/delete-all-reonboard.spec.ts`
-- `docs/implementation/web/PR-WR06.md`
+- `docs/plans/PR-WR06.md`
 
 **Modified**
 
 - `app/(app)/settings/page.tsx`
 - `tests/e2e/helpers/index.ts`
-- `docs/implementation/web/PR-WR01.md`
+- `docs/plans/PR-WR01.md`

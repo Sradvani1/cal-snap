@@ -253,7 +253,7 @@ pnpm lint && pnpm test && pnpm build && pnpm test:integration && pnpm test:e2e
 - `lib/design/use-chart-colors.ts`
 - `tests/e2e/helpers/viewport.ts`
 - `tests/e2e/viewport-320.spec.ts`
-- `docs/implementation/web/PR-WR07.md`
+- `docs/plans/PR-WR07.md`
 
 **Modified**
 
@@ -280,4 +280,4 @@ pnpm lint && pnpm test && pnpm build && pnpm test:integration && pnpm test:e2e
 - `tests/unit/session-route.test.ts`
 - `tests/unit/analyze-meal-route.test.ts`
 - `tests/unit/generate-insight-route.test.ts`
-- `docs/implementation/web/README.md`
+- `docs/plans/README.md`

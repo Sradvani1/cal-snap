@@ -38,7 +38,7 @@ Post-build review sprint after the W01–W10 implementation series. Eight sequen
 
 ## Agent workflow (every WR PR)
 
-Individual planning phases produce `docs/implementation/web/PR-WR0N.md` and `.cursor/plans/pr_wr0N_*.plan.md`.
+Individual planning phases produce `docs/plans/PR-WR0N.md` and `.cursor/plans/pr_wr0N_*.plan.md`.
 
 1. Read W0N specs, product-research, technical-spec, and this doc
 2. Run merge gate baseline before changes
@@ -256,8 +256,8 @@ WR07 comes after functional PRs. WR08 validates production last.
 
 | Artifact | Path |
 |----------|------|
-| Master plan | `docs/implementation/web/REVIEW-MASTER-PLAN.md` |
-| Per-PR spec | `docs/implementation/web/PR-WR01.md` … `PR-WR08.md` |
+| Master plan | `docs/plans/REVIEW-MASTER-PLAN.md` |
+| Per-PR spec | `docs/plans/PR-WR01.md` … `PR-WR08.md` |
 | Per-PR Cursor plan | `.cursor/plans/pr_wr0N_*.plan.md` |
 | Lighthouse baseline | `PR-WR07.md` |
 | Production smoke | `PR-WR08.md` |

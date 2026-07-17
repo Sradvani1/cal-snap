@@ -134,7 +134,7 @@ Recorded 2026-07-01:
 | `lib/design/layout.ts` | Tab bar blur; `elevation.fab` | WO03-CHROME-01, WO03-FAB-01 |
 | `components/dashboard/ScanFab.tsx` | Use `layout.elevation.fab` | WO03-FAB-01 |
 | `tests/unit/layout-safe-area.test.ts` | +4 assertions (blur, fab, overscroll, keyframes) | WO03-TEST-01 |
-| `docs/implementation/web/PR-WO03.md` | This spec | — |
+| `docs/plans/PR-WO03.md` | This spec | — |
 
 **No consumer diffs:** WeighInSheet, PlateauAlertSheet, FoodItemEditSheet — audit pass.
 
@@ -235,7 +235,7 @@ Recorded 2026-07-01:
 
 **New**
 
-- `docs/implementation/web/PR-WO03.md`
+- `docs/plans/PR-WO03.md`
 
 **Modified**
 

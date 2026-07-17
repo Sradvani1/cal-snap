@@ -142,7 +142,7 @@ flowchart TB
 - `calsnap-web/lib/app/scroll-main.ts`
 - `calsnap-web/lib/app/tab-navigation.ts`
 - `calsnap-web/tests/unit/scroll-main.test.ts`
-- `docs/implementation/web/PR-IPHONE-SAFARI-UX.md`
+- `docs/plans/PR-IPHONE-SAFARI-UX.md`
 
 **Modified**
 
@@ -161,11 +161,11 @@ flowchart TB
 - `calsnap-web/tests/unit/layout-safe-area.test.ts`
 - `calsnap-web/tests/e2e/helpers/settings.ts`
 - `calsnap-web/tests/e2e/viewport-320.spec.ts`
-- `docs/implementation/web/README.md`
-- `docs/implementation/web/OPTIMIZATION-MASTER-PLAN.md`
-- `docs/implementation/web/PR-WO01.md`
-- `docs/implementation/web/PR-WO03.md`
-- `docs/implementation/web/PR-WO05.md`
+- `docs/plans/README.md`
+- `docs/plans/OPTIMIZATION-MASTER-PLAN.md`
+- `docs/plans/PR-WO01.md`
+- `docs/plans/PR-WO03.md`
+- `docs/plans/PR-WO05.md`
 
 **Deleted**
 

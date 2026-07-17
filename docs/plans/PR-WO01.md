@@ -242,7 +242,7 @@ Login, onboarding, dashboard (extended), settings — WR07 contract preserved.
 **New**
 
 - `calsnap-web/tests/unit/layout-safe-area.test.ts`
-- `docs/implementation/web/PR-WO01.md`
+- `docs/plans/PR-WO01.md`
 
 **Modified**
 

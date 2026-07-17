@@ -11,14 +11,16 @@ CalSnap is a progressive web app for simple calorie and macronutrient tracking f
 
 ## Source of truth documents
 - [`docs/product-research.md`](docs/product-research.md)
-- [`docs/implementation/README.md`](docs/implementation/README.md)
+- [`docs/build/README.md`](docs/build/README.md)
 
 ## Repository structure
 
 ```
 cal-snap/
 ├── calsnap-web/          # Main app (Next.js PWA)
-├── docs/                 # Product docs and web implementation plans
+├── docs/                 # Product + build docs
+│   ├── plans/            # PR specs and master plans
+│   └── build/            # Build index, rollout, baselines
 ├── archive/ios/          # Archived iOS native app (for future reference)
 ├── .github/workflows/    # CI/CD (web)
 └── README.md

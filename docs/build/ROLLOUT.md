@@ -549,7 +549,7 @@ npx vercel --prod
 
 ## Where to get help
 
-- **Implementation details:** `docs/implementation/web/PR-W01.md` … `PR-W10.md`
+- **Implementation details:** `docs/plans/PR-W01.md` … `PR-W10.md`
 - **CI parity:** `.github/workflows/calsnap-web.yml`
 - **Env template:** `calsnap-web/.env.local.example`
 

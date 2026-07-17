@@ -268,6 +268,6 @@ Reuses `readDashboardCalorieTarget` from `weigh-in.ts` for settings-save E2E.
 | `calsnap-web/tests/e2e/happy-path.spec.ts` | Refactored |
 | `calsnap-web/components/design/LocalNumberInput.tsx` | Unmount commit ref sync fix |
 | `.gitignore` | `!.cursor/plans/` exception |
-| `docs/implementation/web/PR-WR01.md` | This document |
-| `docs/implementation/web/README.md` | WR01 index status |
+| `docs/plans/PR-WR01.md` | This document |
+| `docs/plans/README.md` | WR01 index status |
 | `.cursor/plans/pr_wr01_foundation.plan.md` | Synced implementation plan |

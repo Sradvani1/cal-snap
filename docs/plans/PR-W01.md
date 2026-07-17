@@ -22,7 +22,7 @@ Establish the CalSnap Web skeleton in `calsnap-web/` with Next.js App Router, po
 - Placeholder `app/page.tsx` — "CalSnap" + tagline; no Firebase imports
 - Vitest: `nutrition-calculator.test.ts` (13), `meal-type.test.ts` (4), `firebase-client.test.ts` (smoke)
 - Root `.gitignore` updates; `calsnap-web/README.md`; `.env.local.example`
-- `docs/implementation/web/README.md` + this file
+- `docs/plans/README.md` + this file
 
 ---
 
@@ -53,8 +53,8 @@ Establish the CalSnap Web skeleton in `calsnap-web/` with Next.js App Router, po
 | `calsnap-web/app/layout.tsx` | Root layout, metadata title "CalSnap" |
 | `calsnap-web/app/page.tsx` | Placeholder home screen |
 | `calsnap-web/README.md` | Dev commands, env vars, iOS deltas |
-| `docs/implementation/web/README.md` | Web stack summary + open decisions |
-| `docs/implementation/web/PR-W01.md` | This checklist |
+| `docs/plans/README.md` | Web stack summary + open decisions |
+| `docs/plans/PR-W01.md` | This checklist |
 
 ---
 
@@ -123,7 +123,7 @@ Verified after fixes: `pnpm test` (18/18), `pnpm lint`, `pnpm build`; no `GEMINI
 | `firebase.json` emulator ports | `firebase.json` |
 | No secrets in client bundle | Build grep; only `NEXT_PUBLIC_*` when Firebase wired |
 | Root `.gitignore` covers web artifacts | `.gitignore` diff |
-| Web implementation docs | `docs/implementation/web/` |
+| Web implementation docs | `docs/plans/` |
 
 ---
 
@@ -147,7 +147,7 @@ W01 merge gate: local `pnpm install && pnpm test && pnpm lint && pnpm build`.
 - [x] Placeholder `app/page.tsx` — no Firebase in UI
 - [x] Tests: 13 + 4 + 1 smoke
 - [x] Root `.gitignore` + README pointer
-- [x] `docs/implementation/web/README.md` + `PR-W01.md`
+- [x] `docs/plans/README.md` + `PR-W01.md`
 
 - [x] Post-review: `.env.local.example` committable; light-only CSS; full Firebase smoke test
 

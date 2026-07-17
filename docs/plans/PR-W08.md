@@ -62,7 +62,7 @@ Deliver the Settings tab with profile editing (TDEE recalculation), macro slider
 |------|--------|
 | `app/(app)/settings/page.tsx` | Full Settings screen (replaces stub) |
 | `lib/repositories/meals.ts` | Added `fetchAllMeals` |
-| `docs/implementation/web/README.md` | W08 → Implemented; locked deletion decision |
+| `docs/plans/README.md` | W08 → Implemented; locked deletion decision |
 
 ---
 

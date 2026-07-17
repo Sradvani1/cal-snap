@@ -121,7 +121,7 @@ pnpm lint && pnpm test && pnpm build && pnpm test:integration && pnpm test:e2e
 | `tests/e2e/helpers/index.ts` | Export scanner helpers | Barrel |
 | `tests/e2e/happy-path.spec.ts` | Refactor to scanner helpers | WR03-E2E-02 |
 | `tests/e2e/scanner-error-manual-entry.spec.ts` (new) | Mock 503 → manual entry → log → dashboard kcal; `role="alert"` assertion | WR03-E2E-01 |
-| `docs/implementation/web/PR-WR01.md` | Scanner helper cross-ref in §5 | Review close-out |
+| `docs/plans/PR-WR01.md` | Scanner helper cross-ref in §5 | Review close-out |
 | `.cursor/plans/wr03_dashboard_scanner_fc9beffb.plan.md` | Mark todos completed; superseded note | Review close-out |
 
 ---
@@ -208,7 +208,7 @@ See also [PR-WR01.md](./PR-WR01.md) §5 for the full helper contract.
 
 - `tests/e2e/helpers/scanner.ts`
 - `tests/e2e/scanner-error-manual-entry.spec.ts`
-- `docs/implementation/web/PR-WR03.md`
+- `docs/plans/PR-WR03.md`
 - `.cursor/plans/pr_wr03_dashboard_scanner.plan.md`
 
 **Modified**
@@ -221,5 +221,5 @@ See also [PR-WR01.md](./PR-WR01.md) §5 for the full helper contract.
 - `tests/unit/plateau-diet-break.test.ts`
 - `tests/e2e/happy-path.spec.ts`
 - `tests/e2e/helpers/index.ts`
-- `docs/implementation/web/PR-WR01.md`
+- `docs/plans/PR-WR01.md`
 - `.cursor/plans/wr03_dashboard_scanner_fc9beffb.plan.md`

@@ -141,7 +141,7 @@ Recorded 2026-07-01:
 | `app/(app)/log/[mealId]/page.tsx` | `variant="detail"` | WO04-MEAL-01 |
 | `app/(app)/scan/edit/[mealId]/page.tsx` | Both loading branches | WO04-MEAL-01 |
 | `tests/unit/skeleton.test.ts` | Reduced motion + smoke + nav assert | WO04-TEST-01 |
-| `docs/implementation/web/PR-WO04.md` | This spec | — |
+| `docs/plans/PR-WO04.md` | This spec | — |
 
 ---
 
@@ -263,7 +263,7 @@ Layout gates on `ready` only — single `if (!ready)` branch.
 - `calsnap-web/components/settings/SettingsPageSkeleton.tsx`
 - `calsnap-web/components/meal-log/MealDetailSkeleton.tsx`
 - `calsnap-web/tests/unit/skeleton.test.ts`
-- `docs/implementation/web/PR-WO04.md`
+- `docs/plans/PR-WO04.md`
 
 **Modified**
 
@@ -276,4 +276,4 @@ Layout gates on `ready` only — single `if (!ready)` branch.
 - `calsnap-web/app/(app)/settings/page.tsx`
 - `calsnap-web/app/(app)/log/[mealId]/page.tsx`
 - `calsnap-web/app/(app)/scan/edit/[mealId]/page.tsx`
-- `docs/implementation/web/README.md`
+- `docs/plans/README.md`

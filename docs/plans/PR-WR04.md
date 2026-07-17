@@ -118,7 +118,7 @@ pnpm lint && pnpm test && pnpm build && pnpm test:integration && pnpm test:e2e
 | `tests/e2e/helpers/index.ts` | Export new helpers | Barrel |
 | `tests/e2e/meal-edit-delete.spec.ts` (new) | Edit + delete independent tests | WR04-E2E-01 |
 | `tests/e2e/weigh-in-updates-target.spec.ts` (new) | Relative target decrease | WR04-E2E-02 |
-| `docs/implementation/web/PR-WR01.md` | Meal-log + weigh-in helper cross-ref in §5 | Review close-out |
+| `docs/plans/PR-WR01.md` | Meal-log + weigh-in helper cross-ref in §5 | Review close-out |
 
 ---
 
@@ -211,7 +211,7 @@ See also [PR-WR01.md](./PR-WR01.md) §5 for the full helper contract.
 - `tests/e2e/helpers/weigh-in.ts`
 - `tests/e2e/meal-edit-delete.spec.ts`
 - `tests/e2e/weigh-in-updates-target.spec.ts`
-- `docs/implementation/web/PR-WR04.md`
+- `docs/plans/PR-WR04.md`
 - `.cursor/plans/pr_wr04_meal_log_progress.plan.md`
 
 **Modified**
@@ -224,5 +224,5 @@ See also [PR-WR01.md](./PR-WR01.md) §5 for the full helper contract.
 - `components/meal-log/MealDetailActions.tsx`
 - `components/meal-log/MealDetailView.tsx`
 - `tests/e2e/helpers/index.ts`
-- `docs/implementation/web/PR-WR01.md`
+- `docs/plans/PR-WR01.md`
 - `.cursor/plans/wr04_meal_log_progress_c1cd03bd.plan.md`

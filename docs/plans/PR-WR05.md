@@ -131,7 +131,7 @@ pnpm lint && pnpm test && pnpm build && pnpm test:integration && pnpm test:e2e
 | `tests/e2e/helpers/analytics.ts` (new) | Navigation, assertions, Node emulator meal seeding | WR05-E2E-01 |
 | `tests/e2e/analytics-page.spec.ts` (new) | Empty state + seeded sections (2 tests) | WR05-E2E-01 |
 | `tests/e2e/helpers/index.ts` | Export analytics helpers | Barrel |
-| `docs/implementation/web/PR-WR01.md` | Analytics helper cross-ref in §5 | Review close-out |
+| `docs/plans/PR-WR01.md` | Analytics helper cross-ref in §5 | Review close-out |
 
 ---
 
@@ -209,7 +209,7 @@ See also [PR-WR01.md](./PR-WR01.md) §5 for the full helper contract.
 
 - `tests/e2e/helpers/analytics.ts`
 - `tests/e2e/analytics-page.spec.ts`
-- `docs/implementation/web/PR-WR05.md`
+- `docs/plans/PR-WR05.md`
 
 **Modified**
 
@@ -217,5 +217,5 @@ See also [PR-WR01.md](./PR-WR01.md) §5 for the full helper contract.
 - `lib/queries/use-analytics.ts`
 - `lib/queries/use-generate-insight.ts`
 - `tests/e2e/helpers/index.ts`
-- `docs/implementation/web/PR-WR01.md`
+- `docs/plans/PR-WR01.md`
 - `.cursor/plans/pr_wr05_analytics_insights.plan.md`

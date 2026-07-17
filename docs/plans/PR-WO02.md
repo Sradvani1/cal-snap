@@ -295,7 +295,7 @@ Plus WO02-specific rows in §8 below (cold splash, banner hidden in standalone).
 - `calsnap-web/public/splash-iphone14promax-light.png`
 - `calsnap-web/public/splash-iphone14promax-dark.png`
 - `calsnap-web/tests/unit/manifest-pwa.test.ts`
-- `docs/implementation/web/PR-WO02.md`
+- `docs/plans/PR-WO02.md`
 - `.cursor/plans/pr_wo02_pwa_launch_install.plan.md`
 
 **Modified (implementation)**

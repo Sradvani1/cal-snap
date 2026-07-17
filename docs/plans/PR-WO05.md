@@ -145,8 +145,8 @@ pnpm lint && pnpm test && pnpm build && pnpm test:integration && pnpm test:e2e
 | `tests/unit/form-field.test.ts` (new) | Token class assertions | Merge-blocking |
 | `tests/unit/use-keyboard-inset.test.ts` (new) | Hook + scroll helper tests | Merge-blocking |
 | `tests/unit/query-client.test.ts` (new) | Default options regression | Merge-blocking |
-| `docs/implementation/web/PERF-BASELINE.md` (new) | Lighthouse baseline doc | WO05 deliverable |
-| `docs/implementation/web/OPTIMIZATION-MASTER-PLAN.md` (new) | Sprint close-out | WO05 deliverable |
+| `docs/plans/PERF-BASELINE.md` (new) | Lighthouse baseline doc | WO05 deliverable |
+| `docs/plans/OPTIMIZATION-MASTER-PLAN.md` (new) | Sprint close-out | WO05 deliverable |
 
 ---
 
@@ -280,9 +280,9 @@ Reference full matrix rows 1–20 + pre-flight; all **Pending** except row 12 (C
 - `calsnap-web/tests/unit/form-field.test.ts`
 - `calsnap-web/tests/unit/use-keyboard-inset.test.ts`
 - `calsnap-web/tests/unit/query-client.test.ts`
-- `docs/implementation/web/PR-WO05.md`
-- `docs/implementation/web/PERF-BASELINE.md`
-- `docs/implementation/web/OPTIMIZATION-MASTER-PLAN.md`
+- `docs/plans/PR-WO05.md`
+- `docs/plans/PERF-BASELINE.md`
+- `docs/plans/OPTIMIZATION-MASTER-PLAN.md`
 - `.cursor/plans/pr_wo05_forms_keyboard_perf.plan.md`
 
 **Modified**

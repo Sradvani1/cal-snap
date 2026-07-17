@@ -209,7 +209,7 @@ See also [PR-WR01.md](./PR-WR01.md) §5 for the full helper contract (updated wi
 - `tests/unit/firebase-auth-errors.test.ts`
 - `tests/unit/session-edge.test.ts`
 - `tests/unit/session-route.test.ts`
-- `docs/implementation/web/PR-WR02.md`
+- `docs/plans/PR-WR02.md`
 
 **Modified**
 

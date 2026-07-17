@@ -141,9 +141,9 @@ pnpm lint && pnpm test && pnpm build && pnpm test:integration && pnpm test:e2e
 | `lib/copy/privacy.ts` | Session cookie section | WR08-PRIV-01 |
 | `app/privacy/page.tsx` | Render session section | WR08-PRIV-01 |
 | `.env.local.example` | Never set emulator=true on Vercel | WR08-ENV-01 |
-| `docs/implementation/web/PR-WR08.md` | This document | Sprint deliverable |
-| `docs/implementation/web/README.md` | WR02–WR08 index → Implemented | Sprint close-out |
-| `docs/implementation/web/REVIEW-MASTER-PLAN.md` | WR08 deliverable + sprint status + success criteria | Sprint close-out |
+| `docs/plans/PR-WR08.md` | This document | Sprint deliverable |
+| `docs/plans/README.md` | WR02–WR08 index → Implemented | Sprint close-out |
+| `docs/plans/REVIEW-MASTER-PLAN.md` | WR08 deliverable + sprint status + success criteria | Sprint close-out |
 
 ---
 
@@ -290,7 +290,7 @@ From [REVIEW-MASTER-PLAN.md](./REVIEW-MASTER-PLAN.md) success criteria:
 **New**
 
 - `tests/unit/use-log-meal.test.ts`
-- `docs/implementation/web/PR-WR08.md`
+- `docs/plans/PR-WR08.md`
 
 **Modified**
 
@@ -301,4 +301,4 @@ From [REVIEW-MASTER-PLAN.md](./REVIEW-MASTER-PLAN.md) success criteria:
 - `lib/copy/privacy.ts`
 - `app/privacy/page.tsx`
 - `.env.local.example`
-- `docs/implementation/web/README.md`
+- `docs/plans/README.md`
