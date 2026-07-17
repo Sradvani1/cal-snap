@@ -21,6 +21,7 @@ export const dashboardCopy = {
   'dashboard.weight.logWeighIn': 'Log weigh-in',
   'dashboard.weight.startingWeight': 'Starting weight',
   'dashboard.weight.firstWeighIn': 'Log your first weigh-in',
+  'dashboard.weight.oneWeighIn': 'Log another weigh-in to see your trend',
   'dashboard.weight.logInProgress': 'Log weigh-in in Progress',
   'dashboard.weight.trendA11y': 'Seven-day weight trend',
   'dashboard.plateau.title': 'Plateau Detected',

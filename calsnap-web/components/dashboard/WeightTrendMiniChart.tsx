@@ -53,6 +53,7 @@ export function WeightTrendMiniChart({
   const chartHeight = 120;
   const points = sparklinePoints(weighIns, useLbs, chartWidth, chartHeight);
   const hasChart = weighIns.length >= 2 && points.length > 0;
+  const singleWeighIn = weighIns.length === 1 ? weighIns[0] : null;
 
   return (
     <SectionCard>
@@ -96,12 +97,16 @@ export function WeightTrendMiniChart({
       ) : (
         <div className="flex flex-col items-center gap-2 py-4 text-center">
           <p className="text-lg font-medium text-cs-foreground">
-            {formatWeight(startingWeightKg, useLbs)}
+            {formatWeight(singleWeighIn?.weightKg ?? startingWeightKg, useLbs)}
           </p>
-          <p className={typography.csCaption}>{copy('dashboard.weight.startingWeight')}</p>
+          {!singleWeighIn && (
+            <p className={typography.csCaption}>{copy('dashboard.weight.startingWeight')}</p>
+          )}
           {onLogWeighIn ? (
             <PrimaryButton type="button" onClick={onLogWeighIn}>
-              {copy('dashboard.weight.firstWeighIn')}
+              {singleWeighIn
+                ? copy('dashboard.weight.oneWeighIn')
+                : copy('dashboard.weight.firstWeighIn')}
             </PrimaryButton>
           ) : (
             <p className="text-xs text-cs-muted">{copy('dashboard.weight.logInProgress')}</p>

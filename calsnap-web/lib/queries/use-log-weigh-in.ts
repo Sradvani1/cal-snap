@@ -1,7 +1,6 @@
 'use client';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { localDayKey } from '@/lib/dashboard/date-window';
 import { notSignedInError } from '@/lib/copy/errors';
 import type { ProfileExtras } from '@/lib/models/profile-doc';
 import type { UserProfile } from '@/lib/models/user-profile';
@@ -35,7 +34,7 @@ export function useLogWeighIn(uid: string | undefined) {
       if (!uid) {
         return;
       }
-      invalidateWeighInQueries(queryClient, uid, localDayKey(new Date()));
+      invalidateWeighInQueries(queryClient, uid);
     },
   });
 }

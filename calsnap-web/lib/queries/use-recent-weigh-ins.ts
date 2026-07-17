@@ -9,7 +9,7 @@ import {
 import { queryKeys } from '@/lib/queries/query-keys';
 
 export function useRecentWeighIns(uid: string | undefined, referenceDate: Date = new Date()) {
-  const { start, end } = lastNDaysWindow(7, referenceDate);
+  const { start, end } = lastNDaysWindow(30, referenceDate);
   const windowKey = localDayKey(referenceDate);
 
   return useQuery({
