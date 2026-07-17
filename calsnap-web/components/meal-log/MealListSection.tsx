@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { MealType } from '@/lib/models/meal-type';
 import type { MealsByType } from '@/lib/dashboard/aggregate-meals';
 import {
   MEAL_TYPE_LABELS,
@@ -15,6 +16,20 @@ interface MealListSectionProps {
   onDeleteMeal?: (mealId: string) => void;
 }
 
+function AddMealLink({ mealType }: { mealType: MealType }) {
+  return (
+    <Link
+      href={`/scan?mealType=${mealType}`}
+      className={cn(
+        typography.csCaption,
+        'underline underline-offset-2 hover:text-cs-foreground',
+      )}
+    >
+      {copy('mealLog.addMeal', { mealType: MEAL_TYPE_LABELS[mealType] })}
+    </Link>
+  );
+}
+
 export function MealListSection({
   mealsByType,
   showRowActions = false,
@@ -26,19 +41,20 @@ export function MealListSection({
         const meals = mealsByType[mealType] ?? [];
         return (
           <div key={mealType}>
-            <h3 className={cn(typography.csCaption, 'mb-2 font-semibold')}>
-              {MEAL_TYPE_LABELS[mealType]}
-            </h3>
-            {meals.length === 0 ? (
+            <div className="mb-2 flex items-center justify-between">
+              <h3 className={cn(typography.csCaption, 'font-semibold')}>
+                {MEAL_TYPE_LABELS[mealType]}
+              </h3>
               <Link
-                href="/scan"
-                className={cn(
-                  typography.csCaption,
-                  'underline underline-offset-2 hover:text-cs-foreground',
-                )}
+                href={`/scan?mealType=${mealType}`}
+                aria-label={copy('mealLog.addMeal', { mealType: MEAL_TYPE_LABELS[mealType] })}
+                className="flex h-6 w-6 items-center justify-center rounded-full text-cs-muted hover:bg-cs-muted/15 hover:text-cs-foreground"
               >
-                {copy('mealLog.addMeal', { mealType: MEAL_TYPE_LABELS[mealType] })}
+                +
               </Link>
+            </div>
+            {meals.length === 0 ? (
+              <AddMealLink mealType={mealType} />
             ) : (
               <div className="space-y-2">
                 {meals.map((meal) => (

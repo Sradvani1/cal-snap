@@ -40,16 +40,23 @@ export type ScannerErrorKind = 'offline' | 'api' | 'parse' | 'unrecognizable' | 
 
 export interface UseMealScannerOptions {
   userId: string;
+  initialMealType?: MealType;
   onUnsavedWorkChange?: (hasUnsavedWork: boolean) => void;
 }
 
-export function useMealScanner({ userId, onUnsavedWorkChange }: UseMealScannerOptions) {
+export function useMealScanner({
+  userId,
+  initialMealType,
+  onUnsavedWorkChange,
+}: UseMealScannerOptions) {
   const [phase, setPhase] = useState<MealScannerPhase>('capture');
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [preparedPhoto, setPreparedPhoto] = useState<PreparedMealImage | null>(null);
   const [textDescription, setTextDescription] = useState('');
   const [editableItems, setEditableItems] = useState<EditableFoodItem[]>([]);
-  const [mealType, setMealType] = useState<MealType>(() => suggestedMealTypeForDate(new Date()));
+  const [mealType, setMealType] = useState<MealType>(
+    initialMealType ?? suggestedMealTypeForDate(new Date()),
+  );
   const [scannerError, setScannerError] = useState<ScannerErrorKind | null>(null);
   const [estimationNotes, setEstimationNotes] = useState<string | null>(null);
   const [isManualEntry, setIsManualEntry] = useState(false);

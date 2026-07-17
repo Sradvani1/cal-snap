@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useEffect, useLayoutEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { ConfirmAlertDialog } from '@/components/design/ConfirmAlertDialog';
 import { MealAnalysisResultView } from '@/components/scanner/MealAnalysisResultView';
 import { MealScannerAnalyzingView } from '@/components/scanner/MealScannerAnalyzingView';
@@ -17,20 +17,34 @@ import { cn } from '@/lib/utils/cn';
 import { useLogMeal } from '@/lib/queries/use-log-meal';
 import { useUnsavedWork } from '@/lib/scanner/unsaved-work-context';
 import { useMealScanner } from '@/lib/scanner/use-meal-scanner';
+import { MealType, type MealType as MealTypeValue } from '@/lib/models/meal-type';
+
+const VALID_MEAL_TYPES = new Set<string>(Object.values(MealType));
 
 type DiscardPrompt = 'navigation' | 'discard' | null;
 
-export default function ScanPage() {
+function parseMealTypeParam(param: string | null): MealTypeValue | undefined {
+  if (param && VALID_MEAL_TYPES.has(param)) {
+    return param as MealTypeValue;
+  }
+  return undefined;
+}
+
+function ScanPageContent() {
   const { user } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { setHasUnsavedWork, registerNavigationHandler } = useUnsavedWork();
   const logMealMutation = useLogMeal(user?.uid);
   const [discardDialogOpen, setDiscardDialogOpen] = useState(false);
   const [discardPrompt, setDiscardPrompt] = useState<DiscardPrompt>(null);
   const [pendingHref, setPendingHref] = useState<string | null>(null);
 
+  const initialMealType = parseMealTypeParam(searchParams.get('mealType'));
+
   const scanner = useMealScanner({
     userId: user?.uid ?? '',
+    initialMealType,
     onUnsavedWorkChange: setHasUnsavedWork,
   });
 
@@ -180,5 +194,13 @@ export default function ScanPage() {
         onConfirm={handleConfirmDiscard}
       />
     </div>
+  );
+}
+
+export default function ScanPage() {
+  return (
+    <Suspense>
+      <ScanPageContent />
+    </Suspense>
   );
 }

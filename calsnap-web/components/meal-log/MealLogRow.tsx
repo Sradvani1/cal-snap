@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { MealEntry } from '@/lib/models/meal-entry';
 import {
   MEAL_TYPE_ICONS,
+  MEAL_TYPE_LABELS,
   formatMealTime,
 } from '@/components/meal-log/meal-type-display';
 import { copy } from '@/lib/copy';
@@ -52,6 +53,14 @@ export function MealLogRow({ meal, showActions = false, onDelete }: MealLogRowPr
         <span className={cn(typography.csBody, 'font-medium tabular-nums')}>
           {meal.totalCalories} {copy('common.macro.kcal')}
         </span>
+      </Link>
+
+      <Link
+        href={`/scan?mealType=${meal.mealType}`}
+        aria-label={copy('mealLog.addMeal', { mealType: MEAL_TYPE_LABELS[meal.mealType] })}
+        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-cs-muted hover:bg-cs-muted/15 hover:text-cs-foreground"
+      >
+        +
       </Link>
 
       {showActions && onDelete && (
