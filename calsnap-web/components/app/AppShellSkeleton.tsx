@@ -15,9 +15,6 @@ import {
 import {
   TodaysMealsSectionSkeleton,
 } from '@/components/dashboard/TodaysMealsSection';
-import {
-  WeightTrendMiniChartSkeleton,
-} from '@/components/dashboard/WeightTrendMiniChart';
 import { layout } from '@/lib/design/layout';
 import { cn } from '@/lib/utils/cn';
 
@@ -29,7 +26,6 @@ export function AppShellSkeleton() {
       <MacroBarCardSkeleton />
       <TodaysMealsSectionSkeleton />
       <DailySummaryFooterSkeleton />
-      <WeightTrendMiniChartSkeleton />
     </div>
   );
 }

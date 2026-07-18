@@ -17,15 +17,6 @@ export const dashboardCopy = {
   'dashboard.summary.macroSplitA11y':
     'Actual macros protein {{actualProtein}} percent, carbs {{actualCarbs}} percent, fat {{actualFat}} percent. Target protein {{targetProtein}} percent, carbs {{targetCarbs}} percent, fat {{targetFat}} percent.',
   'dashboard.meals.title': "Today's Meals",
-  'dashboard.weight.title': 'Weight Trend',
-  'dashboard.weight.logWeighIn': 'Log weigh-in',
-  'dashboard.weight.startingWeight': 'Starting weight',
-  'dashboard.weight.firstWeighIn': 'Log your first weigh-in',
-  'dashboard.weight.oneWeighIn': 'Log another weigh-in to see your trend',
-  'dashboard.weight.logInProgress': 'Log weigh-in in Progress',
-  'dashboard.weight.goalLine': 'Goal',
-  'dashboard.weight.range': '{{start}} – {{end}}',
-  'dashboard.weight.trendA11y': 'Weight trend from {{start}} to {{end}}',
   'dashboard.plateau.title': 'Plateau Detected',
   'dashboard.plateau.body':
     'Your weight has been stable for about three weeks. This can happen during a deficit.',

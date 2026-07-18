@@ -12,7 +12,8 @@ export async function readDashboardCalorieTarget(page: Page): Promise<number> {
 }
 
 export async function openWeighInFromDashboard(page: Page): Promise<void> {
-  await page.getByRole('button', { name: copy('dashboard.weight.logWeighIn') }).click();
+  await page.getByRole('link', { name: copy('common.nav.progress') }).click();
+  await page.getByRole('button', { name: copy('progress.logWeighIn') }).click();
   await expect(page.getByRole('dialog')).toBeVisible();
 }
 
@@ -40,6 +41,7 @@ export async function logWeighInAndExpectLowerTarget(
   await openWeighInFromDashboard(page);
   await fillWeighInWeightKg(page, newWeightKg);
   await saveWeighIn(page);
+  await page.getByRole('link', { name: copy('common.nav.dashboard') }).click();
   await expect
     .poll(async () => readDashboardCalorieTarget(page), { timeout: 15_000 })
     .toBeLessThan(previousTarget);

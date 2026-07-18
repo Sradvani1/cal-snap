@@ -23,10 +23,6 @@ import {
   DailySummaryFooterSkeleton,
 } from '@/components/dashboard/DailySummaryFooter';
 import {
-  WeightTrendMiniChart,
-  WeightTrendMiniChartSkeleton,
-} from '@/components/dashboard/WeightTrendMiniChart';
-import {
   DashboardHeader,
   DashboardHeaderSkeleton,
 } from '@/components/dashboard/DashboardHeader';
@@ -61,7 +57,6 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
         <MacroBarCardSkeleton />
         <TodaysMealsSectionSkeleton />
         <DailySummaryFooterSkeleton />
-        <WeightTrendMiniChartSkeleton />
       </div>
     );
   }
@@ -124,13 +119,6 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
           targetMacroPercents={dashboard.targetMacroPercents}
         />
 
-        <WeightTrendMiniChart
-          weighIns={dashboard.chartWeighIns}
-          startingWeightKg={dashboard.startingWeightKg}
-          goalWeightKg={dashboard.goalWeightKg}
-          useLbs={dashboard.useLbsForDisplay}
-          onLogWeighIn={() => setShowWeighInSheet(true)}
-        />
       </div>
 
       {sheetReady && profile && profileExtras && uid && (

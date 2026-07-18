@@ -15,17 +15,14 @@ import {
 import { dashboardFormattedDate, dashboardGreeting } from '@/lib/dashboard/greeting';
 import { macroTargets, macroPercents } from '@/lib/nutrition/calculator';
 import { useProfile } from '@/lib/queries/use-profile';
-import { useRecentWeighIns } from '@/lib/queries/use-recent-weigh-ins';
 import { useTodaysMeals } from '@/lib/queries/use-todays-meals';
 
 export function useDashboard(uid: string | undefined) {
   const now = useMemo(() => new Date(), []);
   const profileQuery = useProfile(uid);
   const mealsQuery = useTodaysMeals(uid, now);
-  const weighInsQuery = useRecentWeighIns(uid, now);
 
   const profile = profileQuery.data?.profile ?? null;
-  const useLbsForDisplay = profileQuery.data?.extras?.useLbsForWeight ?? false;
 
   const aggregation = useMemo(
     () => aggregateTodaysMeals(mealsQuery.data ?? []),
@@ -63,21 +60,18 @@ export function useDashboard(uid: string | undefined) {
     : { proteinPct: 0, carbsPct: 0, fatPct: 0 };
   const netDelta = netCalorieDelta(consumed, target);
 
-  const chartWeighIns = weighInsQuery.data?.chartWeighIns ?? [];
-
   const isLoading =
-    profileQuery.isLoading || mealsQuery.isLoading || weighInsQuery.isLoading;
+    profileQuery.isLoading || mealsQuery.isLoading;
   const profileLoadFailed =
     !isLoading && (profileQuery.isError || (profileQuery.isSuccess && !profile));
   const error =
-    profileQuery.error ?? mealsQuery.error ?? weighInsQuery.error ?? null;
+    profileQuery.error ?? mealsQuery.error ?? null;
 
   return {
     isLoading,
     profileLoadFailed,
     error,
     profile,
-    useLbsForDisplay,
     greeting: dashboardGreeting(profile?.name, now),
     formattedDate: dashboardFormattedDate(now),
     consumed,
@@ -98,8 +92,5 @@ export function useDashboard(uid: string | undefined) {
     netCalorieDelta: netDelta,
     actualMacroPercents,
     targetMacroPercents,
-    chartWeighIns,
-    startingWeightKg: profile?.startingWeightKg ?? 0,
-    goalWeightKg: profile?.goalWeightKg ?? 0,
   };
 }
