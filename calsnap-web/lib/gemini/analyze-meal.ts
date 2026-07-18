@@ -104,6 +104,7 @@ export async function analyzeMealImage(
             responseMimeType: 'application/json',
             responseJsonSchema: mealAnalysisJsonSchema(),
             safetySettings: SAFETY_SETTINGS,
+            thinkingConfig: { thinkingBudget: 0 },
           },
         });
 

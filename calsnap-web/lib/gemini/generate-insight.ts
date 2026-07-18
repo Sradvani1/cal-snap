@@ -63,6 +63,7 @@ export async function generateAnalyticsInsight(
           config: {
             maxOutputTokens: AppConstants.Gemini.maxTokens,
             safetySettings: SAFETY_SETTINGS,
+            thinkingConfig: { thinkingBudget: 0 },
           },
         });
 
