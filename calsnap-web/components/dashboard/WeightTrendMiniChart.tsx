@@ -48,6 +48,9 @@ function sparklinePoints(
   max: number,
   useLbs: boolean,
 ): string {
+  if (weighIns.length < 2) {
+    return '';
+  }
   const sorted = [...weighIns].sort((a, b) => a.date.getTime() - b.date.getTime());
   const start = earliestDate(sorted).getTime();
   const end = latestDate(sorted).getTime();

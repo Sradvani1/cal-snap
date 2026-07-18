@@ -85,6 +85,9 @@ export const commonCopy = {
   'common.nav.settings': 'Settings',
   'common.nav.analytics': 'Analytics',
   'common.confirm.discard': 'Discard',
+  'common.error.title': 'Something went wrong',
+  'common.error.description': 'An unexpected error occurred. Please try again.',
+  'common.button.retry': 'Try again',
 } as const;
 
 export type CommonCopyKey = keyof typeof commonCopy;
