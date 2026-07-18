@@ -127,6 +127,7 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
         <WeightTrendMiniChart
           weighIns={dashboard.chartWeighIns}
           startingWeightKg={dashboard.startingWeightKg}
+          goalWeightKg={dashboard.goalWeightKg}
           useLbs={dashboard.useLbsForDisplay}
           onLogWeighIn={() => setShowWeighInSheet(true)}
         />

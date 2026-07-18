@@ -12,6 +12,7 @@ import {
 } from '@/lib/analytics/analytics-aggregator';
 import {
   AnalyticsDateRange,
+  ANALYTICS_MIN_INSIGHT_LOGGED_DAYS,
   type AnalyticsDateRange as AnalyticsDateRangeType,
   type AnalyticsInsightPayload,
   type DailyNutritionSummary,
@@ -112,7 +113,7 @@ export function buildAnalyticsSnapshot(
   const loggedDays = loggedDailySummaries(input.meals);
   const chartSeries = chartDailySeries(loggedDays, rangeStart, rangeEnd);
   const loggedDayCount = loggedDays.length;
-  const hasEnoughData = loggedDayCount >= 3;
+  const hasEnoughData = loggedDayCount >= ANALYTICS_MIN_INSIGHT_LOGGED_DAYS;
   const calorieTarget = input.profile.dailyCalorieTarget;
 
   const adherencePct = adherencePercent(loggedDays, calorieTarget);

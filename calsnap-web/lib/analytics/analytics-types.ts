@@ -4,6 +4,8 @@ import type { MacroSplit } from '@/lib/models/macro-split';
 
 export const ANALYTICS_MAX_CUSTOM_SPAN_DAYS = 365;
 
+export const ANALYTICS_MIN_INSIGHT_LOGGED_DAYS = 3;
+
 export type AnalyticsDateRange =
   | { kind: 'days'; count: number }
   | { kind: 'custom'; start: Date; end: Date };

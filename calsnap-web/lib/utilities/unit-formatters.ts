@@ -116,3 +116,7 @@ export function formatHeight(cm: number, useImperial: boolean): string {
 export function formatMacroGrams(grams: number, fractionLength = 0): string {
   return `${grams.toFixed(fractionLength)} g`;
 }
+
+export function formatDateShort(date: Date): string {
+  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+}

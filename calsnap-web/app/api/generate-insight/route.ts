@@ -7,6 +7,7 @@ import {
   GeminiInsightError,
 } from '@/lib/gemini/generate-insight';
 import { parseAnalyticsInsightPayload } from '@/lib/gemini/analytics-insight-zod';
+import { ANALYTICS_MIN_INSIGHT_LOGGED_DAYS } from '@/lib/analytics/analytics-types';
 
 function apiError(copyKey: CopyKey, code: (typeof ApiErrorCode)[keyof typeof ApiErrorCode], status: number) {
   return NextResponse.json({ error: copy(copyKey), code }, { status });
@@ -34,7 +35,7 @@ export async function POST(request: NextRequest) {
     return apiError('api.insight.invalidPayload', ApiErrorCode.InvalidPayload, 400);
   }
 
-  if (parsed.data.loggedDayCount < 3) {
+  if (parsed.data.loggedDayCount < ANALYTICS_MIN_INSIGHT_LOGGED_DAYS) {
     return apiError('api.insight.insufficientDays', ApiErrorCode.InsufficientLoggedDays, 400);
   }
 

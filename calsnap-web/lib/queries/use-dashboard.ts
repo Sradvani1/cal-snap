@@ -100,5 +100,6 @@ export function useDashboard(uid: string | undefined) {
     targetMacroPercents,
     chartWeighIns,
     startingWeightKg: profile?.startingWeightKg ?? 0,
+    goalWeightKg: profile?.goalWeightKg ?? 0,
   };
 }
