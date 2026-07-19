@@ -32,7 +32,7 @@ export function createDefaultProfileDraft(): ProfileDraft {
     goalWeightKg: 72,
     activityLevel: 'moderatelyActive',
     requestedDeficit: AppConstants.Deficit.defaultDeficitKcal,
-    useImperialHeight: false,
+    useImperialHeight: true,
     useLbsWeight: true,
     useLbsGoalWeight: true,
   };

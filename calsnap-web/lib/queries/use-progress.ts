@@ -17,7 +17,7 @@ export function useProgress(uid: string | undefined, referenceDate: Date = new D
   const weighInsQuery = useAllWeighIns(uid);
 
   const profile = profileQuery.data?.profile ?? null;
-  const useLbs = profileQuery.data?.extras?.useLbsForWeight ?? false;
+  const useLbs = profileQuery.data?.extras?.useLbsForWeight ?? true;
   const weighIns = useMemo(
     () => weighInsQuery.data ?? [],
     [weighInsQuery.data],
