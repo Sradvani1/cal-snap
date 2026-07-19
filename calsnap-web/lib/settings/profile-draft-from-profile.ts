@@ -5,14 +5,13 @@ import type { ProfileDraft } from '@/lib/onboarding/profile-draft';
 export function profileDraftFromProfile(
   profile: UserProfile,
   extras: ProfileExtras,
-  currentWeightKg: number,
 ): ProfileDraft {
   return {
     name: profile.name,
     sex: profile.sex,
     dateOfBirth: profile.dateOfBirth,
     heightCm: profile.heightCm,
-    weightKg: currentWeightKg,
+    weightKg: profile.startingWeightKg,
     goalWeightKg: profile.goalWeightKg,
     activityLevel: profile.activityLevel,
     requestedDeficit: profile.deficitKcal,

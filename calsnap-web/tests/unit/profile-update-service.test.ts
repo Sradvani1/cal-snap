@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { trimmedName } from '@/lib/onboarding/profile-draft';
-import { canSaveSettings, validateCurrentWeightKg } from '@/lib/settings/validation';
+import { canSaveSettings } from '@/lib/settings/validation';
+import { validateWeightKg } from '@/lib/utilities/unit-formatters';
 import {
   adjustMacroPercents,
   apply,
@@ -66,7 +67,7 @@ describe('profile-update-service', () => {
     draft.name = '  ';
     expect(trimmedName(draft)).toBe('');
     expect(
-      canSaveSettings(draft, { protein: 28, carbs: 47, fat: 25 }, draft.weightKg),
+      canSaveSettings(draft, { protein: 28, carbs: 47, fat: 25 }, draft.weightKg, draft.weightKg),
     ).toBe(true);
   });
 
@@ -100,12 +101,12 @@ describe('profile-update-service', () => {
     expect(profile.dailyCalorieTarget).toBeLessThan(profile.tdee);
   });
 
-  it('rejects invalid current weight', () => {
-    expect(validateCurrentWeightKg(Number.NaN)).toBe(false);
-    expect(validateCurrentWeightKg(0)).toBe(false);
+  it('rejects invalid weight values', () => {
+    expect(validateWeightKg(Number.NaN)).toBe(false);
+    expect(validateWeightKg(0)).toBe(false);
     const draft = createDefaultProfileDraft();
     expect(
-      canSaveSettings(draft, { protein: 28, carbs: 47, fat: 25 }, Number.NaN),
+      canSaveSettings(draft, { protein: 28, carbs: 47, fat: 25 }, Number.NaN, 80),
     ).toBe(false);
   });
 });

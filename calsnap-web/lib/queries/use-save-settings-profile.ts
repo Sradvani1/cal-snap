@@ -19,8 +19,7 @@ export interface SaveSettingsProfileMutationInput {
   macroProteinPct: number;
   macroCarbsPct: number;
   macroFatPct: number;
-  currentWeightKg: number;
-  savedWeightKg: number;
+  startingWeightKg: number;
   reminderPrefs: ResolvedReminderPrefs;
   unitPrefs: { useLbsForWeight: boolean; useImperialForHeight: boolean };
 }

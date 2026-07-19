@@ -8,7 +8,7 @@ export const settingsCopy = {
   'settings.error.exportFailed': 'Failed to export data',
   'settings.error.deleteFailed': 'Failed to delete data',
   'settings.section.profile': 'Profile',
-  'settings.profile.currentWeight': 'Current weight ({{unit}})',
+  'settings.profile.startingWeight': 'Starting weight ({{unit}})',
   'settings.profile.goalWeight': 'Goal weight ({{unit}})',
   'settings.profile.estimatedGoalDate': 'Estimated goal date',
   'settings.profile.tdee': 'TDEE: {{value}} kcal',
@@ -42,11 +42,13 @@ export const settingsCopy = {
   'settings.account.signOut': 'Sign out',
   'settings.validation.ageRange': 'Age must be between 16 and 90 years.',
   'settings.validation.goalBelowCurrent':
-    'Goal weight must be below your current weight.',
+    'Goal weight must be below your current body weight.',
   'settings.validation.heightRange': 'Height must be between 120 and 230 cm.',
   'settings.validation.weightRange': 'Weight must be within a valid range.',
   'settings.validation.goalWeightRange': 'Goal weight must be within a valid range.',
   'settings.validation.macroSum': 'Macro percentages must sum to 100%.',
+  'settings.notice.startingWeightReset':
+    'Starting weight updated. Progress now measures from this new baseline.',
 } as const;
 
 export type SettingsCopyKey = keyof typeof settingsCopy;

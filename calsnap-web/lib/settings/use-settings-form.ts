@@ -27,7 +27,7 @@ interface SettingsSnapshot {
   macroProteinPct: number;
   macroCarbsPct: number;
   macroFatPct: number;
-  currentWeightKg: number;
+  startingWeightKg: number;
   useLbsForWeight: boolean;
   useImperialForHeight: boolean;
   reminderPrefs: ResolvedReminderPrefs;
@@ -56,14 +56,13 @@ function buildInitialSnapshot(
   profile: UserProfile,
   extras: ProfileExtras,
 ): SettingsSnapshot {
-  const weight = extras.currentWeightKg;
   const [p, c, f] = macroIntsFromProfile(profile);
   return {
-    draft: profileDraftFromProfile(profile, extras, weight),
+    draft: profileDraftFromProfile(profile, extras),
     macroProteinPct: p,
     macroCarbsPct: c,
     macroFatPct: f,
-    currentWeightKg: weight,
+    startingWeightKg: profile.startingWeightKg,
     useLbsForWeight: extras.useLbsForWeight,
     useImperialForHeight: extras.useImperialForHeight,
     reminderPrefs: reminderPrefsFromExtras(extras),
@@ -76,7 +75,7 @@ function snapshotsEqual(a: SettingsSnapshot, b: SettingsSnapshot): boolean {
     a.macroProteinPct === b.macroProteinPct &&
     a.macroCarbsPct === b.macroCarbsPct &&
     a.macroFatPct === b.macroFatPct &&
-    a.currentWeightKg === b.currentWeightKg &&
+    a.startingWeightKg === b.startingWeightKg &&
     a.useLbsForWeight === b.useLbsForWeight &&
     a.useImperialForHeight === b.useImperialForHeight &&
     JSON.stringify(a.reminderPrefs) === JSON.stringify(b.reminderPrefs)
@@ -95,8 +94,8 @@ export function useSettingsForm(profile: UserProfile, extras: ProfileExtras) {
     () => savedSnapshot.macroCarbsPct,
   );
   const [macroFatPct, setMacroFatPct] = useState(() => savedSnapshot.macroFatPct);
-  const [currentWeightKg, setCurrentWeightKg] = useState(
-    () => savedSnapshot.currentWeightKg,
+  const [startingWeightKg, setStartingWeightKg] = useState(
+    () => savedSnapshot.startingWeightKg,
   );
   const [useLbsForWeight, setUseLbsForWeight] = useState(
     () => savedSnapshot.useLbsForWeight,
@@ -112,7 +111,9 @@ export function useSettingsForm(profile: UserProfile, extras: ProfileExtras) {
   );
   const [showHardDeficitAlert, setShowHardDeficitAlert] = useState(false);
 
-  const savedWeightKg = savedSnapshot.currentWeightKg;
+  // current weight from weigh-ins (read-only for settings)
+  const currentWeightKg = extras.currentWeightKg;
+  const savedStartingWeightKg = savedSnapshot.startingWeightKg;
 
   const previewResult = useMemo(
     () =>
@@ -219,9 +220,10 @@ export function useSettingsForm(profile: UserProfile, extras: ProfileExtras) {
           carbs: macroCarbsPct,
           fat: macroFatPct,
         },
+        startingWeightKg,
         currentWeightKg,
       ),
-    [draft, macroProteinPct, macroCarbsPct, macroFatPct, currentWeightKg],
+    [draft, macroProteinPct, macroCarbsPct, macroFatPct, startingWeightKg, currentWeightKg],
   );
 
   const validationMessage = useMemo(
@@ -233,9 +235,10 @@ export function useSettingsForm(profile: UserProfile, extras: ProfileExtras) {
           carbs: macroCarbsPct,
           fat: macroFatPct,
         },
+        startingWeightKg,
         currentWeightKg,
       ),
-    [draft, macroProteinPct, macroCarbsPct, macroFatPct, currentWeightKg],
+    [draft, macroProteinPct, macroCarbsPct, macroFatPct, startingWeightKg, currentWeightKg],
   );
 
   const isDirty = useMemo(() => {
@@ -244,7 +247,7 @@ export function useSettingsForm(profile: UserProfile, extras: ProfileExtras) {
       macroProteinPct,
       macroCarbsPct,
       macroFatPct,
-      currentWeightKg,
+      startingWeightKg,
       useLbsForWeight,
       useImperialForHeight,
       reminderPrefs,
@@ -255,7 +258,7 @@ export function useSettingsForm(profile: UserProfile, extras: ProfileExtras) {
     macroProteinPct,
     macroCarbsPct,
     macroFatPct,
-    currentWeightKg,
+    startingWeightKg,
     useLbsForWeight,
     useImperialForHeight,
     reminderPrefs,
@@ -268,7 +271,7 @@ export function useSettingsForm(profile: UserProfile, extras: ProfileExtras) {
       macroProteinPct,
       macroCarbsPct,
       macroFatPct,
-      currentWeightKg,
+      startingWeightKg,
       useLbsForWeight,
       useImperialForHeight,
       reminderPrefs: { ...reminderPrefs },
@@ -278,22 +281,22 @@ export function useSettingsForm(profile: UserProfile, extras: ProfileExtras) {
     macroProteinPct,
     macroCarbsPct,
     macroFatPct,
-    currentWeightKg,
+    startingWeightKg,
     useLbsForWeight,
     useImperialForHeight,
     reminderPrefs,
   ]);
 
   const applySavedValues = useCallback(
-    (saved: { draft: ProfileDraft; currentWeightKg: number }) => {
+    (saved: { draft: ProfileDraft; startingWeightKg: number }) => {
       setDraft(saved.draft);
-      setCurrentWeightKg(saved.currentWeightKg);
+      setStartingWeightKg(saved.startingWeightKg);
       setSavedSnapshot({
         draft: { ...saved.draft },
         macroProteinPct,
         macroCarbsPct,
         macroFatPct,
-        currentWeightKg: saved.currentWeightKg,
+        startingWeightKg: saved.startingWeightKg,
         useLbsForWeight,
         useImperialForHeight,
         reminderPrefs: { ...reminderPrefs },
@@ -317,9 +320,10 @@ export function useSettingsForm(profile: UserProfile, extras: ProfileExtras) {
     macroFatPct,
     macroSum,
     adjustMacro,
+    startingWeightKg,
+    setStartingWeightKg,
+    savedStartingWeightKg,
     currentWeightKg,
-    setCurrentWeightKg,
-    savedWeightKg,
     useLbsForWeight,
     setUseLbsForWeight,
     useImperialForHeight,

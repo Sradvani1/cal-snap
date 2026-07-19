@@ -8,19 +8,17 @@ import {
   validateWeightKg,
 } from '@/lib/utilities/unit-formatters';
 
-export function validateCurrentWeightKg(weightKg: number): boolean {
-  return validateWeightKg(weightKg);
-}
-
 export function canSaveSettings(
   draft: ProfileDraft,
   macroPcts: { protein: number; carbs: number; fat: number },
+  startingWeightKg: number,
   currentWeightKg: number,
 ): boolean {
   return (
     validateDateOfBirth(draft.dateOfBirth) &&
     validateHeightCm(draft.heightCm) &&
-    validateCurrentWeightKg(currentWeightKg) &&
+    validateWeightKg(startingWeightKg) &&
+    validateWeightKg(currentWeightKg) &&
     validateWeightKg(draft.goalWeightKg) &&
     validateGoalBelowCurrent(draft.goalWeightKg, currentWeightKg) &&
     macroPercentsAreValid(macroPcts.protein, macroPcts.carbs, macroPcts.fat)
@@ -30,6 +28,7 @@ export function canSaveSettings(
 export function settingsValidationMessage(
   draft: ProfileDraft,
   macroPcts: { protein: number; carbs: number; fat: number },
+  startingWeightKg: number,
   currentWeightKg: number,
 ): string | null {
   if (!validateDateOfBirth(draft.dateOfBirth)) {
@@ -38,7 +37,7 @@ export function settingsValidationMessage(
   if (!validateHeightCm(draft.heightCm)) {
     return copy('settings.validation.heightRange');
   }
-  if (!validateCurrentWeightKg(currentWeightKg)) {
+  if (!validateWeightKg(startingWeightKg) || !validateWeightKg(currentWeightKg)) {
     return copy('settings.validation.weightRange');
   }
   if (!validateWeightKg(draft.goalWeightKg)) {

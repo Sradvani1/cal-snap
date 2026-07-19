@@ -1,19 +1,15 @@
 'use client';
 
-import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
 import { useAuth } from '@/lib/auth/auth-context';
 import type { ProfileWithExtras } from '@/lib/repositories/profile';
 import { useDeleteAllData } from '@/lib/queries/use-delete-all-data';
 import { useExportData } from '@/lib/queries/use-export-data';
-import { usePlateauAlert } from '@/lib/queries/use-plateau-alert';
 import { useProfile } from '@/lib/queries/use-profile';
-import { queryKeys } from '@/lib/queries/query-keys';
 import { useSaveSettingsProfile } from '@/lib/queries/use-save-settings-profile';
 import { useSettingsForm } from '@/lib/settings/use-settings-form';
 import { InlineErrorMessage } from '@/components/design/InlineErrorMessage';
 import { PrimaryButton } from '@/components/design/PrimaryButton';
-import { PlateauAlertSheet } from '@/components/dashboard/PlateauAlertSheet';
 import { SettingsPageSkeleton } from '@/components/settings/SettingsPageSkeleton';
 import { AboutSection } from '@/components/settings/AboutSection';
 import { AccountSection } from '@/components/settings/AccountSection';
@@ -39,16 +35,13 @@ interface SettingsContentProps {
 
 function SettingsContent({ uid, profileData }: SettingsContentProps) {
   const { signOut } = useAuth();
-  const queryClient = useQueryClient();
   const form = useSettingsForm(profileData.profile, profileData.extras);
   const saveMutation = useSaveSettingsProfile(uid);
   const exportMutation = useExportData(uid, form.draft.name);
   const deleteMutation = useDeleteAllData(uid);
-  const plateau = usePlateauAlert(uid);
 
   const [saveError, setSaveError] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [showPlateauSheet, setShowPlateauSheet] = useState(false);
   const keyboardInset = useKeyboardInset();
 
   const handleSave = useCallback(async () => {
@@ -64,8 +57,7 @@ function SettingsContent({ uid, profileData }: SettingsContentProps) {
         macroProteinPct: form.macroProteinPct,
         macroCarbsPct: form.macroCarbsPct,
         macroFatPct: form.macroFatPct,
-        currentWeightKg: form.currentWeightKg,
-        savedWeightKg: form.savedWeightKg,
+        startingWeightKg: form.startingWeightKg,
         reminderPrefs: form.reminderPrefs,
         unitPrefs: {
           useLbsForWeight: form.useLbsForWeight,
@@ -74,16 +66,12 @@ function SettingsContent({ uid, profileData }: SettingsContentProps) {
       });
       form.applySavedValues({
         draft: result.savedDraft,
-        currentWeightKg: result.savedCurrentWeightKg,
+        startingWeightKg: result.savedStartingWeightKg,
       });
-      if (result.didTriggerPlateau) {
-        await queryClient.invalidateQueries({ queryKey: queryKeys.profile(uid) });
-        setShowPlateauSheet(true);
-      }
     } catch {
       setSaveError(copy('settings.error.saveFailed'));
     }
-  }, [form, profileData, saveMutation, queryClient, uid]);
+  }, [form, profileData, saveMutation]);
 
   const handleUseLbsChange = useCallback(
     (value: boolean) => {
@@ -167,8 +155,8 @@ function SettingsContent({ uid, profileData }: SettingsContentProps) {
         <ProfileSection
           draft={form.draft}
           onUpdateDraft={form.updateDraft}
-          currentWeightKg={form.currentWeightKg}
-          onWeightChange={form.setCurrentWeightKg}
+          startingWeightKg={form.startingWeightKg}
+          onStartingWeightChange={form.setStartingWeightKg}
           useLbsForWeight={form.useLbsForWeight}
           useImperialForHeight={form.useImperialForHeight}
           previewTDEE={form.previewTDEE}
@@ -182,6 +170,15 @@ function SettingsContent({ uid, profileData }: SettingsContentProps) {
           onDismissHardDeficitAlert={() => form.setShowHardDeficitAlert(false)}
           minimumCalories={form.minimumCalories}
         />
+
+        {form.isDirty && Math.abs(form.startingWeightKg - profileData.profile.startingWeightKg) >= 0.05 && (
+          <p
+            className="rounded-lg border border-cs-border bg-cs-muted/10 px-3 py-2 text-sm text-cs-foreground"
+            role="status"
+          >
+            {copy('settings.notice.startingWeightReset')}
+          </p>
+        )}
 
         <MacroTargetsSection
           proteinPct={form.macroProteinPct}
@@ -225,16 +222,6 @@ function SettingsContent({ uid, profileData }: SettingsContentProps) {
         isDeleting={deleteMutation.isPending}
       />
 
-      <PlateauAlertSheet
-        open={showPlateauSheet}
-        onDietBreak={() => {
-          void plateau.applyDietBreak().then(() => setShowPlateauSheet(false));
-        }}
-        onSmallReduction={() => {
-          void plateau.applySmallReduction().then(() => setShowPlateauSheet(false));
-        }}
-        onDismiss={() => setShowPlateauSheet(false)}
-      />
     </>
   );
 }

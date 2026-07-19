@@ -21,8 +21,8 @@ import { cn } from '@/lib/utils/cn';
 interface ProfileSectionProps {
   draft: ProfileDraft;
   onUpdateDraft: (update: (draft: ProfileDraft) => void) => void;
-  currentWeightKg: number;
-  onWeightChange: (kg: number) => void;
+  startingWeightKg: number;
+  onStartingWeightChange: (kg: number) => void;
   useLbsForWeight: boolean;
   useImperialForHeight: boolean;
   previewTDEE: number;
@@ -40,8 +40,8 @@ interface ProfileSectionProps {
 export function ProfileSection({
   draft,
   onUpdateDraft,
-  currentWeightKg,
-  onWeightChange,
+  startingWeightKg,
+  onStartingWeightChange,
   useLbsForWeight,
   useImperialForHeight,
   previewTDEE,
@@ -138,15 +138,15 @@ export function ProfileSection({
         />
 
         <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
-          {copy('settings.profile.currentWeight', { unit: weightUnit })}
+          {copy('settings.profile.startingWeight', { unit: weightUnit })}
           <LocalNumberInput
             key={useLbsForWeight ? 'lbs' : 'kg'}
             inputMode="decimal"
-            value={currentWeightKg}
+            value={startingWeightKg}
             formatDisplay={weightHandlers.formatDisplay}
             commitValue={weightHandlers.commitValue}
             onChange={(display) => {
-              onWeightChange(weightHandlers.toKg(display));
+              onStartingWeightChange(weightHandlers.toKg(display));
             }}
             className={formFieldInputClassName}
           />

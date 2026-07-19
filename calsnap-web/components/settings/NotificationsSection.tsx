@@ -54,7 +54,7 @@ export function NotificationsSection({
           />
         </label>
 
-        <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
+        <label className={cn(typography.csMacroLabel, 'flex min-w-0 flex-col gap-1')}>
           {copy('settings.reminder.dayOfWeek')}
           <select
             value={reminderPrefs.weighInReminderWeekday}
@@ -74,7 +74,7 @@ export function NotificationsSection({
           </select>
         </label>
 
-        <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
+        <label className={cn(typography.csMacroLabel, 'flex min-w-0 flex-col gap-1')}>
           {copy('settings.reminder.time')}
           <input
             type="time"
