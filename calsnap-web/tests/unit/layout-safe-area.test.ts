@@ -35,9 +35,10 @@ describe('layout safe-area tokens', () => {
     expect(globals).toMatch(/env\(safe-area-inset-bottom,\s*0px\)/);
   });
 
-  it('tab bar nav uses translucent blur material', () => {
-    expect(layout.tabBar.nav).toContain('bg-cs-surface/80');
-    expect(layout.tabBar.nav).toContain('backdrop-blur-md');
+  it('tab bar nav uses solid surface background', () => {
+    expect(layout.tabBar.nav).toContain('bg-cs-surface');
+    expect(layout.tabBar.nav).not.toContain('backdrop-blur-md');
+    expect(layout.tabBar.nav).not.toContain('bg-cs-surface/80');
   });
 
   it('applies standalone-only top safe-area inset on main scroll shells', () => {

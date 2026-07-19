@@ -51,7 +51,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           ref={mainScrollRef}
           className={cn(
             layout.content.mainScrollClass,
-            'flex-1 min-h-0 w-full min-w-0 overflow-x-hidden overflow-y-auto',
+            'flex-1 min-h-0 w-full min-w-0 overflow-x-hidden overflow-y-auto [overscroll-behavior:contain]',
           )}
         >
           {children}
