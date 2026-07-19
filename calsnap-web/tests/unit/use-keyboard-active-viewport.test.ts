@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { isEditableElement } from '@/lib/hooks/use-keyboard-dismiss-recovery';
+import { isEditableElement } from '@/lib/hooks/use-keyboard-active-viewport';
 
 describe('isEditableElement', () => {
   it('returns false for null', () => {
