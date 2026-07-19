@@ -8,13 +8,13 @@ import { InstallPromptBanner } from '@/components/pwa/InstallPromptBanner';
 import { scrollMainToTop } from '@/lib/app/scroll-main';
 import { isTabRootPathname } from '@/lib/app/tab-navigation';
 import { useRequireAuth } from '@/lib/auth/auth-context';
-import { useIOSStandaloneViewportRecovery } from '@/lib/hooks/use-ios-standalone-viewport-recovery';
+import { useVisualViewportHeight } from '@/lib/hooks/use-visual-viewport-height';
 import { layout } from '@/lib/design/layout';
 import { UnsavedWorkProvider } from '@/lib/scanner/unsaved-work-context';
 import { cn } from '@/lib/utils/cn';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-  useIOSStandaloneViewportRecovery();
+  useVisualViewportHeight();
   const { user, ready } = useRequireAuth();
   const pathname = usePathname();
   const mainScrollRef = useRef<HTMLElement>(null);
@@ -47,14 +47,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <UnsavedWorkProvider>
-      <div className="app-shell flex h-dvh max-h-dvh flex-col overflow-hidden bg-cs-background">
+      <div className="app-shell flex flex-col overflow-hidden bg-cs-background">
         <InstallPromptBanner uid={user!.uid} />
         <main
           ref={mainScrollRef}
           className={cn(
             layout.content.mainScrollClass,
             'flex-1 min-h-0 w-full min-w-0 overflow-x-hidden overflow-y-auto [overscroll-behavior:contain]',
-            'pb-[var(--app-tab-bar-total-height)]',
           )}
         >
           {children}

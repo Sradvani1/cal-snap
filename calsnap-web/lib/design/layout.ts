@@ -20,11 +20,11 @@ export const layout = {
   tabBar: {
     /** Full visual footprint including safe-area inset. */
     height: 'var(--app-tab-bar-total-height)',
-    /** Fixed to viewport bottom — compositor-positioned, immune to dvh timing bugs. Main content uses this height for padding-bottom. */
-    nav: 'fixed bottom-0 inset-x-0 z-10 border-t border-cs-border bg-cs-surface pb-safe',
+    /** In-flow flex footer inside a visualViewport-height shell — no fixed layer, immune to WKWebView deferred compositor repaint. */
+    nav: 'shrink-0 z-10 border-t border-cs-border bg-cs-surface pb-safe',
   },
   content: {
-    /** Content breathing room. Nav clearance is handled by the main element via its pb-[var(--app-tab-bar-total-height)]. */
+    /** Content breathing room. Nav is in-flow so main content naturally clears it. */
     bottomPadding: 'pb-6',
     /**
      * Top safe-area for standalone PWA: apply `app-main` (or `onboarding-main`) on the
