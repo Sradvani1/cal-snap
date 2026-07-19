@@ -6,10 +6,13 @@ import { copy } from '@/lib/copy';
 import { typography } from '@/lib/design/typography';
 
 export function AboutSection() {
+  const sha = process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ?? 'dev';
+
   return (
     <SectionCard title={copy('settings.section.about')}>
       <div className={`${typography.csCaption} flex flex-col gap-3`}>
         <p>{copy('settings.about.version', { version: packageJson.version })}</p>
+        <p>{copy('settings.about.build', { sha })}</p>
         <p>
           {copy('settings.about.nih')}{' '}
           <a

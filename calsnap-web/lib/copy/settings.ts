@@ -35,6 +35,7 @@ export const settingsCopy = {
     'This permanently deletes your meals, weigh-ins, profile, and photos. Your sign-in account is kept so you can start over from onboarding.',
   'settings.section.about': 'About',
   'settings.about.version': 'CalSnap version {{version}}',
+  'settings.about.build': 'Build {{sha}}',
   'settings.about.nih':
     'Calorie targets use formulas aligned with the NIH Body Weight Planner.',
   'settings.about.dga': 'Macro guidance follows the Dietary Guidelines for Americans.',
