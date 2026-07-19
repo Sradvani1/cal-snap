@@ -8,13 +8,11 @@ import { InstallPromptBanner } from '@/components/pwa/InstallPromptBanner';
 import { scrollMainToTop } from '@/lib/app/scroll-main';
 import { isTabRootPathname } from '@/lib/app/tab-navigation';
 import { useRequireAuth } from '@/lib/auth/auth-context';
-import { useKeyboardDismissRecovery } from '@/lib/hooks/use-keyboard-dismiss-recovery';
 import { layout } from '@/lib/design/layout';
 import { UnsavedWorkProvider } from '@/lib/scanner/unsaved-work-context';
 import { cn } from '@/lib/utils/cn';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-  useKeyboardDismissRecovery();
   const { user, ready } = useRequireAuth();
   const pathname = usePathname();
   const mainScrollRef = useRef<HTMLElement>(null);
