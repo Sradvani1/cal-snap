@@ -8,11 +8,13 @@ import { InstallPromptBanner } from '@/components/pwa/InstallPromptBanner';
 import { scrollMainToTop } from '@/lib/app/scroll-main';
 import { isTabRootPathname } from '@/lib/app/tab-navigation';
 import { useRequireAuth } from '@/lib/auth/auth-context';
+import { useIOSStandaloneViewportRecovery } from '@/lib/hooks/use-ios-standalone-viewport-recovery';
 import { layout } from '@/lib/design/layout';
 import { UnsavedWorkProvider } from '@/lib/scanner/unsaved-work-context';
 import { cn } from '@/lib/utils/cn';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
+  useIOSStandaloneViewportRecovery();
   const { user, ready } = useRequireAuth();
   const pathname = usePathname();
   const mainScrollRef = useRef<HTMLElement>(null);
