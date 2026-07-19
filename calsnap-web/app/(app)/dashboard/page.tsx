@@ -19,10 +19,6 @@ import {
   TodaysMealsSectionSkeleton,
 } from '@/components/dashboard/TodaysMealsSection';
 import {
-  DailySummaryFooter,
-  DailySummaryFooterSkeleton,
-} from '@/components/dashboard/DailySummaryFooter';
-import {
   DashboardHeader,
   DashboardHeaderSkeleton,
 } from '@/components/dashboard/DashboardHeader';
@@ -56,7 +52,6 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
         <CalorieRingCardSkeleton />
         <MacroBarCardSkeleton />
         <TodaysMealsSectionSkeleton />
-        <DailySummaryFooterSkeleton />
       </div>
     );
   }
@@ -104,20 +99,9 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
           fatTarget={dashboard.macros.fatG}
           fiberConsumed={dashboard.fiberConsumed}
           fiberTarget={dashboard.fiberTarget}
-          fiberBand={dashboard.fiberBand}
         />
 
         <TodaysMealsSection mealsByType={dashboard.mealsByType} />
-
-        <DailySummaryFooter
-          fiberConsumed={dashboard.fiberConsumed}
-          fiberTarget={dashboard.fiberTarget}
-          fiberBand={dashboard.fiberBand}
-          netSummary={dashboard.netSummary}
-          netCalorieDelta={dashboard.netCalorieDelta}
-          actualMacroPercents={dashboard.actualMacroPercents}
-          targetMacroPercents={dashboard.targetMacroPercents}
-        />
 
       </div>
 

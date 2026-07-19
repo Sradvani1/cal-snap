@@ -1,5 +1,3 @@
-import type { FiberProgressBand } from '@/lib/dashboard/calorie-progress';
-import { fiberProgressBarClass } from '@/lib/design/colors';
 import { typography } from '@/lib/design/typography';
 import { MacroBarView } from '@/components/design/MacroBarView';
 import { SectionCard, SectionCardSkeleton } from '@/components/design/SectionCard';
@@ -14,7 +12,6 @@ interface MacroBarCardProps {
   fatTarget: number;
   fiberConsumed: number;
   fiberTarget: number;
-  fiberBand: FiberProgressBand;
 }
 
 function barWidth(consumed: number, target: number): number {
@@ -62,7 +59,6 @@ export function MacroBarCard({
   fatTarget,
   fiberConsumed,
   fiberTarget,
-  fiberBand,
 }: MacroBarCardProps) {
   return (
     <SectionCard title={copy('dashboard.macros.title')}>
@@ -70,6 +66,7 @@ export function MacroBarCard({
         proteinG={proteinConsumed}
         carbsG={carbsConsumed}
         fatG={fatConsumed}
+        fiberG={fiberConsumed}
         className="mb-6"
       />
       <div className="space-y-4">
@@ -95,7 +92,7 @@ export function MacroBarCard({
           label={copy('common.macro.fiber')}
           consumed={fiberConsumed}
           target={fiberTarget}
-          barClassName={fiberProgressBarClass(fiberBand)}
+          barClassName="bg-cs-success"
         />
       </div>
     </SectionCard>

@@ -74,17 +74,6 @@ export function fiberProgressColor(band: FiberProgressBand): string {
   }
 }
 
-export function fiberProgressBarClass(band: FiberProgressBand): string {
-  switch (band) {
-    case 'onTrack':
-      return 'bg-cs-success';
-    case 'moderate':
-      return 'bg-cs-warning';
-    case 'low':
-      return 'bg-cs-danger';
-  }
-}
-
 export function confidenceBadgeStyles(level: ConfidenceLevel): {
   container: string;
   highContrastBorder?: string;

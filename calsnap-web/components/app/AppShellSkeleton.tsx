@@ -4,9 +4,6 @@ import {
   CalorieRingCardSkeleton,
 } from '@/components/dashboard/CalorieRingCard';
 import {
-  DailySummaryFooterSkeleton,
-} from '@/components/dashboard/DailySummaryFooter';
-import {
   DashboardHeaderSkeleton,
 } from '@/components/dashboard/DashboardHeader';
 import {
@@ -25,7 +22,6 @@ export function AppShellSkeleton() {
       <CalorieRingCardSkeleton />
       <MacroBarCardSkeleton />
       <TodaysMealsSectionSkeleton />
-      <DailySummaryFooterSkeleton />
     </div>
   );
 }

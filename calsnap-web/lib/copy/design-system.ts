@@ -21,7 +21,7 @@ export const designSystemCopy = {
   'designSystem.foodItem.macroSummary': 'P {{protein}}g · C {{carbs}}g · F {{fat}}g',
   'designSystem.foodItem.weightCalories': '{{weight}}g · {{calories}} kcal',
   'designSystem.macroBar.accessibility.summary':
-    'Macros: protein {{protein}} grams, carbs {{carbs}} grams, fat {{fat}} grams',
+    'Macros: protein {{protein}} grams, carbs {{carbs}} grams, fat {{fat}} grams, fiber {{fiber}} grams',
   'designSystem.macroBar.carbs': 'Carbs',
   'designSystem.macroBar.fat': 'Fat',
   'designSystem.macroBar.legendFormat': '{{label}} {{value}}g',

@@ -1,5 +1,4 @@
 import { fiberTargetG } from '@/lib/nutrition/calculator';
-import { copy } from '@/lib/copy';
 
 export type CalorieProgressBand = 'under' | 'onTrack' | 'over';
 export type FiberProgressBand = 'low' | 'moderate' | 'onTrack';
@@ -54,17 +53,4 @@ export function fiberProgressRatio(consumedFiberG: number, dailyCalorieTarget: n
   return consumedFiberG / target;
 }
 
-export function netCalorieDelta(consumed: number, target: number): number {
-  return consumed - target;
-}
 
-export function netCalorieSummary(consumed: number, target: number): string {
-  const delta = netCalorieDelta(consumed, target);
-  if (delta > 0) {
-    return copy('dashboard.summary.netOver', { delta });
-  }
-  if (delta < 0) {
-    return copy('dashboard.summary.netUnder', { delta });
-  }
-  return copy('dashboard.summary.netOnTarget');
-}

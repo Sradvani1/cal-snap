@@ -5,15 +5,11 @@ import { aggregateTodaysMeals } from '@/lib/dashboard/aggregate-meals';
 import {
   calorieProgress,
   calorieProgressBand,
-  fiberProgressBand,
-  fiberProgressRatio,
   fiberTargetForDailyCalories,
-  netCalorieSummary,
-  netCalorieDelta,
   remainingCalories,
 } from '@/lib/dashboard/calorie-progress';
 import { dashboardFormattedDate, dashboardGreeting } from '@/lib/dashboard/greeting';
-import { macroTargets, macroPercents } from '@/lib/nutrition/calculator';
+import { macroTargets } from '@/lib/nutrition/calculator';
 import { useProfile } from '@/lib/queries/use-profile';
 import { useTodaysMeals } from '@/lib/queries/use-todays-meals';
 
@@ -43,22 +39,6 @@ export function useDashboard(uid: string | undefined) {
       )
     : { proteinG: 0, carbsG: 0, fatG: 0 };
   const fiberTarget = fiberTargetForDailyCalories(target);
-  const fiberRatio = fiberProgressRatio(aggregation.todaysFiberG, target);
-  const fiberBand = fiberProgressBand(fiberRatio);
-
-  const actualMacroPercents = macroPercents(
-    aggregation.todaysProteinG,
-    aggregation.todaysCarbsG,
-    aggregation.todaysFatG,
-  );
-  const targetMacroPercents = profile
-    ? {
-        proteinPct: Math.round(profile.macroTargetProteinPct * 100),
-        carbsPct: Math.round(profile.macroTargetCarbsPct * 100),
-        fatPct: Math.round(profile.macroTargetFatPct * 100),
-      }
-    : { proteinPct: 0, carbsPct: 0, fatPct: 0 };
-  const netDelta = netCalorieDelta(consumed, target);
 
   const isLoading =
     profileQuery.isLoading || mealsQuery.isLoading;
@@ -81,16 +61,10 @@ export function useDashboard(uid: string | undefined) {
     band,
     macros,
     fiberTarget,
-    fiberBand,
-    fiberRatio,
     fiberConsumed: aggregation.todaysFiberG,
     proteinConsumed: aggregation.todaysProteinG,
     carbsConsumed: aggregation.todaysCarbsG,
     fatConsumed: aggregation.todaysFatG,
     mealsByType: aggregation.mealsByType,
-    netSummary: netCalorieSummary(consumed, target),
-    netCalorieDelta: netDelta,
-    actualMacroPercents,
-    targetMacroPercents,
   };
 }

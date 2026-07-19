@@ -7,11 +7,12 @@ interface MacroBarViewProps {
   proteinG: number;
   carbsG: number;
   fatG: number;
+  fiberG: number;
   className?: string;
 }
 
-export function MacroBarView({ proteinG, carbsG, fatG, className }: MacroBarViewProps) {
-  const total = proteinG + carbsG + fatG;
+export function MacroBarView({ proteinG, carbsG, fatG, fiberG, className }: MacroBarViewProps) {
+  const total = proteinG + carbsG + fatG + fiberG;
   const { height, radius, legendDot } = layout.macroBar;
 
   const accessibilitySummary =
@@ -20,6 +21,7 @@ export function MacroBarView({ proteinG, carbsG, fatG, className }: MacroBarView
           protein: Math.round(proteinG),
           carbs: Math.round(carbsG),
           fat: Math.round(fatG),
+          fiber: Math.round(fiberG),
         })
       : copy('designSystem.macroBar.noData');
 
@@ -40,6 +42,7 @@ export function MacroBarView({ proteinG, carbsG, fatG, className }: MacroBarView
   const proteinWidth = (proteinG / total) * 100;
   const carbsWidth = (carbsG / total) * 100;
   const fatWidth = (fatG / total) * 100;
+  const fiberWidth = (fiberG / total) * 100;
 
   return (
     <div className={className} aria-label={accessibilitySummary}>
@@ -53,6 +56,7 @@ export function MacroBarView({ proteinG, carbsG, fatG, className }: MacroBarView
         )}
         {carbsWidth > 0 && <div className="bg-cs-carbs" style={{ width: `${carbsWidth}%` }} />}
         {fatWidth > 0 && <div className="bg-cs-fat" style={{ width: `${fatWidth}%` }} />}
+        {fiberWidth > 0 && <div className="bg-cs-success" style={{ width: `${fiberWidth}%` }} />}
       </div>
       <div className={cn('mt-2 flex flex-wrap gap-4', typography.csCaption)}>
         <LegendItem
@@ -71,6 +75,12 @@ export function MacroBarView({ proteinG, carbsG, fatG, className }: MacroBarView
           colorClass="bg-cs-fat"
           label={copy('designSystem.macroBar.fat')}
           value={Math.round(fatG)}
+          dotSize={legendDot}
+        />
+        <LegendItem
+          colorClass="bg-cs-success"
+          label={copy('common.macro.fiber')}
+          value={Math.round(fiberG)}
           dotSize={legendDot}
         />
       </div>

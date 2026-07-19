@@ -4,13 +4,8 @@ import {
   calorieProgressBand,
   fiberProgressBand,
   fiberTargetForDailyCalories,
-  netCalorieSummary,
   remainingCalories,
 } from '@/lib/dashboard/calorie-progress';
-import {
-  formatMacroSplitCaption,
-  macroSplitAccessibilityLabel,
-} from '@/lib/dashboard/macro-split-caption';
 import {
   applyDietBreakTargets,
   applySmallReductionTargets,
@@ -174,19 +169,6 @@ describe('dashboard aggregation', () => {
     expect(fiberProgressBand(26.6 / 28)).toBe('onTrack');
     expect(fiberProgressBand(21 / 28)).toBe('moderate');
     expect(fiberProgressBand(10 / 28)).toBe('low');
-  });
-
-  it('netCalorieSummary', () => {
-    expect(netCalorieSummary(2300, 2000)).toBe('+300 over goal');
-  });
-
-  it('testMacroSplitFormatting', () => {
-    const actual = { proteinPct: 30, carbsPct: 45, fatPct: 25 };
-    const target = { proteinPct: 28, carbsPct: 47, fatPct: 25 };
-    expect(formatMacroSplitCaption(actual, target)).toBe(
-      'Actual P/C/F: 30/45/25% · Target: 28/47/25%',
-    );
-    expect(macroSplitAccessibilityLabel(actual, target)).toContain('30 percent');
   });
 
   it('shouldShowPlateauAlert respects snooze, maintenance, and isOnPlateau', () => {

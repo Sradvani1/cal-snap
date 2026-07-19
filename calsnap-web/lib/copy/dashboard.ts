@@ -7,15 +7,6 @@ export const dashboardCopy = {
   'dashboard.error.profileLoad': 'Could not load your profile.',
   'dashboard.error.loadFailed': 'Failed to load dashboard',
   'dashboard.macros.title': 'Macros',
-  'dashboard.summary.title': 'Daily summary',
-  'dashboard.summary.netCalories': 'Net calories',
-  'dashboard.summary.netOver': '+{{delta}} over goal',
-  'dashboard.summary.netUnder': '{{delta}} under goal',
-  'dashboard.summary.netOnTarget': 'On target',
-  'dashboard.summary.macroSplit':
-    'Actual P/C/F: {{actualProtein}}/{{actualCarbs}}/{{actualFat}}% · Target: {{targetProtein}}/{{targetCarbs}}/{{targetFat}}%',
-  'dashboard.summary.macroSplitA11y':
-    'Actual macros protein {{actualProtein}} percent, carbs {{actualCarbs}} percent, fat {{actualFat}} percent. Target protein {{targetProtein}} percent, carbs {{targetCarbs}} percent, fat {{targetFat}} percent.',
   'dashboard.meals.title': "Today's Meals",
   'dashboard.plateau.title': 'Plateau Detected',
   'dashboard.plateau.body':
