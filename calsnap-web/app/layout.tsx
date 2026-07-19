@@ -35,7 +35,7 @@ export default function RootLayout({
       <head>
         <PwaStartupImages />
       </head>
-      <body className="h-full flex flex-col font-sans">
+      <body className="min-h-full flex flex-col font-sans">
         <AppProviders>{children}</AppProviders>
       </body>
     </html>
