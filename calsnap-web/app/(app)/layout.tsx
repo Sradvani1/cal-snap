@@ -8,11 +8,13 @@ import { InstallPromptBanner } from '@/components/pwa/InstallPromptBanner';
 import { scrollMainToTop } from '@/lib/app/scroll-main';
 import { isTabRootPathname } from '@/lib/app/tab-navigation';
 import { useRequireAuth } from '@/lib/auth/auth-context';
+import { useEditingMode } from '@/lib/hooks/use-editing-mode'; // TEMP experiment
 import { layout } from '@/lib/design/layout';
 import { UnsavedWorkProvider } from '@/lib/scanner/unsaved-work-context';
 import { cn } from '@/lib/utils/cn';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
+  const isEditing = useEditingMode(); // TEMP experiment
   const { user, ready } = useRequireAuth();
   const pathname = usePathname();
   const mainScrollRef = useRef<HTMLElement>(null);
@@ -56,7 +58,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         >
           {children}
         </main>
-        <BottomTabNav />
+        {/* TEMPORARY EXPERIMENT: unmount nav while editing to test iOS repaint */}
+        {!isEditing && <BottomTabNav />}
       </div>
     </UnsavedWorkProvider>
   );
