@@ -52,6 +52,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           className={cn(
             layout.content.mainScrollClass,
             'flex-1 min-h-0 w-full min-w-0 overflow-x-hidden overflow-y-auto [overscroll-behavior:contain]',
+            'pb-[var(--app-tab-bar-total-height)]',
           )}
         >
           {children}

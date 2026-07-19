@@ -6,10 +6,12 @@ import { layout } from '@/lib/design/layout';
 
 describe('layout safe-area tokens', () => {
   it('exports tabBar and content token groups', () => {
-    expect(layout.tabBar.height).toBe('var(--app-tab-bar-content-height)');
+    expect(layout.tabBar.height).toBe('var(--app-tab-bar-total-height)');
     expect(layout.tabBar.nav).toContain('pb-safe');
-    expect(layout.tabBar.nav).toContain('shrink-0');
-    expect(layout.tabBar.nav).not.toContain('fixed');
+    expect(layout.tabBar.nav).toContain('fixed');
+    expect(layout.tabBar.nav).toContain('bottom-0');
+    expect(layout.tabBar.nav).toContain('inset-x-0');
+    expect(layout.tabBar.nav).not.toContain('shrink-0');
     expect(layout.content.bottomPadding).toBe('pb-6');
     expect(layout.content.mainScrollClass).toBe('app-main');
     expect(layout.content.onboardingMainScrollClass).toBe('onboarding-main');
@@ -21,6 +23,7 @@ describe('layout safe-area tokens', () => {
     expect(globals).toContain('--safe-area-top: env(safe-area-inset-top, 0px)');
     expect(globals).toContain('--safe-area-bottom: env(safe-area-inset-bottom, 0px)');
     expect(globals).toContain('--app-tab-bar-content-height: calc(2.75rem + 1rem + 1px)');
+    expect(globals).toContain('--app-tab-bar-total-height: calc(var(--app-tab-bar-content-height) + var(--safe-area-bottom))');
     expect(globals).toContain('.app-shell:has(> [role=\'status\']) .app-main');
     expect(globals).toContain('.pb-sheet-safe');
     expect(globals).toContain('.pt-safe');

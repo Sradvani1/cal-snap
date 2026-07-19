@@ -18,13 +18,13 @@ export const layout = {
   pageShell:
     'mx-auto flex w-full min-w-0 max-w-lg flex-col overflow-x-hidden px-4',
   tabBar: {
-    /** Documented content row height before safe-area inset (min-h-11 + py-2 + border). */
-    height: 'var(--app-tab-bar-content-height)',
-    /** In-flow flex footer — parent shell must be h-dvh overflow-hidden so only main scrolls. */
-    nav: 'shrink-0 z-10 border-t border-cs-border bg-cs-surface pb-safe',
+    /** Full visual footprint including safe-area inset. */
+    height: 'var(--app-tab-bar-total-height)',
+    /** Fixed to viewport bottom — compositor-positioned, immune to dvh timing bugs. Main content uses this height for padding-bottom. */
+    nav: 'fixed bottom-0 inset-x-0 z-10 border-t border-cs-border bg-cs-surface pb-safe',
   },
   content: {
-    /** Tab bar is an in-flow flex footer — content only needs modest bottom padding. */
+    /** Content breathing room. Nav clearance is handled by the main element via its pb-[var(--app-tab-bar-total-height)]. */
     bottomPadding: 'pb-6',
     /**
      * Top safe-area for standalone PWA: apply `app-main` (or `onboarding-main`) on the
