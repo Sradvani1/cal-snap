@@ -8,13 +8,11 @@ import { InstallPromptBanner } from '@/components/pwa/InstallPromptBanner';
 import { scrollMainToTop } from '@/lib/app/scroll-main';
 import { isTabRootPathname } from '@/lib/app/tab-navigation';
 import { useRequireAuth } from '@/lib/auth/auth-context';
-import { useVisualViewportHeight } from '@/lib/hooks/use-visual-viewport-height';
 import { layout } from '@/lib/design/layout';
 import { UnsavedWorkProvider } from '@/lib/scanner/unsaved-work-context';
 import { cn } from '@/lib/utils/cn';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-  useVisualViewportHeight();
   const { user, ready } = useRequireAuth();
   const pathname = usePathname();
   const mainScrollRef = useRef<HTMLElement>(null);
@@ -47,7 +45,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <UnsavedWorkProvider>
-      <div className="app-shell flex flex-col overflow-hidden bg-cs-background">
+      <div className="app-shell flex h-dvh max-h-dvh flex-col overflow-hidden bg-cs-background">
         <InstallPromptBanner uid={user!.uid} />
         <main
           ref={mainScrollRef}

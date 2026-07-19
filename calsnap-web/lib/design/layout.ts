@@ -18,13 +18,13 @@ export const layout = {
   pageShell:
     'mx-auto flex w-full min-w-0 max-w-lg flex-col overflow-x-hidden px-4',
   tabBar: {
-    /** Full visual footprint including safe-area inset. */
-    height: 'var(--app-tab-bar-total-height)',
-    /** In-flow flex footer inside a visualViewport-height shell — no fixed layer, immune to WKWebView deferred compositor repaint. */
+    /** Documented content row height before safe-area inset (min-h-11 + py-2 + border). */
+    height: 'var(--app-tab-bar-content-height)',
+    /** In-flow flex footer — parent shell must be h-dvh overflow-hidden so only main scrolls. */
     nav: 'shrink-0 z-10 border-t border-cs-border bg-cs-surface pb-safe',
   },
   content: {
-    /** Content breathing room. Nav is in-flow so main content naturally clears it. */
+    /** Tab bar is an in-flow flex footer — content only needs modest bottom padding. */
     bottomPadding: 'pb-6',
     /**
      * Top safe-area for standalone PWA: apply `app-main` (or `onboarding-main`) on the

@@ -54,12 +54,8 @@
   --safe-area-right: env(safe-area-inset-right, 0px);
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
   --safe-area-left: env(safe-area-inset-left, 0px);
-  /* Driven by useVisualViewportHeight hook — explicit px value, no dvh lag. Fallback for SSR/unsupported. */
-  --app-visual-viewport-height: 100dvh;
   /* Tab row: min-h-11 (2.75rem) + py-2 (1rem) + border-t (1px) */
   --app-tab-bar-content-height: calc(2.75rem + 1rem + 1px);
-  /* Full visual footprint of the fixed bottom nav including safe-area inset. */
-  --app-tab-bar-total-height: calc(var(--app-tab-bar-content-height) + var(--safe-area-bottom));
 
   --cs-primary: #3da35d;
   --cs-secondary: #1a6b6b;
@@ -155,11 +151,6 @@ body {
   :root {
     --cs-border: CanvasText;
   }
-}
-
-.app-shell {
-  height: var(--app-visual-viewport-height);
-  max-height: var(--app-visual-viewport-height);
 }
 
 .pt-safe {
