@@ -2,11 +2,13 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useRef } from 'react';
 import { copy, type CopyKey } from '@/lib/copy';
 import { formFieldFocusRingClassName } from '@/lib/design/form-field';
 import { layout } from '@/lib/design/layout';
 import { cn } from '@/lib/utils/cn';
 import { useUnsavedWork } from '@/lib/scanner/unsaved-work-context';
+import { useViewportAnchor } from '@/lib/hooks/use-viewport-anchor';
 
 const TABS = [
   { href: '/dashboard', labelKey: 'common.nav.dashboard' as CopyKey, icon: DashboardIcon },
@@ -149,9 +151,11 @@ function TabLink({
 
 export function BottomTabNav() {
   const pathname = usePathname();
+  const navRef = useRef<HTMLElement>(null);
+  useViewportAnchor(navRef);
 
   return (
-    <nav className={layout.tabBar.nav} aria-label={copy('common.nav.main')}>
+    <nav ref={navRef} className={layout.tabBar.nav} aria-label={copy('common.nav.main')}>
       <ul className="mx-auto flex max-w-lg items-stretch justify-around">
         {TABS.map(({ href, labelKey, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(`${href}/`);
