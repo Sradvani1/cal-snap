@@ -21,8 +21,12 @@ export const onboardingCopy = {
   'onboarding.calorie.deficit': 'Daily deficit',
   'onboarding.calorie.recommended': 'Recommended: {{min}}–{{max}} kcal/day',
   'onboarding.calorie.macroTargets': 'Macro targets',
+  'onboarding.calorie.macroPreset': 'Macro split',
+  'onboarding.calorie.macroPreset.moreCarbs': 'More carbs',
+  'onboarding.calorie.macroPreset.balanced': 'Balanced',
+  'onboarding.calorie.macroPreset.moreProtein': 'More protein',
   'onboarding.calorie.macroDefaultsNote':
-    'Macro split follows evidence-based defaults (28% protein, 47% carbs, 25% fat), within ±15% of common recommendations.',
+    'Choose a macro split that fits your lifestyle. You can fine-tune in Settings after onboarding.',
   'onboarding.calorie.hardDeficit.title': 'High deficit warning',
   'onboarding.calorie.hardDeficit.body':
     'Deficits above {{max}} kcal/day can trigger metabolic adaptation. Continue only if you understand the risks.',

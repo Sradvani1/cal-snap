@@ -91,6 +91,7 @@ Sprint plan: [OPTIMIZATION-MASTER-PLAN.md](../plans/OPTIMIZATION-MASTER-PLAN.md)
 | Doc | Status |
 |-----|--------|
 | [MACRO-REMAINING-CALORIES.md](./MACRO-REMAINING-CALORIES.md) | Complete (`e9fbfa0`) |
+| [MACRO-PRESETS.md](./MACRO-PRESETS.md) | Complete |
 
 ## Source of truth
 

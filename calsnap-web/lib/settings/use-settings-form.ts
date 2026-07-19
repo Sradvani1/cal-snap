@@ -16,6 +16,7 @@ import {
   preview,
   type MacroKind,
 } from '@/lib/services/profile-update-service';
+import { getPresetValues, detectPreset, type MacroPresetKey } from '@/lib/models/macro-preset';
 import { computeGoalTargetDate } from '@/lib/nutrition/goal-pathway';
 import { type ResolvedReminderPrefs } from '@/lib/progress/reminder-prefs';
 
@@ -202,7 +203,19 @@ export function useSettingsForm(profile: UserProfile, extras: ProfileExtras) {
     [macroProteinPct, macroCarbsPct, macroFatPct],
   );
 
+  const applyPreset = useCallback((key: MacroPresetKey) => {
+    const { proteinPct, carbsPct, fatPct } = getPresetValues(key);
+    setMacroProteinPct(proteinPct);
+    setMacroCarbsPct(carbsPct);
+    setMacroFatPct(fatPct);
+  }, []);
+
   const macroSum = macroProteinPct + macroCarbsPct + macroFatPct;
+
+  const detectedPreset = useMemo(
+    () => detectPreset(macroProteinPct, macroCarbsPct, macroFatPct),
+    [macroProteinPct, macroCarbsPct, macroFatPct],
+  );
 
   const canSave = useMemo(
     () =>
@@ -291,6 +304,8 @@ export function useSettingsForm(profile: UserProfile, extras: ProfileExtras) {
     macroFatPct,
     macroSum,
     adjustMacro,
+    applyPreset,
+    detectedPreset,
     startingWeightKg,
     setStartingWeightKg,
     savedStartingWeightKg,

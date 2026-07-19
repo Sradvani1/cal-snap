@@ -1,6 +1,8 @@
 'use client';
 
 import { DeficitSlider } from '@/components/onboarding/DeficitSlider';
+import { MacroPresetPicker } from '@/components/design/MacroPresetPicker';
+import type { MacroPresetKey } from '@/lib/models/macro-preset';
 import type { OnboardingTargets } from '@/lib/onboarding/use-onboarding';
 import { formatEstimatedGoalDate } from '@/lib/nutrition/goal-pathway';
 import { formatMacroGrams } from '@/lib/utilities/unit-formatters';
@@ -12,6 +14,8 @@ interface CalorieTargetPreviewStepProps {
   deficit: number;
   hardDeficitUnlocked: boolean;
   showHardDeficitAlert: boolean;
+  macroPresetKey: MacroPresetKey;
+  onPresetChange: (key: MacroPresetKey) => void;
   onDeficitChange: (value: number) => void;
   onUnlockHardDeficit: () => void;
   onDismissHardDeficitAlert: () => void;
@@ -22,6 +26,8 @@ export function CalorieTargetPreviewStep({
   deficit,
   hardDeficitUnlocked,
   showHardDeficitAlert,
+  macroPresetKey,
+  onPresetChange,
   onDeficitChange,
   onUnlockHardDeficit,
   onDismissHardDeficitAlert,
@@ -73,6 +79,13 @@ export function CalorieTargetPreviewStep({
           ))}
         </ul>
       )}
+
+      <div>
+        <p className={typography.csMacroLabel}>{copy('onboarding.calorie.macroPreset')}</p>
+        <div className="mt-2">
+          <MacroPresetPicker value={macroPresetKey} onChange={onPresetChange} label={copy('onboarding.calorie.macroPreset')} />
+        </div>
+      </div>
 
       <div className="rounded-lg border border-cs-border p-4 text-sm">
         <p className={typography.csMacroLabel}>{copy('onboarding.calorie.macroTargets')}</p>

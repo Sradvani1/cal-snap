@@ -185,7 +185,9 @@ function SettingsContent({ uid, profileData }: SettingsContentProps) {
           carbsPct={form.macroCarbsPct}
           fatPct={form.macroFatPct}
           macroSum={form.macroSum}
+          activePreset={form.detectedPreset}
           onAdjust={form.adjustMacro}
+          onApplyPreset={form.applyPreset}
         />
 
         <UnitsSection

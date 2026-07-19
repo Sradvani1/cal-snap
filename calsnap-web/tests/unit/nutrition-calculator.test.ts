@@ -52,6 +52,22 @@ describe('NutritionCalculator', () => {
     expect(macros.fiberG).toBe(28);
   });
 
+  it('macroTargets with moreCarbs preset', () => {
+    const macros = macroTargets(2000, 0.25, 0.55, 0.20);
+    expect(macros.proteinG).toBe(122);
+    expect(macros.totalCarbsG).toBe(295);
+    expect(macros.fatG).toBe(43);
+    expect(macros.fiberG).toBe(28);
+  });
+
+  it('macroTargets with moreProtein preset', () => {
+    const macros = macroTargets(2000, 0.33, 0.42, 0.25);
+    expect(macros.proteinG).toBe(160);
+    expect(macros.totalCarbsG).toBe(232);
+    expect(macros.fatG).toBe(54);
+    expect(macros.fiberG).toBe(28);
+  });
+
   it('bmi', () => {
     expect(bmi(80, 178)).toBeCloseTo(25.2, 1);
   });
