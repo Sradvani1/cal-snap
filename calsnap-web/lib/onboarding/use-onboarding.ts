@@ -220,7 +220,10 @@ export function useOnboarding(uid: string) {
         setValidationError(validationMessageForStep('profileSetup', normalized));
         return;
       }
-      setProfileDraft(normalized);
+      setProfileDraft({
+        ...normalized,
+        goalWeightKg: Math.round(normalized.weightKg * (1 - AppConstants.Onboarding.defaultGoalWeightLossPct)),
+      });
       setCurrentStep('goalSetup');
       return;
     }

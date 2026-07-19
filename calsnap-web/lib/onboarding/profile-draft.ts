@@ -31,7 +31,7 @@ export function createDefaultProfileDraft(): ProfileDraft {
     dateOfBirth: defaultDateOfBirth(),
     heightCm: 175,
     weightKg: 80,
-    goalWeightKg: 72,
+    goalWeightKg: Math.round(80 * (1 - AppConstants.Onboarding.defaultGoalWeightLossPct)),
     activityLevel: 'moderatelyActive',
     requestedDeficit: AppConstants.Deficit.defaultDeficitKcal,
     useImperialHeight: true,

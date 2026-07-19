@@ -45,6 +45,7 @@ export const AppConstants = {
   Onboarding: {
     minAgeYears: 16,
     maxAgeYears: 90,
+    defaultGoalWeightLossPct: 0.1,
   },
   MealPhoto: {
     maxLongEdgePx: 1280,
