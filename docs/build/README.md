@@ -86,6 +86,12 @@ Sprint plan: [OPTIMIZATION-MASTER-PLAN.md](../plans/OPTIMIZATION-MASTER-PLAN.md)
 |----|-----|--------|
 | iPhone PWA + Settings UX | [PR-IPHONE-SAFARI-UX.md](../plans/PR-IPHONE-SAFARI-UX.md) | Complete (code) — §8 Pending |
 
+## Post-sprint polish
+
+| Doc | Status |
+|-----|--------|
+| [MACRO-REMAINING-CALORIES.md](./MACRO-REMAINING-CALORIES.md) | Complete (commit `??`) |
+
 ## Source of truth
 
 - [`docs/product-research.md`](../product-research.md) — product and science

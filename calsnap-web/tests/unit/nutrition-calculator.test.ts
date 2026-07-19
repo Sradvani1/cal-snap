@@ -46,9 +46,10 @@ describe('NutritionCalculator', () => {
 
   it('macroTargets', () => {
     const macros = macroTargets(2000, 0.28, 0.47, 0.25);
-    expect(macros.proteinG).toBeCloseTo(140, 0);
-    expect(macros.carbsG).toBeCloseTo(235, 0);
-    expect(macros.fatG).toBeCloseTo(55.6, 0);
+    expect(macros.proteinG).toBe(136);
+    expect(macros.totalCarbsG).toBe(256);
+    expect(macros.fatG).toBe(54);
+    expect(macros.fiberG).toBe(28);
   });
 
   it('bmi', () => {
@@ -123,11 +124,12 @@ describe('NutritionCalculator', () => {
 
   it('macroPercents from macroTargets output', () => {
     const macros = macroTargets(2000, 0.28, 0.47, 0.25);
-    const percents = macroPercents(macros.proteinG, macros.carbsG, macros.fatG);
+    const percents = macroPercents(macros.proteinG, macros.totalCarbsG, macros.fatG);
 
-    expect(percents.proteinPct).toBe(28);
-    expect(percents.carbsPct).toBe(47);
-    expect(percents.fatPct).toBe(25);
+    expect(percents.proteinPct).toBe(26);
+    expect(percents.carbsPct).toBe(50);
+    expect(percents.fatPct).toBe(24);
+    expect(percents.proteinPct + percents.carbsPct + percents.fatPct).toBe(100);
   });
 
   it('macroPercents returns zeros when total kcal is zero', () => {

@@ -1,5 +1,3 @@
-import { fiberTargetG } from '@/lib/nutrition/calculator';
-
 export type CalorieProgressBand = 'under' | 'onTrack' | 'over';
 export type FiberProgressBand = 'low' | 'moderate' | 'onTrack';
 
@@ -41,16 +39,5 @@ export function remainingCalories(consumed: number, target: number): number {
   return target - consumed;
 }
 
-export function fiberTargetForDailyCalories(dailyCalorieTarget: number): number {
-  return fiberTargetG(dailyCalorieTarget);
-}
-
-export function fiberProgressRatio(consumedFiberG: number, dailyCalorieTarget: number): number {
-  const target = fiberTargetForDailyCalories(dailyCalorieTarget);
-  if (target <= 0) {
-    return 0;
-  }
-  return consumedFiberG / target;
-}
 
 

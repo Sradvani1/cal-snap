@@ -64,12 +64,19 @@ export function macroTargets(
   proteinPct: number,
   carbsPct: number,
   fatPct: number,
-): { proteinG: number; carbsG: number; fatG: number } {
-  const kcal = dailyCalories;
+): { proteinG: number; totalCarbsG: number; fatG: number; fiberG: number } {
+  const rawFiberG = fiberTargetG(dailyCalories);
+  const fiberCal = rawFiberG * AppConstants.Nutrition.fiberCalPerGram;
+  const remainingCal = dailyCalories - fiberCal;
+  const roundedFiberG = Math.round(rawFiberG);
+
   return {
-    proteinG: (kcal * proteinPct) / AppConstants.Nutrition.proteinCalPerGram,
-    carbsG: (kcal * carbsPct) / AppConstants.Nutrition.carbsCalPerGram,
-    fatG: (kcal * fatPct) / AppConstants.Nutrition.fatCalPerGram,
+    proteinG: Math.round((remainingCal * proteinPct) / AppConstants.Nutrition.proteinCalPerGram),
+    totalCarbsG:
+      Math.round((remainingCal * carbsPct) / AppConstants.Nutrition.carbsCalPerGram)
+      + roundedFiberG,
+    fatG: Math.round((remainingCal * fatPct) / AppConstants.Nutrition.fatCalPerGram),
+    fiberG: roundedFiberG,
   };
 }
 

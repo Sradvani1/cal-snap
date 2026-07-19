@@ -3,9 +3,9 @@ import { aggregateTodaysMeals } from '@/lib/dashboard/aggregate-meals';
 import {
   calorieProgressBand,
   fiberProgressBand,
-  fiberTargetForDailyCalories,
   remainingCalories,
 } from '@/lib/dashboard/calorie-progress';
+import { fiberTargetG } from '@/lib/nutrition/calculator';
 import {
   applyDietBreakTargets,
   applySmallReductionTargets,
@@ -162,7 +162,7 @@ describe('dashboard aggregation', () => {
   });
 
   it('fiberTargetG at 2000 kcal', () => {
-    expect(fiberTargetForDailyCalories(2000)).toBe(28);
+    expect(fiberTargetG(2000)).toBe(28);
   });
 
   it('fiberProgressBand thresholds', () => {

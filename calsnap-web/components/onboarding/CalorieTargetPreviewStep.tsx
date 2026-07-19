@@ -76,18 +76,22 @@ export function CalorieTargetPreviewStep({
 
       <div className="rounded-lg border border-cs-border p-4 text-sm">
         <p className={typography.csMacroLabel}>{copy('onboarding.calorie.macroTargets')}</p>
-        <div className="mt-2 grid grid-cols-3 gap-2 text-center">
+        <div className="mt-2 grid grid-cols-4 gap-2 text-center">
           <div>
             <p className={typography.csCaption}>{copy('common.macro.protein')}</p>
             <p className="font-semibold">{formatMacroGrams(targets.proteinG, 0)}</p>
           </div>
           <div>
             <p className={typography.csCaption}>{copy('common.macro.carbs')}</p>
-            <p className="font-semibold">{formatMacroGrams(targets.carbsG, 0)}</p>
+            <p className="font-semibold">{formatMacroGrams(targets.totalCarbsG, 0)}</p>
           </div>
           <div>
             <p className={typography.csCaption}>{copy('common.macro.fat')}</p>
             <p className="font-semibold">{formatMacroGrams(targets.fatG, 0)}</p>
+          </div>
+          <div>
+            <p className={typography.csCaption}>{copy('common.macro.fiber')}</p>
+            <p className="font-semibold">{formatMacroGrams(targets.fiberG, 0)}</p>
           </div>
         </div>
         <p className={`${typography.csCaption} mt-3`}>

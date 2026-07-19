@@ -5,7 +5,6 @@ import { aggregateTodaysMeals } from '@/lib/dashboard/aggregate-meals';
 import {
   calorieProgress,
   calorieProgressBand,
-  fiberTargetForDailyCalories,
   remainingCalories,
 } from '@/lib/dashboard/calorie-progress';
 import { dashboardFormattedDate, dashboardGreeting } from '@/lib/dashboard/greeting';
@@ -37,8 +36,7 @@ export function useDashboard(uid: string | undefined) {
         profile.macroTargetCarbsPct,
         profile.macroTargetFatPct,
       )
-    : { proteinG: 0, carbsG: 0, fatG: 0 };
-  const fiberTarget = fiberTargetForDailyCalories(target);
+    : { proteinG: 0, totalCarbsG: 0, fatG: 0, fiberG: 0 };
 
   const isLoading =
     profileQuery.isLoading || mealsQuery.isLoading;
@@ -60,7 +58,6 @@ export function useDashboard(uid: string | undefined) {
     progress,
     band,
     macros,
-    fiberTarget,
     fiberConsumed: aggregation.todaysFiberG,
     proteinConsumed: aggregation.todaysProteinG,
     carbsConsumed: aggregation.todaysCarbsG,
