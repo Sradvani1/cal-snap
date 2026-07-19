@@ -97,9 +97,6 @@ function makeProfileExtras(): ProfileExtras {
     useLbsForWeight: true,
     useImperialForHeight: false,
     weighInReminderEnabled: true,
-    weighInReminderWeekday: 0,
-    weighInReminderHour: 8,
-    weighInReminderMinute: 0,
   };
 }
 

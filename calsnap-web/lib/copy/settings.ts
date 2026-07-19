@@ -21,11 +21,7 @@ export const settingsCopy = {
   'settings.units.weightLbs': 'Weight in pounds',
   'settings.units.heightImperial': 'Height in feet and inches',
   'settings.section.weighInReminder': 'Weigh-in reminder',
-  'settings.reminder.futureNote':
-    'When you are overdue, CalSnap shows an in-app reminder on your dashboard. Day and time apply when Web Push notifications ship in a future update.',
-  'settings.reminder.enable': 'Enable weekly reminder',
-  'settings.reminder.dayOfWeek': 'Day of week',
-  'settings.reminder.time': 'Time',
+  'settings.reminder.enable': 'Enable weigh-in reminder',
   'settings.section.yourData': 'Your data',
   'settings.data.export': 'Export data (CSV)',
   'settings.data.exporting': 'Exporting…',

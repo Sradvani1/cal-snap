@@ -17,10 +17,7 @@ import {
   type MacroKind,
 } from '@/lib/services/profile-update-service';
 import { computeGoalTargetDate } from '@/lib/nutrition/goal-pathway';
-import {
-  defaultReminderPrefs,
-  type ResolvedReminderPrefs,
-} from '@/lib/progress/reminder-prefs';
+import { type ResolvedReminderPrefs } from '@/lib/progress/reminder-prefs';
 
 interface SettingsSnapshot {
   draft: ProfileDraft;
@@ -43,12 +40,8 @@ function macroIntsFromProfile(profile: UserProfile): [number, number, number] {
 }
 
 function reminderPrefsFromExtras(extras: ProfileExtras): ResolvedReminderPrefs {
-  const defaults = defaultReminderPrefs();
   return {
-    weighInReminderEnabled: extras.weighInReminderEnabled ?? defaults.weighInReminderEnabled,
-    weighInReminderWeekday: extras.weighInReminderWeekday ?? defaults.weighInReminderWeekday,
-    weighInReminderHour: extras.weighInReminderHour ?? defaults.weighInReminderHour,
-    weighInReminderMinute: extras.weighInReminderMinute ?? defaults.weighInReminderMinute,
+    weighInReminderEnabled: extras.weighInReminderEnabled ?? true,
   };
 }
 
@@ -265,28 +258,6 @@ export function useSettingsForm(profile: UserProfile, extras: ProfileExtras) {
     savedSnapshot,
   ]);
 
-  const markSaved = useCallback(() => {
-    setSavedSnapshot({
-      draft: { ...draft },
-      macroProteinPct,
-      macroCarbsPct,
-      macroFatPct,
-      startingWeightKg,
-      useLbsForWeight,
-      useImperialForHeight,
-      reminderPrefs: { ...reminderPrefs },
-    });
-  }, [
-    draft,
-    macroProteinPct,
-    macroCarbsPct,
-    macroFatPct,
-    startingWeightKg,
-    useLbsForWeight,
-    useImperialForHeight,
-    reminderPrefs,
-  ]);
-
   const applySavedValues = useCallback(
     (saved: { draft: ProfileDraft; startingWeightKg: number }) => {
       setDraft(saved.draft);
@@ -343,7 +314,6 @@ export function useSettingsForm(profile: UserProfile, extras: ProfileExtras) {
     canSave,
     validationMessage,
     isDirty,
-    markSaved,
     applySavedValues,
   };
 }

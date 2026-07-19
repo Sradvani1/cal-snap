@@ -46,15 +46,6 @@ export const AppConstants = {
     minAgeYears: 16,
     maxAgeYears: 90,
   },
-  Notifications: {
-    weighInCategoryIdentifier: 'WEIGH_IN',
-    dailyLogCategoryIdentifier: 'DAILY_LOG',
-    defaultReminderWeekday: 0,
-    defaultReminderHour: 8,
-    defaultReminderMinute: 0,
-    defaultDailyLogReminderHour: 20,
-    defaultDailyLogReminderMinute: 0,
-  },
   MealPhoto: {
     maxLongEdgePx: 1280,
     minLongEdgePx: 896,

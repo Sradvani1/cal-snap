@@ -99,15 +99,6 @@ export function profileToDoc(
     ...(extras.weighInReminderEnabled !== undefined
       ? { weighInReminderEnabled: extras.weighInReminderEnabled }
       : {}),
-    ...(extras.weighInReminderWeekday !== undefined
-      ? { weighInReminderWeekday: extras.weighInReminderWeekday }
-      : {}),
-    ...(extras.weighInReminderHour !== undefined
-      ? { weighInReminderHour: extras.weighInReminderHour }
-      : {}),
-    ...(extras.weighInReminderMinute !== undefined
-      ? { weighInReminderMinute: extras.weighInReminderMinute }
-      : {}),
   };
 }
 
@@ -230,9 +221,6 @@ export async function updateCalorieTargets(
     useLbsForWeight: docData.useLbsForWeight,
     useImperialForHeight: docData.useImperialForHeight,
     weighInReminderEnabled: docData.weighInReminderEnabled,
-    weighInReminderWeekday: docData.weighInReminderWeekday,
-    weighInReminderHour: docData.weighInReminderHour,
-    weighInReminderMinute: docData.weighInReminderMinute,
   }, db);
 
   return updatedProfile;

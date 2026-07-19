@@ -79,7 +79,7 @@ export async function saveSettingsProfile(
     onboardingCompleted: input.extras.onboardingCompleted,
     useLbsForWeight: input.unitPrefs.useLbsForWeight,
     useImperialForHeight: input.unitPrefs.useImperialForHeight,
-    ...input.reminderPrefs,
+    weighInReminderEnabled: input.reminderPrefs.weighInReminderEnabled,
   };
 
   await saveProfile(input.uid, updatedProfile, updatedExtras, deps.db);
