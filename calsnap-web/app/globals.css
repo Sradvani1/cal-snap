@@ -203,14 +203,6 @@ body {
   }
 }
 
-/* TEMP EXPERIMENT: useKeyboardActiveViewport sizes app-shell to body's
-   inline pixel height (set to visualViewport.height) during keyboard
-   activity, overriding the default h-dvh/max-h-dvh. */
-html.keyboard-active .app-shell {
-  height: 100%;
-  max-height: 100%;
-}
-
 @media (display-mode: standalone) {
   body {
     overscroll-behavior-y: none;
