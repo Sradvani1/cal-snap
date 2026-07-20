@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import { Button } from '@/components/ui/button';
 import { PrimaryButton, SecondaryButton } from '@/components/design/PrimaryButton';
 import { ScanDescriptionFullScreen } from '@/components/scanner/ScanDescriptionFullScreen';
 import type { MealScannerState } from '@/lib/scanner/use-meal-scanner';
@@ -63,9 +64,15 @@ export function MealScannerCaptureView({ scanner }: MealScannerCaptureViewProps)
             />
           </div>
         ) : (
-          <div className="flex aspect-[4/3] flex-col items-center justify-center rounded-xl border-2 border-dashed border-cs-border bg-cs-surface p-6 text-center">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => cameraInputRef.current?.click()}
+            aria-label={copy('scanner.capture.camera')}
+            className="flex aspect-[4/3] w-full flex-col items-center justify-center rounded-xl border-2 border-dashed border-cs-border bg-cs-surface p-6 text-center"
+          >
             <p className={typography.csCaption}>{copy('scanner.capture.prompt')}</p>
-          </div>
+          </Button>
         )}
 
         <div className="flex flex-wrap gap-2">
