@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense, useEffect, useLayoutEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { ConfirmAlertDialog } from '@/components/design/ConfirmAlertDialog';
 import { MealAnalysisResultView } from '@/components/scanner/MealAnalysisResultView';
 import { MealScannerAnalyzingView } from '@/components/scanner/MealScannerAnalyzingView';
@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils/cn';
 import { useLogMeal } from '@/lib/queries/use-log-meal';
 import { useUnsavedWork } from '@/lib/scanner/unsaved-work-context';
 import { useMealScanner } from '@/lib/scanner/use-meal-scanner';
+import { useNavVisibility } from '@/lib/app/nav-visibility-context';
 import { MealType, type MealType as MealTypeValue } from '@/lib/models/meal-type';
 
 const VALID_MEAL_TYPES = new Set<string>(Object.values(MealType));
@@ -31,7 +32,7 @@ function parseMealTypeParam(param: string | null): MealTypeValue | undefined {
 
 function ScanPageContent() {
   const { user } = useAuth();
-  const router = useRouter();
+  const { setHidden } = useNavVisibility();
   const searchParams = useSearchParams();
   const { setHasUnsavedWork, registerNavigationHandler } = useUnsavedWork();
   const logMealMutation = useLogMeal(user?.uid);
@@ -60,10 +61,11 @@ function ScanPageContent() {
     setHasUnsavedWork(false);
     setDiscardDialogOpen(false);
     if (discardPrompt === 'navigation' && pendingHref) {
-      router.push(pendingHref);
+      window.location.replace(pendingHref);
+      return;
     }
-    setDiscardPrompt(null);
-    setPendingHref(null);
+    window.location.replace('/dashboard');
+    return;
   };
 
   useLayoutEffect(() => {
@@ -88,6 +90,12 @@ function ScanPageContent() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [scanner.hasUnsavedWork]);
 
+  useEffect(() => {
+    return () => {
+      setHidden(false);
+    };
+  }, [setHidden]);
+
   const handleDiscard = () => {
     if (scanner.hasUnsavedWork) {
       openDiscardDialog('discard');
@@ -111,7 +119,8 @@ function ScanPageContent() {
       });
       scanner.discard();
       setHasUnsavedWork(false);
-      router.push('/dashboard');
+      window.location.replace('/dashboard');
+      return;
     } catch {
       scanner.setLogError(copy('scanner.error.logFailed'));
     }

@@ -11,6 +11,12 @@ export const scannerCopy = {
   'scanner.capture.camera': 'Camera',
   'scanner.capture.gallery': 'Gallery',
   'scanner.capture.description': 'Description',
+  'scanner.capture.addDescription': 'Add meal description',
+  'scanner.capture.editDescription': 'Edit',
+  'scanner.capture.saveDescription': 'Save Description',
+  'scanner.capture.cancelDescription': 'Cancel',
+  'scanner.capture.descriptionHelper':
+    'Describe what you ate so we can estimate nutritional values.',
   'scanner.capture.descriptionPlaceholder': 'e.g. 2 eggs, 2 slices toast, coffee with milk',
   'scanner.capture.analyze': 'Analyze',
   'scanner.capture.photoAlt': 'Selected meal',
