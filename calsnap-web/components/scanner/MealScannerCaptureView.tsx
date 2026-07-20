@@ -68,8 +68,7 @@ export function MealScannerCaptureView({ scanner }: MealScannerCaptureViewProps)
             type="button"
             variant="ghost"
             onClick={() => cameraInputRef.current?.click()}
-            aria-label={copy('scanner.capture.camera')}
-            className="flex aspect-[4/3] w-full flex-col items-center justify-center rounded-xl border-2 border-dashed border-cs-border bg-cs-surface p-6 text-center"
+            className="flex aspect-[4/3] w-full flex-col items-center justify-center whitespace-normal rounded-xl border-2 border-dashed border-cs-border bg-cs-surface p-6 text-center"
           >
             <p className={typography.csCaption}>{copy('scanner.capture.prompt')}</p>
           </Button>
