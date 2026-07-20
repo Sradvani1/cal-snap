@@ -85,7 +85,7 @@ export function HeightInputFields({
         </div>
       ) : (
         <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
-          {copy('common.label.height')}
+          {copy('common.label.height')} ({copy('common.units.cm')})
           <LocalNumberInput
             key="metric"
             inputMode="numeric"

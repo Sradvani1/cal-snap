@@ -142,6 +142,30 @@ describe('save-settings-profile', () => {
     expect(result.savedStartingWeightKg).toBe(80);
   });
 
+  it('returns result shape compatible with useProfile cache', async () => {
+    const profile = makeProfile();
+    const extras = makeExtras();
+    const draft = createDefaultProfileDraft();
+
+    const result = await saveSettingsProfile({
+      uid: 'user-1',
+      profile,
+      extras,
+      draft,
+      macroProteinPct: 28,
+      macroCarbsPct: 47,
+      macroFatPct: 25,
+      startingWeightKg: 80,
+      reminderPrefs: defaultReminderPrefs(),
+      unitPrefs: { useLbsForWeight: false, useImperialForHeight: false },
+    });
+
+    expect(result).toHaveProperty('profile');
+    expect(result).toHaveProperty('extras');
+    expect(result.profile).toHaveProperty('updatedAt');
+    expect(result.extras).toHaveProperty('currentWeightKg');
+  });
+
   it('recomputes goalTargetDate when deficit changes', async () => {
     const profile = makeProfile({
       goalTargetDate: new Date(2026, 11, 27),

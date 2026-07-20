@@ -7,6 +7,7 @@ import type { ProfileDraft } from '@/lib/onboarding/profile-draft';
 import { notSignedInError } from '@/lib/copy/errors';
 import type { ResolvedReminderPrefs } from '@/lib/progress/reminder-prefs';
 import { invalidateProfileQueries } from '@/lib/queries/invalidate-profile-queries';
+import { queryKeys } from '@/lib/queries/query-keys';
 import {
   saveSettingsProfile,
   type SaveSettingsProfileResult,
@@ -36,10 +37,14 @@ export function useSaveSettingsProfile(uid: string | undefined) {
       }
       return saveSettingsProfile({ uid, ...input });
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       if (!uid) {
         return;
       }
+      queryClient.setQueryData(queryKeys.profile(uid), {
+        profile: data.profile,
+        extras: data.extras,
+      });
       invalidateProfileQueries(queryClient, uid);
     },
   });

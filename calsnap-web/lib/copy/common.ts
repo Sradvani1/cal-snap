@@ -29,6 +29,7 @@ export const commonCopy = {
   'common.units.useLbs': 'Use lbs',
   'common.units.kg': 'kg',
   'common.units.lbs': 'lbs',
+  'common.units.cm': 'cm',
   'common.label.activityLevel': 'Activity level',
   'common.label.date': 'Date',
   'common.label.name': 'Name',

@@ -15,9 +15,9 @@ export function SettingsPageSkeleton() {
         <Skeleton className="h-8 w-32" />
       </header>
 
-      <SectionCardSkeleton />
-      <SectionCardSkeleton />
-      <SectionCardSkeleton />
+      {Array.from({ length: 7 }).map((_, i) => (
+        <SectionCardSkeleton key={i} />
+      ))}
     </div>
   );
 }
