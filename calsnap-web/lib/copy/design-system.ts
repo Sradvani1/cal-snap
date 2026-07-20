@@ -24,7 +24,6 @@ export const designSystemCopy = {
     'Macros: protein {{protein}} grams, carbs {{carbs}} grams, fat {{fat}} grams, fiber {{fiber}} grams',
   'designSystem.macroBar.carbs': 'Carbs',
   'designSystem.macroBar.fat': 'Fat',
-  'designSystem.macroBar.legendFormat': '{{label}} {{value}}g',
   'designSystem.macroBar.noData': 'No macro data',
   'designSystem.macroBar.protein': 'Protein',
   'designSystem.nutrient.calories': 'Calories',

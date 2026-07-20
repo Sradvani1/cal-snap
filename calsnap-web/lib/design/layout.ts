@@ -8,7 +8,6 @@ export const layout = {
   macroBar: {
     height: 12,
     radius: 6,
-    legendDot: 8,
   },
   sectionCard: {
     radius: 'rounded-2xl',

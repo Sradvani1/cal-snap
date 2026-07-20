@@ -13,7 +13,7 @@ interface MacroBarViewProps {
 
 export function MacroBarView({ proteinG, carbsG, fatG, fiberG, className }: MacroBarViewProps) {
   const total = proteinG + carbsG + fatG + fiberG;
-  const { height, radius, legendDot } = layout.macroBar;
+  const { height, radius } = layout.macroBar;
 
   const accessibilitySummary =
     total > 0
@@ -58,55 +58,6 @@ export function MacroBarView({ proteinG, carbsG, fatG, fiberG, className }: Macr
         {fatWidth > 0 && <div className="bg-cs-fat" style={{ width: `${fatWidth}%` }} />}
         {fiberWidth > 0 && <div className="bg-cs-success" style={{ width: `${fiberWidth}%` }} />}
       </div>
-      <div className={cn('mt-2 flex flex-wrap gap-4', typography.csCaption)}>
-        <LegendItem
-          colorClass="bg-cs-protein"
-          label={copy('designSystem.macroBar.protein')}
-          value={Math.round(proteinG)}
-          dotSize={legendDot}
-        />
-        <LegendItem
-          colorClass="bg-cs-carbs"
-          label={copy('designSystem.macroBar.carbs')}
-          value={Math.round(carbsG)}
-          dotSize={legendDot}
-        />
-        <LegendItem
-          colorClass="bg-cs-fat"
-          label={copy('designSystem.macroBar.fat')}
-          value={Math.round(fatG)}
-          dotSize={legendDot}
-        />
-        <LegendItem
-          colorClass="bg-cs-success"
-          label={copy('common.macro.fiber')}
-          value={Math.round(fiberG)}
-          dotSize={legendDot}
-        />
-      </div>
     </div>
-  );
-}
-
-function LegendItem({
-  colorClass,
-  label,
-  value,
-  dotSize,
-}: {
-  colorClass: string;
-  label: string;
-  value: number;
-  dotSize: number;
-}) {
-  return (
-    <span className="inline-flex items-center gap-1">
-      <span
-        className={cn('inline-block rounded-full', colorClass)}
-        style={{ width: dotSize, height: dotSize }}
-        aria-hidden
-      />
-      {copy('designSystem.macroBar.legendFormat', { label, value })}
-    </span>
   );
 }
