@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { FormEvent, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { AuthFormSkeleton } from '@/components/auth/AuthFormSkeleton';
 import { PrimaryButton, SecondaryButton } from '@/components/design/PrimaryButton';
 import { useAuth } from '@/lib/auth/auth-context';
@@ -15,7 +14,6 @@ import { cn } from '@/lib/utils/cn';
 export default function LoginPage() {
   const { user, loading, authError, signInWithEmail, signInWithGoogle } = useAuth();
   const profile = useProfile(user?.uid);
-  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -25,10 +23,10 @@ export default function LoginPage() {
     if (loading || !user || profile.isLoading) {
       return;
     }
-    router.replace(
+    window.location.replace(
       profile.data?.extras.onboardingCompleted === true ? '/dashboard' : '/onboarding',
     );
-  }, [user, loading, profile.isLoading, profile.data, router]);
+  }, [user, loading, profile.isLoading, profile.data]);
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
