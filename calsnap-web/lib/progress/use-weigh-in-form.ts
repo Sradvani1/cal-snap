@@ -9,7 +9,6 @@ import {
   kgFromDisplayWeight,
   WEIGHT_RANGE_KG,
   weightDisplayRange,
-  weightDisplayStep,
 } from '@/lib/utilities/unit-formatters';
 
 function toDateInputValue(date: Date): string {
@@ -46,7 +45,7 @@ export function useWeighInForm(
   );
 
   const range = weightDisplayRange(useLbs);
-  const step = weightDisplayStep(useLbs);
+  const step = 0.1;
 
   const canSave = useMemo(() => {
     const parsed = Number.parseFloat(weightInput);

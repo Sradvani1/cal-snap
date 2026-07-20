@@ -17,17 +17,14 @@ export function weightDisplayRange(useLbs: boolean): { min: number; max: number 
   return useLbs ? WEIGHT_RANGE_LBS : WEIGHT_RANGE_KG;
 }
 
-export function weightDisplayStep(useLbs: boolean): number {
-  return useLbs ? 1 : 0.5;
+export function weightDisplayStep(): number {
+  return 0.1;
 }
 
 export function snappedDisplayWeight(value: number, useLbs: boolean): number {
   const range = weightDisplayRange(useLbs);
   const clamped = Math.min(Math.max(value, range.min), range.max);
-  if (useLbs) {
-    return Math.round(clamped);
-  }
-  return Math.round(clamped * 2) / 2;
+  return Math.round(clamped * 10) / 10;
 }
 
 export function displayWeight(fromKg: number, useLbs: boolean): number {
