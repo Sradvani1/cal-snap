@@ -10,8 +10,10 @@ import { useWeighInForm } from '@/lib/progress/use-weigh-in-form';
 import { snoozeWeighInUntilTomorrow } from '@/lib/progress/weigh-in-snooze';
 import { useLogWeighIn } from '@/lib/queries/use-log-weigh-in';
 import type { SaveWeighInResult } from '@/lib/services/weigh-in-service';
+import { WeightSelector } from '@/components/design/WeightSelector';
+import { displayWeight } from '@/lib/utilities/unit-formatters';
 import { typography } from '@/lib/design/typography';
-import { formFieldFocusRingClassName, formFieldInputClassName } from '@/lib/design/form-field';
+import { formFieldInputClassName } from '@/lib/design/form-field';
 import {
   scrollFormFieldIntoView,
   useKeyboardInset,
@@ -113,19 +115,13 @@ function WeighInSheetForm({
 
       <label className="mt-4 block">
         <span className="sr-only">{copy('common.label.weight')}</span>
-        <input
-          type="number"
-          inputMode="decimal"
-          enterKeyHint="done"
-          min={form.range.min}
-          max={form.range.max}
-          step={form.step}
-          value={form.weightInput}
-          onChange={(event) => form.setWeightInput(event.target.value)}
-          className={cn(
-            'w-full border-0 bg-transparent text-center text-4xl font-semibold tabular-nums text-cs-foreground',
-            formFieldFocusRingClassName,
-          )}
+        <WeightSelector
+          key={form.useLbs ? 'lbs' : 'kg'}
+          valueKg={form.weightKg > 0 ? form.weightKg : profileExtras.currentWeightKg}
+          useLbs={form.useLbs}
+          onChange={(kg) =>
+            form.setWeightInput(String(displayWeight(kg, form.useLbs)))
+          }
         />
       </label>
 
