@@ -28,10 +28,7 @@ import {
 } from '@/lib/scanner/meal-totals';
 import { createAnalyzeGenerationGuard } from '@/lib/scanner/analyze-generation';
 import type { PreparedMealImage } from '@/lib/services/meal-photo-processor';
-import {
-  MealPhotoProcessorError,
-  prepareForAnalysisAndStorage,
-} from '@/lib/services/meal-photo-processor';
+import { prepareForAnalysisAndStorage } from '@/lib/services/meal-photo-processor';
 
 export type MealScannerPhase = 'capture' | 'analyzing' | 'results' | 'error';
 
@@ -187,15 +184,11 @@ export function useMealScanner({
         previewUrlRef.current = url;
         setPreviewUrl(url);
         setPreparedPhoto(prepared);
-      } catch (error) {
+      } catch {
         revokePreviewUrl();
         setPreviewUrl(null);
         setPreparedPhoto(null);
-        if (error instanceof MealPhotoProcessorError) {
-          setScannerError('photoPrep');
-        } else {
-          setScannerError('photoPrep');
-        }
+        setScannerError('photoPrep');
         setPhase('error');
       }
     },
@@ -277,13 +270,13 @@ export function useMealScanner({
       }
       applyAnalysis(data);
     } catch (error) {
-      if (error instanceof DOMException && error.name === 'AbortError') {
-        if (!analyzeGenerationRef.current.isCurrent(generation)) {
-          setPhase('capture');
-        }
-        return;
-      }
-      if (!analyzeGenerationRef.current.isCurrent(generation)) {
+      // Aborted or superseded requests are handled by whichever action
+      // triggered them (cancelAnalysis / reAnalyze / retryAnalyze / unmount),
+      // so ignore them here to avoid stomping a freshly-set phase.
+      if (
+        (error instanceof DOMException && error.name === 'AbortError') ||
+        !analyzeGenerationRef.current.isCurrent(generation)
+      ) {
         return;
       }
       setScannerError('api');
@@ -423,10 +416,11 @@ export function useMealScanner({
   }, [invalidateAnalyze]);
 
   const retryAnalyze = useCallback(() => {
+    invalidateAnalyze();
     setScannerError(null);
     setPhase('capture');
     void analyze();
-  }, [analyze]);
+  }, [invalidateAnalyze, analyze]);
 
   const cancelAnalysis = useCallback(() => {
     if (phase === 'analyzing') {

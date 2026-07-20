@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { use, useEffect, useRef, useState } from 'react';
+import { use, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ConfirmAlertDialog } from '@/components/design/ConfirmAlertDialog';
 import { MealDetailSkeleton } from '@/components/meal-log/MealDetailSkeleton';
@@ -100,7 +100,7 @@ export default function ScanEditPage({ params }: ScanEditPageProps) {
     };
   }, [mealQuery.data, loadForEditing]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     registerNavigationHandler((href) => {
       openDiscardDialog('navigation', href);
       return false;

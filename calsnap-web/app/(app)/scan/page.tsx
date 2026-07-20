@@ -14,6 +14,7 @@ import { layout } from '@/lib/design/layout';
 import { typography } from '@/lib/design/typography';
 import { cn } from '@/lib/utils/cn';
 import { useLogMeal } from '@/lib/queries/use-log-meal';
+import { errorRetryAction } from '@/lib/scanner/error-retry-action';
 import { useUnsavedWork } from '@/lib/scanner/unsaved-work-context';
 import { useMealScanner } from '@/lib/scanner/use-meal-scanner';
 import { useNavVisibility } from '@/lib/app/nav-visibility-context';
@@ -156,15 +157,9 @@ function ScanPageContent() {
           <ScannerErrorBanner
             error={scanner.scannerError}
             onRetry={
-              scanner.scannerError === 'offline' ||
-              scanner.scannerError === 'api' ||
-              scanner.scannerError === 'parse'
-                ? scanner.retryAnalyze
-                : scanner.scannerError === 'photoPrep'
-                  ? () => {
-                      scanner.discard();
-                    }
-                  : scanner.retryAnalyze
+              errorRetryAction(scanner.scannerError) === 'discard'
+                ? scanner.discard
+                : scanner.retryAnalyze
             }
           />
           {scanner.previewUrl && (
