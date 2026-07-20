@@ -15,10 +15,12 @@ interface MealLogRowProps {
   meal: MealEntry;
   showActions?: boolean;
   onDelete?: (mealId: string) => void;
+  onSaveFavorite?: (mealId: string) => void;
 }
 
-export function MealLogRow({ meal, showActions = false, onDelete }: MealLogRowProps) {
+export function MealLogRow({ meal, showActions = false, onDelete, onSaveFavorite }: MealLogRowProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [savedFav, setSavedFav] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -54,7 +56,7 @@ export function MealLogRow({ meal, showActions = false, onDelete }: MealLogRowPr
         </span>
       </Link>
 
-      {showActions && onDelete && (
+      {showActions && (onDelete || onSaveFavorite) ? (
         <div className="relative" ref={menuRef}>
           <button
             type="button"
@@ -66,7 +68,22 @@ export function MealLogRow({ meal, showActions = false, onDelete }: MealLogRowPr
             ⋯
           </button>
           {menuOpen && (
-            <div className="absolute right-0 top-full z-10 mt-1 w-36 rounded-lg border border-cs-border bg-cs-surface py-1 shadow-lg">
+            <div className="absolute right-0 top-full z-10 mt-1 w-40 rounded-lg border border-cs-border bg-cs-surface py-1 shadow-lg">
+              {onSaveFavorite && (
+                <button
+                  type="button"
+                  disabled={savedFav}
+                  className="block w-full px-4 py-2 text-left text-sm text-cs-foreground hover:bg-cs-muted/10 disabled:text-cs-muted"
+                  onClick={() => {
+                    onSaveFavorite(meal.id);
+                    setSavedFav(true);
+                    setTimeout(() => setSavedFav(false), 2000);
+                    setMenuOpen(false);
+                  }}
+                >
+                  {savedFav ? copy('mealLog.actions.savedFavorite') : copy('mealLog.actions.saveFavorite')}
+                </button>
+              )}
               <Link
                 href={`/log/${meal.id}`}
                 className="block px-4 py-2 text-sm text-cs-foreground hover:bg-cs-muted/10"
@@ -81,17 +98,19 @@ export function MealLogRow({ meal, showActions = false, onDelete }: MealLogRowPr
               >
                 {copy('mealLog.row.edit')}
               </Link>
-              <button
-                type="button"
-                className="block w-full px-4 py-2 text-left text-sm text-cs-danger hover:bg-cs-muted/10"
-                onClick={handleDelete}
-              >
-                {copy('mealLog.actions.delete')}
-              </button>
+              {onDelete && (
+                <button
+                  type="button"
+                  className="block w-full px-4 py-2 text-left text-sm text-cs-danger hover:bg-cs-muted/10"
+                  onClick={handleDelete}
+                >
+                  {copy('mealLog.actions.delete')}
+                </button>
+              )}
             </div>
           )}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

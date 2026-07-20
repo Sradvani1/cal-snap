@@ -6,4 +6,5 @@ export const queryKeys = {
   allWeighIns: (uid: string) => ['allWeighIns', uid] as const,
   analyticsMeals: (uid: string, rangeKey: string) =>
     ['analyticsMeals', uid, rangeKey] as const,
+  favorites: (uid: string) => ['favorites', uid] as const,
 };

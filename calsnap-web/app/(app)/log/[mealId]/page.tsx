@@ -13,6 +13,7 @@ import { useAuth } from '@/lib/auth/auth-context';
 import { copy } from '@/lib/copy';
 import { layout } from '@/lib/design/layout';
 import { typography } from '@/lib/design/typography';
+import { useSaveFavorite } from '@/lib/queries/use-save-favorite';
 import { cn } from '@/lib/utils/cn';
 import { useDeleteMeal } from '@/lib/queries/use-delete-meal';
 import { useMeal } from '@/lib/queries/use-meal';
@@ -29,10 +30,12 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
   const router = useRouter();
   const mealQuery = useMeal(user?.uid, mealId);
   const deleteMealMutation = useDeleteMeal(user?.uid);
+  const saveFavoriteMutation = useSaveFavorite(user?.uid);
   const { shareCardImage, isSharing, shareError } = useMealShareImage();
   const shareCardRef = useRef<HTMLDivElement>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [savedFavorite, setSavedFavorite] = useState(false);
 
   const meal = mealQuery.data?.entry;
 
@@ -77,6 +80,13 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
     }
   };
 
+  const handleSaveFavorite = () => {
+    if (!meal || !user) return;
+    saveFavoriteMutation.mutate(meal);
+    setSavedFavorite(true);
+    setTimeout(() => setSavedFavorite(false), 2000);
+  };
+
   const handleShare = async () => {
     if (!shareCardRef.current || !meal) {
       return;
@@ -119,8 +129,10 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
           mealId={meal.id}
           onShare={() => void handleShare()}
           onDelete={handleDelete}
+          onSaveFavorite={handleSaveFavorite}
           isSharing={isSharing}
           isDeleting={deleteMealMutation.isPending}
+          savedFavorite={savedFavorite}
         />
       </div>
 

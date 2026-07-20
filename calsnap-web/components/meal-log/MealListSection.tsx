@@ -15,6 +15,7 @@ interface MealListSectionProps {
   showAddButton?: boolean;
   showRowActions?: boolean;
   onDeleteMeal?: (mealId: string) => void;
+  onSaveFavorite?: (mealId: string) => void;
 }
 
 function AddMealLink({ mealType }: { mealType: MealType }) {
@@ -36,6 +37,7 @@ export function MealListSection({
   showAddButton = true,
   showRowActions = false,
   onDeleteMeal,
+  onSaveFavorite,
 }: MealListSectionProps) {
   return (
     <div className="space-y-4">
@@ -67,6 +69,7 @@ export function MealListSection({
                     meal={meal}
                     showActions={showRowActions}
                     onDelete={onDeleteMeal}
+                    onSaveFavorite={onSaveFavorite}
                   />
                 ))}
               </div>

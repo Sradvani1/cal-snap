@@ -1,5 +1,5 @@
 import { Timestamp } from 'firebase/firestore';
-import type { FoodItem } from '@/lib/models/food-item';
+import { foodItemDocToEntry, foodItemToDoc } from '@/lib/models/food-item-doc';
 import type { MealEntry } from '@/lib/models/meal-entry';
 import type { MealType } from '@/lib/models/meal-type';
 
@@ -35,38 +35,6 @@ export interface MealEntryDoc {
   items: FoodItemDoc[];
   createdAt: Timestamp;
   updatedAt: Timestamp;
-}
-
-function foodItemDocToEntry(doc: FoodItemDoc): FoodItem {
-  return {
-    id: doc.id,
-    name: doc.name,
-    estimatedWeightG: doc.estimatedWeightG,
-    calories: doc.calories,
-    proteinG: doc.proteinG,
-    carbsG: doc.carbsG,
-    fatG: doc.fatG,
-    fiberG: doc.fiberG,
-    confidence: doc.confidence,
-    usdaFoodId: doc.usdaFoodId,
-    isFlagged: doc.isFlagged,
-  };
-}
-
-function foodItemToDoc(item: FoodItem): FoodItemDoc {
-  return {
-    id: item.id,
-    name: item.name,
-    estimatedWeightG: item.estimatedWeightG,
-    calories: item.calories,
-    proteinG: item.proteinG,
-    carbsG: item.carbsG,
-    fatG: item.fatG,
-    fiberG: item.fiberG,
-    confidence: item.confidence,
-    isFlagged: item.isFlagged,
-    ...(item.usdaFoodId !== undefined ? { usdaFoodId: item.usdaFoodId } : {}),
-  };
 }
 
 export function mealDocToEntry(id: string, doc: MealEntryDoc): MealEntry {

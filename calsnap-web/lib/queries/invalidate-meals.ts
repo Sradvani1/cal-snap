@@ -16,5 +16,8 @@ export function invalidateMealQueries(
       queryKey: queryKeys.meal(uid, mealId),
     });
   }
+  void queryClient.invalidateQueries({
+    queryKey: queryKeys.favorites(uid),
+  });
   invalidateAnalyticsQueries(queryClient, uid);
 }
