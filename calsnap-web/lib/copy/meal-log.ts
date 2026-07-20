@@ -40,6 +40,8 @@ export const mealLogCopy = {
   'mealLog.favorites.errorLoad': 'Failed to load favorites.',
   'mealLog.favorites.errorDelete': 'Failed to delete favorite.',
   'mealLog.favorites.errorUse': 'Failed to log favorite meal.',
+  'mealLog.favorites.logAction': 'Log for today',
+  'mealLog.favorites.logging': 'Logging\u2026',
   'mealLog.share.title': 'CalSnap meal',
   'mealLog.share.error.generate': 'Failed to generate share image',
   'mealLog.share.error.failed': 'Failed to share meal card',

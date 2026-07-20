@@ -5,6 +5,7 @@ import { AppDialog } from '@/components/design/AppDialog';
 import { ConfirmAlertDialog } from '@/components/design/ConfirmAlertDialog';
 import { EmptyStateView } from '@/components/design/EmptyStateView';
 import { SectionCard, SectionCardSkeleton } from '@/components/design/SectionCard';
+import { FavoriteDetailSheet } from '@/components/favorites/FavoriteDetailSheet';
 import { FavoritesGrid } from '@/components/favorites/FavoritesGrid';
 import { DailySummaryBar } from '@/components/meal-log/DailySummaryBar';
 import { DateNavBar } from '@/components/meal-log/DateNavBar';
@@ -90,6 +91,10 @@ export default function LogPage() {
   const [renameFavTarget, setRenameFavTarget] = useState<FavoriteMeal | null>(null);
   const [renameValue, setRenameValue] = useState('');
 
+  // Favorite detail sheet
+  const [sheetFav, setSheetFav] = useState<FavoriteMeal | null>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
+
   const aggregation = aggregateTodaysMeals(mealsQuery.data ?? []);
   const hasMeals = (mealsQuery.data?.length ?? 0) > 0;
 
@@ -110,19 +115,23 @@ export default function LogPage() {
     [user, mealsQuery.data, saveFavoriteMutation],
   );
 
-  const handleUseFavorite = useCallback(
-    async (favorite: FavoriteMeal) => {
-      if (!user) return;
-      try {
-        await logFromFavoriteMutation.mutateAsync(favorite);
-        setConfirmText(copy('mealLog.favorites.useConfirm', { name: favorite.name }));
-        setTimeout(() => setConfirmText(null), 3000);
-      } catch {
-        // mutation error is surfaced via logFromFavoriteMutation.error
-      }
-    },
-    [user, logFromFavoriteMutation],
-  );
+  const handleOpenSheet = useCallback((favorite: FavoriteMeal) => {
+    setSheetFav(favorite);
+    setSheetOpen(true);
+  }, []);
+
+  const handleLogFromSheet = useCallback(async () => {
+    if (!sheetFav || !user) return;
+    try {
+      await logFromFavoriteMutation.mutateAsync(sheetFav);
+      setSheetOpen(false);
+      setSheetFav(null);
+      setConfirmText(copy('mealLog.favorites.useConfirm', { name: sheetFav.name }));
+      setTimeout(() => setConfirmText(null), 3000);
+    } catch {
+      // mutation error is surfaced via logFromFavoriteMutation.error
+    }
+  }, [sheetFav, user, logFromFavoriteMutation]);
 
   const handleDeleteMeal = useCallback((mealId: string) => {
     setMealIdToDelete(mealId);
@@ -227,7 +236,7 @@ export default function LogPage() {
           isLoading={favoritesQuery.isLoading}
           isError={favoritesQuery.isError}
           confirmText={confirmText}
-          onUse={handleUseFavorite}
+          onOpenDetail={handleOpenSheet}
           onDelete={handleDeleteFavorite}
           onRename={handleOpenRename}
         />
@@ -286,6 +295,20 @@ export default function LogPage() {
           </div>
         </div>
       </AppDialog>
+
+      <FavoriteDetailSheet
+        open={sheetOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            setSheetOpen(false);
+            setSheetFav(null);
+          }
+        }}
+        favorite={sheetFav}
+        isLogging={logFromFavoriteMutation.isPending}
+        onLog={() => void handleLogFromSheet()}
+        errorMessage={logFromFavoriteMutation.isError ? copy('mealLog.favorites.errorUse') : null}
+      />
     </div>
   );
 }

@@ -11,7 +11,7 @@ interface FavoritesGridProps {
   isLoading: boolean;
   isError: boolean;
   confirmText: string | null;
-  onUse: (favorite: FavoriteMeal) => void;
+  onOpenDetail: (favorite: FavoriteMeal) => void;
   onDelete: (favorite: FavoriteMeal) => void;
   onRename: (favorite: FavoriteMeal) => void;
 }
@@ -21,7 +21,7 @@ export function FavoritesGrid({
   isLoading,
   isError,
   confirmText,
-  onUse,
+  onOpenDetail,
   onDelete,
   onRename,
 }: FavoritesGridProps) {
@@ -60,7 +60,7 @@ export function FavoritesGrid({
           <FavoriteCard
             key={fav.id}
             favorite={fav}
-            onUse={() => onUse(fav)}
+            onUse={() => onOpenDetail(fav)}
             onDelete={() => onDelete(fav)}
             onRename={() => onRename(fav)}
           />
