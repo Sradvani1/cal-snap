@@ -102,6 +102,7 @@ function ScanPageContent() {
       return;
     }
     scanner.discard();
+    window.location.replace('/dashboard');
   };
 
   const handleLog = async () => {
