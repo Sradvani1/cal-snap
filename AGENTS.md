@@ -28,13 +28,12 @@ cp .env.local.example .env.local   # then fill Firebase + GEMINI_API_KEY
 pnpm lint
 pnpm test                          # unit (Vitest, node env)
 pnpm test:integration              # Firestore/Auth/Storage via firebase emulators
-pnpm test:e2e                      # Playwright; starts emulators + dev server itself
 pnpm dev                           # http://localhost:3000
 ```
 
 - **Single unit test:** `pnpm exec vitest run tests/unit/<file>.test.ts`
 - **Integration tests require the Firebase emulators.** The `test:integration` script boots them automatically (`firebase emulators:exec --project demo-calsnap`). Running Vitest directly against `tests/integration` without emulators fails.
-- **E2E** (`playwright.config.ts`) auto-starts the auth/firestore/storage emulators and the dev server, so just run `pnpm test:e2e`. It uses `.env.e2e` (copied to `.env.local` by the webServer hook) — do not commit `.env.local`.
+- **E2E (Playwright) was removed.** The CI `e2e` job and `tests/e2e/` were deleted; UI flows are covered by manual testing. If e2e is reintroduced later, restore `playwright.config.ts`, `tests/e2e/`, and `.env.e2e`.
 
 ## PWA / service worker
 

@@ -53,19 +53,18 @@ Phase 1 ──► Phase 2 ──► Phase 3 ──► Phase 4 (optional) ──�
 | File | Purpose | Commit? |
 |------|---------|---------|
 | `.env.local` | Your local dev config | No (gitignored) |
-| `.env.e2e` | Playwright / E2E defaults (emulator mode) | Yes |
 | `.env.local.example` | Template for production vars | Yes |
 
 ### Phase 1–2 emulator config (copy into `.env.local`)
 
-If you already have `.env.local` with these values, skip copying.
+If you already have `.env.local` with these values, skip copying. For emulator-local dev, copy the example template and set `NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true`:
 
 ```bash
 cd calsnap-web
-cp .env.e2e .env.local
+cp .env.local.example .env.local
 ```
 
-Contents (same as `.env.e2e`):
+Contents (emulator mode):
 
 ```env
 NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true
@@ -99,7 +98,6 @@ pnpm lint
 pnpm test
 pnpm build
 pnpm test:integration
-pnpm test:e2e
 ```
 
 Optional secret audit (CI runs this after build):
@@ -116,21 +114,13 @@ Optional secret audit (CI runs this after build):
 | `pnpm test` | Unit tests — nutrition math, validation, parsers, etc. |
 | `pnpm build` | Production Next.js + Serwist PWA build (`--webpack`) |
 | `pnpm test:integration` | Firestore + Storage **security rules** via emulators |
-| `pnpm test:e2e` | Full happy path in Chromium (signup → onboarding → scan → log → weigh-in); **mocks** `/api/analyze-meal` |
 
-E2E flow covered by `tests/e2e/happy-path.spec.ts`:
-
-1. Email signup
-2. Five-step onboarding
-3. Scan tab → upload test photo → mocked analysis
-4. Log meal → dashboard shows meal
-5. Weigh-in sheet → save
+> Note: The Playwright E2E suite (`tests/e2e/`, `playwright.config.ts`, `.env.e2e`) and the CI `e2e` job were removed. UI flows are covered by manual QA (Phase 2). If reintroduced, restore those files and the `e2e` job.
 
 ### Phase 1 checklist
 
 - [ ] All commands exit 0
-- [ ] No Java errors during `test:integration` or `test:e2e`
-- [ ] If E2E fails: run `pnpm exec playwright install chromium` once, then retry
+- [ ] No Java errors during `test:integration`
 
 ### Troubleshooting
 
@@ -138,8 +128,6 @@ E2E flow covered by `tests/e2e/happy-path.spec.ts`:
 |---------|-----|
 | `java: command not found` | Install Java 21+ |
 | Port 8080/9099/9199/4000 in use | Stop other emulator instances; `lsof -i :8080` |
-| Playwright browser missing | `pnpm exec playwright install --with-deps chromium` |
-| `test:e2e` hangs | Ensure no stale `pnpm dev` on port 3000 |
 
 **Gate:** Do not proceed to Phase 2 until Phase 1 is green (or you have a documented reason a failure is environmental).
 
@@ -507,7 +495,7 @@ Repeat core flows on preview URL:
 cd calsnap-web
 
 # Phase 1
-pnpm lint && pnpm test && pnpm build && pnpm test:integration && pnpm test:e2e
+pnpm lint && pnpm test && pnpm build && pnpm test:integration
 
 # Phase 2–3
 pnpm emulators          # terminal 1

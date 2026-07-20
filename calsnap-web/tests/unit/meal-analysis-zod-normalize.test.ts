@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import mealAnalysisFixture from '../e2e/helpers/fixtures/meal-analysis.json';
+import mealAnalysisFixture from './fixtures/meal-analysis.json';
 import {
   normalizeMealAnalysisRaw,
   parseMealAnalysisResponse,

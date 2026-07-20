@@ -30,8 +30,6 @@ Fill in `.env.local`:
 pnpm dev              # http://localhost:3000 (webpack; required with Serwist)
 pnpm test             # Vitest unit tests (merge gate)
 pnpm test:integration # Firestore + Storage rules via emulators (required in CI)
-pnpm test:e2e         # Playwright happy path (required in CI)
-pnpm test:e2e:ui      # Playwright UI mode
 pnpm lint
 pnpm build            # next build --webpack (Serwist PWA)
 pnpm emulators        # Start Auth + Firestore + Storage emulators

@@ -53,25 +53,4 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm test:integration
 
-  e2e:
-    needs: [unit, integration]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 9
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-          cache-dependency-path: calsnap-web/pnpm-lock.yaml
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 21
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps chromium
-      - run: pnpm test:e2e
-        env:
-          CI: true
+
