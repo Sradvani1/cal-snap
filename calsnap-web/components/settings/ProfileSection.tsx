@@ -7,12 +7,11 @@ import {
   HeightInputFields,
 } from '@/components/design/HeightInputFields';
 import { LocalDateInput } from '@/components/design/LocalDateInput';
-import { LocalNumberInput } from '@/components/design/LocalNumberInput';
 import type { ProfileDraft } from '@/lib/onboarding/profile-draft';
 import { formatEstimatedGoalDate } from '@/lib/nutrition/goal-pathway';
 import { dateOfBirthInputBounds } from '@/lib/utilities/date-input';
-import { weightInputHandlers } from '@/lib/utilities/unit-formatters';
 import { SectionCard } from '@/components/design/SectionCard';
+import { WeightSelector } from '@/components/design/WeightSelector';
 import { copy } from '@/lib/copy';
 import { formFieldInputClassName } from '@/lib/design/form-field';
 import { typography } from '@/lib/design/typography';
@@ -56,14 +55,6 @@ export function ProfileSection({
   minimumCalories,
 }: ProfileSectionProps) {
   const dobBounds = useMemo(() => dateOfBirthInputBounds(), []);
-  const weightHandlers = useMemo(
-    () => weightInputHandlers(useLbsForWeight),
-    [useLbsForWeight],
-  );
-  const goalWeightHandlers = useMemo(
-    () => weightInputHandlers(draft.useLbsGoalWeight),
-    [draft.useLbsGoalWeight],
-  );
   const weightUnit = useLbsForWeight ? copy('common.units.lbs') : copy('common.units.kg');
   const goalWeightUnit = draft.useLbsGoalWeight
     ? copy('common.units.lbs')
@@ -139,16 +130,11 @@ export function ProfileSection({
 
         <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
           {copy('settings.profile.startingWeight', { unit: weightUnit })}
-          <LocalNumberInput
+          <WeightSelector
             key={useLbsForWeight ? 'lbs' : 'kg'}
-            inputMode="decimal"
-            value={startingWeightKg}
-            formatDisplay={weightHandlers.formatDisplay}
-            commitValue={weightHandlers.commitValue}
-            onChange={(display) => {
-              onStartingWeightChange(weightHandlers.toKg(display));
-            }}
-            className={formFieldInputClassName}
+            valueKg={startingWeightKg}
+            useLbs={useLbsForWeight}
+            onChange={onStartingWeightChange}
           />
         </label>
 
@@ -186,18 +172,15 @@ export function ProfileSection({
 
         <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
           {copy('settings.profile.goalWeight', { unit: goalWeightUnit })}
-          <LocalNumberInput
+          <WeightSelector
             key={draft.useLbsGoalWeight ? 'lbs' : 'kg'}
-            inputMode="decimal"
-            value={draft.goalWeightKg}
-            formatDisplay={goalWeightHandlers.formatDisplay}
-            commitValue={goalWeightHandlers.commitValue}
-            onChange={(display) =>
+            valueKg={draft.goalWeightKg}
+            useLbs={draft.useLbsGoalWeight}
+            onChange={(kg) =>
               onUpdateDraft((d) => {
-                d.goalWeightKg = goalWeightHandlers.toKg(display);
+                d.goalWeightKg = kg;
               })
             }
-            className={formFieldInputClassName}
           />
         </label>
 

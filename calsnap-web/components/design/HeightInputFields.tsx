@@ -1,13 +1,7 @@
 'use client';
 
-import {
-  LocalNumberInput,
-  parseIntegerInputValue,
-} from '@/components/design/LocalNumberInput';
 import { formFieldInputClassName, formFieldFocusRingClassName } from '@/lib/design/form-field';
 import {
-  clampFeet,
-  clampInches,
   cmToFeetInches,
   feetInchesToCm,
 } from '@/lib/utilities/unit-formatters';
@@ -23,6 +17,10 @@ interface HeightInputFieldsProps {
   inputClassName?: string;
 }
 
+const CM_OPTIONS = Array.from({ length: 230 - 120 + 1 }, (_, i) => 120 + i);
+const FT_OPTIONS = [4, 5, 6];
+const IN_OPTIONS = Array.from({ length: 12 }, (_, i) => i);
+
 export function HeightInputFields({
   heightCm,
   useImperialHeight,
@@ -30,7 +28,9 @@ export function HeightInputFields({
   onToggleImperial,
   inputClassName = formFieldInputClassName,
 }: HeightInputFieldsProps) {
-  const { feet, inches } = cmToFeetInches(heightCm);
+  const raw = cmToFeetInches(heightCm);
+  const feet = Math.min(Math.max(raw.feet, 4), 6);
+  const inches = raw.feet < 4 ? 0 : raw.feet > 6 ? 11 : raw.inches;
 
   return (
     <div className="flex min-w-0 flex-col gap-2">
@@ -56,44 +56,48 @@ export function HeightInputFields({
         <div key="imperial" className="grid min-w-0 grid-cols-2 gap-3">
           <label className={cn(typography.csCaption, 'flex min-w-0 flex-col gap-1')}>
             {copy('common.label.feet')}
-            <LocalNumberInput
-              inputMode="numeric"
-              value={feet}
-              parseInput={parseIntegerInputValue}
-              commitValue={clampFeet}
-              onChange={(nextFeet) => {
-                const { inches: currentInches } = cmToFeetInches(heightCm);
-                onHeightCmChange(feetInchesToCm(nextFeet, currentInches));
+            <select
+              value={String(feet)}
+              onChange={(e) => {
+                const nextFeet = Number(e.target.value);
+                onHeightCmChange(feetInchesToCm(nextFeet, inches));
               }}
               className={inputClassName}
-            />
+            >
+              {FT_OPTIONS.map((ft) => (
+                <option key={ft} value={ft}>{ft}</option>
+              ))}
+            </select>
           </label>
           <label className={cn(typography.csCaption, 'flex min-w-0 flex-col gap-1')}>
             {copy('common.label.inches')}
-            <LocalNumberInput
-              inputMode="numeric"
-              value={inches}
-              parseInput={parseIntegerInputValue}
-              commitValue={clampInches}
-              onChange={(nextInches) => {
-                const { feet: currentFeet } = cmToFeetInches(heightCm);
-                onHeightCmChange(feetInchesToCm(currentFeet, nextInches));
+            <select
+              value={String(inches)}
+              onChange={(e) => {
+                const nextInches = Number(e.target.value);
+                onHeightCmChange(feetInchesToCm(feet, nextInches));
               }}
               className={inputClassName}
-            />
+            >
+              {IN_OPTIONS.map((inch) => (
+                <option key={inch} value={inch}>{inch}</option>
+              ))}
+            </select>
           </label>
         </div>
       ) : (
         <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
           {copy('common.label.height')} ({copy('common.units.cm')})
-          <LocalNumberInput
+          <select
             key="metric"
-            inputMode="numeric"
-            value={Math.round(heightCm)}
-            commitValue={(value) => Math.min(230, Math.max(120, Math.round(value)))}
-            onChange={onHeightCmChange}
+            value={String(Math.round(heightCm))}
+            onChange={(e) => onHeightCmChange(Number(e.target.value))}
             className={inputClassName}
-          />
+          >
+            {CM_OPTIONS.map((cm) => (
+              <option key={cm} value={cm}>{cm}</option>
+            ))}
+          </select>
         </label>
       )}
     </div>
