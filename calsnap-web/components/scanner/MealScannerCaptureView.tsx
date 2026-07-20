@@ -25,6 +25,56 @@ export function MealScannerCaptureView({ scanner }: MealScannerCaptureViewProps)
     event.target.value = '';
   };
 
+  /**
+   * TEMPORARY UX EXPERIMENT — scroll-nudge <main> before closing the
+   * description overlay.  Forces WebKit compositor layout recompute
+   * so BottomTabNav renders at the true physical bottom.
+   *
+   * Only nudges if <main> has scroll room.  If already at the bottom
+   * of the scroll range, nudges upward by 1px instead.
+   *
+   * Diagnostics via Safari Web Inspector: filter on
+   * '[scan-keyboard-recovery]'.
+   */
+  function closeWithRecovery() {
+    const main = document.querySelector<HTMLElement>('main');
+
+    if (!main || main.scrollHeight <= main.clientHeight) {
+      console.info('[scan-keyboard-recovery]', {
+        scrollTop: main?.scrollTop,
+        scrollHeight: main?.scrollHeight,
+        clientHeight: main?.clientHeight,
+        canScroll: false,
+      });
+      setDescriptionOverlayOpen(false);
+      return;
+    }
+
+    const before = main.scrollTop;
+    const maxScrollTop = main.scrollHeight - main.clientHeight;
+    const nudgeTarget =
+      before < maxScrollTop ? before + 1 : Math.max(0, before - 1);
+
+    console.info('[scan-keyboard-recovery]', {
+      scrollTop: before,
+      scrollHeight: main.scrollHeight,
+      clientHeight: main.clientHeight,
+      maxScrollTop,
+      nudgeTarget,
+      canScroll: true,
+    });
+
+    main.scrollTo({ top: nudgeTarget, behavior: 'auto' });
+
+    requestAnimationFrame(() => {
+      main.scrollTo({ top: before, behavior: 'auto' });
+
+      requestAnimationFrame(() => {
+        setDescriptionOverlayOpen(false);
+      });
+    });
+  }
+
   return (
     <>
       <div className="space-y-4">
@@ -129,9 +179,9 @@ export function MealScannerCaptureView({ scanner }: MealScannerCaptureViewProps)
           initialValue={scanner.textDescription}
           onSave={(text) => {
             scanner.setTextDescription(text);
-            setDescriptionOverlayOpen(false);
+            closeWithRecovery();
           }}
-          onCancel={() => setDescriptionOverlayOpen(false)}
+          onCancel={() => closeWithRecovery()}
         />
       )}
     </>
