@@ -7,9 +7,9 @@ import {
 } from 'firebase/firestore';
 import { getFirestoreDb } from '@/lib/firebase/client';
 import {
+  DEFAULT_USER_PROFILE_MACROS,
   type UserProfile,
 } from '@/lib/models/user-profile';
-import { getPresetValues } from '@/lib/models/macro-preset';
 import {
   PROFILE_DOC_ID,
   type ProfileDoc,
@@ -39,8 +39,6 @@ export function makeProfileFromDraft(
   const targetResult = dailyTarget(tdeeValue, draft.requestedDeficit, draft.sex);
   const now = new Date();
 
-  const presetValues = getPresetValues(draft.macroPresetKey ?? 'balanced');
-
   return {
     id: uid,
     name: trimmedName(draft),
@@ -63,9 +61,9 @@ export function makeProfileFromDraft(
     dailyCalorieTarget: targetResult.target,
     tdee: Math.round(tdeeValue),
     deficitKcal: targetResult.deficit,
-    macroTargetProteinPct: presetValues.proteinPct / 100,
-    macroTargetCarbsPct: presetValues.carbsPct / 100,
-    macroTargetFatPct: presetValues.fatPct / 100,
+    macroTargetProteinPct: DEFAULT_USER_PROFILE_MACROS.macroTargetProteinPct,
+    macroTargetCarbsPct: DEFAULT_USER_PROFILE_MACROS.macroTargetCarbsPct,
+    macroTargetFatPct: DEFAULT_USER_PROFILE_MACROS.macroTargetFatPct,
     createdAt: now,
     updatedAt: now,
   };

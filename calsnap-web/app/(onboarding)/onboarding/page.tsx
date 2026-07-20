@@ -76,8 +76,6 @@ export default function OnboardingPage() {
             deficit={onboarding.profileDraft.requestedDeficit}
             hardDeficitUnlocked={onboarding.hardDeficitUnlocked}
             showHardDeficitAlert={onboarding.showHardDeficitAlert}
-            macroPresetKey={onboarding.macroPresetKey}
-            onPresetChange={onboarding.setMacroPresetKey}
             onDeficitChange={onboarding.updateDeficit}
             onUnlockHardDeficit={onboarding.unlockHardDeficit}
             onDismissHardDeficitAlert={() => onboarding.setShowHardDeficitAlert(false)}

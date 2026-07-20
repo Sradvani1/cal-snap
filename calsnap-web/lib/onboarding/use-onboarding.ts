@@ -4,7 +4,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { AppConstants } from '@/lib/constants';
 import { copy } from '@/lib/copy';
-import { getPresetValues, type MacroPresetKey } from '@/lib/models/macro-preset';
 import type { OnboardingStep } from '@/lib/onboarding/onboarding-step';
 import { onboardingProgress } from '@/lib/onboarding/onboarding-step';
 import {
@@ -50,7 +49,6 @@ export function useOnboarding(uid: string) {
   const [showHardDeficitAlert, setShowHardDeficitAlert] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [macroPresetKey, setMacroPresetKeyState] = useState<MacroPresetKey>('balanced');
   const [targets, setTargets] = useState<OnboardingTargets>({
     tdee: 0,
     target: 0,
@@ -73,18 +71,17 @@ export function useOnboarding(uid: string) {
     });
   }, []);
 
-  const calculateTargets = useCallback((draft: ProfileDraft = profileDraft, preset?: MacroPresetKey) => {
+  const calculateTargets = useCallback((draft: ProfileDraft = profileDraft) => {
     const referenceDate = new Date();
     const age = ageFromDateOfBirth(draft.dateOfBirth, referenceDate);
     const bmrValue = bmr(draft.weightKg, draft.heightCm, age, draft.sex);
     const tdeeValue = tdee(bmrValue, draft.activityLevel);
     const targetResult = dailyTarget(tdeeValue, draft.requestedDeficit, draft.sex);
-    const presetValues = getPresetValues(preset ?? macroPresetKey);
     const macros = macroTargets(
       targetResult.target,
-      presetValues.proteinPct / 100,
-      presetValues.carbsPct / 100,
-      presetValues.fatPct / 100,
+      AppConstants.Nutrition.defaultMacroProteinPct,
+      AppConstants.Nutrition.defaultMacroCarbsPct,
+      AppConstants.Nutrition.defaultMacroFatPct,
     );
     const goalTargetDate = computeGoalTargetDate({
       currentWeightKg: draft.weightKg,
@@ -108,13 +105,7 @@ export function useOnboarding(uid: string) {
       warnings: targetResult.warnings,
       goalTargetDate,
     });
-  }, [profileDraft, macroPresetKey]);
-
-  const setMacroPresetKey = useCallback((key: MacroPresetKey) => {
-    setMacroPresetKeyState(key);
-    updateDraft((d) => { d.macroPresetKey = key; });
-    calculateTargets(profileDraft, key);
-  }, [updateDraft, calculateTargets, profileDraft]);
+  }, [profileDraft]);
 
   const updateDeficit = useCallback(
     (value: number) => {
@@ -283,7 +274,5 @@ export function useOnboarding(uid: string) {
     advance,
     goBack,
     calculateTargets,
-    macroPresetKey,
-    setMacroPresetKey,
   };
 }

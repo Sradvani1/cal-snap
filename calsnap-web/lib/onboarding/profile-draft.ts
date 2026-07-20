@@ -1,7 +1,6 @@
 import { AppConstants } from '@/lib/constants';
 import type { ActivityLevel } from '@/lib/models/activity-level';
 import type { BiologicalSex } from '@/lib/models/biological-sex';
-import type { MacroPresetKey } from '@/lib/models/macro-preset';
 
 function defaultDateOfBirth(): Date {
   const date = new Date();
@@ -21,7 +20,6 @@ export interface ProfileDraft {
   useImperialHeight: boolean;
   useLbsWeight: boolean;
   useLbsGoalWeight: boolean;
-  macroPresetKey?: MacroPresetKey;
 }
 
 export function createDefaultProfileDraft(): ProfileDraft {

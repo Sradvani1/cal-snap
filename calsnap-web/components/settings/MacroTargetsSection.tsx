@@ -1,8 +1,6 @@
 'use client';
 
-import { MacroPresetPicker } from '@/components/design/MacroPresetPicker';
 import { SectionCard } from '@/components/design/SectionCard';
-import type { MacroPresetKey } from '@/lib/models/macro-preset';
 import type { MacroKind } from '@/lib/services/profile-update-service';
 import { copy } from '@/lib/copy';
 import { formFieldFocusRingClassName } from '@/lib/design/form-field';
@@ -14,9 +12,7 @@ interface MacroTargetsSectionProps {
   carbsPct: number;
   fatPct: number;
   macroSum: number;
-  activePreset: MacroPresetKey | null;
   onAdjust: (kind: MacroKind, value: number) => void;
-  onApplyPreset: (key: MacroPresetKey) => void;
 }
 
 export function MacroTargetsSection({
@@ -24,19 +20,13 @@ export function MacroTargetsSection({
   carbsPct,
   fatPct,
   macroSum,
-  activePreset,
   onAdjust,
-  onApplyPreset,
 }: MacroTargetsSectionProps) {
   const sumValid = macroSum === 100;
 
   return (
     <SectionCard title={copy('settings.section.macroTargets')}>
       <div className="flex flex-col gap-4">
-        <div>
-          <p className={cn(typography.csCaption, 'mb-2')}>{copy('settings.macro.preset')}</p>
-          <MacroPresetPicker value={activePreset} onChange={onApplyPreset} label={copy('settings.macro.preset')} />
-        </div>
         <MacroSlider
           label={copy('common.macro.protein')}
           value={proteinPct}
