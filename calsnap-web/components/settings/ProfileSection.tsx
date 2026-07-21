@@ -138,6 +138,20 @@ export function ProfileSection({
           />
         </label>
 
+        <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
+          {copy('settings.profile.goalWeight', { unit: goalWeightUnit })}
+          <WeightSelector
+            key={draft.useLbsGoalWeight ? 'lbs' : 'kg'}
+            valueKg={draft.goalWeightKg}
+            useLbs={draft.useLbsGoalWeight}
+            onChange={(kg) =>
+              onUpdateDraft((d) => {
+                d.goalWeightKg = kg;
+              })
+            }
+          />
+        </label>
+
         <fieldset className="flex flex-col gap-2">
           <legend className={typography.csMacroLabel}>{copy('common.label.activityLevel')}</legend>
           <div className="flex flex-col gap-2">
@@ -169,20 +183,6 @@ export function ProfileSection({
             ))}
           </div>
         </fieldset>
-
-        <label className={cn(typography.csMacroLabel, 'flex flex-col gap-1')}>
-          {copy('settings.profile.goalWeight', { unit: goalWeightUnit })}
-          <WeightSelector
-            key={draft.useLbsGoalWeight ? 'lbs' : 'kg'}
-            valueKg={draft.goalWeightKg}
-            useLbs={draft.useLbsGoalWeight}
-            onChange={(kg) =>
-              onUpdateDraft((d) => {
-                d.goalWeightKg = kg;
-              })
-            }
-          />
-        </label>
 
         <DeficitSlider
           deficit={draft.requestedDeficit}

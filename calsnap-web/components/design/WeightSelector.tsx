@@ -2,7 +2,6 @@
 
 import { useMemo } from 'react';
 import { formFieldInputClassName } from '@/lib/design/form-field';
-import { cn } from '@/lib/utils/cn';
 
 interface WeightSelectorProps {
   valueKg: number;
@@ -33,21 +32,20 @@ export function WeightSelector({ valueKg, useLbs, onChange }: WeightSelectorProp
   };
 
   return (
-    <div className="flex items-start gap-1">
+    <div className="grid min-w-0 grid-cols-2 gap-3">
       <select
         value={String(whole)}
         onChange={(e) => commit(Number(e.target.value), tenths)}
-        className={cn(formFieldInputClassName, 'flex-1')}
+        className={formFieldInputClassName}
       >
         {wholeOpts.map((w) => (
           <option key={w} value={w}>{w}</option>
         ))}
       </select>
-      <span className="mt-2 text-sm text-cs-muted">.</span>
       <select
         value={String(tenths)}
         onChange={(e) => commit(whole, Number(e.target.value))}
-        className={cn(formFieldInputClassName, 'w-20')}
+        className={formFieldInputClassName}
       >
         {Array.from({ length: 10 }, (_, i) => (
           <option key={i} value={i}>{i}</option>
