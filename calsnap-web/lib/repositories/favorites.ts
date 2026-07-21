@@ -40,6 +40,7 @@ export async function saveFavorite(
   const entry: FavoriteMeal = {
     id,
     userId: uid,
+    originalMealId: meal.id,
     name: autoFavoriteName(meal.items),
     mealType: meal.mealType,
     totalCalories: meal.totalCalories,

@@ -4,6 +4,7 @@ import type { MealType } from './meal-type';
 export interface FavoriteMeal {
   id: string;
   userId: string;
+  originalMealId: string;
   name: string;
   mealType: MealType;
   totalCalories: number;

@@ -7,6 +7,7 @@ import type { MealType } from '@/lib/models/meal-type';
 
 export interface FavoriteMealDoc {
   userId: string;
+  originalMealId: string;
   name: string;
   mealType: MealType;
   totalCalories: number;
@@ -34,6 +35,7 @@ export function favoriteDocToEntry(id: string, doc: FavoriteMealDoc): FavoriteMe
   return {
     id,
     userId: doc.userId,
+    originalMealId: doc.originalMealId ?? '',
     name: doc.name,
     mealType: doc.mealType,
     totalCalories: doc.totalCalories,
@@ -51,6 +53,7 @@ export function favoriteEntryToDoc(entry: FavoriteMeal): FavoriteMealDoc {
   const now = Timestamp.fromDate(new Date());
   return {
     userId: entry.userId,
+    originalMealId: entry.originalMealId,
     name: entry.name,
     mealType: entry.mealType,
     totalCalories: entry.totalCalories,

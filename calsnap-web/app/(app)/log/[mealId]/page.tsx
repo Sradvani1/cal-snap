@@ -11,7 +11,9 @@ import { useAuth } from '@/lib/auth/auth-context';
 import { copy } from '@/lib/copy';
 import { layout } from '@/lib/design/layout';
 import { typography } from '@/lib/design/typography';
+import { useDeleteFavorite } from '@/lib/queries/use-delete-favorite';
 import { useDeleteMeal } from '@/lib/queries/use-delete-meal';
+import { useFavorites } from '@/lib/queries/use-favorites';
 import { useMeal } from '@/lib/queries/use-meal';
 import { useSaveFavorite } from '@/lib/queries/use-save-favorite';
 import { useUpdateMeal } from '@/lib/queries/use-update-meal';
@@ -41,10 +43,11 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
   const updateMealMutation = useUpdateMeal(user?.uid);
   const deleteMealMutation = useDeleteMeal(user?.uid);
   const saveFavoriteMutation = useSaveFavorite(user?.uid);
+  const deleteFavoriteMutation = useDeleteFavorite(user?.uid);
+  const favoritesQuery = useFavorites(user?.uid);
   const { setHasUnsavedWork, registerNavigationHandler } = useUnsavedWork();
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [editableItems, setEditableItems] = useState<EditableFoodItem[] | null>(null);
-  const [savedFavorite, setSavedFavorite] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [discardDialogOpen, setDiscardDialogOpen] = useState(false);
   const [discardDialog, setDiscardDialog] = useState<DiscardDialog>(null);
@@ -177,11 +180,22 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
     }
   };
 
-  const handleSaveFavorite = () => {
-    if (!meal || !user) return;
-    saveFavoriteMutation.mutate(meal);
-    setSavedFavorite(true);
-    setTimeout(() => setSavedFavorite(false), 2000);
+  const isFavorited = favoritesQuery.data?.some(
+    (f) => f.originalMealId === meal?.id,
+  ) ?? false;
+  const favoriteId = favoritesQuery.data?.find(
+    (f) => f.originalMealId === meal?.id,
+  )?.id;
+
+  const favoritePending = saveFavoriteMutation.isPending || deleteFavoriteMutation.isPending;
+
+  const handleToggleFavorite = () => {
+    if (!meal || !user || favoritePending) return;
+    if (isFavorited && favoriteId) {
+      deleteFavoriteMutation.mutate(favoriteId);
+    } else {
+      saveFavoriteMutation.mutate(meal);
+    }
   };
 
   const handleConfirmDiscard = () => {
@@ -219,14 +233,12 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
         <h1 className={`${typography.csCardTitle} text-2xl`}>{copy('mealLog.detail.title')}</h1>
         <button
           type="button"
-          onClick={handleSaveFavorite}
-          disabled={savedFavorite}
-          className={`flex min-h-11 min-w-11 items-center justify-center rounded-lg text-lg ${
-            savedFavorite ? 'text-cs-danger' : 'text-cs-muted hover:text-cs-danger'
-          }`}
-          aria-label={savedFavorite ? copy('mealLog.actions.savedFavorite') : copy('mealLog.actions.saveFavorite')}
+          onClick={handleToggleFavorite}
+          disabled={favoritePending}
+          className="flex min-h-11 min-w-11 items-center justify-center rounded-lg text-lg text-cs-muted hover:text-cs-warning disabled:opacity-50"
+          aria-label={isFavorited ? copy('mealLog.actions.savedFavorite') : copy('mealLog.actions.saveFavorite')}
         >
-          {savedFavorite ? '♥' : '♡'}
+          {favoritePending ? '⋯' : isFavorited ? '★' : '☆'}
         </button>
       </header>
 
@@ -245,11 +257,9 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
           itemCount={editableItems?.length ?? 0}
           isSaving={updateMealMutation.isPending}
           isDeleting={deleteMealMutation.isPending}
-          savedFavorite={savedFavorite}
           onSave={() => void handleSave()}
           onCancel={handleCancel}
           onDelete={handleDelete}
-          onSaveFavorite={handleSaveFavorite}
         />
       </div>
 

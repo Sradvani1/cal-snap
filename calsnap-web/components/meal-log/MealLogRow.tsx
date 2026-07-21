@@ -20,7 +20,6 @@ interface MealLogRowProps {
 
 export function MealLogRow({ meal, showActions = false, onDelete, onSaveFavorite }: MealLogRowProps) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [savedFav, setSavedFav] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -72,16 +71,13 @@ export function MealLogRow({ meal, showActions = false, onDelete, onSaveFavorite
               {onSaveFavorite && (
                 <button
                   type="button"
-                  disabled={savedFav}
-                  className="block w-full px-4 py-2 text-left text-sm text-cs-foreground hover:bg-cs-muted/10 disabled:text-cs-muted"
+                  className="block w-full px-4 py-2 text-left text-sm text-cs-foreground hover:bg-cs-muted/10"
                   onClick={() => {
                     onSaveFavorite(meal.id);
-                    setSavedFav(true);
-                    setTimeout(() => setSavedFav(false), 2000);
                     setMenuOpen(false);
                   }}
                 >
-                  {savedFav ? copy('mealLog.actions.savedFavorite') : copy('mealLog.actions.saveFavorite')}
+                  {copy('mealLog.actions.saveFavorite')}
                 </button>
               )}
               <Link
