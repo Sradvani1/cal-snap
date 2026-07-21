@@ -9,17 +9,11 @@ import type { MealType } from '@/lib/models/meal-type';
 import { suggestedMealTypeForDate } from '@/lib/models/meal-type';
 import {
   editableFoodItemFromAnalysisResult,
-  editableFoodItemFromFoodItem,
   editableFoodItemToFoodItem,
   updateEditableItemWeight,
   type EditableFoodItem,
 } from '@/lib/scanner/editable-food-item';
-import {
-  assertScannerEditMode,
-  editBaselineFromState,
-  editBaselinesEqual,
-  type EditBaseline,
-} from '@/lib/scanner/edit-baseline';
+
 import {
   allItemsFlagged,
   hasAdjustedItems,
@@ -55,12 +49,7 @@ export function useMealScanner({
   );
   const [scannerError, setScannerError] = useState<ScannerErrorKind | null>(null);
   const [estimationNotes, setEstimationNotes] = useState<string | null>(null);
-  const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [logError, setLogError] = useState<string | null>(null);
-  const [editingMealId, setEditingMealId] = useState<string | null>(null);
-  const [editingTimestamp, setEditingTimestamp] = useState<Date | null>(null);
-  const [existingPhotoStoragePath, setExistingPhotoStoragePath] = useState<string | undefined>();
-  const [editBaseline, setEditBaseline] = useState<EditBaseline | null>(null);
   const [externalPreviewUrl, setExternalPreviewUrl] = useState(false);
   const originalItemWeightsRef = useRef<Map<string, number>>(new Map());
   const previewUrlRef = useRef<string | null>(null);
@@ -91,8 +80,6 @@ export function useMealScanner({
 
   const totals = useMemo(() => sumEditableItems(editableItems), [editableItems]);
 
-  const isEditing = editingMealId !== null;
-
   const computedOverallConfidence = useMemo(
     () => overallConfidence(editableItems),
     [editableItems],
@@ -113,18 +100,6 @@ export function useMealScanner({
     (preparedPhoto !== null || textDescription.trim().length > 0) && phase !== 'analyzing';
 
   const hasUnsavedWork = useMemo(() => {
-    if (isEditing) {
-      if (!editBaseline) {
-        return false;
-      }
-      const current = editBaselineFromState(
-        mealType,
-        textDescription,
-        totals,
-        editableItems,
-      );
-      return !editBaselinesEqual(current, editBaseline);
-    }
     switch (phase) {
       case 'analyzing':
         return true;
@@ -139,11 +114,7 @@ export function useMealScanner({
         return false;
     }
   }, [
-    isEditing,
-    editBaseline,
-    mealType,
     textDescription,
-    totals,
     editableItems,
     phase,
     preparedPhoto,
@@ -292,10 +263,8 @@ export function useMealScanner({
     );
   }, []);
 
-  const editItem = useCallback((id: string, patch: Partial<EditableFoodItem>) => {
-    setEditableItems((items) =>
-      items.map((item) => (item.id === id ? { ...item, ...patch } : item)),
-    );
+  const deleteItem = useCallback((id: string) => {
+    setEditableItems((items) => items.filter((item) => item.id !== id));
   }, []);
 
   const makeMealEntry = useCallback(
@@ -307,11 +276,10 @@ export function useMealScanner({
       );
 
       return {
-        id: editingMealId ?? mealId ?? crypto.randomUUID(),
+        id: mealId ?? crypto.randomUUID(),
         userId,
-        timestamp: editingTimestamp ?? new Date(),
+        timestamp: new Date(),
         mealType,
-        photoStoragePath: existingPhotoStoragePath,
         textDescription: description || undefined,
         totalCalories: totals.totalCalories,
         totalProteinG: totals.totalProteinG,
@@ -327,59 +295,12 @@ export function useMealScanner({
     [
       textDescription,
       editableItems,
-      editingMealId,
-      editingTimestamp,
-      existingPhotoStoragePath,
       userId,
       mealType,
       totals,
       computedOverallConfidence,
       estimationNotes,
     ],
-  );
-
-  const makeEditMealEntry = useCallback((): MealEntry => {
-    assertScannerEditMode(isEditing);
-    return makeMealEntry();
-  }, [isEditing, makeMealEntry]);
-
-  const loadForEditing = useCallback(
-    (meal: MealEntry, photoPreviewUrl?: string | null) => {
-      invalidateAnalyze();
-      setEditingMealId(meal.id);
-      setEditingTimestamp(meal.timestamp);
-      setExistingPhotoStoragePath(meal.photoStoragePath);
-      setMealType(meal.mealType);
-      setTextDescription(meal.textDescription ?? '');
-      setEstimationNotes(meal.estimationNotes ?? null);
-      setScannerError(null);
-      setPreparedPhoto(null);
-
-      revokePreviewUrl();
-      if (photoPreviewUrl) {
-        previewUrlRef.current = photoPreviewUrl;
-        setExternalPreviewUrl(true);
-        setPreviewUrl(photoPreviewUrl);
-      } else {
-        setPreviewUrl(null);
-      }
-
-      const items = meal.items.map(editableFoodItemFromFoodItem);
-      const weights = new Map(items.map((item) => [item.id, item.weightG]));
-      originalItemWeightsRef.current = weights;
-      setEditableItems(items);
-
-      const itemTotals = sumEditableItems(items);
-      const baseline = editBaselineFromState(
-        meal.mealType,
-        meal.textDescription ?? '',
-        itemTotals,
-        items,
-      );
-      setEditBaseline(baseline);
-      setPhase('results');
-    },
-    [invalidateAnalyze, revokePreviewUrl],
   );
 
   const discard = useCallback(() => {
@@ -391,20 +312,11 @@ export function useMealScanner({
     setEditableItems([]);
     setEstimationNotes(null);
     setScannerError(null);
-    setEditingItemId(null);
     setLogError(null);
-    setEditingMealId(null);
-    setEditingTimestamp(null);
-    setExistingPhotoStoragePath(undefined);
-    setEditBaseline(null);
     originalItemWeightsRef.current = new Map();
     setMealType(suggestedMealTypeForDate(new Date()));
     setPhase('capture');
   }, [invalidateAnalyze, revokePreviewUrl]);
-
-  const cancelEdit = useCallback(() => {
-    discard();
-  }, [discard]);
 
   const reAnalyze = useCallback(() => {
     invalidateAnalyze();
@@ -440,10 +352,6 @@ export function useMealScanner({
     setMealType,
     scannerError,
     estimationNotes,
-    isEditing,
-    editingMealId,
-    editingItemId,
-    setEditingItemId,
     logError,
     setLogError,
     totals,
@@ -456,11 +364,8 @@ export function useMealScanner({
     analyze,
     applyAnalysis,
     updateItemWeight,
-    editItem,
+    deleteItem,
     makeMealEntry,
-    makeEditMealEntry,
-    loadForEditing,
-    cancelEdit,
     discard,
     reAnalyze,
     retryAnalyze,

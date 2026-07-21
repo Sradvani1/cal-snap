@@ -1,5 +1,8 @@
 import type { MealEntry } from '@/lib/models/meal-entry';
+import type { EditableFoodItem } from '@/lib/scanner/editable-food-item';
+import type { MealTotals } from '@/lib/scanner/meal-totals';
 import { ConfidenceBadge } from '@/components/design/ConfidenceBadge';
+import { EditableFoodItemCard } from '@/components/scanner/EditableFoodItemCard';
 import { NutrientStatRow } from '@/components/design/NutrientStatRow';
 import { EstimationNotesAccordion } from '@/components/scanner/EstimationNotesAccordion';
 import { FoodItemRowView } from '@/components/design/FoodItemRowView';
@@ -12,15 +15,33 @@ import { cn } from '@/lib/utils/cn';
 interface MealDetailViewProps {
   meal: MealEntry;
   photoUrl?: string | null;
+  editableItems?: EditableFoodItem[] | null;
+  totalsOverride?: MealTotals;
+  onWeightChange?: (id: string, weightG: number) => void;
+  onDeleteItem?: (id: string) => void;
 }
 
 function formatMacroValue(value: number, unit: string): string {
   return `${Math.round(value)}${unit}`;
 }
 
-export function MealDetailView({ meal, photoUrl }: MealDetailViewProps) {
+export function MealDetailView({
+  meal,
+  photoUrl,
+  editableItems,
+  totalsOverride,
+  onWeightChange,
+  onDeleteItem,
+}: MealDetailViewProps) {
   const confidenceLevel = confidenceLevelFromScore(meal.geminiConfidence);
   const grams = copy('common.macro.grams');
+  const totals = totalsOverride ?? {
+    totalCalories: meal.totalCalories,
+    totalProteinG: meal.totalProteinG,
+    totalCarbsG: meal.totalCarbsG,
+    totalFatG: meal.totalFatG,
+    totalFiberG: meal.totalFiberG,
+  };
 
   return (
     <div className="space-y-4">
@@ -57,7 +78,7 @@ export function MealDetailView({ meal, photoUrl }: MealDetailViewProps) {
       <div className="rounded-xl border border-cs-border bg-cs-surface p-4">
         <div className="mb-2 flex items-center justify-between gap-2">
           <p className={typography.csLargeCalorie} data-testid="meal-detail-total-calories">
-            {meal.totalCalories} {copy('common.macro.kcal')}
+            {totals.totalCalories} {copy('common.macro.kcal')}
           </p>
           <ConfidenceBadge level={confidenceLevel} score={meal.geminiConfidence} />
         </div>
@@ -65,26 +86,35 @@ export function MealDetailView({ meal, photoUrl }: MealDetailViewProps) {
           <NutrientStatRow
             layout="card"
             label={copy('common.macro.protein')}
-            value={formatMacroValue(meal.totalProteinG, grams)}
+            value={formatMacroValue(totals.totalProteinG, grams)}
           />
           <NutrientStatRow
             layout="card"
             label={copy('common.macro.carbs')}
-            value={formatMacroValue(meal.totalCarbsG, grams)}
+            value={formatMacroValue(totals.totalCarbsG, grams)}
           />
           <NutrientStatRow
             layout="card"
             label={copy('common.macro.fat')}
-            value={formatMacroValue(meal.totalFatG, grams)}
+            value={formatMacroValue(totals.totalFatG, grams)}
           />
         </div>
       </div>
 
       <div className="space-y-2">
         <h3 className={cn(typography.csBody, 'font-medium')}>{copy('scanner.result.items')}</h3>
-        {meal.items.map((item) => (
-          <FoodItemRowView key={item.id} item={item} flagged={item.isFlagged} />
-        ))}
+        {editableItems && onWeightChange && onDeleteItem
+          ? editableItems.map((item) => (
+              <EditableFoodItemCard
+                key={item.id}
+                item={item}
+                onWeightChange={onWeightChange}
+                onDelete={onDeleteItem}
+              />
+            ))
+          : meal.items.map((item) => (
+              <FoodItemRowView key={item.id} item={item} flagged={item.isFlagged} />
+            ))}
       </div>
 
       {meal.estimationNotes && (

@@ -15,13 +15,11 @@ export const mealLogCopy = {
   'mealLog.detail.loadFailed': 'Could not load meal.',
   'mealLog.detail.backToLog': 'Back to log',
   'mealLog.detail.noPhoto': 'No photo',
-  'mealLog.actions.edit': 'Edit',
-  'mealLog.actions.share': 'Share',
-  'mealLog.actions.sharing': 'Sharing…',
   'mealLog.actions.delete': 'Delete',
   'mealLog.actions.deleting': 'Deleting…',
   'mealLog.actions.saveFavorite': 'Save to Favorites',
   'mealLog.actions.savedFavorite': 'Saved!',
+  'mealLog.actions.noItems': 'All items removed — save is disabled. Cancel to restore or delete the meal.',
   'mealLog.favorites.title': 'Favorites',
   'mealLog.favorites.empty': 'No favorites yet',
   'mealLog.favorites.emptySubtitle': 'Save a meal from your log to quickly log it again.',
@@ -34,7 +32,6 @@ export const mealLogCopy = {
   'mealLog.favorites.deleteAction': 'Delete',
   'mealLog.row.actions': 'Meal actions',
   'mealLog.row.view': 'View',
-  'mealLog.row.edit': 'Edit',
   'mealLog.dateNav.today': 'Today',
   'mealLog.summary.total': 'Daily total',
   'mealLog.favorites.errorLoad': 'Failed to load favorites.',
@@ -42,9 +39,6 @@ export const mealLogCopy = {
   'mealLog.favorites.errorUse': 'Failed to log favorite meal.',
   'mealLog.favorites.logAction': 'Log for today',
   'mealLog.favorites.logging': 'Logging\u2026',
-  'mealLog.share.title': 'CalSnap meal',
-  'mealLog.share.error.generate': 'Failed to generate share image',
-  'mealLog.share.error.failed': 'Failed to share meal card',
 } as const;
 
 export type MealLogCopyKey = keyof typeof mealLogCopy;

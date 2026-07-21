@@ -91,13 +91,6 @@ export function MealLogRow({ meal, showActions = false, onDelete, onSaveFavorite
               >
                 {copy('mealLog.row.view')}
               </Link>
-              <Link
-                href={`/scan/edit/${meal.id}`}
-                className="block px-4 py-2 text-sm text-cs-foreground hover:bg-cs-muted/10"
-                onClick={() => setMenuOpen(false)}
-              >
-                {copy('mealLog.row.edit')}
-              </Link>
               {onDelete && (
                 <button
                   type="button"

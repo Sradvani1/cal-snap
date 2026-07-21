@@ -5,8 +5,7 @@ import { ConfidenceBadge } from '@/components/design/ConfidenceBadge';
 import { NutrientStatRow } from '@/components/design/NutrientStatRow';
 import { PrimaryButton, SecondaryButton } from '@/components/design/PrimaryButton';
 import { EstimationNotesAccordion } from '@/components/scanner/EstimationNotesAccordion';
-import { FoodItemEditSheet } from '@/components/scanner/FoodItemEditSheet';
-import { FoodItemRow } from '@/components/scanner/FoodItemRow';
+import { EditableFoodItemCard } from '@/components/scanner/EditableFoodItemCard';
 import { MealTypeSelector } from '@/components/scanner/MealTypeSelector';
 import { copy } from '@/lib/copy';
 import { SCAN_FADE_MS, SCAN_STAGGER_MS, useReducedMotion } from '@/lib/design/motion';
@@ -21,7 +20,6 @@ interface MealAnalysisResultViewProps {
   onLog: () => void;
   onReAnalyze: () => void;
   onDiscard: () => void;
-  isEditing?: boolean;
 }
 
 function ScanStaggerSection({
@@ -70,11 +68,8 @@ export function MealAnalysisResultView({
   onLog,
   onReAnalyze,
   onDiscard,
-  isEditing = false,
 }: MealAnalysisResultViewProps) {
   const reducedMotion = useReducedMotion();
-  const editingItem =
-    scanner.editableItems.find((item) => item.id === scanner.editingItemId) ?? null;
 
   const confidenceLevel = confidenceLevelFromScore(
     scanner.overallConfidence,
@@ -148,7 +143,12 @@ export function MealAnalysisResultView({
         <div className="space-y-2">
           <h3 className={cn(typography.csBody, 'font-medium')}>{copy('scanner.result.items')}</h3>
           {scanner.editableItems.map((item) => (
-            <FoodItemRow key={item.id} item={item} onEdit={() => scanner.setEditingItemId(item.id)} />
+            <EditableFoodItemCard
+              key={item.id}
+              item={item}
+              onWeightChange={(id, weight) => scanner.updateItemWeight(id, weight)}
+              onDelete={(id) => scanner.deleteItem(id)}
+            />
           ))}
         </div>
       </ScanStaggerSection>
@@ -177,44 +177,27 @@ export function MealAnalysisResultView({
             fullWidth
             className="min-h-11"
           >
-            {isLogging
-              ? isEditing
-                ? copy('scanner.result.saving')
-                : copy('scanner.result.logging')
-              : isEditing
-                ? copy('scanner.result.saveChanges')
-                : copy('scanner.result.logMeal')}
+            {isLogging ? copy('scanner.result.logging') : copy('scanner.result.logMeal')}
           </PrimaryButton>
-          {!isEditing && (
-            <SecondaryButton
-              type="button"
-              disabled={isLogging}
-              onClick={onReAnalyze}
-              fullWidth
-              className="min-h-11"
-            >
-              {copy('scanner.result.reAnalyze')}
-            </SecondaryButton>
-          )}
+          <SecondaryButton
+            type="button"
+            disabled={isLogging}
+            onClick={onReAnalyze}
+            fullWidth
+            className="min-h-11"
+          >
+            {copy('scanner.result.reAnalyze')}
+          </SecondaryButton>
           <button
             type="button"
             disabled={isLogging}
             onClick={onDiscard}
             className="min-h-11 w-full rounded-lg px-4 py-2 text-sm font-medium text-cs-danger-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cs-primary focus-visible:ring-offset-2 disabled:opacity-50"
           >
-            {isEditing ? copy('common.button.cancel') : copy('scanner.result.discard')}
+            {copy('scanner.result.discard')}
           </button>
         </div>
       </ScanStaggerSection>
-
-      <FoodItemEditSheet
-        item={editingItem}
-        onClose={() => scanner.setEditingItemId(null)}
-        onSave={(id, patch) => {
-          scanner.editItem(id, { name: patch.name });
-          scanner.updateItemWeight(id, patch.weightG);
-        }}
-      />
     </div>
   );
 }

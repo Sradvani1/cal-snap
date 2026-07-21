@@ -54,10 +54,6 @@ export const scannerCopy = {
   'scanner.confidence.low': 'Low confidence',
   'scanner.item.review': 'Review',
   'scanner.item.edit': 'Edit',
-  'scanner.editSheet.title': 'Edit item',
-  'scanner.editSheet.weightLabel': 'Weight (g)',
-  'scanner.editSheet.weightHint':
-    'Calories and macros scale proportionally when weight changes.',
   'scanner.notes.title': 'Estimation notes',
 } as const;
 
