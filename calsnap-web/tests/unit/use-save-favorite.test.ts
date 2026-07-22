@@ -18,6 +18,8 @@ function makeEntry(overrides: Partial<MealEntry> = {}): MealEntry {
     totalProteinG: overrides.totalProteinG ?? 20,
     totalCarbsG: overrides.totalCarbsG ?? 50,
     totalFatG: overrides.totalFatG ?? 10,
+    totalSaturatedFatG: overrides.totalSaturatedFatG ?? 0,
+    totalUnsaturatedFatG: overrides.totalUnsaturatedFatG ?? 0,
     totalFiberG: overrides.totalFiberG ?? 3,
     geminiConfidence: overrides.geminiConfidence ?? 0.9,
     isManuallyAdjusted: overrides.isManuallyAdjusted ?? false,
@@ -44,7 +46,7 @@ describe('saveFavorite', () => {
   it('generates an auto-name from meal items', async () => {
     const entry = makeEntry({
       items: [
-        { id: 'i1', name: 'Bagel', estimatedWeightG: 100, calories: 250, proteinG: 10, carbsG: 50, fatG: 2, fiberG: 1, confidence: 0.9, isFlagged: false },
+        { id: 'i1', name: 'Bagel', estimatedWeightG: 100, calories: 250, proteinG: 10, carbsG: 50, fatG: 2, saturatedFatG: 0, unsaturatedFatG: 2, fiberG: 1, confidence: 0.9, isFlagged: false },
       ],
     });
     mockedSaveFavorite.mockImplementation(async (_uid, meal) => {

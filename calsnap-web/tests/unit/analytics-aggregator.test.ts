@@ -23,6 +23,8 @@ function makeMeal(
     totalProteinG: overrides.totalProteinG ?? 0,
     totalCarbsG: overrides.totalCarbsG ?? 0,
     totalFatG: overrides.totalFatG ?? 0,
+    totalSaturatedFatG: overrides.totalSaturatedFatG ?? 0,
+    totalUnsaturatedFatG: overrides.totalUnsaturatedFatG ?? 0,
     totalFiberG: overrides.totalFiberG ?? 0,
     geminiConfidence: overrides.geminiConfidence ?? 0.9,
     isManuallyAdjusted: overrides.isManuallyAdjusted ?? false,
@@ -39,6 +41,8 @@ function makeFood(name: string, calories: number): FoodItem {
     proteinG: 0,
     carbsG: 0,
     fatG: 0,
+    saturatedFatG: 0,
+    unsaturatedFatG: 0,
     fiberG: 0,
     confidence: 0.9,
     isFlagged: false,
@@ -48,13 +52,13 @@ function makeFood(name: string, calories: number): FoodItem {
 describe('analytics aggregator', () => {
   it('adherencePercent matches iOS AnalyticsTests', () => {
     const loggedDays: DailyNutritionSummary[] = [
-      { date: new Date(), calories: 1750, proteinG: 0, carbsG: 0, fatG: 0, fiberG: 0 },
-      { date: new Date(), calories: 1900, proteinG: 0, carbsG: 0, fatG: 0, fiberG: 0 },
-      { date: new Date(), calories: 2100, proteinG: 0, carbsG: 0, fatG: 0, fiberG: 0 },
-      { date: new Date(), calories: 2200, proteinG: 0, carbsG: 0, fatG: 0, fiberG: 0 },
-      { date: new Date(), calories: 2000, proteinG: 0, carbsG: 0, fatG: 0, fiberG: 0 },
-      { date: new Date(), calories: 1700, proteinG: 0, carbsG: 0, fatG: 0, fiberG: 0 },
-      { date: new Date(), calories: 2050, proteinG: 0, carbsG: 0, fatG: 0, fiberG: 0 },
+      { date: new Date(), calories: 1750, proteinG: 0, carbsG: 0, fatG: 0, saturatedFatG: 0, unsaturatedFatG: 0, fiberG: 0 },
+      { date: new Date(), calories: 1900, proteinG: 0, carbsG: 0, fatG: 0, saturatedFatG: 0, unsaturatedFatG: 0, fiberG: 0 },
+      { date: new Date(), calories: 2100, proteinG: 0, carbsG: 0, fatG: 0, saturatedFatG: 0, unsaturatedFatG: 0, fiberG: 0 },
+      { date: new Date(), calories: 2200, proteinG: 0, carbsG: 0, fatG: 0, saturatedFatG: 0, unsaturatedFatG: 0, fiberG: 0 },
+      { date: new Date(), calories: 2000, proteinG: 0, carbsG: 0, fatG: 0, saturatedFatG: 0, unsaturatedFatG: 0, fiberG: 0 },
+      { date: new Date(), calories: 1700, proteinG: 0, carbsG: 0, fatG: 0, saturatedFatG: 0, unsaturatedFatG: 0, fiberG: 0 },
+      { date: new Date(), calories: 2050, proteinG: 0, carbsG: 0, fatG: 0, saturatedFatG: 0, unsaturatedFatG: 0, fiberG: 0 },
     ];
 
     const result = adherencePercent(loggedDays, 2000);
@@ -129,6 +133,8 @@ describe('analytics aggregator', () => {
         proteinG: 0,
         carbsG: 0,
         fatG: 0,
+        saturatedFatG: 0,
+        unsaturatedFatG: 0,
         fiberG: 0,
       },
     ];

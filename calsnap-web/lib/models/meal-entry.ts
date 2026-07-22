@@ -14,6 +14,8 @@ export interface MealEntry {
   totalProteinG: number;
   totalCarbsG: number;
   totalFatG: number;
+  totalSaturatedFatG: number;
+  totalUnsaturatedFatG: number;
   totalFiberG: number;
   geminiConfidence: number;
   isManuallyAdjusted: boolean;

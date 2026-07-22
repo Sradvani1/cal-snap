@@ -8,6 +8,8 @@ export interface AggregatedMeals {
   todaysProteinG: number;
   todaysCarbsG: number;
   todaysFatG: number;
+  todaysSaturatedFatG: number;
+  todaysUnsaturatedFatG: number;
   todaysFiberG: number;
   mealsByType: MealsByType;
 }
@@ -17,6 +19,8 @@ export function aggregateTodaysMeals(meals: MealEntry[]): AggregatedMeals {
   let todaysProteinG = 0;
   let todaysCarbsG = 0;
   let todaysFatG = 0;
+  let todaysSaturatedFatG = 0;
+  let todaysUnsaturatedFatG = 0;
   let todaysFiberG = 0;
 
   const grouped: MealsByType = {};
@@ -26,6 +30,8 @@ export function aggregateTodaysMeals(meals: MealEntry[]): AggregatedMeals {
     todaysProteinG += meal.totalProteinG;
     todaysCarbsG += meal.totalCarbsG;
     todaysFatG += meal.totalFatG;
+    todaysSaturatedFatG += meal.totalSaturatedFatG;
+    todaysUnsaturatedFatG += meal.totalUnsaturatedFatG;
     todaysFiberG += meal.totalFiberG;
 
     const bucket = grouped[meal.mealType] ?? [];
@@ -42,6 +48,8 @@ export function aggregateTodaysMeals(meals: MealEntry[]): AggregatedMeals {
     todaysProteinG,
     todaysCarbsG,
     todaysFatG,
+    todaysSaturatedFatG,
+    todaysUnsaturatedFatG,
     todaysFiberG,
     mealsByType: grouped,
   };

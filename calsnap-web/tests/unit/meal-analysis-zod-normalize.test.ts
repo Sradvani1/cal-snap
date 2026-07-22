@@ -29,13 +29,17 @@ describe('meal-analysis-zod normalization', () => {
       flagged_items: [],
     });
     expect(parsed.items[0]?.fiberG).toBe(0);
+    expect(parsed.items[0]?.saturatedFatG).toBe(0);
+    expect(parsed.items[0]?.unsaturatedFatG).toBe(0);
     expect(parsed.mealTotal.fiberG).toBe(0);
+    expect(parsed.mealTotal.saturatedFatG).toBe(0);
+    expect(parsed.mealTotal.unsaturatedFatG).toBe(0);
   });
 
   it('coerces flagged item objects to names', () => {
     const normalized = normalizeMealAnalysisRaw({
       items: [],
-      meal_total: { calories: 0, protein_g: 0, carbs_g: 0, fat_g: 0, fiber_g: 0 },
+      meal_total: { calories: 0, protein_g: 0, carbs_g: 0, fat_g: 0, saturated_fat_g: 0, unsaturated_fat_g: 0, fiber_g: 0 },
       flagged_items: [{ name: 'hidden sauce' }],
       estimation_notes: 'notes',
     });

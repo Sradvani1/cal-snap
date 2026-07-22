@@ -7,11 +7,21 @@ interface MacroBarViewProps {
   proteinG: number;
   carbsG: number;
   fatG: number;
+  saturatedFatG?: number;
+  unsaturatedFatG?: number;
   fiberG: number;
   className?: string;
 }
 
-export function MacroBarView({ proteinG, carbsG, fatG, fiberG, className }: MacroBarViewProps) {
+export function MacroBarView({
+  proteinG,
+  carbsG,
+  fatG,
+  saturatedFatG = 0,
+  unsaturatedFatG = 0,
+  fiberG,
+  className,
+}: MacroBarViewProps) {
   const total = proteinG + carbsG + fatG + fiberG;
   const { height, radius } = layout.macroBar;
 
@@ -55,7 +65,16 @@ export function MacroBarView({ proteinG, carbsG, fatG, fiberG, className }: Macr
           <div className="bg-cs-protein" style={{ width: `${proteinWidth}%` }} />
         )}
         {carbsWidth > 0 && <div className="bg-cs-carbs" style={{ width: `${carbsWidth}%` }} />}
-        {fatWidth > 0 && <div className="bg-cs-fat" style={{ width: `${fatWidth}%` }} />}
+        {fatWidth > 0 && (
+          saturatedFatG + unsaturatedFatG > 0 ? (
+            <>
+              <div className="bg-cs-fat-saturated" style={{ width: `${(saturatedFatG / total) * 100}%` }} />
+              <div className="bg-cs-fat-unsaturated" style={{ width: `${(unsaturatedFatG / total) * 100}%` }} />
+            </>
+          ) : (
+            <div className="bg-cs-fat" style={{ width: `${fatWidth}%` }} />
+          )
+        )}
         {fiberWidth > 0 && <div className="bg-cs-success" style={{ width: `${fiberWidth}%` }} />}
       </div>
     </div>

@@ -41,6 +41,8 @@ function snapshotEditableItem(item: EditableFoodItem): EditableFoodItem {
     proteinG: item.proteinG,
     carbsG: item.carbsG,
     fatG: item.fatG,
+    saturatedFatG: item.saturatedFatG,
+    unsaturatedFatG: item.unsaturatedFatG,
     fiberG: item.fiberG,
     confidence: item.confidence,
     isFlagged: item.isFlagged,
@@ -72,6 +74,8 @@ export function editBaselinesEqual(a: EditBaseline, b: EditBaseline): boolean {
       item.proteinG === other.proteinG &&
       item.carbsG === other.carbsG &&
       item.fatG === other.fatG &&
+      item.saturatedFatG === other.saturatedFatG &&
+      item.unsaturatedFatG === other.unsaturatedFatG &&
       item.fiberG === other.fiberG &&
       item.confidence === other.confidence &&
       item.isFlagged === other.isFlagged

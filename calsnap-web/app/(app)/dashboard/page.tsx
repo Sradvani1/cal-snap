@@ -97,6 +97,8 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
           carbsTarget={dashboard.macros.totalCarbsG}
           fatConsumed={dashboard.fatConsumed}
           fatTarget={dashboard.macros.fatG}
+          saturatedFatConsumed={dashboard.saturatedFatConsumed}
+          unsaturatedFatConsumed={dashboard.unsaturatedFatConsumed}
           fiberConsumed={dashboard.fiberConsumed}
           fiberTarget={dashboard.macros.fiberG}
         />

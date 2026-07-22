@@ -8,6 +8,8 @@ export interface FoodItem {
   proteinG: number;
   carbsG: number;
   fatG: number;
+  saturatedFatG: number;
+  unsaturatedFatG: number;
   fiberG: number;
   confidence: number;
   usdaFoodId?: string;

@@ -29,6 +29,8 @@ export function loggedDailySummaries(meals: MealEntry[]): DailyNutritionSummary[
         proteinG: existing.proteinG + meal.totalProteinG,
         carbsG: existing.carbsG + meal.totalCarbsG,
         fatG: existing.fatG + meal.totalFatG,
+        saturatedFatG: existing.saturatedFatG + meal.totalSaturatedFatG,
+        unsaturatedFatG: existing.unsaturatedFatG + meal.totalUnsaturatedFatG,
         fiberG: existing.fiberG + meal.totalFiberG,
       });
     } else {
@@ -38,6 +40,8 @@ export function loggedDailySummaries(meals: MealEntry[]): DailyNutritionSummary[
         proteinG: meal.totalProteinG,
         carbsG: meal.totalCarbsG,
         fatG: meal.totalFatG,
+        saturatedFatG: meal.totalSaturatedFatG,
+        unsaturatedFatG: meal.totalUnsaturatedFatG,
         fiberG: meal.totalFiberG,
       });
     }
@@ -75,6 +79,8 @@ export function chartDailySeries(
         proteinG: 0,
         carbsG: 0,
         fatG: 0,
+        saturatedFatG: 0,
+        unsaturatedFatG: 0,
         fiberG: 0,
       });
     }

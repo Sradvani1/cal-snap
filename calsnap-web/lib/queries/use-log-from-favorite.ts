@@ -18,6 +18,8 @@ export function favoriteToMealEntry(favorite: FavoriteMeal): MealEntry {
     totalProteinG: favorite.totalProteinG,
     totalCarbsG: favorite.totalCarbsG,
     totalFatG: favorite.totalFatG,
+    totalSaturatedFatG: favorite.items.reduce((s, i) => s + (i.saturatedFatG ?? 0), 0),
+    totalUnsaturatedFatG: favorite.items.reduce((s, i) => s + (i.unsaturatedFatG ?? 0), 0),
     totalFiberG: favorite.totalFiberG,
     geminiConfidence: 0,
     isManuallyAdjusted: true,

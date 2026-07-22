@@ -33,6 +33,8 @@ function makeMeal(
     totalProteinG: overrides.totalProteinG ?? 0,
     totalCarbsG: overrides.totalCarbsG ?? 0,
     totalFatG: overrides.totalFatG ?? 0,
+    totalSaturatedFatG: overrides.totalSaturatedFatG ?? 0,
+    totalUnsaturatedFatG: overrides.totalUnsaturatedFatG ?? 0,
     totalFiberG: overrides.totalFiberG ?? 0,
     geminiConfidence: overrides.geminiConfidence ?? 0.9,
     isManuallyAdjusted: overrides.isManuallyAdjusted ?? false,

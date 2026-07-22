@@ -20,6 +20,8 @@ function makeItem(overrides: Partial<EditableFoodItem> = {}): EditableFoodItem {
     proteinG: overrides.proteinG ?? 20,
     carbsG: overrides.carbsG ?? 30,
     fatG: overrides.fatG ?? 10,
+    saturatedFatG: overrides.saturatedFatG ?? 3,
+    unsaturatedFatG: overrides.unsaturatedFatG ?? 7,
     fiberG: overrides.fiberG ?? 5,
     confidence: overrides.confidence ?? 0.9,
     isFlagged: overrides.isFlagged ?? false,
@@ -37,6 +39,8 @@ describe('updateEditableItemWeight', () => {
     expect(scaled.proteinG).toBeCloseTo(40, 2);
     expect(scaled.carbsG).toBeCloseTo(60, 2);
     expect(scaled.fatG).toBeCloseTo(20, 2);
+    expect(scaled.saturatedFatG).toBeCloseTo(6, 2);
+    expect(scaled.unsaturatedFatG).toBeCloseTo(14, 2);
     expect(scaled.fiberG).toBeCloseTo(10, 2);
   });
 
@@ -71,6 +75,8 @@ describe('fromAnalysisResult flagging', () => {
         proteinG: 1,
         carbsG: 5,
         fatG: 3,
+        saturatedFatG: 1,
+        unsaturatedFatG: 2,
         fiberG: 0,
         confidence: 0.5,
       },
@@ -88,6 +94,8 @@ describe('fromAnalysisResult flagging', () => {
         proteinG: 0,
         carbsG: 2,
         fatG: 8,
+        saturatedFatG: 2,
+        unsaturatedFatG: 6,
         fiberG: 0,
         confidence: 0.9,
       },
@@ -129,13 +137,15 @@ describe('allItemsFlagged', () => {
 describe('sumEditableItems', () => {
   it('sums totals across items', () => {
     const items = [
-      makeItem({ calories: 200, proteinG: 20, carbsG: 10, fatG: 5, fiberG: 2 }),
+      makeItem({ calories: 200, proteinG: 20, carbsG: 10, fatG: 5, saturatedFatG: 1, unsaturatedFatG: 4, fiberG: 2 }),
       makeItem({
         id: 'b',
         calories: 100,
         proteinG: 10,
         carbsG: 5,
         fatG: 3,
+        saturatedFatG: 1,
+        unsaturatedFatG: 2,
         fiberG: 1,
       }),
     ];
@@ -144,6 +154,8 @@ describe('sumEditableItems', () => {
     expect(totals.totalProteinG).toBe(30);
     expect(totals.totalCarbsG).toBe(15);
     expect(totals.totalFatG).toBe(8);
+    expect(totals.totalSaturatedFatG).toBe(2);
+    expect(totals.totalUnsaturatedFatG).toBe(6);
     expect(totals.totalFiberG).toBe(3);
   });
 });

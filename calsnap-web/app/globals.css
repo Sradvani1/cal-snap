@@ -21,6 +21,8 @@
   --color-cs-protein: var(--cs-protein);
   --color-cs-carbs: var(--cs-carbs);
   --color-cs-fat: var(--cs-fat);
+  --color-cs-fat-saturated: var(--cs-fat-saturated);
+  --color-cs-fat-unsaturated: var(--cs-fat-unsaturated);
   --color-cs-on-primary: var(--cs-on-primary);
 
   /* shadcn theme mapping */
@@ -73,6 +75,8 @@
   --cs-protein: #007aff;
   --cs-carbs: #ff9500;
   --cs-fat: #af52de;
+  --cs-fat-saturated: rgba(175, 82, 222, 0.8);
+  --cs-fat-unsaturated: rgba(175, 82, 222, 0.4);
   --cs-on-primary: #ffffff;
 }
 
@@ -94,6 +98,8 @@
     --cs-protein: #4099ff;
     --cs-carbs: #ff9f0a;
     --cs-fat: #bf5af2;
+    --cs-fat-saturated: rgba(191, 90, 242, 0.8);
+    --cs-fat-unsaturated: rgba(191, 90, 242, 0.4);
     --cs-on-primary: #ffffff;
   }
 }
@@ -116,6 +122,8 @@
   --cs-protein: #4099ff;
   --cs-carbs: #ff9f0a;
   --cs-fat: #bf5af2;
+  --cs-fat-saturated: rgba(191, 90, 242, 0.8);
+  --cs-fat-unsaturated: rgba(191, 90, 242, 0.4);
   --cs-on-primary: #ffffff;
 }
 

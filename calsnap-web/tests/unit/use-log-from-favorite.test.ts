@@ -13,6 +13,8 @@ function makeItem(name: string): FoodItem {
     proteinG: 10,
     carbsG: 20,
     fatG: 5,
+    saturatedFatG: 1,
+    unsaturatedFatG: 4,
     fiberG: 2,
     confidence: 0.9,
     isFlagged: false,

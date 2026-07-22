@@ -52,6 +52,8 @@ function normalizeFoodItem(raw: unknown): Record<string, unknown> | null {
     protein_g: asNumber(readField(item, 'protein_g', 'proteinG')),
     carbs_g: asNumber(readField(item, 'carbs_g', 'carbsG')),
     fat_g: asNumber(readField(item, 'fat_g', 'fatG')),
+    saturated_fat_g: asNumber(readField(item, 'saturated_fat_g', 'saturatedFatG')),
+    unsaturated_fat_g: asNumber(readField(item, 'unsaturated_fat_g', 'unsaturatedFatG')),
     fiber_g: asNumber(readField(item, 'fiber_g', 'fiberG')),
     confidence: asNumber(readField(item, 'confidence', 'confidence')),
   };
@@ -66,6 +68,8 @@ function normalizeMealTotal(raw: unknown): Record<string, number> {
     protein_g: asNumber(readField(total, 'protein_g', 'proteinG')),
     carbs_g: asNumber(readField(total, 'carbs_g', 'carbsG')),
     fat_g: asNumber(readField(total, 'fat_g', 'fatG')),
+    saturated_fat_g: asNumber(readField(total, 'saturated_fat_g', 'saturatedFatG')),
+    unsaturated_fat_g: asNumber(readField(total, 'unsaturated_fat_g', 'unsaturatedFatG')),
     fiber_g: asNumber(readField(total, 'fiber_g', 'fiberG')),
   };
 }
@@ -126,6 +130,8 @@ const foodItemSchema = z.object({
   protein_g: z.number(),
   carbs_g: z.number(),
   fat_g: z.number(),
+  saturated_fat_g: z.number(),
+  unsaturated_fat_g: z.number(),
   fiber_g: z.number(),
   confidence: z.number(),
 });
@@ -135,6 +141,8 @@ const mealTotalSchema = z.object({
   protein_g: z.number(),
   carbs_g: z.number(),
   fat_g: z.number(),
+  saturated_fat_g: z.number(),
+  unsaturated_fat_g: z.number(),
   fiber_g: z.number(),
 });
 
@@ -155,6 +163,8 @@ export function parseMealAnalysisResponse(raw: unknown): MealAnalysisResponse {
       proteinG: item.protein_g,
       carbsG: item.carbs_g,
       fatG: item.fat_g,
+      saturatedFatG: item.saturated_fat_g,
+      unsaturatedFatG: item.unsaturated_fat_g,
       fiberG: item.fiber_g,
       confidence: item.confidence,
     })),
@@ -163,6 +173,8 @@ export function parseMealAnalysisResponse(raw: unknown): MealAnalysisResponse {
       proteinG: parsed.meal_total.protein_g,
       carbsG: parsed.meal_total.carbs_g,
       fatG: parsed.meal_total.fat_g,
+      saturatedFatG: parsed.meal_total.saturated_fat_g,
+      unsaturatedFatG: parsed.meal_total.unsaturated_fat_g,
       fiberG: parsed.meal_total.fiber_g,
     },
     flaggedItems: parsed.flagged_items,

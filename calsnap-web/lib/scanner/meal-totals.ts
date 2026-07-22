@@ -5,6 +5,8 @@ export interface MealTotals {
   totalProteinG: number;
   totalCarbsG: number;
   totalFatG: number;
+  totalSaturatedFatG: number;
+  totalUnsaturatedFatG: number;
   totalFiberG: number;
 }
 
@@ -15,6 +17,8 @@ export function sumEditableItems(items: EditableFoodItem[]): MealTotals {
       totalProteinG: acc.totalProteinG + item.proteinG,
       totalCarbsG: acc.totalCarbsG + item.carbsG,
       totalFatG: acc.totalFatG + item.fatG,
+      totalSaturatedFatG: acc.totalSaturatedFatG + item.saturatedFatG,
+      totalUnsaturatedFatG: acc.totalUnsaturatedFatG + item.unsaturatedFatG,
       totalFiberG: acc.totalFiberG + item.fiberG,
     }),
     {
@@ -22,6 +26,8 @@ export function sumEditableItems(items: EditableFoodItem[]): MealTotals {
       totalProteinG: 0,
       totalCarbsG: 0,
       totalFatG: 0,
+      totalSaturatedFatG: 0,
+      totalUnsaturatedFatG: 0,
       totalFiberG: 0,
     },
   );

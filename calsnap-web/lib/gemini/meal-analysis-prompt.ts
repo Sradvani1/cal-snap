@@ -25,7 +25,9 @@ For each food item you can identify, estimate:
 - Calories
 - Protein in grams
 - Carbohydrates in grams (excluding fiber)
-- Fat in grams
+- Fat in grams (total of saturated + unsaturated)
+- Saturated fat in grams (the solid fat at room temperature)
+- Unsaturated fat in grams (the liquid oils, including mono- and poly-unsaturated fats)
 - Fiber in grams
 - Confidence score 0.0–1.0 (be honest; reduce confidence for partially visible items,
   unclear sauces/dressings, or ambiguous portions)
@@ -46,7 +48,9 @@ For each food item you can identify, estimate:
 - Calories
 - Protein in grams
 - Carbohydrates in grams (excluding fiber)
-- Fat in grams
+- Fat in grams (total of saturated + unsaturated)
+- Saturated fat in grams (the solid fat at room temperature)
+- Unsaturated fat in grams (the liquid oils, including mono- and poly-unsaturated fats)
 - Fiber in grams
 - Confidence score 0.0–1.0 (be honest; reduce confidence for partially visible items,
   unclear sauces/dressings, or ambiguous portions)
@@ -72,7 +76,9 @@ For each food item mentioned, estimate:
 - Calories
 - Protein in grams
 - Carbohydrates in grams (excluding fiber)
-- Fat in grams
+- Fat in grams (total of saturated + unsaturated)
+- Saturated fat in grams (the solid fat at room temperature)
+- Unsaturated fat in grams (the liquid oils, including mono- and poly-unsaturated fats)
 - Fiber in grams
 - Confidence score 0.0–1.0 (be honest; use lower confidence when portions are ambiguous
   or the description is vague)

@@ -11,6 +11,8 @@ export interface FoodItemDoc {
   proteinG: number;
   carbsG: number;
   fatG: number;
+  saturatedFatG: number;
+  unsaturatedFatG: number;
   fiberG: number;
   confidence: number;
   usdaFoodId?: string;
@@ -28,6 +30,8 @@ export interface MealEntryDoc {
   totalProteinG: number;
   totalCarbsG: number;
   totalFatG: number;
+  totalSaturatedFatG: number;
+  totalUnsaturatedFatG: number;
   totalFiberG: number;
   geminiConfidence: number;
   isManuallyAdjusted: boolean;
@@ -49,6 +53,8 @@ export function mealDocToEntry(id: string, doc: MealEntryDoc): MealEntry {
     totalProteinG: doc.totalProteinG,
     totalCarbsG: doc.totalCarbsG,
     totalFatG: doc.totalFatG,
+    totalSaturatedFatG: doc.totalSaturatedFatG ?? 0,
+    totalUnsaturatedFatG: doc.totalUnsaturatedFatG ?? 0,
     totalFiberG: doc.totalFiberG,
     geminiConfidence: doc.geminiConfidence,
     isManuallyAdjusted: doc.isManuallyAdjusted,
@@ -67,6 +73,8 @@ export function mealEntryToDoc(entry: MealEntry): MealEntryDoc {
     totalProteinG: entry.totalProteinG,
     totalCarbsG: entry.totalCarbsG,
     totalFatG: entry.totalFatG,
+    totalSaturatedFatG: entry.totalSaturatedFatG,
+    totalUnsaturatedFatG: entry.totalUnsaturatedFatG,
     totalFiberG: entry.totalFiberG,
     geminiConfidence: entry.geminiConfidence,
     isManuallyAdjusted: entry.isManuallyAdjusted,
@@ -92,6 +100,8 @@ export function mealEntryToUpdateDoc(
     totalProteinG: entry.totalProteinG,
     totalCarbsG: entry.totalCarbsG,
     totalFatG: entry.totalFatG,
+    totalSaturatedFatG: entry.totalSaturatedFatG,
+    totalUnsaturatedFatG: entry.totalUnsaturatedFatG,
     totalFiberG: entry.totalFiberG,
     geminiConfidence: entry.geminiConfidence,
     isManuallyAdjusted: entry.isManuallyAdjusted,

@@ -10,6 +10,8 @@ export interface EditableFoodItem {
   proteinG: number;
   carbsG: number;
   fatG: number;
+  saturatedFatG: number;
+  unsaturatedFatG: number;
   fiberG: number;
   confidence: number;
   isFlagged: boolean;
@@ -31,6 +33,8 @@ export function updateEditableItemWeight(
     proteinG: item.proteinG * ratio,
     carbsG: item.carbsG * ratio,
     fatG: item.fatG * ratio,
+    saturatedFatG: item.saturatedFatG * ratio,
+    unsaturatedFatG: item.unsaturatedFatG * ratio,
     fiberG: item.fiberG * ratio,
   };
 }
@@ -44,6 +48,8 @@ export function editableFoodItemFromFoodItem(foodItem: FoodItem): EditableFoodIt
     proteinG: foodItem.proteinG,
     carbsG: foodItem.carbsG,
     fatG: foodItem.fatG,
+    saturatedFatG: foodItem.saturatedFatG,
+    unsaturatedFatG: foodItem.unsaturatedFatG,
     fiberG: foodItem.fiberG,
     confidence: foodItem.confidence,
     isFlagged: foodItem.isFlagged,
@@ -66,6 +72,8 @@ export function editableFoodItemFromAnalysisResult(
     proteinG: result.proteinG,
     carbsG: result.carbsG,
     fatG: result.fatG,
+    saturatedFatG: result.saturatedFatG,
+    unsaturatedFatG: result.unsaturatedFatG,
     fiberG: result.fiberG,
     confidence: result.confidence,
     isFlagged,
@@ -88,6 +96,8 @@ export function editableFoodItemToFoodItem(item: EditableFoodItem): FoodItem {
     proteinG: item.proteinG,
     carbsG: item.carbsG,
     fatG: item.fatG,
+    saturatedFatG: item.saturatedFatG,
+    unsaturatedFatG: item.unsaturatedFatG,
     fiberG: item.fiberG,
     confidence: item.confidence,
     usdaFoodId: undefined,

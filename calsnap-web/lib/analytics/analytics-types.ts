@@ -126,6 +126,8 @@ export interface DailyNutritionSummary {
   proteinG: number;
   carbsG: number;
   fatG: number;
+  saturatedFatG: number;
+  unsaturatedFatG: number;
   fiberG: number;
 }
 

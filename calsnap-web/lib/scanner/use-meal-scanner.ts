@@ -285,6 +285,8 @@ export function useMealScanner({
         totalProteinG: totals.totalProteinG,
         totalCarbsG: totals.totalCarbsG,
         totalFatG: totals.totalFatG,
+        totalSaturatedFatG: totals.totalSaturatedFatG,
+        totalUnsaturatedFatG: totals.totalUnsaturatedFatG,
         totalFiberG: totals.totalFiberG,
         geminiConfidence: computedOverallConfidence,
         isManuallyAdjusted: adjusted,

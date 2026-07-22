@@ -59,6 +59,8 @@ export function useDashboard(uid: string | undefined) {
     band,
     macros,
     fiberConsumed: aggregation.todaysFiberG,
+    saturatedFatConsumed: aggregation.todaysSaturatedFatG,
+    unsaturatedFatConsumed: aggregation.todaysUnsaturatedFatG,
     proteinConsumed: aggregation.todaysProteinG,
     carbsConsumed: aggregation.todaysCarbsG,
     fatConsumed: aggregation.todaysFatG,

@@ -148,6 +148,8 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
       totalProteinG: totals.totalProteinG,
       totalCarbsG: totals.totalCarbsG,
       totalFatG: totals.totalFatG,
+      totalSaturatedFatG: totals.totalSaturatedFatG,
+      totalUnsaturatedFatG: totals.totalUnsaturatedFatG,
       totalFiberG: totals.totalFiberG,
       isManuallyAdjusted: true,
     };

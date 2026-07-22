@@ -10,6 +10,8 @@ interface MacroBarCardProps {
   carbsTarget: number;
   fatConsumed: number;
   fatTarget: number;
+  saturatedFatConsumed: number;
+  unsaturatedFatConsumed: number;
   fiberConsumed: number;
   fiberTarget: number;
 }
@@ -57,6 +59,8 @@ export function MacroBarCard({
   carbsTarget,
   fatConsumed,
   fatTarget,
+  saturatedFatConsumed,
+  unsaturatedFatConsumed,
   fiberConsumed,
   fiberTarget,
 }: MacroBarCardProps) {
@@ -66,6 +70,8 @@ export function MacroBarCard({
         proteinG={proteinConsumed}
         carbsG={carbsConsumed}
         fatG={fatConsumed}
+        saturatedFatG={saturatedFatConsumed}
+        unsaturatedFatG={unsaturatedFatConsumed}
         fiberG={fiberConsumed}
         className="mb-6"
       />

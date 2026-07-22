@@ -16,6 +16,8 @@ describe('data-export', () => {
       totalProteinG: 40,
       totalCarbsG: 50,
       totalFatG: 12,
+      totalSaturatedFatG: 3,
+      totalUnsaturatedFatG: 9,
       totalFiberG: 5,
       geminiConfidence: 0.9,
       isManuallyAdjusted: false,
