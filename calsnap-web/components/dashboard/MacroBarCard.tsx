@@ -28,12 +28,26 @@ function MacroRow({
   consumed,
   target,
   barClassName,
+  subConsumedA,
+  subConsumedB,
+  subBarClassNameA,
+  subBarClassNameB,
+  subLabelA,
+  subLabelB,
 }: {
   label: string;
   consumed: number;
   target: number;
   barClassName: string;
+  subConsumedA?: number;
+  subConsumedB?: number;
+  subBarClassNameA?: string;
+  subBarClassNameB?: string;
+  subLabelA?: string;
+  subLabelB?: string;
 }) {
+  const hasSplit = subConsumedA !== undefined && subConsumedB !== undefined;
+
   return (
     <div>
       <div className="mb-1 flex items-center justify-between text-sm">
@@ -42,11 +56,26 @@ function MacroRow({
           {Math.round(consumed)}g / {Math.round(target)}g
         </span>
       </div>
-      <div className="h-2 overflow-hidden rounded-full bg-cs-muted/20">
-        <div
-          className={`h-full rounded-full transition-all duration-300 ${barClassName}`}
-          style={{ width: `${barWidth(consumed, target)}%` }}
-        />
+      <div className="h-2 overflow-hidden rounded-full bg-cs-muted/20 flex">
+        {hasSplit ? (
+          <>
+            <div
+              className={`h-full transition-all duration-300 ${subBarClassNameA}`}
+              style={{ width: `${barWidth(subConsumedA, target)}%` }}
+              title={subLabelA ? `${subLabelA}: ${Math.round(subConsumedA)}g` : undefined}
+            />
+            <div
+              className={`h-full transition-all duration-300 ${subBarClassNameB}`}
+              style={{ width: `${barWidth(subConsumedB, target)}%` }}
+              title={subLabelB ? `${subLabelB}: ${Math.round(subConsumedB)}g` : undefined}
+            />
+          </>
+        ) : (
+          <div
+            className={`h-full rounded-full transition-all duration-300 ${barClassName}`}
+            style={{ width: `${barWidth(consumed, target)}%` }}
+          />
+        )}
       </div>
     </div>
   );
@@ -93,6 +122,12 @@ export function MacroBarCard({
           consumed={fatConsumed}
           target={fatTarget}
           barClassName="bg-cs-fat"
+          subConsumedA={saturatedFatConsumed}
+          subConsumedB={unsaturatedFatConsumed}
+          subBarClassNameA="bg-cs-fat-saturated rounded-l-full"
+          subBarClassNameB="bg-cs-fat-unsaturated rounded-r-full"
+          subLabelA="Saturated"
+          subLabelB="Unsaturated"
         />
         <MacroRow
           label={copy('common.macro.fiber')}
