@@ -36,6 +36,8 @@ function makeEntry(overrides: Partial<MealEntry> = {}): MealEntry {
     totalProteinG: overrides.totalProteinG ?? 30,
     totalCarbsG: overrides.totalCarbsG ?? 40,
     totalFatG: overrides.totalFatG ?? 15,
+    totalSaturatedFatG: overrides.totalSaturatedFatG ?? 0,
+    totalUnsaturatedFatG: overrides.totalUnsaturatedFatG ?? 0,
     totalFiberG: overrides.totalFiberG ?? 5,
     geminiConfidence: overrides.geminiConfidence ?? 0.9,
     isManuallyAdjusted: overrides.isManuallyAdjusted ?? false,

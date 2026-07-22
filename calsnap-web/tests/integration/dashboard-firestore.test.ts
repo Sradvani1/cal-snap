@@ -48,6 +48,8 @@ describe('dashboard Firestore reads', () => {
       totalProteinG: 20,
       totalCarbsG: 30,
       totalFatG: 10,
+      totalSaturatedFatG: 0,
+      totalUnsaturatedFatG: 0,
       totalFiberG: 4,
       geminiConfidence: 0.9,
       isManuallyAdjusted: false,
