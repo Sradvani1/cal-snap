@@ -46,7 +46,7 @@ function MacroRow({
   subLabelA?: string;
   subLabelB?: string;
 }) {
-  const hasSplit = subConsumedA !== undefined && subConsumedB !== undefined && (subConsumedA + subConsumedB) > 0;
+  const hasSplit = subConsumedA !== undefined && subConsumedB !== undefined && (subConsumedA + subConsumedB) > 0 && subConsumedA + subConsumedB === consumed;
 
   return (
     <div>
