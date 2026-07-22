@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useAuth } from '@/lib/auth/auth-context';
 import { useDashboard } from '@/lib/queries/use-dashboard';
 import { usePlateauAlert } from '@/lib/queries/use-plateau-alert';
@@ -23,10 +23,12 @@ import {
   DashboardHeaderSkeleton,
 } from '@/components/dashboard/DashboardHeader';
 import { PlateauAlertSheet } from '@/components/dashboard/PlateauAlertSheet';
+import { MacroBreakdownSheet } from '@/components/dashboard/MacroBreakdownSheet';
 import { WeighInReminderBanner } from '@/components/dashboard/WeighInReminderBanner';
 import { WeighInSheet } from '@/components/progress/WeighInSheet';
 import { copy } from '@/lib/copy';
 import { layout } from '@/lib/design/layout';
+import type { FoodItem } from '@/lib/models/food-item';
 import { cn } from '@/lib/utils/cn';
 import { useWeighInReminder } from '@/lib/queries/use-weigh-in-reminder';
 
@@ -36,6 +38,10 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
   const plateau = usePlateauAlert(uid);
   const reminder = useWeighInReminder(uid);
   const [showWeighInSheet, setShowWeighInSheet] = useState(false);
+  const [macroSheet, setMacroSheet] = useState<{
+    items: FoodItem[];
+    macro: 'protein' | 'carbs' | 'fat' | 'fiber';
+  } | null>(null);
 
   const profile = profileQuery.data?.profile;
   const profileExtras = profileQuery.data?.extras;
@@ -43,6 +49,25 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
   const sheetReady = useMemo(
     () => Boolean(profile && profileExtras && uid),
     [profile, profileExtras, uid],
+  );
+
+  const handleMacroClick = useCallback(
+    (macro: 'protein' | 'carbs' | 'fat' | 'fiber') => {
+      const allItems: FoodItem[] = [];
+      const meals = Object.values(dashboard.mealsByType);
+      for (const mealList of meals) {
+        if (mealList) {
+          for (const meal of mealList) {
+            allItems.push(...meal.items);
+          }
+        }
+      }
+      const field = `${macro}G` as keyof FoodItem;
+      const filtered = allItems.filter((i) => (i[field] as number) > 0);
+      filtered.sort((a, b) => (b[field] as number) - (a[field] as number));
+      setMacroSheet({ items: filtered, macro });
+    },
+    [dashboard.mealsByType],
   );
 
   if (dashboard.isLoading) {
@@ -100,6 +125,7 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
           fatTarget={dashboard.macros.fatG}
           fiberConsumed={dashboard.fiberConsumed}
           fiberTarget={dashboard.macros.fiberG}
+          onMacroClick={handleMacroClick}
         />
 
         <TodaysMealsSection mealsByType={dashboard.mealsByType} />
@@ -123,6 +149,15 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
         onSmallReduction={() => void plateau.applySmallReduction()}
         onDismiss={plateau.dismissPlateauAlert}
       />
+
+      {macroSheet && (
+        <MacroBreakdownSheet
+          open
+          onOpenChange={() => setMacroSheet(null)}
+          items={macroSheet.items}
+          macro={macroSheet.macro}
+        />
+      )}
     </>
   );
 }

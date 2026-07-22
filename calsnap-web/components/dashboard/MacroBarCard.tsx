@@ -13,6 +13,7 @@ interface MacroBarCardProps {
   fatTarget: number;
   fiberConsumed: number;
   fiberTarget: number;
+  onMacroClick?: (macro: 'protein' | 'carbs' | 'fat' | 'fiber') => void;
 }
 
 function barWidth(consumed: number, target: number): number {
@@ -27,6 +28,7 @@ function MacroRow({
   consumed,
   target,
   barClassName,
+  onClick,
   subConsumedA,
   subConsumedB,
   subBarClassNameA,
@@ -38,6 +40,7 @@ function MacroRow({
   consumed: number;
   target: number;
   barClassName: string;
+  onClick?: () => void;
   subConsumedA?: number;
   subConsumedB?: number;
   subBarClassNameA?: string;
@@ -48,7 +51,7 @@ function MacroRow({
   const hasSplit = subConsumedA !== undefined && subConsumedB !== undefined && (subConsumedA + subConsumedB) > 0;
 
   return (
-    <div>
+    <div className={onClick ? 'cursor-pointer' : undefined} onClick={onClick}>
       <div className="mb-1 flex items-center justify-between text-sm">
         <span className={typography.csMacroLabel}>{label}</span>
         <span className="tabular-nums text-cs-muted">
@@ -92,6 +95,7 @@ export function MacroBarCard({
   unsaturatedFatConsumed,
   fiberConsumed,
   fiberTarget,
+  onMacroClick,
 }: MacroBarCardProps) {
   return (
     <SectionCard title={copy('dashboard.macros.title')}>
@@ -109,18 +113,21 @@ export function MacroBarCard({
           consumed={proteinConsumed}
           target={proteinTarget}
           barClassName="bg-cs-protein"
+          onClick={proteinConsumed > 0 ? () => onMacroClick?.('protein') : undefined}
         />
         <MacroRow
           label={copy('designSystem.macroBar.carbs')}
           consumed={carbsConsumed}
           target={carbsTarget}
           barClassName="bg-cs-carbs"
+          onClick={carbsConsumed > 0 ? () => onMacroClick?.('carbs') : undefined}
         />
         <MacroRow
           label={copy('designSystem.macroBar.fat')}
           consumed={saturatedFatConsumed + unsaturatedFatConsumed}
           target={fatTarget}
           barClassName="bg-cs-fat"
+          onClick={(saturatedFatConsumed + unsaturatedFatConsumed) > 0 ? () => onMacroClick?.('fat') : undefined}
           subConsumedA={saturatedFatConsumed}
           subConsumedB={unsaturatedFatConsumed}
           subBarClassNameA="bg-cs-fat-saturated rounded-l-full"
@@ -133,6 +140,7 @@ export function MacroBarCard({
           consumed={fiberConsumed}
           target={fiberTarget}
           barClassName="bg-cs-success"
+          onClick={fiberConsumed > 0 ? () => onMacroClick?.('fiber') : undefined}
         />
       </div>
     </SectionCard>
