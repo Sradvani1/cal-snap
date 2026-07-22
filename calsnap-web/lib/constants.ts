@@ -1,6 +1,6 @@
 export const AppConstants = {
   Gemini: {
-    model: 'gemini-2.5-flash',
+    model: 'gemini-3-flash',
     maxTokens: 4096,
     confidenceThreshold: 0.6,
   },
@@ -37,10 +37,6 @@ export const AppConstants = {
   },
   WeightProjection: {
     maxWeeks: 104,
-  },
-  USDA: {
-    baseURL: 'https://api.nal.usda.gov/fdc/v1',
-    demoAPIKey: 'DEMO_KEY',
   },
   Onboarding: {
     minAgeYears: 16,
