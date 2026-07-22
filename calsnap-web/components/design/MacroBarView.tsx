@@ -66,7 +66,7 @@ export function MacroBarView({
         )}
         {carbsWidth > 0 && <div className="bg-cs-carbs" style={{ width: `${carbsWidth}%` }} />}
         {fatWidth > 0 && (
-          saturatedFatG + unsaturatedFatG > 0 ? (
+          saturatedFatG + unsaturatedFatG > 0 && saturatedFatG + unsaturatedFatG === fatG ? (
             <>
               <div className="bg-cs-fat-saturated" style={{ width: `${(saturatedFatG / total) * 100}%` }} />
               <div className="bg-cs-fat-unsaturated" style={{ width: `${(unsaturatedFatG / total) * 100}%` }} />
