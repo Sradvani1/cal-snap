@@ -1,7 +1,7 @@
 import { GoogleGenAI, HarmCategory, HarmBlockThreshold, ThinkingLevel } from '@google/genai';
 import type { AnalyticsInsightPayload } from '@/lib/analytics/analytics-types';
 import { AppConstants } from '@/lib/constants';
-import { buildAnalyticsInsightPrompt } from '@/lib/gemini/analytics-insight-prompt';
+import { buildAnalyticsInsightPrompt, ANALYTICS_INSIGHT_SYSTEM_INSTRUCTION } from '@/lib/gemini/analytics-insight-prompt';
 import { withRetry } from '@/lib/gemini/retry';
 
 export type GeminiInsightErrorCode = 'emptyResponse' | 'requestFailed';
@@ -61,6 +61,7 @@ export async function generateAnalyticsInsight(
           model: AppConstants.Gemini.model,
           contents: [{ role: 'user', parts: [{ text: prompt }] }],
           config: {
+            systemInstruction: ANALYTICS_INSIGHT_SYSTEM_INSTRUCTION,
             maxOutputTokens: AppConstants.Gemini.maxTokens,
             safetySettings: SAFETY_SETTINGS,
             thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },

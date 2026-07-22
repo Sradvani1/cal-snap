@@ -1,6 +1,6 @@
 import { GoogleGenAI, HarmCategory, HarmBlockThreshold, ThinkingLevel } from '@google/genai';
 import { AppConstants } from '@/lib/constants';
-import { buildMealAnalysisPrompt } from '@/lib/gemini/meal-analysis-prompt';
+import { buildMealAnalysisPrompt, MEAL_ANALYSIS_SYSTEM_INSTRUCTION } from '@/lib/gemini/meal-analysis-prompt';
 import { mealAnalysisJsonSchema } from '@/lib/gemini/meal-analysis-schema';
 import { normalizedJSONData } from '@/lib/gemini/meal-analysis-parser';
 import {
@@ -100,6 +100,7 @@ export async function analyzeMealImage(
             },
           ],
           config: {
+            systemInstruction: MEAL_ANALYSIS_SYSTEM_INSTRUCTION,
             maxOutputTokens: AppConstants.Gemini.maxTokens,
             responseMimeType: 'application/json',
             responseJsonSchema: mealAnalysisJsonSchema(),
