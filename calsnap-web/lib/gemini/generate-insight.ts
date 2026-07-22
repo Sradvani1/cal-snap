@@ -1,4 +1,4 @@
-import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/genai';
+import { GoogleGenAI, HarmCategory, HarmBlockThreshold, ThinkingLevel } from '@google/genai';
 import type { AnalyticsInsightPayload } from '@/lib/analytics/analytics-types';
 import { AppConstants } from '@/lib/constants';
 import { buildAnalyticsInsightPrompt } from '@/lib/gemini/analytics-insight-prompt';
@@ -63,7 +63,7 @@ export async function generateAnalyticsInsight(
           config: {
             maxOutputTokens: AppConstants.Gemini.maxTokens,
             safetySettings: SAFETY_SETTINGS,
-            thinkingConfig: { thinkingBudget: 0 },
+            thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
           },
         });
 

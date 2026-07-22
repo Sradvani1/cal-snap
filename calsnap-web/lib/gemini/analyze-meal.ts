@@ -1,4 +1,4 @@
-import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/genai';
+import { GoogleGenAI, HarmCategory, HarmBlockThreshold, ThinkingLevel } from '@google/genai';
 import { AppConstants } from '@/lib/constants';
 import { buildMealAnalysisPrompt } from '@/lib/gemini/meal-analysis-prompt';
 import { mealAnalysisJsonSchema } from '@/lib/gemini/meal-analysis-schema';
@@ -104,7 +104,7 @@ export async function analyzeMealImage(
             responseMimeType: 'application/json',
             responseJsonSchema: mealAnalysisJsonSchema(),
             safetySettings: SAFETY_SETTINGS,
-            thinkingConfig: { thinkingBudget: 0 },
+            thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
           },
         });
 
