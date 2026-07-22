@@ -54,16 +54,7 @@ export function MealDetailView({
             className="aspect-[4/3] w-full object-cover"
           />
         </div>
-      ) : (
-        <div
-          className={cn(
-            typography.csCaption,
-            'flex aspect-[4/3] items-center justify-center rounded-xl border border-cs-border bg-cs-muted/10',
-          )}
-        >
-          {copy('mealLog.detail.noPhoto')}
-        </div>
-      )}
+      ) : null}
 
       <div>
         <h2 className={typography.csCardTitle}>{MEAL_TYPE_LABELS[meal.mealType]}</h2>

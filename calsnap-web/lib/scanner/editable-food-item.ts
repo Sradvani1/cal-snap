@@ -82,8 +82,8 @@ export function editableFoodItemFromAnalysisResult(
 }
 
 export function itemWeightRange(originalWeightG: number): { min: number; max: number } {
-  const min = Math.max(1, Math.round(originalWeightG * 0.7));
-  const max = Math.max(min + 1, Math.round(originalWeightG * 1.3));
+  const min = Math.max(1, Math.round(originalWeightG * 0.5));
+  const max = Math.max(min + 1, Math.round(originalWeightG * 1.5));
   return { min, max };
 }
 

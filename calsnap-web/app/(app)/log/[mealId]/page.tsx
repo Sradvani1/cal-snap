@@ -156,7 +156,8 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
     try {
       await updateMealMutation.mutateAsync({ entry: updatedEntry, existingCreatedAt: createdAt });
       setHasUnsavedWork(false);
-      loadedMealIdRef.current = null; // allow re-init on refetch
+      loadedMealIdRef.current = null;
+      router.replace('/');
     } catch {
       // error shown via updateMealMutation.error
     }

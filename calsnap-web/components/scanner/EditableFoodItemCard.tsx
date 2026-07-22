@@ -28,7 +28,7 @@ export function EditableFoodItemCard({
           {(item.proteinG > 0 || item.carbsG > 0 || item.fatG > 0) && (
             <p className="mt-1 text-xs text-cs-muted">
               P: {Math.round(item.proteinG)}g · C: {Math.round(item.carbsG)}g · F:{' '}
-              {Math.round(item.fatG)}g
+              {Math.round(item.saturatedFatG)}g/{Math.round(item.unsaturatedFatG)}g
             </p>
           )}
         </div>
