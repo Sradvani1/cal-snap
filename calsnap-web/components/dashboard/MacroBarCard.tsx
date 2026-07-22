@@ -8,10 +8,9 @@ interface MacroBarCardProps {
   proteinTarget: number;
   carbsConsumed: number;
   carbsTarget: number;
-  fatConsumed: number;
-  fatTarget: number;
   saturatedFatConsumed: number;
   unsaturatedFatConsumed: number;
+  fatTarget: number;
   fiberConsumed: number;
   fiberTarget: number;
 }
@@ -46,7 +45,7 @@ function MacroRow({
   subLabelA?: string;
   subLabelB?: string;
 }) {
-  const hasSplit = subConsumedA !== undefined && subConsumedB !== undefined && (subConsumedA + subConsumedB) > 0 && subConsumedA + subConsumedB === consumed;
+  const hasSplit = subConsumedA !== undefined && subConsumedB !== undefined && (subConsumedA + subConsumedB) > 0;
 
   return (
     <div>
@@ -54,7 +53,7 @@ function MacroRow({
         <span className={typography.csMacroLabel}>{label}</span>
         <span className="tabular-nums text-cs-muted">
           {hasSplit
-            ? `${Math.round(subConsumedB)}g / ${Math.round(subConsumedA)}g / ${Math.round(target)}g`
+            ? `${Math.round(subConsumedA)}g / ${Math.round(subConsumedB)}g / ${Math.round(target)}g`
             : `${Math.round(consumed)}g / ${Math.round(target)}g`}
         </span>
       </div>
@@ -88,7 +87,6 @@ export function MacroBarCard({
   proteinTarget,
   carbsConsumed,
   carbsTarget,
-  fatConsumed,
   fatTarget,
   saturatedFatConsumed,
   unsaturatedFatConsumed,
@@ -100,7 +98,6 @@ export function MacroBarCard({
       <MacroBarView
         proteinG={proteinConsumed}
         carbsG={carbsConsumed}
-        fatG={fatConsumed}
         saturatedFatG={saturatedFatConsumed}
         unsaturatedFatG={unsaturatedFatConsumed}
         fiberG={fiberConsumed}
@@ -121,7 +118,7 @@ export function MacroBarCard({
         />
         <MacroRow
           label={copy('designSystem.macroBar.fat')}
-          consumed={fatConsumed}
+          consumed={saturatedFatConsumed + unsaturatedFatConsumed}
           target={fatTarget}
           barClassName="bg-cs-fat"
           subConsumedA={saturatedFatConsumed}

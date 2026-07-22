@@ -63,7 +63,6 @@ export function useDashboard(uid: string | undefined) {
     unsaturatedFatConsumed: aggregation.todaysUnsaturatedFatG,
     proteinConsumed: aggregation.todaysProteinG,
     carbsConsumed: aggregation.todaysCarbsG,
-    fatConsumed: aggregation.todaysFatG,
     mealsByType: aggregation.mealsByType,
   };
 }
