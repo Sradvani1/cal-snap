@@ -53,7 +53,9 @@ function MacroRow({
       <div className="mb-1 flex items-center justify-between text-sm">
         <span className={typography.csMacroLabel}>{label}</span>
         <span className="tabular-nums text-cs-muted">
-          {Math.round(consumed)}g / {Math.round(target)}g
+          {hasSplit
+            ? `${Math.round(subConsumedB)}g / ${Math.round(subConsumedA)}g / ${Math.round(target)}g`
+            : `${Math.round(consumed)}g / ${Math.round(target)}g`}
         </span>
       </div>
       <div className="h-2 overflow-hidden rounded-full bg-cs-muted/20 flex">
