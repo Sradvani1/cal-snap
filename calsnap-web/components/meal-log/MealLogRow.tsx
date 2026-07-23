@@ -3,13 +3,16 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import type { MealEntry } from '@/lib/models/meal-entry';
-import {
-  MEAL_TYPE_ICONS,
-  formatMealTime,
-} from '@/components/meal-log/meal-type-display';
 import { copy } from '@/lib/copy';
 import { typography } from '@/lib/design/typography';
 import { cn } from '@/lib/utils/cn';
+
+function mealBrief(meal: MealEntry): string {
+  const names = meal.items.map((i) => i.name);
+  if (names.length === 0) return copy('mealLog.row.empty');
+  if (names.length === 1) return names[0];
+  return `${names[0]} +${names.length - 1}`;
+}
 
 interface MealLogRowProps {
   meal: MealEntry;
@@ -40,17 +43,18 @@ export function MealLogRow({ meal, showActions = false, onDelete, onSaveFavorite
     onDelete?.(meal.id);
   };
 
+  const brief = mealBrief(meal);
+
   return (
     <div className="flex items-center gap-2 rounded-lg bg-cs-muted/10 px-3 py-2">
       <Link
         href={`/log/${meal.id}`}
         className="flex min-w-0 flex-1 items-center justify-between"
       >
-        <div className="flex items-center gap-2">
-          <span aria-hidden>{MEAL_TYPE_ICONS[meal.mealType]}</span>
-          <span className={typography.csCaption}>{formatMealTime(meal.timestamp)}</span>
-        </div>
-        <span className={cn(typography.csBody, 'font-medium tabular-nums')}>
+        <span className={cn(typography.csCaption, 'min-w-0 truncate text-cs-foreground')}>
+          {brief}
+        </span>
+        <span className={cn(typography.csCaption, 'font-medium tabular-nums shrink-0 text-cs-foreground')}>
           {meal.totalCalories} {copy('common.macro.kcal')}
         </span>
       </Link>

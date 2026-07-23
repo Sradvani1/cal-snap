@@ -49,13 +49,14 @@ function normalizeFoodItem(raw: unknown): Record<string, unknown> | null {
   const protein_g = asNumber(readField(item, 'protein_g', 'proteinG'));
   const fat_g = asNumber(readField(item, 'fat_g', 'fatG'));
   const fiber_g = asNumber(readField(item, 'fiber_g', 'fiberG'));
+  const netCarbs = Math.max(0, carbs_g - fiber_g);
 
   return {
     name,
     estimated_weight_g: asNumber(readField(item, 'estimated_weight_g', 'estimatedWeightG')),
-    calories: Math.round((carbs_g * 4) + (protein_g * 4) + (fat_g * 9) + (fiber_g * 2)),
+    calories: Math.round((netCarbs * 4) + (protein_g * 4) + (fat_g * 9) + (fiber_g * 2)),
     protein_g,
-    carbs_g,
+    carbs_g: netCarbs,
     fat_g,
     saturated_fat_g: asNumber(readField(item, 'saturated_fat_g', 'saturatedFatG')),
     unsaturated_fat_g: asNumber(readField(item, 'unsaturated_fat_g', 'unsaturatedFatG')),

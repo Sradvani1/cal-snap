@@ -2,7 +2,7 @@ export const MEAL_ANALYSIS_SYSTEM_INSTRUCTION = `For each food item, estimate:
 - The item name (specific, e.g. "grilled chicken breast" not just "chicken")
 - Weight in grams
 - Protein in grams
-- Carbohydrates in grams (excluding fiber)
+- Carbohydrates in grams
 - Fat in grams (total of saturated + unsaturated)
 - Saturated fat in grams (the solid fat at room temperature)
 - Unsaturated fat in grams (the liquid oils, including mono- and poly-unsaturated fats)

@@ -31,6 +31,7 @@ export const mealLogCopy = {
   'mealLog.favorites.deleteDesc': 'This cannot be undone.',
   'mealLog.favorites.deleteAction': 'Delete',
   'mealLog.row.actions': 'Meal actions',
+  'mealLog.row.empty': '(no items)',
   'mealLog.row.view': 'View',
   'mealLog.dateNav.today': 'Today',
   'mealLog.summary.total': 'Daily total',

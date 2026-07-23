@@ -22,7 +22,7 @@ export function useDashboard(uid: string | undefined) {
   const target = profile?.dailyCalorieTarget ?? 0;
   const ringSegments = [
     { calories: aggregation.todaysProteinG * 4,                         macro: 'protein' as const },
-    { calories: Math.max(0, aggregation.todaysCarbsG - aggregation.todaysFiberG) * 4, macro: 'carbs' as const },
+    { calories: Math.max(0, aggregation.todaysCarbsG) * 4, macro: 'carbs' as const },
     { calories: aggregation.todaysSaturatedFatG * 9,                  macro: 'saturatedFat' as const },
     { calories: aggregation.todaysUnsaturatedFatG * 9,                macro: 'unsaturatedFat' as const },
     { calories: aggregation.todaysFiberG * 2,                          macro: 'fiber' as const },
@@ -57,7 +57,7 @@ export function useDashboard(uid: string | undefined) {
     saturatedFatConsumed: aggregation.todaysSaturatedFatG,
     unsaturatedFatConsumed: aggregation.todaysUnsaturatedFatG,
     proteinConsumed: aggregation.todaysProteinG,
-    carbsConsumed: Math.max(0, aggregation.todaysCarbsG - aggregation.todaysFiberG),
+    carbsConsumed: Math.max(0, aggregation.todaysCarbsG),
     mealsByType: aggregation.mealsByType,
   };
 }
