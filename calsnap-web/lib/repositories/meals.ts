@@ -17,7 +17,6 @@ import type { MealEntry } from '@/lib/models/meal-entry';
 import {
   mealDocToEntry,
   mealEntryToDoc,
-  mealEntryToUpdateDoc,
   type MealEntryDoc,
 } from '@/lib/models/meal-entry-doc';
 import { calendarDayRange, endOfLocalDayExclusive, startOfLocalDay } from '@/lib/dashboard/date-window';
@@ -47,10 +46,6 @@ export async function createMeal(
   return entry.id;
 }
 
-export function docToMealEntry(id: string, doc: MealEntryDoc): MealEntry {
-  return mealDocToEntry(id, doc);
-}
-
 export async function fetchMealsForCalendarDay(
   uid: string,
   day: Date,
@@ -67,7 +62,7 @@ export async function fetchMealsForCalendarDay(
 
   const snapshot = await getDocs(mealsQuery);
   return snapshot.docs.map((docSnap) =>
-    docToMealEntry(docSnap.id, docSnap.data() as MealEntryDoc),
+    mealDocToEntry(docSnap.id, docSnap.data() as MealEntryDoc),
   );
 }
 
@@ -89,7 +84,7 @@ export async function fetchMealsInRange(
 
   const snapshot = await getDocs(mealsQuery);
   return snapshot.docs.map((docSnap) =>
-    docToMealEntry(docSnap.id, docSnap.data() as MealEntryDoc),
+    mealDocToEntry(docSnap.id, docSnap.data() as MealEntryDoc),
   );
 }
 
@@ -110,14 +105,13 @@ export async function fetchMeal(
   }
   const data = snapshot.data() as MealEntryDoc;
   return {
-    entry: docToMealEntry(snapshot.id, data),
+    entry: mealDocToEntry(snapshot.id, data),
     createdAt: data.createdAt,
   };
 }
 
 export async function updateMeal(
   entry: MealEntry,
-  existingCreatedAt: Timestamp,
   db: Firestore = getFirestoreDb(),
 ): Promise<void> {
   const docRef = doc(db, 'users', entry.userId, 'meals', entry.id);
@@ -125,7 +119,8 @@ export async function updateMeal(
   if (!snapshot.exists()) {
     throw new MealNotFoundError(entry.id);
   }
-  await setDoc(docRef, mealEntryToUpdateDoc(entry, existingCreatedAt));
+  const data = snapshot.data() as MealEntryDoc;
+  await setDoc(docRef, mealEntryToDoc(entry, data.createdAt));
 }
 
 export async function deleteMeal(
@@ -139,7 +134,7 @@ export async function deleteMeal(
     throw new MealNotFoundError(mealId);
   }
 
-  const entry = docToMealEntry(snapshot.id, snapshot.data() as MealEntryDoc);
+  const entry = mealDocToEntry(snapshot.id, snapshot.data() as MealEntryDoc);
   await deleteDoc(docRef);
 
   if (entry.photoStoragePath) {
@@ -176,6 +171,6 @@ export async function fetchAllMeals(
 
   const snapshot = await getDocs(mealsQuery);
   return snapshot.docs.map((docSnap) =>
-    docToMealEntry(docSnap.id, docSnap.data() as MealEntryDoc),
+    mealDocToEntry(docSnap.id, docSnap.data() as MealEntryDoc),
   );
 }

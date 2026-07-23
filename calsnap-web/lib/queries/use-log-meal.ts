@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { notSignedInError } from '@/lib/copy/errors';
 import { localDayKey } from '@/lib/dashboard/date-window';
 import type { MealEntry } from '@/lib/models/meal-entry';
-import { invalidateMealQueries } from '@/lib/queries/invalidate-meals';
+import { queryKeys } from '@/lib/queries/query-keys';
 import {
   createMeal,
   deleteMealPhoto,
@@ -24,28 +24,36 @@ export async function logMeal(
     throw notSignedInError();
   }
 
-  let uploadedPhotoPath: string | undefined;
-  if (photoBlob) {
-    uploadedPhotoPath = await uploadMealPhoto(uid, entry.id, photoBlob);
-  }
+  const photoPath = photoBlob
+    ? `users/${uid}/meals/${entry.id}/photo.jpg`
+    : undefined;
 
   const entryWithPhoto: MealEntry = {
     ...entry,
-    photoStoragePath: uploadedPhotoPath ?? entry.photoStoragePath,
+    photoStoragePath: photoPath ?? entry.photoStoragePath,
   };
 
-  try {
-    await createMeal(entryWithPhoto);
-  } catch (error) {
-    if (uploadedPhotoPath) {
+  const photoPromise = photoBlob
+    ? uploadMealPhoto(uid, entry.id, photoBlob)
+    : undefined;
+
+  const [mealResult] = await Promise.allSettled([
+    createMeal(entryWithPhoto),
+    photoPromise,
+  ]);
+
+  if (mealResult.status === 'rejected') {
+    if (photoBlob) {
       try {
-        await deleteMealPhoto(uploadedPhotoPath);
+        await deleteMealPhoto(photoPath!);
       } catch {
         // Best-effort cleanup — original meal write error takes precedence.
       }
     }
-    throw error;
+    throw mealResult.reason;
   }
+
+  // Photo upload failure is non-fatal — meal data is intact.
 
   return entryWithPhoto;
 }
@@ -55,12 +63,33 @@ export function useLogMeal(uid: string | undefined) {
 
   return useMutation({
     mutationFn: (input: LogMealInput) => logMeal(uid, input),
-    onSuccess: (entry) => {
-      if (!uid) {
-        return;
+    onMutate: async (input) => {
+      if (!uid) return { dayKey: '' };
+
+      const dayKey = localDayKey(input.entry.timestamp);
+      await queryClient.cancelQueries({
+        queryKey: queryKeys.todaysMeals(uid, dayKey),
+      });
+
+      const previous = queryClient.getQueryData<MealEntry[]>(
+        queryKeys.todaysMeals(uid, dayKey),
+      );
+
+      if (previous) {
+        queryClient.setQueryData(queryKeys.todaysMeals(uid, dayKey), [
+          ...previous,
+          input.entry,
+        ]);
       }
-      const dayKey = localDayKey(entry.timestamp);
-      invalidateMealQueries(queryClient, uid, dayKey);
+
+      return { dayKey };
+    },
+    onSettled: (_data, _error, _input, context) => {
+      if (context?.dayKey && uid) {
+        void queryClient.invalidateQueries({
+          queryKey: queryKeys.todaysMeals(uid, context.dayKey),
+        });
+      }
     },
   });
 }

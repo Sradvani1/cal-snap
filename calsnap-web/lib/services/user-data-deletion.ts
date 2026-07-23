@@ -13,8 +13,8 @@ import {
 } from '@/lib/dashboard/plateau-state';
 import { getFirestoreDb, getFirebaseStorage } from '@/lib/firebase/client';
 import type { MealEntryDoc } from '@/lib/models/meal-entry-doc';
+import { mealDocToEntry } from '@/lib/models/meal-entry-doc';
 import { PROFILE_DOC_ID } from '@/lib/models/profile-doc';
-import { docToMealEntry } from '@/lib/repositories/meals';
 import { weighInSnoozeKey } from '@/lib/progress/weigh-in-snooze';
 import {
   pwaInstallDismissedKey,
@@ -104,7 +104,7 @@ export async function deleteAllUserData(
   const storage = deps.storage ?? getFirebaseStorage();
 
   await deleteSubcollectionInBatches(db, uid, 'meals', async (_id, data) => {
-    const entry = docToMealEntry(_id, data as unknown as MealEntryDoc);
+    const entry = mealDocToEntry(_id, data as unknown as MealEntryDoc);
     if (entry.photoStoragePath) {
       await deleteMealPhoto(entry.photoStoragePath, storage);
     }

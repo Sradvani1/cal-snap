@@ -1,5 +1,4 @@
 import type { QueryClient } from '@tanstack/react-query';
-import { invalidateAnalyticsQueries } from '@/lib/queries/invalidate-analytics';
 import { queryKeys } from '@/lib/queries/query-keys';
 
 export function invalidateMealQueries(
@@ -16,8 +15,4 @@ export function invalidateMealQueries(
       queryKey: queryKeys.meal(uid, mealId),
     });
   }
-  void queryClient.invalidateQueries({
-    queryKey: queryKeys.favorites(uid),
-  });
-  invalidateAnalyticsQueries(queryClient, uid);
 }

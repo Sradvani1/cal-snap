@@ -63,7 +63,7 @@ export function mealDocToEntry(id: string, doc: MealEntryDoc): MealEntry {
   };
 }
 
-export function mealEntryToDoc(entry: MealEntry): MealEntryDoc {
+export function mealEntryToDoc(entry: MealEntry, createdAt?: Timestamp): MealEntryDoc {
   const now = Timestamp.fromDate(new Date());
   return {
     userId: entry.userId,
@@ -79,7 +79,7 @@ export function mealEntryToDoc(entry: MealEntry): MealEntryDoc {
     geminiConfidence: entry.geminiConfidence,
     isManuallyAdjusted: entry.isManuallyAdjusted,
     items: entry.items.map(foodItemToDoc),
-    createdAt: now,
+    createdAt: createdAt ?? now,
     updatedAt: now,
     ...(entry.photoStoragePath !== undefined ? { photoStoragePath: entry.photoStoragePath } : {}),
     ...(entry.textDescription !== undefined ? { textDescription: entry.textDescription } : {}),
@@ -87,29 +87,4 @@ export function mealEntryToDoc(entry: MealEntry): MealEntryDoc {
   };
 }
 
-/** Update mapper — preserves `createdAt`, bumps `updatedAt`. */
-export function mealEntryToUpdateDoc(
-  entry: MealEntry,
-  createdAt: Timestamp,
-): MealEntryDoc {
-  return {
-    userId: entry.userId,
-    timestamp: Timestamp.fromDate(entry.timestamp),
-    mealType: entry.mealType,
-    totalCalories: entry.totalCalories,
-    totalProteinG: entry.totalProteinG,
-    totalCarbsG: entry.totalCarbsG,
-    totalFatG: entry.totalFatG,
-    totalSaturatedFatG: entry.totalSaturatedFatG,
-    totalUnsaturatedFatG: entry.totalUnsaturatedFatG,
-    totalFiberG: entry.totalFiberG,
-    geminiConfidence: entry.geminiConfidence,
-    isManuallyAdjusted: entry.isManuallyAdjusted,
-    items: entry.items.map(foodItemToDoc),
-    createdAt,
-    updatedAt: Timestamp.fromDate(new Date()),
-    ...(entry.photoStoragePath !== undefined ? { photoStoragePath: entry.photoStoragePath } : {}),
-    ...(entry.textDescription !== undefined ? { textDescription: entry.textDescription } : {}),
-    ...(entry.estimationNotes !== undefined ? { estimationNotes: entry.estimationNotes } : {}),
-  };
-}
+

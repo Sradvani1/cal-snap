@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { Timestamp } from 'firebase/firestore';
 import { aggregateTodaysMeals } from '@/lib/dashboard/aggregate-meals';
-import { mealEntryToUpdateDoc } from '@/lib/models/meal-entry-doc';
+import { mealEntryToDoc } from '@/lib/models/meal-entry-doc';
 import type { MealEntry } from '@/lib/models/meal-entry';
 import type { FoodItem } from '@/lib/models/food-item';
 import { updateEditableItemWeight } from '@/lib/scanner/editable-food-item';
@@ -131,7 +131,7 @@ describe('meal log CRUD', () => {
     };
 
     const createdAt = Timestamp.fromDate(new Date('2026-06-01T10:00:00'));
-    const doc = mealEntryToUpdateDoc(updatedEntry, createdAt);
+    const doc = mealEntryToDoc(updatedEntry, createdAt);
 
     expect(updatedEntry.id).toBe('meal-edit');
     expect(updatedEntry.timestamp).toEqual(meal.timestamp);
@@ -144,7 +144,7 @@ describe('meal log CRUD', () => {
   it('testMealEntryToUpdateDocPreservesCreatedAt', () => {
     const meal = makeMeal({ mealType: 'dinner', totalCalories: 500 });
     const createdAt = Timestamp.fromDate(new Date('2026-05-01T08:00:00'));
-    const doc = mealEntryToUpdateDoc(meal, createdAt);
+    const doc = mealEntryToDoc(meal, createdAt);
 
     expect(doc.createdAt).toEqual(createdAt);
     expect(doc.updatedAt.toMillis()).toBeGreaterThanOrEqual(createdAt.toMillis());

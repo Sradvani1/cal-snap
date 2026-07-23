@@ -9,5 +9,6 @@ export function useProfile(uid: string | undefined) {
     queryKey: queryKeys.profile(uid ?? ''),
     queryFn: () => getProfileWithExtras(uid!),
     enabled: Boolean(uid),
+    staleTime: 5 * 60 * 1000,
   });
 }

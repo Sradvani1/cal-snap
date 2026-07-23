@@ -9,5 +9,6 @@ export function useFavorites(uid: string | undefined) {
     queryKey: queryKeys.favorites(uid ?? ''),
     queryFn: () => fetchFavorites(uid!),
     enabled: Boolean(uid),
+    staleTime: 5 * 60 * 1000,
   });
 }

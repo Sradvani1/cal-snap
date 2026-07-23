@@ -54,6 +54,6 @@ export function useAnalytics(
       return { snapshot, profileResult };
     },
     enabled: Boolean(uid),
-    staleTime: 30_000,
+    staleTime: 0,
   });
 }

@@ -1,7 +1,6 @@
 'use client';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import type { Timestamp } from 'firebase/firestore';
 import { localDayKey } from '@/lib/dashboard/date-window';
 import { notSignedInError } from '@/lib/copy/errors';
 import type { MealEntry } from '@/lib/models/meal-entry';
@@ -10,18 +9,17 @@ import { updateMeal } from '@/lib/repositories/meals';
 
 export interface UpdateMealInput {
   entry: MealEntry;
-  existingCreatedAt: Timestamp;
 }
 
 export function useUpdateMeal(uid: string | undefined) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ entry, existingCreatedAt }: UpdateMealInput) => {
+    mutationFn: async ({ entry }: UpdateMealInput) => {
       if (!uid) {
         throw notSignedInError();
       }
-      await updateMeal(entry, existingCreatedAt);
+      await updateMeal(entry);
       return entry;
     },
     onSuccess: (entry) => {

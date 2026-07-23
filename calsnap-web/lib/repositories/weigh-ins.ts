@@ -17,10 +17,6 @@ import {
   type WeighInDoc,
 } from '@/lib/models/weigh-in-doc';
 
-export function docToWeighIn(id: string, doc: WeighInDoc): WeighIn {
-  return weighInDocToEntry(id, doc);
-}
-
 export async function fetchWeighInsInWindow(
   uid: string,
   start: Date,
@@ -38,7 +34,7 @@ export async function fetchWeighInsInWindow(
 
   const snapshot = await getDocs(weighInsQuery);
   return snapshot.docs.map((docSnap) =>
-    docToWeighIn(docSnap.id, docSnap.data() as WeighInDoc),
+    weighInDocToEntry(docSnap.id, docSnap.data() as WeighInDoc),
   );
 }
 
@@ -60,7 +56,7 @@ export async function fetchWeeklyPlateauWeighIns(
   );
   const snapshot = await getDocs(recentQuery);
   const recent = snapshot.docs.map((docSnap) =>
-    docToWeighIn(docSnap.id, docSnap.data() as WeighInDoc),
+    weighInDocToEntry(docSnap.id, docSnap.data() as WeighInDoc),
   );
 
   if (recent.length === 0) {
@@ -100,6 +96,6 @@ export async function fetchAllWeighIns(
 
   const snapshot = await getDocs(weighInsQuery);
   return snapshot.docs.map((docSnap) =>
-    docToWeighIn(docSnap.id, docSnap.data() as WeighInDoc),
+    weighInDocToEntry(docSnap.id, docSnap.data() as WeighInDoc),
   );
 }

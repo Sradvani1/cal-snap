@@ -9,5 +9,6 @@ export function useAllWeighIns(uid: string | undefined) {
     queryKey: queryKeys.allWeighIns(uid ?? ''),
     queryFn: () => fetchAllWeighIns(uid!),
     enabled: Boolean(uid),
+    staleTime: 2 * 60 * 1000,
   });
 }

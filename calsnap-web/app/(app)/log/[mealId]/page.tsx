@@ -56,7 +56,6 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
   const loadedMealIdRef = useRef<string | null>(null);
 
   const meal = mealQuery.data?.entry;
-  const createdAt = mealQuery.data?.createdAt;
 
   useEffect(() => {
     if (!meal?.photoStoragePath) {
@@ -139,7 +138,7 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
   };
 
   const handleSave = async () => {
-    if (!user || !editableItems || !meal || !createdAt) return;
+    if (!user || !editableItems || !meal) return;
     const totals = sumEditableItems(editableItems);
     const updatedEntry = {
       ...meal,
@@ -154,7 +153,7 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
       isManuallyAdjusted: true,
     };
     try {
-      await updateMealMutation.mutateAsync({ entry: updatedEntry, existingCreatedAt: createdAt });
+      await updateMealMutation.mutateAsync({ entry: updatedEntry });
       setHasUnsavedWork(false);
       loadedMealIdRef.current = null;
       router.replace('/');

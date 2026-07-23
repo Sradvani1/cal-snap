@@ -92,6 +92,7 @@ Sprint plan: [OPTIMIZATION-MASTER-PLAN.md](../plans/OPTIMIZATION-MASTER-PLAN.md)
 |-----|--------|
 | [MACRO-REMAINING-CALORIES.md](./MACRO-REMAINING-CALORIES.md) | Complete (`e9fbfa0`) |
 | [FAT-SPLIT-BAR.md](./FAT-SPLIT-BAR.md) | Complete (HEAD) |
+| [FIRESTORE-OPTIMIZATION.md](./FIRESTORE-OPTIMIZATION.md) | Complete |
 
 ## Source of truth
 
