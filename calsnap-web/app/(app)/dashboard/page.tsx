@@ -108,11 +108,8 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
         )}
 
         <CalorieRingCard
-          consumed={dashboard.consumed}
+          segments={dashboard.ringSegments}
           target={dashboard.target}
-          remaining={dashboard.remaining}
-          progress={dashboard.progress}
-          band={dashboard.band}
         />
 
         <MacroBarCard

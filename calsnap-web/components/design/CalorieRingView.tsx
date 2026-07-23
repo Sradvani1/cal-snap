@@ -1,6 +1,7 @@
 'use client';
 
 import type { CalorieProgressBand } from '@/lib/dashboard/calorie-progress';
+import { calorieProgressBand } from '@/lib/dashboard/calorie-progress';
 import {
   calorieBandIcon,
   calorieBandLabel,
@@ -14,6 +15,21 @@ import { typography } from '@/lib/design/typography';
 import { copy } from '@/lib/copy';
 import { cn } from '@/lib/utils/cn';
 
+export type RingMacro = 'protein' | 'carbs' | 'saturatedFat' | 'unsaturatedFat' | 'fiber';
+
+export interface RingSegment {
+  calories: number;
+  macro: RingMacro;
+}
+
+const RING_SEGMENT_COLORS: Record<RingMacro, string> = {
+  protein: 'stroke-cs-protein',
+  carbs: 'stroke-cs-carbs',
+  saturatedFat: 'stroke-cs-fat-saturated',
+  unsaturatedFat: 'stroke-cs-fat-unsaturated',
+  fiber: 'stroke-cs-success',
+};
+
 function bandTextClass(band: CalorieProgressBand): string {
   switch (band) {
     case 'under':
@@ -26,31 +42,39 @@ function bandTextClass(band: CalorieProgressBand): string {
 }
 
 interface CalorieRingViewProps {
-  consumed: number;
+  segments: RingSegment[];
   target: number;
-  remaining: number;
-  progress: number;
-  band: CalorieProgressBand;
-  /** Force band label visible (high contrast mode also shows it) */
   showBandLabel?: boolean;
 }
 
 export function CalorieRingView({
-  consumed,
+  segments,
   target,
-  remaining,
-  progress,
-  band,
   showBandLabel = false,
 }: CalorieRingViewProps) {
   const reducedMotion = useReducedMotion();
-  const ringProgress = Math.min(Math.max(progress, 0), 1);
+  const consumed = segments.reduce((sum, s) => sum + s.calories, 0);
+  const remaining = target - consumed;
+  const progress = target > 0 ? consumed / target : 0;
+  const band = calorieProgressBand(progress);
   const isOverTarget = progress > 1;
   const { size, strokeWidth, overStrokeWidth } = layout.calorieRing;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const dashOffset = circumference * (1 - ringProgress);
   const strokeClass = calorieProgressStrokeClass(band);
+
+  let cumulativeOffset = 0;
+  const arcs = target > 0
+    ? segments.map((seg) => {
+        const arc = {
+          macro: seg.macro,
+          dashLength: (seg.calories / target) * circumference,
+          offset: cumulativeOffset,
+        };
+        cumulativeOffset += arc.dashLength;
+        return arc;
+      })
+    : [];
 
   return (
     <div className="flex flex-col items-center gap-3">
@@ -83,22 +107,32 @@ export function CalorieRingView({
               strokeWidth={overStrokeWidth}
             />
           )}
-          <circle
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            fill="none"
-            className={strokeClass}
-            strokeWidth={strokeWidth}
-            strokeLinecap="round"
-            strokeDasharray={circumference}
-            strokeDashoffset={dashOffset}
-            style={{
-              transition: reducedMotion
-                ? 'none'
-                : `stroke-dashoffset ${RING_SPRING_MS}ms ${RING_SPRING_EASING}`,
-            }}
-          />
+          {arcs.map((seg) => {
+            const remainingInRing = Math.max(0, circumference - seg.offset);
+            const actualDash = Math.min(seg.dashLength, remainingInRing);
+            if (actualDash <= 0) return null;
+
+            return (
+              <circle
+                key={seg.macro}
+                cx={size / 2}
+                cy={size / 2}
+                r={radius}
+                fill="none"
+                className={RING_SEGMENT_COLORS[seg.macro]}
+                strokeWidth={strokeWidth}
+                strokeLinecap="butt"
+                strokeDasharray={`${actualDash} ${circumference - actualDash}`}
+                strokeDashoffset={-seg.offset}
+                style={{
+                  transition: reducedMotion
+                    ? 'none'
+                    : `stroke-dashoffset ${RING_SPRING_MS}ms ${RING_SPRING_EASING}`,
+                }}
+              />
+            );
+          })}
+
         </svg>
         <div className="absolute inset-0 flex min-w-0 flex-col items-center justify-center px-2">
           <span

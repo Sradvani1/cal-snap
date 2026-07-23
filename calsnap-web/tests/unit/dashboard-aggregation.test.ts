@@ -3,7 +3,6 @@ import { aggregateTodaysMeals } from '@/lib/dashboard/aggregate-meals';
 import {
   calorieProgressBand,
   fiberProgressBand,
-  remainingCalories,
 } from '@/lib/dashboard/calorie-progress';
 import { fiberTargetG } from '@/lib/nutrition/calculator';
 import {
@@ -157,10 +156,6 @@ describe('dashboard aggregation', () => {
     expect(calorieProgressBand(0.89)).toBe('under');
     expect(calorieProgressBand(0.95)).toBe('onTrack');
     expect(calorieProgressBand(1.15)).toBe('over');
-  });
-
-  it('remainingCalories with overage', () => {
-    expect(remainingCalories(2300, 2000)).toBe(-300);
   });
 
   it('fiberTargetG at 2000 kcal', () => {

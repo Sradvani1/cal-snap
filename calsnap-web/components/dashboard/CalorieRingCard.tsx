@@ -1,30 +1,20 @@
-import type { CalorieProgressBand } from '@/lib/dashboard/calorie-progress';
-import { CalorieRingView, CalorieRingViewSkeleton } from '@/components/design/CalorieRingView';
+import { CalorieRingView, CalorieRingViewSkeleton, type RingSegment } from '@/components/design/CalorieRingView';
 import { SectionCard } from '@/components/design/SectionCard';
 
 interface CalorieRingCardProps {
-  consumed: number;
+  segments: RingSegment[];
   target: number;
-  remaining: number;
-  progress: number;
-  band: CalorieProgressBand;
 }
 
 export function CalorieRingCard({
-  consumed,
+  segments,
   target,
-  remaining,
-  progress,
-  band,
 }: CalorieRingCardProps) {
   return (
     <SectionCard>
       <CalorieRingView
-        consumed={consumed}
+        segments={segments}
         target={target}
-        remaining={remaining}
-        progress={progress}
-        band={band}
       />
     </SectionCard>
   );

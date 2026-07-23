@@ -2,11 +2,6 @@
 
 import { useMemo } from 'react';
 import { aggregateTodaysMeals } from '@/lib/dashboard/aggregate-meals';
-import {
-  calorieProgress,
-  calorieProgressBand,
-  remainingCalories,
-} from '@/lib/dashboard/calorie-progress';
 import { dashboardFormattedDate, dashboardGreeting } from '@/lib/dashboard/greeting';
 import { macroTargets } from '@/lib/nutrition/calculator';
 import { useProfile } from '@/lib/queries/use-profile';
@@ -25,10 +20,13 @@ export function useDashboard(uid: string | undefined) {
   );
 
   const target = profile?.dailyCalorieTarget ?? 0;
-  const consumed = aggregation.todaysCalories;
-  const progress = calorieProgress(consumed, target);
-  const band = calorieProgressBand(progress);
-  const remaining = remainingCalories(consumed, target);
+  const ringSegments = [
+    { calories: aggregation.todaysProteinG * 4,                         macro: 'protein' as const },
+    { calories: Math.max(0, aggregation.todaysCarbsG - aggregation.todaysFiberG) * 4, macro: 'carbs' as const },
+    { calories: aggregation.todaysSaturatedFatG * 9,                  macro: 'saturatedFat' as const },
+    { calories: aggregation.todaysUnsaturatedFatG * 9,                macro: 'unsaturatedFat' as const },
+    { calories: aggregation.todaysFiberG * 2,                          macro: 'fiber' as const },
+  ].filter(s => s.calories > 0);
   const macros = profile
     ? macroTargets(
         profile.dailyCalorieTarget,
@@ -52,11 +50,8 @@ export function useDashboard(uid: string | undefined) {
     profile,
     greeting: dashboardGreeting(profile?.name, now),
     formattedDate: dashboardFormattedDate(now),
-    consumed,
     target,
-    remaining,
-    progress,
-    band,
+    ringSegments,
     macros,
     fiberConsumed: aggregation.todaysFiberG,
     saturatedFatConsumed: aggregation.todaysSaturatedFatG,
