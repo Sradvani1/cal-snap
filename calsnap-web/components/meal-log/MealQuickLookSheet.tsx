@@ -124,7 +124,10 @@ export function MealQuickLookSheet({ open, onOpenChange, meal }: MealQuickLookSh
     <Drawer.Root open={open} onOpenChange={onOpenChange}>
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 bg-black/40" />
-        <Drawer.Content className="fixed bottom-0 left-0 right-0 mt-24 flex flex-col rounded-t-2xl bg-cs-surface max-h-[92vh]">
+        <Drawer.Content
+          className="fixed left-0 right-0 mt-24 flex flex-col rounded-t-2xl bg-cs-surface max-h-[92vh]"
+          style={{ bottom: 'var(--app-tab-bar-content-height, 0px)' }}
+        >
           <div className="mx-auto mt-2 h-1.5 w-12 flex-shrink-0 rounded-full bg-cs-muted/30" />
 
           <div
