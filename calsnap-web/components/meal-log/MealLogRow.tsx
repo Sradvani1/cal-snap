@@ -13,17 +13,21 @@ const MEAL_BRIEF_LIMIT = 22;
 function mealBrief(meal: MealEntry): string {
   const names = meal.items.map((i) => i.name);
   if (names.length === 0) return copy('mealLog.row.empty');
-  if (names.length === 1) return names[0];
 
-  const suffix = ` +${names.length - 1}`;
-  const words = names[0].split(' ');
+  const suffix = names.length === 1 ? '' : ` +${names.length - 1}`;
+  const first = names[0];
 
+  if (first.length + suffix.length <= MEAL_BRIEF_LIMIT) {
+    return first + suffix;
+  }
+
+  const words = first.split(' ');
   for (let i = words.length; i > 0; i--) {
     const candidate = words.slice(0, i).join(' ') + suffix;
     if (candidate.length <= MEAL_BRIEF_LIMIT) return candidate;
   }
 
-  return suffix.trimStart();
+  return suffix || '…';
 }
 
 interface MealLogRowProps {
