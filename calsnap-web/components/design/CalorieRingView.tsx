@@ -8,7 +8,6 @@ import {
   calorieRingAccessibilityLabel,
   calorieRingAccessibilityValue,
 } from '@/lib/design/calorie-ring-accessibility';
-import { calorieProgressStrokeClass } from '@/lib/design/colors';
 import { layout } from '@/lib/design/layout';
 import { RING_SPRING_EASING, RING_SPRING_MS, useReducedMotion } from '@/lib/design/motion';
 import { typography } from '@/lib/design/typography';
@@ -57,11 +56,9 @@ export function CalorieRingView({
   const remaining = target - consumed;
   const progress = target > 0 ? consumed / target : 0;
   const band = calorieProgressBand(progress);
-  const isOverTarget = progress > 1;
-  const { size, strokeWidth, overStrokeWidth } = layout.calorieRing;
+  const { size, strokeWidth } = layout.calorieRing;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const strokeClass = calorieProgressStrokeClass(band);
   const baseline = Math.max(target, consumed);
 
   let cumulativeOffset = 0;
@@ -98,16 +95,6 @@ export function CalorieRingView({
             className="stroke-cs-border"
             strokeWidth={strokeWidth}
           />
-          {isOverTarget && (
-            <circle
-              cx={size / 2}
-              cy={size / 2}
-              r={radius}
-              fill="none"
-              className={cn(strokeClass, 'opacity-35')}
-              strokeWidth={overStrokeWidth}
-            />
-          )}
           {arcs.map((seg) => {
             if (seg.dashLength <= 0) return null;
 
