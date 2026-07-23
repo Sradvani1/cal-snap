@@ -3,7 +3,6 @@
 import { AppDialog } from '@/components/design/AppDialog';
 import { PrimaryButton, SecondaryButton } from '@/components/design/PrimaryButton';
 import {
-  MEAL_TYPE_ICONS,
   MEAL_TYPE_LABELS,
 } from '@/components/meal-log/meal-type-display';
 import { copy } from '@/lib/copy';
@@ -36,14 +35,9 @@ export function FavoriteDetailSheet({
       onOpenChange={onOpenChange}
       title={favorite.name}
     >
-      <div className="flex items-center gap-2">
-        <span className="text-2xl" aria-hidden>
-          {MEAL_TYPE_ICONS[favorite.mealType]}
-        </span>
-        <p className={cn(typography.csCaption)}>
-          {MEAL_TYPE_LABELS[favorite.mealType]}
-        </p>
-      </div>
+      <p className={cn(typography.csCaption)}>
+        {MEAL_TYPE_LABELS[favorite.mealType]}
+      </p>
 
       <div className="mt-4 space-y-2">
         <p className={cn(typography.csCaption)}>{copy('scanner.result.items')}</p>

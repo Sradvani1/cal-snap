@@ -67,7 +67,7 @@ function TabButton({
 export default function LogPage() {
   const { user } = useAuth();
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [activeTab, setActiveTab] = useState<Tab>('log');
+  const [activeTab, setActiveTab] = useState<Tab>('favorites');
   const [confirmText, setConfirmText] = useState<string | null>(null);
 
   const queryClient = useQueryClient();

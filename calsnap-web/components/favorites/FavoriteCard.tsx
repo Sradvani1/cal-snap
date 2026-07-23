@@ -1,9 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import {
-  MEAL_TYPE_ICONS,
-} from '@/components/meal-log/meal-type-display';
 import { copy } from '@/lib/copy';
 import { typography } from '@/lib/design/typography';
 import type { FavoriteMeal } from '@/lib/models/favorite-meal';
@@ -39,10 +36,6 @@ export function FavoriteCard({ favorite, onUse, onDelete, onRename }: FavoriteCa
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onUse(); }}
       className="relative cursor-pointer rounded-xl border border-cs-border bg-cs-surface p-3 transition-colors hover:bg-cs-muted/5"
     >
-      <div className="mb-1 text-center text-lg" aria-hidden>
-        {MEAL_TYPE_ICONS[favorite.mealType]}
-      </div>
-
       <p className="mb-0.5 truncate text-center text-sm font-semibold text-cs-foreground">
         {favorite.name}
       </p>

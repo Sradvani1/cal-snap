@@ -1,17 +1,29 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { MealEntry } from '@/lib/models/meal-entry';
+import { MealQuickLookSheet } from '@/components/meal-log/MealQuickLookSheet';
 import { copy } from '@/lib/copy';
 import { typography } from '@/lib/design/typography';
 import { cn } from '@/lib/utils/cn';
+
+const MEAL_BRIEF_LIMIT = 22;
 
 function mealBrief(meal: MealEntry): string {
   const names = meal.items.map((i) => i.name);
   if (names.length === 0) return copy('mealLog.row.empty');
   if (names.length === 1) return names[0];
-  return `${names[0]} +${names.length - 1}`;
+
+  const suffix = ` +${names.length - 1}`;
+  const words = names[0].split(' ');
+
+  for (let i = words.length; i > 0; i--) {
+    const candidate = words.slice(0, i).join(' ') + suffix;
+    if (candidate.length <= MEAL_BRIEF_LIMIT) return candidate;
+  }
+
+  return suffix.trimStart();
 }
 
 interface MealLogRowProps {
@@ -23,6 +35,7 @@ interface MealLogRowProps {
 
 export function MealLogRow({ meal, showActions = false, onDelete, onSaveFavorite }: MealLogRowProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [quickLookOpen, setQuickLookOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -43,21 +56,45 @@ export function MealLogRow({ meal, showActions = false, onDelete, onSaveFavorite
     onDelete?.(meal.id);
   };
 
+  const handleRowTap = useCallback(() => {
+    if (!showActions) {
+      setQuickLookOpen(true);
+    }
+  }, [showActions]);
+
   const brief = mealBrief(meal);
+
+  const content = (
+    <>
+      <span className={cn(typography.csCaption, 'min-w-0 truncate text-cs-foreground')}>
+        {brief}
+      </span>
+      <span className={cn(typography.csCaption, 'font-medium tabular-nums shrink-0 text-cs-foreground')}>
+        {meal.totalCalories} {copy('common.macro.kcal')}
+      </span>
+    </>
+  );
 
   return (
     <div className="flex items-center gap-2 rounded-lg bg-cs-muted/10 px-3 py-2">
-      <Link
-        href={`/log/${meal.id}`}
-        className="flex min-w-0 flex-1 items-center justify-between"
-      >
-        <span className={cn(typography.csCaption, 'min-w-0 truncate text-cs-foreground')}>
-          {brief}
-        </span>
-        <span className={cn(typography.csCaption, 'font-medium tabular-nums shrink-0 text-cs-foreground')}>
-          {meal.totalCalories} {copy('common.macro.kcal')}
-        </span>
-      </Link>
+      {showActions ? (
+        <Link
+          href={`/log/${meal.id}`}
+          className="flex min-w-0 flex-1 items-center justify-between"
+        >
+          {content}
+        </Link>
+      ) : (
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={handleRowTap}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleRowTap(); }}
+          className="flex min-w-0 flex-1 items-center justify-between"
+        >
+          {content}
+        </div>
+      )}
 
       {showActions && (onDelete || onSaveFavorite) ? (
         <div className="relative" ref={menuRef}>
@@ -104,6 +141,14 @@ export function MealLogRow({ meal, showActions = false, onDelete, onSaveFavorite
           )}
         </div>
       ) : null}
+
+      {!showActions && (
+        <MealQuickLookSheet
+          open={quickLookOpen}
+          onOpenChange={setQuickLookOpen}
+          meal={meal}
+        />
+      )}
     </div>
   );
 }
