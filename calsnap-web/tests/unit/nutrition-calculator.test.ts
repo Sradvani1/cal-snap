@@ -46,9 +46,9 @@ describe('NutritionCalculator', () => {
 
   it('macroTargets', () => {
     const macros = macroTargets(2000, 0.28, 0.47, 0.25);
-    expect(macros.proteinG).toBe(136);
-    expect(macros.totalCarbsG).toBe(256);
-    expect(macros.fatG).toBe(54);
+    expect(macros.proteinG).toBe(140);
+    expect(macros.carbsG).toBe(221);
+    expect(macros.fatG).toBe(56);
     expect(macros.fiberG).toBe(28);
   });
 
@@ -124,11 +124,11 @@ describe('NutritionCalculator', () => {
 
   it('macroPercents from macroTargets output', () => {
     const macros = macroTargets(2000, 0.28, 0.47, 0.25);
-    const percents = macroPercents(macros.proteinG, macros.totalCarbsG, macros.fatG);
+    const percents = macroPercents(macros.proteinG, macros.carbsG, macros.fatG);
 
-    expect(percents.proteinPct).toBe(26);
-    expect(percents.carbsPct).toBe(50);
-    expect(percents.fatPct).toBe(24);
+    expect(percents.proteinPct).toBe(29);
+    expect(percents.carbsPct).toBe(45);
+    expect(percents.fatPct).toBe(26);
     expect(percents.proteinPct + percents.carbsPct + percents.fatPct).toBe(100);
   });
 

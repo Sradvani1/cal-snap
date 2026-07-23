@@ -119,7 +119,7 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
           proteinConsumed={dashboard.proteinConsumed}
           proteinTarget={dashboard.macros.proteinG}
           carbsConsumed={dashboard.carbsConsumed}
-          carbsTarget={dashboard.macros.totalCarbsG}
+          carbsTarget={dashboard.macros.carbsG}
           saturatedFatConsumed={dashboard.saturatedFatConsumed}
           unsaturatedFatConsumed={dashboard.unsaturatedFatConsumed}
           fatTarget={dashboard.macros.fatG}

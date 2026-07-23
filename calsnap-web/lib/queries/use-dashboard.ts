@@ -36,7 +36,7 @@ export function useDashboard(uid: string | undefined) {
         profile.macroTargetCarbsPct,
         profile.macroTargetFatPct,
       )
-    : { proteinG: 0, totalCarbsG: 0, fatG: 0, fiberG: 0 };
+    : { proteinG: 0, carbsG: 0, fatG: 0, fiberG: 0 };
 
   const isLoading =
     profileQuery.isLoading || mealsQuery.isLoading;
@@ -62,7 +62,7 @@ export function useDashboard(uid: string | undefined) {
     saturatedFatConsumed: aggregation.todaysSaturatedFatG,
     unsaturatedFatConsumed: aggregation.todaysUnsaturatedFatG,
     proteinConsumed: aggregation.todaysProteinG,
-    carbsConsumed: aggregation.todaysCarbsG,
+    carbsConsumed: Math.max(0, aggregation.todaysCarbsG - aggregation.todaysFiberG),
     mealsByType: aggregation.mealsByType,
   };
 }

@@ -34,7 +34,7 @@ export interface OnboardingTargets {
   target: number;
   deficit: number;
   proteinG: number;
-  totalCarbsG: number;
+  carbsG: number;
   fatG: number;
   fiberG: number;
   warnings: string[];
@@ -54,7 +54,7 @@ export function useOnboarding(uid: string) {
     target: 0,
     deficit: AppConstants.Deficit.defaultDeficitKcal,
     proteinG: 0,
-    totalCarbsG: 0,
+    carbsG: 0,
     fatG: 0,
     fiberG: 0,
     warnings: [],
@@ -99,7 +99,7 @@ export function useOnboarding(uid: string) {
       target: targetResult.target,
       deficit: targetResult.deficit,
       proteinG: macros.proteinG,
-      totalCarbsG: macros.totalCarbsG,
+      carbsG: macros.carbsG,
       fatG: macros.fatG,
       fiberG: macros.fiberG,
       warnings: targetResult.warnings,

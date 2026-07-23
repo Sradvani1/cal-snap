@@ -83,7 +83,7 @@ export function CalorieTargetPreviewStep({
           </div>
           <div>
             <p className={typography.csCaption}>{copy('common.macro.carbs')}</p>
-            <p className="font-semibold">{formatMacroGrams(targets.totalCarbsG, 0)}</p>
+            <p className="font-semibold">{formatMacroGrams(targets.carbsG, 0)}</p>
           </div>
           <div>
             <p className={typography.csCaption}>{copy('common.macro.fat')}</p>
