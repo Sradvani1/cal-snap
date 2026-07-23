@@ -1,7 +1,6 @@
 export const MEAL_ANALYSIS_SYSTEM_INSTRUCTION = `For each food item, estimate:
 - The item name (specific, e.g. "grilled chicken breast" not just "chicken")
 - Weight in grams
-- Calories
 - Protein in grams
 - Carbohydrates in grams (excluding fiber)
 - Fat in grams (total of saturated + unsaturated)
@@ -11,7 +10,6 @@ export const MEAL_ANALYSIS_SYSTEM_INSTRUCTION = `For each food item, estimate:
 - Confidence score 0.0–1.0
 
 Use standard USDA nutritional values as your reference database.
-Caloric density: carbs = 4 kcal/g, protein = 4 kcal/g, fat = 9 kcal/g, fiber = 2 kcal/g.
 
 Flag any item with confidence below 0.6 in the flaggedItems array.
 Include brief estimation_notes explaining your reasoning for portion sizes.`;

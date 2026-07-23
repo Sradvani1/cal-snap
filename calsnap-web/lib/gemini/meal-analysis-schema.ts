@@ -9,7 +9,6 @@ export function mealAnalysisJsonSchema(): Record<string, unknown> {
           properties: {
             name: { type: 'string' },
             estimated_weight_g: { type: 'number' },
-            calories: { type: 'integer' },
             protein_g: { type: 'number' },
             carbs_g: { type: 'number' },
             fat_g: { type: 'number' },
@@ -21,7 +20,6 @@ export function mealAnalysisJsonSchema(): Record<string, unknown> {
           required: [
             'name',
             'estimated_weight_g',
-            'calories',
             'protein_g',
             'carbs_g',
             'fat_g',
@@ -35,7 +33,6 @@ export function mealAnalysisJsonSchema(): Record<string, unknown> {
       meal_total: {
         type: 'object',
         properties: {
-          calories: { type: 'integer' },
           protein_g: { type: 'number' },
           carbs_g: { type: 'number' },
           fat_g: { type: 'number' },
@@ -43,7 +40,7 @@ export function mealAnalysisJsonSchema(): Record<string, unknown> {
           unsaturated_fat_g: { type: 'number' },
           fiber_g: { type: 'number' },
         },
-        required: ['calories', 'protein_g', 'carbs_g', 'fat_g', 'saturated_fat_g', 'unsaturated_fat_g', 'fiber_g'],
+        required: ['protein_g', 'carbs_g', 'fat_g', 'saturated_fat_g', 'unsaturated_fat_g', 'fiber_g'],
       },
       flagged_items: {
         type: 'array',

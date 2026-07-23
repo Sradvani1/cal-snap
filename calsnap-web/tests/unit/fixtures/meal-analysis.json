@@ -3,7 +3,6 @@
     {
       "name": "Grilled chicken",
       "estimatedWeightG": 150,
-      "calories": 248,
       "proteinG": 46,
       "carbsG": 0,
       "fatG": 5,
@@ -15,7 +14,6 @@
     {
       "name": "Brown rice",
       "estimatedWeightG": 120,
-      "calories": 134,
       "proteinG": 3,
       "carbsG": 28,
       "fatG": 1,
@@ -26,7 +24,6 @@
     }
   ],
   "mealTotal": {
-    "calories": 382,
     "proteinG": 49,
     "carbsG": 28,
     "fatG": 6,

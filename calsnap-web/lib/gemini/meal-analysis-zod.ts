@@ -45,16 +45,21 @@ function normalizeFoodItem(raw: unknown): Record<string, unknown> | null {
     return null;
   }
 
+  const carbs_g = asNumber(readField(item, 'carbs_g', 'carbsG'));
+  const protein_g = asNumber(readField(item, 'protein_g', 'proteinG'));
+  const fat_g = asNumber(readField(item, 'fat_g', 'fatG'));
+  const fiber_g = asNumber(readField(item, 'fiber_g', 'fiberG'));
+
   return {
     name,
     estimated_weight_g: asNumber(readField(item, 'estimated_weight_g', 'estimatedWeightG')),
-    calories: asNumber(readField(item, 'calories', 'calories')),
-    protein_g: asNumber(readField(item, 'protein_g', 'proteinG')),
-    carbs_g: asNumber(readField(item, 'carbs_g', 'carbsG')),
-    fat_g: asNumber(readField(item, 'fat_g', 'fatG')),
+    calories: Math.round((carbs_g * 4) + (protein_g * 4) + (fat_g * 9) + (fiber_g * 2)),
+    protein_g,
+    carbs_g,
+    fat_g,
     saturated_fat_g: asNumber(readField(item, 'saturated_fat_g', 'saturatedFatG')),
     unsaturated_fat_g: asNumber(readField(item, 'unsaturated_fat_g', 'unsaturatedFatG')),
-    fiber_g: asNumber(readField(item, 'fiber_g', 'fiberG')),
+    fiber_g,
     confidence: asNumber(readField(item, 'confidence', 'confidence')),
   };
 }
@@ -64,7 +69,6 @@ function normalizeMealTotal(raw: unknown): Record<string, number> {
     typeof raw === 'object' && raw !== null ? (raw as Record<string, unknown>) : {};
 
   return {
-    calories: asNumber(readField(total, 'calories', 'calories')),
     protein_g: asNumber(readField(total, 'protein_g', 'proteinG')),
     carbs_g: asNumber(readField(total, 'carbs_g', 'carbsG')),
     fat_g: asNumber(readField(total, 'fat_g', 'fatG')),
@@ -113,7 +117,10 @@ export function normalizeMealAnalysisRaw(raw: unknown): unknown {
 
   return {
     items,
-    meal_total: normalizeMealTotal(mealTotalRaw),
+    meal_total: {
+      ...normalizeMealTotal(mealTotalRaw),
+      calories: items.reduce((sum, item) => sum + (item.calories as number), 0),
+    },
     flagged_items: normalizeFlaggedItems(
       readField(record, 'flagged_items', 'flaggedItems'),
     ),
@@ -159,7 +166,7 @@ export function parseMealAnalysisResponse(raw: unknown): MealAnalysisResponse {
     items: parsed.items.map((item) => ({
       name: item.name,
       estimatedWeightG: item.estimated_weight_g,
-      calories: Math.round(item.calories),
+      calories: item.calories,
       proteinG: item.protein_g,
       carbsG: item.carbs_g,
       fatG: item.fat_g,
@@ -169,7 +176,7 @@ export function parseMealAnalysisResponse(raw: unknown): MealAnalysisResponse {
       confidence: item.confidence,
     })),
     mealTotal: {
-      calories: Math.round(parsed.meal_total.calories),
+      calories: parsed.meal_total.calories,
       proteinG: parsed.meal_total.protein_g,
       carbsG: parsed.meal_total.carbs_g,
       fatG: parsed.meal_total.fat_g,

@@ -11,7 +11,7 @@ describe('meal-analysis-zod normalization', () => {
     const parsed = parseMealAnalysisResponse(mealAnalysisFixture);
     expect(parsed.items).toHaveLength(2);
     expect(parsed.items[0]?.name).toBe('Grilled chicken');
-    expect(parsed.mealTotal.calories).toBe(382);
+    expect(parsed.mealTotal.calories).toBe(366);
     expect(parsed.flaggedItems).toEqual([]);
     expect(parsed.estimationNotes).toBe('E2E mock analysis');
   });
