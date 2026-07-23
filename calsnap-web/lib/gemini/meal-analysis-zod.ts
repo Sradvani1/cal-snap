@@ -64,20 +64,6 @@ function normalizeFoodItem(raw: unknown): Record<string, unknown> | null {
   };
 }
 
-function normalizeMealTotal(raw: unknown): Record<string, number> {
-  const total =
-    typeof raw === 'object' && raw !== null ? (raw as Record<string, unknown>) : {};
-
-  return {
-    protein_g: asNumber(readField(total, 'protein_g', 'proteinG')),
-    carbs_g: asNumber(readField(total, 'carbs_g', 'carbsG')),
-    fat_g: asNumber(readField(total, 'fat_g', 'fatG')),
-    saturated_fat_g: asNumber(readField(total, 'saturated_fat_g', 'saturatedFatG')),
-    unsaturated_fat_g: asNumber(readField(total, 'unsaturated_fat_g', 'unsaturatedFatG')),
-    fiber_g: asNumber(readField(total, 'fiber_g', 'fiberG')),
-  };
-}
-
 function normalizeFlaggedItems(raw: unknown): string[] {
   if (!Array.isArray(raw)) {
     return [];
@@ -113,14 +99,8 @@ export function normalizeMealAnalysisRaw(raw: unknown): unknown {
         .filter((item): item is Record<string, unknown> => item !== null)
     : [];
 
-  const mealTotalRaw = readField(record, 'meal_total', 'mealTotal');
-
   return {
     items,
-    meal_total: {
-      ...normalizeMealTotal(mealTotalRaw),
-      calories: items.reduce((sum, item) => sum + (item.calories as number), 0),
-    },
     flagged_items: normalizeFlaggedItems(
       readField(record, 'flagged_items', 'flaggedItems'),
     ),
@@ -128,6 +108,28 @@ export function normalizeMealAnalysisRaw(raw: unknown): unknown {
       readField(record, 'estimation_notes', 'estimationNotes'),
     ),
   };
+}
+
+function itemsSumMealTotal(items: { protein_g: number; carbs_g: number; fat_g: number; saturated_fat_g: number; unsaturated_fat_g: number; fiber_g: number; calories: number }[]) {
+  let calories = 0;
+  let protein_g = 0;
+  let carbs_g = 0;
+  let fat_g = 0;
+  let saturated_fat_g = 0;
+  let unsaturated_fat_g = 0;
+  let fiber_g = 0;
+
+  for (const item of items) {
+    calories += item.calories;
+    protein_g += item.protein_g;
+    carbs_g += item.carbs_g;
+    fat_g += item.fat_g;
+    saturated_fat_g += item.saturated_fat_g;
+    unsaturated_fat_g += item.unsaturated_fat_g;
+    fiber_g += item.fiber_g;
+  }
+
+  return { calories, proteinG: protein_g, carbsG: carbs_g, fatG: fat_g, saturatedFatG: saturated_fat_g, unsaturatedFatG: unsaturated_fat_g, fiberG: fiber_g };
 }
 
 const foodItemSchema = z.object({
@@ -143,19 +145,8 @@ const foodItemSchema = z.object({
   confidence: z.number(),
 });
 
-const mealTotalSchema = z.object({
-  calories: z.number(),
-  protein_g: z.number(),
-  carbs_g: z.number(),
-  fat_g: z.number(),
-  saturated_fat_g: z.number(),
-  unsaturated_fat_g: z.number(),
-  fiber_g: z.number(),
-});
-
 const mealAnalysisRawSchema = z.object({
   items: z.array(foodItemSchema),
-  meal_total: mealTotalSchema,
   flagged_items: z.array(z.string()),
   estimation_notes: z.string(),
 });
@@ -175,15 +166,7 @@ export function parseMealAnalysisResponse(raw: unknown): MealAnalysisResponse {
       fiberG: item.fiber_g,
       confidence: item.confidence,
     })),
-    mealTotal: {
-      calories: parsed.meal_total.calories,
-      proteinG: parsed.meal_total.protein_g,
-      carbsG: parsed.meal_total.carbs_g,
-      fatG: parsed.meal_total.fat_g,
-      saturatedFatG: parsed.meal_total.saturated_fat_g,
-      unsaturatedFatG: parsed.meal_total.unsaturated_fat_g,
-      fiberG: parsed.meal_total.fiber_g,
-    },
+    mealTotal: itemsSumMealTotal(parsed.items),
     flaggedItems: parsed.flagged_items,
     estimationNotes: parsed.estimation_notes,
   };

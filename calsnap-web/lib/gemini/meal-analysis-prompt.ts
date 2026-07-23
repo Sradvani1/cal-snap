@@ -39,7 +39,7 @@ export function buildMealAnalysisPrompt(options: PromptOptions): string {
 function imageOnlyPrompt(): string {
   return `Analyze this meal image and return a JSON nutritional breakdown.
 
-For each food item you can identify, refer to the system instruction for field specifications. Use plate size, utensils, and visual proportion as references for portions.
+For each food item you can identify, use plate size, utensils, and visual proportion as references for portions.
 
 Be honest with confidence scores; reduce confidence for partially visible items, unclear sauces/dressings, or ambiguous portions.`;
 }
@@ -56,7 +56,7 @@ function descriptionOnlyPrompt(description: string): string {
 
 User description: ${description}
 
-Refer to the system instruction for field specifications. Use standard serving sizes as reference for portions.
+Use standard serving sizes as reference for portions.
 
 Be honest with confidence scores; use lower confidence when portions are ambiguous or the description is vague. When the description is vague (e.g. "some rice"), use typical serving sizes but flag the item.`;
 }

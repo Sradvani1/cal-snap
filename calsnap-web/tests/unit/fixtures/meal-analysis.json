@@ -23,14 +23,6 @@
       "confidence": 0.88
     }
   ],
-  "mealTotal": {
-    "proteinG": 49,
-    "carbsG": 28,
-    "fatG": 6,
-    "saturatedFatG": 1,
-    "unsaturatedFatG": 5,
-    "fiberG": 2
-  },
   "flaggedItems": [],
   "estimationNotes": "E2E mock analysis"
 }

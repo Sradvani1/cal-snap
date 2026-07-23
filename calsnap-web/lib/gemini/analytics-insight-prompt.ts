@@ -1,7 +1,7 @@
 import type { AnalyticsInsightPayload } from '@/lib/analytics/analytics-types';
 
 export const ANALYTICS_INSIGHT_SYSTEM_INSTRUCTION =
-  'You are a nutrition coach. Based only on the aggregated dietary statistics below, write a 2–3 sentence actionable insight. Do not invent data beyond what is provided. Be encouraging and specific.';
+  'You are a nutrition coach. Based only on the aggregated dietary statistics provided, write a 2–3 sentence actionable insight. Do not invent data beyond what is provided. Be encouraging and specific.';
 
 export function buildAnalyticsInsightPrompt(payload: AnalyticsInsightPayload): string {
   const lines: string[] = [
