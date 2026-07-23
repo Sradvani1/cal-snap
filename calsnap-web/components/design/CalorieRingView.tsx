@@ -53,7 +53,7 @@ export function CalorieRingView({
   showBandLabel = false,
 }: CalorieRingViewProps) {
   const reducedMotion = useReducedMotion();
-  const consumed = segments.reduce((sum, s) => sum + s.calories, 0);
+  const consumed = Math.round(segments.reduce((sum, s) => sum + s.calories, 0));
   const remaining = target - consumed;
   const progress = target > 0 ? consumed / target : 0;
   const band = calorieProgressBand(progress);
