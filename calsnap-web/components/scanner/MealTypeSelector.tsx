@@ -1,5 +1,4 @@
 import type { MealType } from '@/lib/models/meal-type';
-import { suggestedMealTypeForDate } from '@/lib/models/meal-type';
 import { MEAL_TYPE_LABELS } from '@/components/meal-log/meal-type-display';
 import { copy } from '@/lib/copy';
 import { formFieldFocusRingClassName } from '@/lib/design/form-field';
@@ -15,15 +14,10 @@ interface MealTypeSelectorProps {
 }
 
 export function MealTypeSelector({ value, onChange, compact = false }: MealTypeSelectorProps) {
-  const suggested = suggestedMealTypeForDate(new Date());
-
   return (
     <div>
-      <div className="mb-2 flex items-center justify-between">
+      <div className="mb-2">
         <h3 className={cn(typography.csBody, 'font-medium')}>{copy('scanner.mealType.title')}</h3>
-        <span className={typography.csCaption}>
-          {copy('scanner.mealType.suggested', { type: MEAL_TYPE_LABELS[suggested] })}
-        </span>
       </div>
       <div role="radiogroup" aria-label={copy('scanner.mealType.title')} className={cn('flex gap-2', compact && 'gap-1.5', !compact && 'flex-wrap')}>
         {MEAL_TYPES.map((type) => {
