@@ -127,7 +127,7 @@ export function MealQuickLookSheet({ open, onOpenChange, meal }: MealQuickLookSh
         <Drawer.Content className="fixed bottom-0 left-0 right-0 mt-24 flex flex-col rounded-t-2xl bg-cs-surface max-h-[92vh]">
           <div className="mx-auto mt-2 h-1.5 w-12 flex-shrink-0 rounded-full bg-cs-muted/30" />
 
-          <div className="overflow-y-auto p-6 pt-2 space-y-4">
+          <div className="overflow-y-auto p-6 pt-2 pb-8 space-y-4">
             <Drawer.Title className="text-lg font-semibold text-cs-foreground">
               {MEAL_TYPE_LABELS[mealType]}
             </Drawer.Title>
@@ -185,7 +185,7 @@ export function MealQuickLookSheet({ open, onOpenChange, meal }: MealQuickLookSh
               );
             })}
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="flex gap-2">
               <MacroPill
                 label={copy('common.macro.protein')}
                 value={`${Math.round(totals.totalProteinG)}${copy('common.macro.grams')}`}
@@ -214,9 +214,9 @@ export function MealQuickLookSheet({ open, onOpenChange, meal }: MealQuickLookSh
 
 function MacroPill({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex-1 rounded-lg bg-cs-muted/10 px-3 py-2 text-center">
-      <p className={cn(typography.csCaption, 'text-xs')}>{label}</p>
-      <p className="text-sm font-semibold tabular-nums text-cs-foreground">{value}</p>
+    <div className="flex-1 rounded-lg bg-cs-muted/10 px-2 py-1.5 text-center">
+      <p className="text-[11px] leading-tight text-cs-muted">{label}</p>
+      <p className="text-xs font-semibold tabular-nums text-cs-foreground">{value}</p>
     </div>
   );
 }
