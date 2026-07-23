@@ -62,13 +62,14 @@ export function CalorieRingView({
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const strokeClass = calorieProgressStrokeClass(band);
+  const baseline = Math.max(target, consumed);
 
   let cumulativeOffset = 0;
-  const arcs = target > 0
+  const arcs = baseline > 0
     ? segments.map((seg) => {
         const arc = {
           macro: seg.macro,
-          dashLength: (seg.calories / target) * circumference,
+          dashLength: (seg.calories / baseline) * circumference,
           offset: cumulativeOffset,
         };
         cumulativeOffset += arc.dashLength;
@@ -108,9 +109,7 @@ export function CalorieRingView({
             />
           )}
           {arcs.map((seg) => {
-            const remainingInRing = Math.max(0, circumference - seg.offset);
-            const actualDash = Math.min(seg.dashLength, remainingInRing);
-            if (actualDash <= 0) return null;
+            if (seg.dashLength <= 0) return null;
 
             return (
               <circle
@@ -122,7 +121,7 @@ export function CalorieRingView({
                 className={RING_SEGMENT_COLORS[seg.macro]}
                 strokeWidth={strokeWidth}
                 strokeLinecap="butt"
-                strokeDasharray={`${actualDash} ${circumference - actualDash}`}
+                strokeDasharray={`${seg.dashLength} ${circumference - seg.dashLength}`}
                 strokeDashoffset={-seg.offset}
                 style={{
                   transition: reducedMotion
