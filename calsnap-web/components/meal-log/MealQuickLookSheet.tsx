@@ -127,7 +127,7 @@ export function MealQuickLookSheet({ open, onOpenChange, meal }: MealQuickLookSh
         <Drawer.Content className="fixed bottom-0 left-0 right-0 mt-24 flex flex-col rounded-t-2xl bg-cs-surface max-h-[92vh]">
           <div className="mx-auto mt-2 h-1.5 w-12 flex-shrink-0 rounded-full bg-cs-muted/30" />
 
-          <div className="overflow-y-auto p-6 pt-2 pb-8 space-y-4">
+          <div className="overflow-y-auto p-6 pt-2 pb-12 space-y-4">
             <Drawer.Title className="text-lg font-semibold text-cs-foreground">
               {MEAL_TYPE_LABELS[mealType]}
             </Drawer.Title>
@@ -204,7 +204,7 @@ export function MealQuickLookSheet({ open, onOpenChange, meal }: MealQuickLookSh
               />
             </div>
 
-            <MealTypeSelector value={mealType} onChange={setMealType} />
+            <MealTypeSelector compact value={mealType} onChange={setMealType} />
           </div>
         </Drawer.Content>
       </Drawer.Portal>
