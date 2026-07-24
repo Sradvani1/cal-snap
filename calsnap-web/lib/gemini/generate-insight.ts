@@ -21,7 +21,7 @@ function getGeminiClient(): GoogleGenAI {
   if (!apiKey) {
     throw new GeminiInsightError('requestFailed', 'GEMINI_API_KEY missing');
   }
-  return new GoogleGenAI({ apiKey });
+  return new GoogleGenAI({ apiKey, httpOptions: { apiVersion: 'v1' } });
 }
 
 const SAFETY_SETTINGS = [
