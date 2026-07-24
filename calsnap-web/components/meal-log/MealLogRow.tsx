@@ -148,6 +148,7 @@ export function MealLogRow({ meal, showActions = false, onDelete, onSaveFavorite
 
       {!showActions && (
         <MealQuickLookSheet
+          key={meal?.id}
           open={quickLookOpen}
           onOpenChange={setQuickLookOpen}
           meal={meal}

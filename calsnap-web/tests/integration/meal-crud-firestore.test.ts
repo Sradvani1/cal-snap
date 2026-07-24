@@ -74,7 +74,7 @@ describe('meal CRUD Firestore', () => {
       totalCalories: 600,
       totalProteinG: 35,
     };
-    await updateMeal(updated, fetched.createdAt, db);
+    await updateMeal(updated, db);
 
     const refetched = await fetchMeal(uid, entry.id, db);
     expect(refetched.entry.totalCalories).toBe(600);

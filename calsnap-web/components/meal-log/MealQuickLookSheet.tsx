@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Drawer } from 'vaul';
 import { useAuth } from '@/lib/auth/auth-context';
 import { MealTypeSelector } from '@/components/scanner/MealTypeSelector';
@@ -65,33 +65,40 @@ export function MealQuickLookSheet({ open, onOpenChange, meal }: MealQuickLookSh
   const [mealType, setMealType] = useState<MealType>(meal?.mealType ?? 'breakfast');
 
   const prevOpen = useRef(open);
+  const hasChangesRef = useRef(false);
 
-  useEffect(() => {
-    if (!meal) return;
-    setWeights({});
-    setExpandedItemId(null);
-    setMealType(meal.mealType);
-  }, [meal?.id]);
-
-  if (!meal) return null;
-
-  const adjustedItems = meal.items.map((item) => {
-    const newWeight = weights[item.id];
-    return newWeight !== undefined ? scaleItem(item, newWeight) : item;
-  });
-
-  const totals = computeTotals(adjustedItems);
-
-  const hasWeightChanges = Object.keys(weights).some(
-    (id) => weights[id] !== meal.items.find((i) => i.id === id)?.estimatedWeightG,
+  const adjustedItems = useMemo(
+    () =>
+      meal
+        ? meal.items.map((item) => {
+            const newWeight = weights[item.id];
+            return newWeight !== undefined ? scaleItem(item, newWeight) : item;
+          })
+        : [],
+    [meal, weights],
   );
-  const hasMealTypeChange = mealType !== meal.mealType;
+
+  const totals = useMemo(() => computeTotals(adjustedItems), [adjustedItems]);
+
+  const hasWeightChanges = useMemo(
+    () =>
+      meal
+        ? Object.keys(weights).some(
+            (id) => weights[id] !== meal.items.find((i) => i.id === id)?.estimatedWeightG,
+          )
+        : false,
+    [meal, weights],
+  );
+
+  const hasMealTypeChange = meal ? mealType !== meal.mealType : false;
   const hasChanges = hasWeightChanges || hasMealTypeChange;
-  const hasChangesRef = useRef(hasChanges);
-  hasChangesRef.current = hasChanges;
 
   useEffect(() => {
-    if (prevOpen.current && !open && hasChangesRef.current && user?.uid) {
+    hasChangesRef.current = hasChanges;
+  }, [hasChanges]);
+
+  useEffect(() => {
+    if (prevOpen.current && !open && hasChangesRef.current && user?.uid && meal) {
       updateMeal.mutate({
         entry: {
           ...meal,
@@ -118,6 +125,8 @@ export function MealQuickLookSheet({ open, onOpenChange, meal }: MealQuickLookSh
     },
     [],
   );
+
+  if (!meal) return null;
 
   return (
     <Drawer.Root open={open} onOpenChange={onOpenChange}>
