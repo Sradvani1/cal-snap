@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Drawer } from 'vaul';
 import { useAuth } from '@/lib/auth/auth-context';
-import { MEAL_TYPE_LABELS } from '@/components/meal-log/meal-type-display';
 import { MealTypeSelector } from '@/components/scanner/MealTypeSelector';
 import { useUpdateMeal } from '@/lib/queries/use-update-meal';
 import { copy } from '@/lib/copy';
@@ -131,13 +130,9 @@ export function MealQuickLookSheet({ open, onOpenChange, meal }: MealQuickLookSh
           <div className="mx-auto mt-2 h-1.5 w-12 flex-shrink-0 rounded-full bg-cs-muted/30" />
 
           <div
-            className="overflow-y-auto p-6 pt-2 space-y-4"
-            style={{ paddingBottom: 'calc(var(--app-tab-bar-content-height, 0px) + 1rem)' }}
+            className="overflow-y-auto p-6 pt-4 space-y-4"
+            style={{ paddingBottom: 'calc(var(--app-tab-bar-content-height, 0px) + 0.5rem)' }}
           >
-            <Drawer.Title className="text-lg font-semibold text-cs-foreground">
-              {MEAL_TYPE_LABELS[mealType]}
-            </Drawer.Title>
-
             {adjustedItems.map((item) => {
               const original = meal.items.find((i) => i.id === item.id);
               const range = getWeightRange(original?.estimatedWeightG);
