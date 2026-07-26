@@ -32,15 +32,15 @@ describe('onboarding validation', () => {
     expect(validateDateOfBirth(dob, referenceDate)).toBe(true);
   });
 
-  it('rejects goal weight at or above current weight', () => {
+  it('accepts goal weight equal to current weight, rejects above', () => {
     const draft = createDefaultProfileDraft();
     draft.goalWeightKg = 80;
     draft.weightKg = 80;
-    expect(canAdvanceGoalSetup(draft)).toBe(false);
+    expect(canAdvanceGoalSetup(draft)).toBe(true);
 
     draft.goalWeightKg = 85;
     expect(canAdvanceGoalSetup(draft)).toBe(false);
-    expect(validationMessageForStep('goalSetup', draft)).toContain('below');
+    expect(validationMessageForStep('goalSetup', draft)).toContain('exceed');
   });
 
   it('accepts goal weight below current weight', () => {

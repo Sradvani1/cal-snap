@@ -17,9 +17,8 @@ export const AppConstants = {
   },
   Deficit: {
     defaultDeficitKcal: 350,
-    minDeficitKcal: 100,
-    maxDeficitKcal: 500,
-    hardMaxDeficitKcal: 750,
+    minDeficitKcal: 0,
+    maxDeficitKcal: 750,
     minCaloriesMale: 1500,
     minCaloriesFemale: 1200,
   },

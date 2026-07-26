@@ -39,7 +39,7 @@ export const settingsCopy = {
   'settings.account.signOut': 'Sign out',
   'settings.validation.ageRange': 'Age must be between 16 and 90 years.',
   'settings.validation.goalBelowCurrent':
-    'Goal weight must be below your current body weight.',
+    'Goal weight must not exceed your current body weight.',
   'settings.validation.heightRange': 'Height must be between 120 and 230 cm.',
   'settings.validation.weightRange': 'Weight must be within a valid range.',
   'settings.validation.goalWeightRange': 'Goal weight must be within a valid range.',

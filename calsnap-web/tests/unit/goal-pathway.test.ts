@@ -14,9 +14,9 @@ describe('goal-pathway', () => {
     deficitKcal: 350,
   };
 
-  it('validateGoalBelowCurrent requires goal below current', () => {
+  it('validateGoalBelowCurrent accepts equal or below, rejects above', () => {
     expect(validateGoalBelowCurrent(72, 80)).toBe(true);
-    expect(validateGoalBelowCurrent(80, 80)).toBe(false);
+    expect(validateGoalBelowCurrent(80, 80)).toBe(true);
     expect(validateGoalBelowCurrent(85, 80)).toBe(false);
   });
 

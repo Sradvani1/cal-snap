@@ -27,20 +27,8 @@ export function dailyTarget(
   const warnings: string[] = [];
   let deficit = requestedDeficit;
 
-  if (deficit > AppConstants.Deficit.hardMaxDeficitKcal) {
-    deficit = AppConstants.Deficit.hardMaxDeficitKcal;
-    warnings.push(
-      copy('onboarding.warning.deficitCapped', {
-        max: AppConstants.Deficit.hardMaxDeficitKcal,
-      }),
-    );
-  }
   if (deficit > AppConstants.Deficit.maxDeficitKcal) {
-    warnings.push(
-      copy('onboarding.warning.highDeficit', {
-        max: AppConstants.Deficit.maxDeficitKcal,
-      }),
-    );
+    deficit = AppConstants.Deficit.maxDeficitKcal;
   }
 
   const minimum =

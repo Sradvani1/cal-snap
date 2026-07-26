@@ -45,6 +45,7 @@ export function ProfileSetupStep({ draft, onUpdate }: ProfileSetupStepProps) {
           }
           className={formFieldInputClassName}
           placeholder={copy('common.placeholder.yourName')}
+          maxLength={50}
         />
       </label>
 

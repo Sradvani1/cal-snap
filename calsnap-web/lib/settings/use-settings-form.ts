@@ -99,11 +99,6 @@ export function useSettingsForm(profile: UserProfile, extras: ProfileExtras) {
   const [reminderPrefs, setReminderPrefs] = useState(
     () => savedSnapshot.reminderPrefs,
   );
-  const [hardDeficitUnlocked, setHardDeficitUnlocked] = useState(
-    () => savedSnapshot.draft.requestedDeficit > AppConstants.Deficit.maxDeficitKcal,
-  );
-  const [showHardDeficitAlert, setShowHardDeficitAlert] = useState(false);
-
   // current weight from weigh-ins (read-only for settings)
   const currentWeightKg = extras.currentWeightKg;
   const savedStartingWeightKg = savedSnapshot.startingWeightKg;
@@ -138,45 +133,16 @@ export function useSettingsForm(profile: UserProfile, extras: ProfileExtras) {
 
   const updateDeficit = useCallback(
     (value: number) => {
-      const maxAllowed = hardDeficitUnlocked
-        ? AppConstants.Deficit.hardMaxDeficitKcal
-        : AppConstants.Deficit.maxDeficitKcal;
-
-      if (
-        value > AppConstants.Deficit.maxDeficitKcal &&
-        !hardDeficitUnlocked
-      ) {
-        setShowHardDeficitAlert(true);
-        return;
-      }
-
       setDraft((prev) => ({
         ...prev,
         requestedDeficit: Math.min(
           Math.max(value, AppConstants.Deficit.minDeficitKcal),
-          maxAllowed,
+          AppConstants.Deficit.maxDeficitKcal,
         ),
       }));
     },
-    [hardDeficitUnlocked],
+    [],
   );
-
-  const unlockHardDeficit = useCallback(() => {
-    setHardDeficitUnlocked(true);
-    setShowHardDeficitAlert(false);
-    setDraft((prev) => {
-      if (prev.requestedDeficit <= AppConstants.Deficit.maxDeficitKcal) {
-        return prev;
-      }
-      return {
-        ...prev,
-        requestedDeficit: Math.min(
-          prev.requestedDeficit,
-          AppConstants.Deficit.hardMaxDeficitKcal,
-        ),
-      };
-    });
-  }, []);
 
   const updateDraft = useCallback((update: (d: ProfileDraft) => void) => {
     setDraft((prev) => {
@@ -306,11 +272,7 @@ export function useSettingsForm(profile: UserProfile, extras: ProfileExtras) {
     previewDeficit: previewResult.deficitKcal,
     previewGoalTargetDate,
     minimumCalories: previewResult.minimumCalories,
-    hardDeficitUnlocked,
-    showHardDeficitAlert,
-    setShowHardDeficitAlert,
     updateDeficit,
-    unlockHardDeficit,
     canSave,
     validationMessage,
     isDirty,

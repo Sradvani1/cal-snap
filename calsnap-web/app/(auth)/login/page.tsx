@@ -20,13 +20,13 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (loading || !user || profile.isLoading) {
+    if (loading || !user || profile.isPending) {
       return;
     }
     window.location.replace(
       profile.data?.extras.onboardingCompleted === true ? '/dashboard' : '/onboarding',
     );
-  }, [user, loading, profile.isLoading, profile.data]);
+  }, [user, loading, profile.isPending, profile.data]);
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();

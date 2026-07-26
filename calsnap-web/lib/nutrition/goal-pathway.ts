@@ -7,7 +7,7 @@ export function validateGoalBelowCurrent(
   goalWeightKg: number,
   currentWeightKg: number,
 ): boolean {
-  return goalWeightKg < currentWeightKg;
+  return goalWeightKg <= currentWeightKg;
 }
 
 export function computeGoalTargetDate(input: {

@@ -23,10 +23,6 @@ export const onboardingCopy = {
   'onboarding.calorie.macroTargets': 'Macro targets',
   'onboarding.calorie.macroDefaultsNote':
     'Macro split follows evidence-based defaults (28% protein, 47% carbs, 25% fat), within ±15% of common recommendations.',
-  'onboarding.calorie.hardDeficit.title': 'High deficit warning',
-  'onboarding.calorie.hardDeficit.body':
-    'Deficits above {{max}} kcal/day can trigger metabolic adaptation. Continue only if you understand the risks.',
-  'onboarding.calorie.hardDeficit.continue': 'I understand, continue',
   'onboarding.done.title': "You're all set!",
   'onboarding.done.redirecting':
     'Your profile has been saved. Taking you to your dashboard…',
@@ -35,12 +31,9 @@ export const onboardingCopy = {
     'Height must be between {{min}} and {{max}} cm.',
   'onboarding.validation.weightRange': 'Weight must be within a valid range.',
   'onboarding.validation.goalBelowCurrent':
-    'Goal weight must be below your current weight.',
+    'Goal weight must not exceed your current weight.',
   'onboarding.validation.requiredFields': 'Please complete required fields.',
   'onboarding.error.saveFailed': 'Failed to save profile. Please try again.',
-  'onboarding.warning.deficitCapped': 'Deficit capped at {{max}} kcal/day for safety.',
-  'onboarding.warning.highDeficit':
-    'Deficits above {{max}} kcal/day can trigger metabolic adaptation. Recommend 350 kcal/day.',
   'onboarding.warning.targetFloored':
     'Target floored to {{minimum}} kcal/day minimum for safety.',
 } as const;

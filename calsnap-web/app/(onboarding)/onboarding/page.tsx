@@ -74,11 +74,7 @@ export default function OnboardingPage() {
           <CalorieTargetPreviewStep
             targets={onboarding.targets}
             deficit={onboarding.profileDraft.requestedDeficit}
-            hardDeficitUnlocked={onboarding.hardDeficitUnlocked}
-            showHardDeficitAlert={onboarding.showHardDeficitAlert}
             onDeficitChange={onboarding.updateDeficit}
-            onUnlockHardDeficit={onboarding.unlockHardDeficit}
-            onDismissHardDeficitAlert={() => onboarding.setShowHardDeficitAlert(false)}
           />
         )}
         {currentStep === 'done' && <OnboardingDoneStep onComplete={handleDone} />}

@@ -10,21 +10,13 @@ import { typography } from '@/lib/design/typography';
 interface CalorieTargetPreviewStepProps {
   targets: OnboardingTargets;
   deficit: number;
-  hardDeficitUnlocked: boolean;
-  showHardDeficitAlert: boolean;
   onDeficitChange: (value: number) => void;
-  onUnlockHardDeficit: () => void;
-  onDismissHardDeficitAlert: () => void;
 }
 
 export function CalorieTargetPreviewStep({
   targets,
   deficit,
-  hardDeficitUnlocked,
-  showHardDeficitAlert,
   onDeficitChange,
-  onUnlockHardDeficit,
-  onDismissHardDeficitAlert,
 }: CalorieTargetPreviewStepProps) {
   const estimatedGoalDateLabel = formatEstimatedGoalDate(
     targets.goalTargetDate,
@@ -59,11 +51,7 @@ export function CalorieTargetPreviewStep({
 
       <DeficitSlider
         deficit={deficit}
-        hardDeficitUnlocked={hardDeficitUnlocked}
-        showHardDeficitAlert={showHardDeficitAlert}
         onDeficitChange={onDeficitChange}
-        onUnlockHardDeficit={onUnlockHardDeficit}
-        onDismissHardDeficitAlert={onDismissHardDeficitAlert}
       />
 
       {targets.warnings.length > 0 && (

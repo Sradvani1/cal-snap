@@ -28,11 +28,7 @@ interface ProfileSectionProps {
   previewTarget: number;
   previewDeficit: number;
   previewGoalTargetDate: Date | null;
-  hardDeficitUnlocked: boolean;
-  showHardDeficitAlert: boolean;
   onDeficitChange: (value: number) => void;
-  onUnlockHardDeficit: () => void;
-  onDismissHardDeficitAlert: () => void;
   minimumCalories: number;
 }
 
@@ -47,11 +43,7 @@ export function ProfileSection({
   previewTarget,
   previewDeficit,
   previewGoalTargetDate,
-  hardDeficitUnlocked,
-  showHardDeficitAlert,
   onDeficitChange,
-  onUnlockHardDeficit,
-  onDismissHardDeficitAlert,
   minimumCalories,
 }: ProfileSectionProps) {
   const dobBounds = useMemo(() => dateOfBirthInputBounds(), []);
@@ -79,6 +71,7 @@ export function ProfileSection({
             }
             className={formFieldInputClassName}
             placeholder={copy('common.placeholder.yourName')}
+            maxLength={50}
           />
         </label>
 
@@ -186,11 +179,7 @@ export function ProfileSection({
 
         <DeficitSlider
           deficit={draft.requestedDeficit}
-          hardDeficitUnlocked={hardDeficitUnlocked}
-          showHardDeficitAlert={showHardDeficitAlert}
           onDeficitChange={onDeficitChange}
-          onUnlockHardDeficit={onUnlockHardDeficit}
-          onDismissHardDeficitAlert={onDismissHardDeficitAlert}
         />
 
         <div className="rounded-lg bg-cs-muted/10 p-3 text-sm">

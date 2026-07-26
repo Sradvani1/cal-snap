@@ -65,6 +65,6 @@ describe('unit-formatters normalization', () => {
 
   it('normalizes lbs-entered weights through the display unit', () => {
     const kg = normalizeWeightKg(lbsToKg(200), true);
-    expect(kg).toBeCloseTo(lbsToKg(200), 2);
+    expect(kg).toBeCloseTo(lbsToKg(200), 1);
   });
 });

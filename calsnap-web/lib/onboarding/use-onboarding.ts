@@ -45,8 +45,6 @@ export function useOnboarding(uid: string) {
   const queryClient = useQueryClient();
   const [currentStep, setCurrentStep] = useState<OnboardingStep>('welcome');
   const [profileDraft, setProfileDraft] = useState<ProfileDraft>(createDefaultProfileDraft);
-  const [hardDeficitUnlocked, setHardDeficitUnlocked] = useState(false);
-  const [showHardDeficitAlert, setShowHardDeficitAlert] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [targets, setTargets] = useState<OnboardingTargets>({
@@ -109,42 +107,20 @@ export function useOnboarding(uid: string) {
 
   const updateDeficit = useCallback(
     (value: number) => {
-      const maxAllowed = hardDeficitUnlocked
-        ? AppConstants.Deficit.hardMaxDeficitKcal
-        : AppConstants.Deficit.maxDeficitKcal;
-
-      if (
-        value > AppConstants.Deficit.maxDeficitKcal &&
-        !hardDeficitUnlocked
-      ) {
-        setShowHardDeficitAlert(true);
-        return;
-      }
-
+      const clamped = Math.min(
+        Math.max(value, AppConstants.Deficit.minDeficitKcal),
+        AppConstants.Deficit.maxDeficitKcal,
+      );
       updateDraft((draft) => {
-        draft.requestedDeficit = Math.min(
-          Math.max(value, AppConstants.Deficit.minDeficitKcal),
-          maxAllowed,
-        );
+        draft.requestedDeficit = clamped;
       });
       calculateTargets({
         ...profileDraft,
-        requestedDeficit: Math.min(
-          Math.max(value, AppConstants.Deficit.minDeficitKcal),
-          maxAllowed,
-        ),
+        requestedDeficit: clamped,
       });
     },
-    [hardDeficitUnlocked, updateDraft, calculateTargets, profileDraft],
+    [updateDraft, calculateTargets, profileDraft],
   );
-
-  const unlockHardDeficit = useCallback(() => {
-    setHardDeficitUnlocked(true);
-    setShowHardDeficitAlert(false);
-    if (profileDraft.requestedDeficit > AppConstants.Deficit.maxDeficitKcal) {
-      updateDeficit(profileDraft.requestedDeficit);
-    }
-  }, [profileDraft.requestedDeficit, updateDeficit]);
 
   const canAdvance = useCallback(
     (step: OnboardingStep = currentStep): boolean => {
@@ -262,14 +238,10 @@ export function useOnboarding(uid: string) {
     profileDraft,
     progress,
     targets,
-    hardDeficitUnlocked,
-    showHardDeficitAlert,
-    setShowHardDeficitAlert,
     validationError,
     saving,
     updateDraft,
     updateDeficit,
-    unlockHardDeficit,
     canAdvance,
     advance,
     goBack,

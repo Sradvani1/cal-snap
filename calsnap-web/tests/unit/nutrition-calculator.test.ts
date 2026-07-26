@@ -36,12 +36,10 @@ describe('NutritionCalculator', () => {
     expect(result.warnings.some((warning) => warning.includes('1500'))).toBe(true);
   });
 
-  it('dailyTarget warnings', () => {
+  it('dailyTarget caps deficit silently, no warnings', () => {
     const result = dailyTarget(3000, 800, 'male');
     expect(result.deficit).toBe(750);
-    expect(result.warnings).toHaveLength(2);
-    expect(result.warnings.some((warning) => warning.includes('750'))).toBe(true);
-    expect(result.warnings.some((warning) => warning.includes('500'))).toBe(true);
+    expect(result.warnings).toHaveLength(0);
   });
 
   it('macroTargets', () => {
