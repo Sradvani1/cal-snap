@@ -9,10 +9,10 @@ import { MealScannerCaptureView } from '@/components/scanner/MealScannerCaptureV
 import { ScannerErrorBanner } from '@/components/scanner/ScannerErrorBanner';
 import { useAuth } from '@/lib/auth/auth-context';
 import { copy } from '@/lib/copy';
-import { formFieldFocusRingClassName } from '@/lib/design/form-field';
 import { layout } from '@/lib/design/layout';
 import { typography } from '@/lib/design/typography';
 import { cn } from '@/lib/utils/cn';
+import { Button } from '@/components/ui/button';
 import { useLogMeal } from '@/lib/queries/use-log-meal';
 import { errorRetryAction } from '@/lib/scanner/error-retry-action';
 import { useUnsavedWork } from '@/lib/scanner/unsaved-work-context';
@@ -132,18 +132,30 @@ function ScanPageContent() {
     <div className={cn(layout.pageShell, 'py-6', layout.content.bottomPadding)}>
       <header className="mb-6 flex items-center justify-between">
         <h1 className={`${typography.csCardTitle} text-2xl`}>{copy('scanner.title')}</h1>
-        {scanner.hasUnsavedWork && scanner.phase !== 'analyzing' && (
-          <button
-            type="button"
-            onClick={handleDiscard}
-            className={cn(
-              'text-sm font-medium text-cs-danger-text',
-              formFieldFocusRingClassName,
-            )}
-          >
-            {copy('scanner.discard')}
-          </button>
-        )}
+        <div className="flex items-center gap-2">
+          {scanner.phase === 'results' && (
+            <Button
+              size="sm"
+              disabled={!scanner.canLog || logMealMutation.isPending}
+              onClick={handleLog}
+            >
+              {logMealMutation.isPending
+                ? copy('scanner.result.logging')
+                : copy('scanner.result.logShort')}
+            </Button>
+          )}
+          {scanner.hasUnsavedWork && scanner.phase !== 'analyzing' && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleDiscard}
+              className="border-cs-danger/40 text-cs-danger-text hover:bg-cs-danger/10 hover:text-cs-danger-text"
+            >
+              {copy('scanner.discard')}
+            </Button>
+          )}
+        </div>
       </header>
 
       {scanner.phase === 'capture' && <MealScannerCaptureView scanner={scanner} />}

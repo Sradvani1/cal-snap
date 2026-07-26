@@ -36,6 +36,7 @@ export const scannerCopy = {
     'All items have low confidence — review portions carefully before logging.',
   'scanner.result.items': 'Items',
   'scanner.result.logMeal': 'Log this meal',
+  'scanner.result.logShort': 'Log',
   'scanner.result.logging': 'Logging…',
   'scanner.result.saveChanges': 'Save changes',
   'scanner.result.saving': 'Saving…',
