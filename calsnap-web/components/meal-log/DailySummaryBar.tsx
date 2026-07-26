@@ -25,6 +25,9 @@ export function DailySummaryBar({ aggregation }: DailySummaryBarProps) {
           <span>
             {copy('common.macro.fat')} {Math.round(aggregation.todaysFatG)}{copy('common.macro.grams')}
           </span>
+          <span>
+            {copy('common.macro.fiber')} {Math.round(aggregation.todaysFiberG)}{copy('common.macro.grams')}
+          </span>
         </div>
       </div>
     </div>

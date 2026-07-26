@@ -3,9 +3,8 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
-  orderBy,
-  query,
   setDoc,
   updateDoc,
   type Firestore,
@@ -25,9 +24,36 @@ export async function fetchFavorites(
   db: Firestore = getFirestoreDb(),
 ): Promise<FavoriteMeal[]> {
   const ref = collection(db, 'users', uid, 'favorites');
-  const q = query(ref, orderBy('createdAt', 'desc'));
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map((d) => favoriteDocToEntry(d.id, d.data() as FavoriteMealDoc));
+  const snapshot = await getDocs(ref);
+  const result = snapshot.docs.map((d) =>
+    favoriteDocToEntry(d.id, d.data() as FavoriteMealDoc),
+  );
+  result.sort((a, b) => {
+    const useDiff = (b.useCount ?? 0) - (a.useCount ?? 0);
+    if (useDiff !== 0) return useDiff;
+    const lastA = a.lastUsedAt?.getTime() ?? 0;
+    const lastB = b.lastUsedAt?.getTime() ?? 0;
+    if (lastB !== lastA) return lastB - lastA;
+    return b.createdAt.getTime() - a.createdAt.getTime();
+  });
+  return result;
+}
+
+export async function logFavorite(
+  uid: string,
+  favoriteId: string,
+  db: Firestore = getFirestoreDb(),
+): Promise<void> {
+  const docRef = doc(db, 'users', uid, 'favorites', favoriteId);
+  const snap = await getDoc(docRef);
+  if (!snap.exists()) return;
+  const data = snap.data() as FavoriteMealDoc;
+  const now = Timestamp.fromDate(new Date());
+  await updateDoc(docRef, {
+    useCount: (data.useCount ?? 0) + 1,
+    lastUsedAt: now,
+    updatedAt: now,
+  });
 }
 
 export async function saveFavorite(
@@ -49,6 +75,8 @@ export async function saveFavorite(
     totalFatG: meal.totalFatG,
     totalFiberG: meal.totalFiberG,
     items: meal.items,
+    useCount: 0,
+    lastUsedAt: null,
     createdAt: now,
     updatedAt: now,
   };

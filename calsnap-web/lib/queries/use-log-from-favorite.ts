@@ -7,6 +7,7 @@ import type { FavoriteMeal } from '@/lib/models/favorite-meal';
 import type { MealEntry } from '@/lib/models/meal-entry';
 import { queryKeys } from '@/lib/queries/query-keys';
 import { createMeal } from '@/lib/repositories/meals';
+import { logFavorite } from '@/lib/repositories/favorites';
 
 export function favoriteToMealEntry(favorite: FavoriteMeal): MealEntry {
   return {
@@ -35,6 +36,7 @@ export function useLogFromFavorite(uid: string | undefined) {
       if (!uid) throw notSignedInError();
       const entry = favoriteToMealEntry(favorite);
       await createMeal(entry);
+      await logFavorite(uid, favorite.id);
       return entry;
     },
     onSuccess: (entry) => {
@@ -42,6 +44,9 @@ export function useLogFromFavorite(uid: string | undefined) {
       const dayKey = localDayKey(entry.timestamp);
       void queryClient.invalidateQueries({
         queryKey: queryKeys.todaysMeals(uid, dayKey),
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.favorites(uid),
       });
     },
   });

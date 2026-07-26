@@ -143,13 +143,13 @@ export function MealAnalysisResultView({
         <div className="space-y-2">
           <h3 className={cn(typography.csBody, 'font-medium')}>{copy('scanner.result.items')}</h3>
           {scanner.editableItems.map((item) => (
-            <EditableFoodItemCard
-              key={item.id}
-              item={item}
-              onWeightChange={(id, weight) => scanner.updateItemWeight(id, weight)}
-              onDelete={(id) => scanner.deleteItem(id)}
-            />
-          ))}
+              <EditableFoodItemCard
+                key={item.id}
+                item={item}
+                onWeightChange={(id, weight) => scanner.updateItemWeight(id, weight)}
+                onDelete={(id) => scanner.deleteItem(id)}
+              />
+            ))}
         </div>
       </ScanStaggerSection>
 

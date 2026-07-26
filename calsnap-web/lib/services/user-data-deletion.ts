@@ -112,6 +112,8 @@ export async function deleteAllUserData(
 
   await deleteSubcollectionInBatches(db, uid, 'weighIns');
 
+  await deleteSubcollectionInBatches(db, uid, 'favorites');
+
   await deleteDoc(doc(db, 'users', uid, 'profile', PROFILE_DOC_ID));
 
   await deleteStoragePrefix(storage, `users/${uid}/meals`);

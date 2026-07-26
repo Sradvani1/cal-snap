@@ -16,6 +16,8 @@ export interface FavoriteMealDoc {
   totalFatG: number;
   totalFiberG: number;
   items: FoodItemDoc[];
+  useCount: number;
+  lastUsedAt: Timestamp | null;
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }
@@ -44,6 +46,8 @@ export function favoriteDocToEntry(id: string, doc: FavoriteMealDoc): FavoriteMe
     totalFatG: doc.totalFatG,
     totalFiberG: doc.totalFiberG,
     items: doc.items.map(foodItemDocToEntry),
+    useCount: doc.useCount ?? 0,
+    lastUsedAt: doc.lastUsedAt?.toDate() ?? null,
     createdAt: doc.createdAt.toDate(),
     updatedAt: doc.updatedAt.toDate(),
   };
@@ -62,6 +66,8 @@ export function favoriteEntryToDoc(entry: FavoriteMeal): FavoriteMealDoc {
     totalFatG: entry.totalFatG,
     totalFiberG: entry.totalFiberG,
     items: entry.items.map(foodItemToDoc),
+    useCount: entry.useCount ?? 0,
+    lastUsedAt: entry.lastUsedAt ? Timestamp.fromDate(entry.lastUsedAt) : null,
     createdAt: now,
     updatedAt: now,
   };

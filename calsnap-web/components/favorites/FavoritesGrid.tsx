@@ -1,6 +1,6 @@
 'use client';
 
-import { FavoriteCard } from '@/components/favorites/FavoriteCard';
+import { FavoriteMealRow } from '@/components/favorites/FavoriteMealRow';
 import { EmptyStateView } from '@/components/design/EmptyStateView';
 import { Skeleton } from '@/components/design/Skeleton';
 import { copy } from '@/lib/copy';
@@ -10,20 +10,14 @@ interface FavoritesGridProps {
   favorites: FavoriteMeal[] | undefined;
   isLoading: boolean;
   isError: boolean;
-  confirmText: string | null;
-  onOpenDetail: (favorite: FavoriteMeal) => void;
-  onDelete: (favorite: FavoriteMeal) => void;
-  onRename: (favorite: FavoriteMeal) => void;
+  onUse: (favorite: FavoriteMeal) => void;
 }
 
 export function FavoritesGrid({
   favorites,
   isLoading,
   isError,
-  confirmText,
-  onOpenDetail,
-  onDelete,
-  onRename,
+  onUse,
 }: FavoritesGridProps) {
   if (isError) {
     return (
@@ -35,9 +29,9 @@ export function FavoritesGrid({
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-2 gap-3">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-28 rounded-xl" />
+      <div className="space-y-2">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <Skeleton key={i} className="h-12 rounded-lg" />
         ))}
       </div>
     );
@@ -54,23 +48,14 @@ export function FavoritesGrid({
   }
 
   return (
-    <div>
-      <div className="grid grid-cols-2 gap-3">
-        {favorites.map((fav) => (
-          <FavoriteCard
-            key={fav.id}
-            favorite={fav}
-            onUse={() => onOpenDetail(fav)}
-            onDelete={() => onDelete(fav)}
-            onRename={() => onRename(fav)}
-          />
-        ))}
-      </div>
-      {confirmText && (
-        <p className="mt-3 text-center text-sm text-cs-success">
-          {confirmText}
-        </p>
-      )}
+    <div className="space-y-2">
+      {favorites.map((fav) => (
+        <FavoriteMealRow
+          key={fav.id}
+          favorite={fav}
+          onUse={() => onUse(fav)}
+        />
+      ))}
     </div>
   );
 }

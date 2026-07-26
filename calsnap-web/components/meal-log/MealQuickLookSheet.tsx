@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import Link from 'next/link';
 import { Drawer } from 'vaul';
 import { useAuth } from '@/lib/auth/auth-context';
 import { MealTypeSelector } from '@/components/scanner/MealTypeSelector';
@@ -16,6 +17,14 @@ interface MealQuickLookSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   meal: MealEntry | null;
+  skipAutoSave?: boolean;
+  onLogForToday?: (items: FoodItem[], mealType: MealType) => void;
+  isLogging?: boolean;
+  onFavorite?: () => void;
+  onDeleteMeal?: (meal: MealEntry) => void;
+  viewHref?: string;
+  isFavorited?: boolean;
+  hideMealType?: boolean;
 }
 
 const WEIGHT_RANGE_FACTOR = 0.3;
@@ -57,12 +66,25 @@ function computeTotals(items: FoodItem[]) {
   };
 }
 
-export function MealQuickLookSheet({ open, onOpenChange, meal }: MealQuickLookSheetProps) {
+export function MealQuickLookSheet({
+  open,
+  onOpenChange,
+  meal,
+  skipAutoSave = false,
+  onLogForToday,
+  isLogging = false,
+  onFavorite,
+  onDeleteMeal,
+  viewHref,
+  isFavorited = false,
+  hideMealType = false,
+}: MealQuickLookSheetProps) {
   const { user } = useAuth();
   const updateMeal = useUpdateMeal(user?.uid);
   const [weights, setWeights] = useState<Record<string, number>>({});
   const [expandedItemId, setExpandedItemId] = useState<string | null>(null);
   const [mealType, setMealType] = useState<MealType>(meal?.mealType ?? 'breakfast');
+  const [faveClicked, setFaveClicked] = useState(() => isFavorited);
 
   const prevOpen = useRef(open);
   const hasChangesRef = useRef(false);
@@ -98,7 +120,7 @@ export function MealQuickLookSheet({ open, onOpenChange, meal }: MealQuickLookSh
   }, [hasChanges]);
 
   useEffect(() => {
-    if (prevOpen.current && !open && hasChangesRef.current && user?.uid && meal) {
+    if (prevOpen.current && !open && hasChangesRef.current && user?.uid && meal && !skipAutoSave) {
       updateMeal.mutate({
         entry: {
           ...meal,
@@ -110,7 +132,7 @@ export function MealQuickLookSheet({ open, onOpenChange, meal }: MealQuickLookSh
       });
     }
     prevOpen.current = open;
-  }, [open, updateMeal, meal, mealType, adjustedItems, totals, user?.uid]);
+  }, [open, updateMeal, meal, mealType, adjustedItems, totals, user?.uid, skipAutoSave]);
 
   const handleWeightChange = useCallback(
     (itemId: string, weight: number) => {
@@ -126,6 +148,24 @@ export function MealQuickLookSheet({ open, onOpenChange, meal }: MealQuickLookSh
     [],
   );
 
+  const handleLogForToday = useCallback(() => {
+    onLogForToday?.(adjustedItems, mealType);
+    onOpenChange(false);
+  }, [adjustedItems, mealType, onLogForToday, onOpenChange]);
+
+  const handleFavorite = useCallback(() => {
+    setFaveClicked((prev) => !prev);
+    onFavorite?.();
+  }, [onFavorite]);
+
+  const handleDelete = useCallback(() => {
+    if (!meal) return;
+    onDeleteMeal?.(meal);
+    onOpenChange(false);
+  }, [onDeleteMeal, onOpenChange, meal]);
+
+  const hasActions = !!(onLogForToday || viewHref || onDeleteMeal);
+
   if (!meal) return null;
 
   return (
@@ -137,6 +177,22 @@ export function MealQuickLookSheet({ open, onOpenChange, meal }: MealQuickLookSh
           style={{ bottom: 'var(--app-tab-bar-content-height, 0px)' }}
         >
           <div className="mx-auto mt-2 h-1.5 w-12 flex-shrink-0 rounded-full bg-cs-muted/30" />
+
+          {onFavorite && (
+            <div className="flex justify-end px-6 pt-3 pb-0">
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); handleFavorite(); }}
+                className={cn(
+                  'text-lg transition-colors',
+                  faveClicked ? 'text-cs-warning' : 'text-cs-muted hover:text-cs-warning',
+                )}
+                aria-label={faveClicked ? 'Remove from favorites' : 'Add to favorites'}
+              >
+                {faveClicked ? '★' : '☆'}
+              </button>
+            </div>
+          )}
 
           <div
             className="overflow-y-auto p-6 pt-4 space-y-4"
@@ -214,11 +270,66 @@ export function MealQuickLookSheet({ open, onOpenChange, meal }: MealQuickLookSh
               />
             </div>
 
-            <MealTypeSelector compact value={mealType} onChange={setMealType} />
+            {!hideMealType && <MealTypeSelector compact value={mealType} onChange={setMealType} />}
+
+            {hasActions && (
+              <div className="flex gap-1.5">
+                {onLogForToday && (
+                  <ActionButton
+                    onClick={handleLogForToday}
+                    disabled={isLogging}
+                    className="bg-cs-primary/10 text-cs-primary hover:bg-cs-primary/15"
+                  >
+                    {isLogging ? '...' : copy('common.action.log')}
+                  </ActionButton>
+                )}
+                {viewHref && (
+                  <ActionButton as="link" href={viewHref} onClick={() => onOpenChange(false)}>
+                    {copy('common.action.view')}
+                  </ActionButton>
+                )}
+                {onDeleteMeal && (
+                  <ActionButton onClick={handleDelete}>
+                    {copy('common.action.delete')}
+                  </ActionButton>
+                )}
+              </div>
+            )}
           </div>
         </Drawer.Content>
       </Drawer.Portal>
     </Drawer.Root>
+  );
+}
+
+function ActionButton({
+  children,
+  onClick,
+  disabled,
+  className,
+  as,
+  href,
+}: {
+  children: React.ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+  className?: string;
+  as?: 'link';
+  href?: string;
+}) {
+  const base = cn(
+    'flex-1 min-h-10 rounded-lg px-1 py-2 text-[13px] font-medium transition-colors text-center border border-cs-border bg-cs-surface text-cs-foreground hover:bg-cs-muted/10 disabled:opacity-50',
+    className,
+  );
+
+  if (as === 'link' && href) {
+    return <Link href={href} className={base} onClick={onClick}>{children}</Link>;
+  }
+
+  return (
+    <button type="button" onClick={onClick} disabled={disabled} className={base}>
+      {children}
+    </button>
   );
 }
 

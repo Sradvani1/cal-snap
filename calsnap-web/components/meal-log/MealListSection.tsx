@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import type { FavoriteMeal } from '@/lib/models/favorite-meal';
+import type { MealEntry } from '@/lib/models/meal-entry';
 import type { MealType } from '@/lib/models/meal-type';
 import type { MealsByType } from '@/lib/dashboard/aggregate-meals';
 import {
@@ -16,6 +18,10 @@ interface MealListSectionProps {
   showRowActions?: boolean;
   onDeleteMeal?: (mealId: string) => void;
   onSaveFavorite?: (mealId: string) => void;
+  onOpenSheet?: (meal: MealEntry) => void;
+  onDeleteFromSheet?: (meal: MealEntry) => void;
+  onFavorite?: (meal: MealEntry) => void;
+  favoritesData?: FavoriteMeal[];
 }
 
 function AddMealLink({ mealType }: { mealType: MealType }) {
@@ -38,6 +44,10 @@ export function MealListSection({
   showRowActions = false,
   onDeleteMeal,
   onSaveFavorite,
+  onOpenSheet,
+  onDeleteFromSheet,
+  onFavorite,
+  favoritesData,
 }: MealListSectionProps) {
   return (
     <div className="space-y-4">
@@ -70,6 +80,10 @@ export function MealListSection({
                     showActions={showRowActions}
                     onDelete={onDeleteMeal}
                     onSaveFavorite={onSaveFavorite}
+                    onOpenSheet={onOpenSheet}
+                    onDeleteFromSheet={onDeleteFromSheet}
+                    onFavorite={onFavorite}
+                    favoritesData={favoritesData}
                   />
                 ))}
               </div>

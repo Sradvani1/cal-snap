@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import type { FavoriteMeal } from '@/lib/models/favorite-meal';
 import type { MealEntry } from '@/lib/models/meal-entry';
 import { MealQuickLookSheet } from '@/components/meal-log/MealQuickLookSheet';
 import { copy } from '@/lib/copy';
@@ -35,12 +36,17 @@ interface MealLogRowProps {
   showActions?: boolean;
   onDelete?: (mealId: string) => void;
   onSaveFavorite?: (mealId: string) => void;
+  onOpenSheet?: (meal: MealEntry) => void;
+  onDeleteFromSheet?: (meal: MealEntry) => void;
+  onFavorite?: (meal: MealEntry) => void;
+  favoritesData?: FavoriteMeal[];
 }
 
-export function MealLogRow({ meal, showActions = false, onDelete, onSaveFavorite }: MealLogRowProps) {
+export function MealLogRow({ meal, showActions = false, onDelete, onSaveFavorite, onOpenSheet, onDeleteFromSheet, onFavorite, favoritesData }: MealLogRowProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [quickLookOpen, setQuickLookOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const isFavorited = favoritesData?.some((f) => f.originalMealId === meal.id) ?? false;
 
   useEffect(() => {
     if (!menuOpen) {
@@ -61,10 +67,12 @@ export function MealLogRow({ meal, showActions = false, onDelete, onSaveFavorite
   };
 
   const handleRowTap = useCallback(() => {
-    if (!showActions) {
+    if (onOpenSheet) {
+      onOpenSheet(meal);
+    } else if (!showActions) {
       setQuickLookOpen(true);
     }
-  }, [showActions]);
+  }, [showActions, onOpenSheet, meal]);
 
   const brief = mealBrief(meal);
 
@@ -81,14 +89,7 @@ export function MealLogRow({ meal, showActions = false, onDelete, onSaveFavorite
 
   return (
     <div className="flex items-center gap-2 rounded-lg bg-cs-muted/10 px-3 py-2">
-      {showActions ? (
-        <Link
-          href={`/log/${meal.id}`}
-          className="flex min-w-0 flex-1 items-center justify-between"
-        >
-          {content}
-        </Link>
-      ) : (
+      {onOpenSheet || !showActions ? (
         <div
           role="button"
           tabIndex={0}
@@ -98,6 +99,13 @@ export function MealLogRow({ meal, showActions = false, onDelete, onSaveFavorite
         >
           {content}
         </div>
+      ) : (
+        <Link
+          href={`/log/${meal.id}`}
+          className="flex min-w-0 flex-1 items-center justify-between"
+        >
+          {content}
+        </Link>
       )}
 
       {showActions && (onDelete || onSaveFavorite) ? (
@@ -146,12 +154,15 @@ export function MealLogRow({ meal, showActions = false, onDelete, onSaveFavorite
         </div>
       ) : null}
 
-      {!showActions && (
+      {!onOpenSheet && !showActions && (
         <MealQuickLookSheet
           key={meal?.id}
           open={quickLookOpen}
           onOpenChange={setQuickLookOpen}
           meal={meal}
+          onDeleteMeal={onDeleteFromSheet}
+          onFavorite={onFavorite ? () => onFavorite(meal) : undefined}
+          isFavorited={isFavorited}
         />
       )}
     </div>

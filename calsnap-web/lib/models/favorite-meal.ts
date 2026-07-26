@@ -13,6 +13,8 @@ export interface FavoriteMeal {
   totalFatG: number;
   totalFiberG: number;
   items: FoodItem[];
+  useCount: number;
+  lastUsedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }

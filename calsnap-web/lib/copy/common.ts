@@ -89,6 +89,10 @@ export const commonCopy = {
   'common.error.title': 'Something went wrong',
   'common.error.description': 'An unexpected error occurred. Please try again.',
   'common.button.retry': 'Try again',
+  'common.action.log': 'Log',
+  'common.action.save': 'Fave',
+  'common.action.view': 'View',
+  'common.action.delete': 'Delete',
 } as const;
 
 export type CommonCopyKey = keyof typeof commonCopy;

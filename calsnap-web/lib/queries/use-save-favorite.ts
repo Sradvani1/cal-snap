@@ -30,6 +30,8 @@ export function useSaveFavorite(uid: string | undefined) {
         totalFatG: meal.totalFatG,
         totalFiberG: meal.totalFiberG,
         items: meal.items,
+        useCount: 0,
+        lastUsedAt: null,
         createdAt: new Date(),
         updatedAt: new Date(),
       };

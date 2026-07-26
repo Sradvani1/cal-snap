@@ -3,8 +3,13 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useAuth } from '@/lib/auth/auth-context';
 import { useDashboard } from '@/lib/queries/use-dashboard';
+import { useDeleteFavorite } from '@/lib/queries/use-delete-favorite';
+import { useDeleteMeal } from '@/lib/queries/use-delete-meal';
+import { useFavorites } from '@/lib/queries/use-favorites';
 import { usePlateauAlert } from '@/lib/queries/use-plateau-alert';
 import { useProfile } from '@/lib/queries/use-profile';
+import { useSaveFavorite } from '@/lib/queries/use-save-favorite';
+import { ConfirmAlertDialog } from '@/components/design/ConfirmAlertDialog';
 import { InlineErrorMessage } from '@/components/design/InlineErrorMessage';
 import {
   CalorieRingCard,
@@ -29,6 +34,7 @@ import { WeighInSheet } from '@/components/progress/WeighInSheet';
 import { copy } from '@/lib/copy';
 import { layout } from '@/lib/design/layout';
 import type { FoodItem } from '@/lib/models/food-item';
+import type { MealEntry } from '@/lib/models/meal-entry';
 import { cn } from '@/lib/utils/cn';
 import { useWeighInReminder } from '@/lib/queries/use-weigh-in-reminder';
 
@@ -37,7 +43,13 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
   const profileQuery = useProfile(uid);
   const plateau = usePlateauAlert(uid);
   const reminder = useWeighInReminder(uid);
+  const deleteMealMutation = useDeleteMeal(uid);
+  const favoritesQuery = useFavorites(uid);
+  const saveFavoriteMutation = useSaveFavorite(uid);
+  const deleteFavoriteMutation = useDeleteFavorite(uid);
   const [showWeighInSheet, setShowWeighInSheet] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [mealIdToDelete, setMealIdToDelete] = useState<string | null>(null);
   const [macroSheet, setMacroSheet] = useState<{
     items: FoodItem[];
     macro: 'protein' | 'carbs' | 'fat' | 'fiber';
@@ -68,6 +80,42 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
       setMacroSheet({ items: filtered, macro });
     },
     [dashboard.mealsByType],
+  );
+
+  const handleDeleteFromSheet = useCallback(
+    (meal: MealEntry) => {
+      setMealIdToDelete(meal.id);
+      setDeleteDialogOpen(true);
+    },
+    [],
+  );
+
+  const handleConfirmDelete = useCallback(async () => {
+    if (!mealIdToDelete) return;
+    try {
+      await deleteMealMutation.mutateAsync(mealIdToDelete);
+    } finally {
+      setMealIdToDelete(null);
+      setDeleteDialogOpen(false);
+    }
+  }, [mealIdToDelete, deleteMealMutation]);
+
+  const handleFavorite = useCallback(
+    async (meal: MealEntry) => {
+      if (!uid) return;
+      const existingFav = favoritesQuery.data?.find((f) => f.originalMealId === meal.id);
+      if (existingFav) {
+        await deleteFavoriteMutation.mutateAsync(existingFav.id);
+      } else {
+        const favEntry: MealEntry = {
+          ...meal,
+          geminiConfidence: 0,
+          isManuallyAdjusted: true,
+        };
+        await saveFavoriteMutation.mutateAsync(favEntry);
+      }
+    },
+    [uid, favoritesQuery.data, deleteFavoriteMutation, saveFavoriteMutation],
   );
 
   if (dashboard.isLoading) {
@@ -125,7 +173,7 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
           onMacroClick={handleMacroClick}
         />
 
-        <TodaysMealsSection mealsByType={dashboard.mealsByType} />
+        <TodaysMealsSection mealsByType={dashboard.mealsByType} onDeleteFromSheet={handleDeleteFromSheet} onFavorite={handleFavorite} favoritesData={favoritesQuery.data} />
 
       </div>
 
@@ -155,6 +203,16 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
           macro={macroSheet.macro}
         />
       )}
+
+      <ConfirmAlertDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        title={copy('mealLog.confirm.deleteTitle')}
+        description={copy('mealLog.confirm.delete')}
+        confirmLabel={copy('mealLog.confirm.deleteAction')}
+        destructive
+        onConfirm={() => void handleConfirmDelete()}
+      />
     </>
   );
 }

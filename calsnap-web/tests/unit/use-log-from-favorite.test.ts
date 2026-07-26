@@ -25,6 +25,7 @@ function makeFavorite(overrides: Partial<FavoriteMeal> = {}): FavoriteMeal {
   return {
     id: 'fav-1',
     userId: 'user-1',
+    originalMealId: 'meal-1',
     name: 'Bagel with cream cheese',
     mealType: 'breakfast',
     totalCalories: 350,
@@ -33,6 +34,8 @@ function makeFavorite(overrides: Partial<FavoriteMeal> = {}): FavoriteMeal {
     totalFatG: 14,
     totalFiberG: 2,
     items: [makeItem('Bagel'), makeItem('Cream Cheese')],
+    useCount: 0,
+    lastUsedAt: null,
     createdAt: new Date('2026-07-01T10:00:00'),
     updatedAt: new Date('2026-07-01T10:00:00'),
     ...overrides,
