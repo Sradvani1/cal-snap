@@ -257,6 +257,12 @@ export default function LogPage() {
           </div>
           {mealsQuery.isLoading ? (
             <SectionCardSkeleton />
+          ) : mealsQuery.isError ? (
+            <EmptyStateView
+              icon="⚠️"
+              titleKey="mealLog.error.loadTitle"
+              messageKey="mealLog.error.loadMessage"
+            />
           ) : !hasMeals ? (
             <EmptyStateView
               icon="🍽️"

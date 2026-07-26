@@ -34,6 +34,8 @@ export const mealLogCopy = {
   'mealLog.row.empty': '(no items)',
   'mealLog.row.view': 'View',
   'mealLog.dateNav.today': 'Today',
+  'mealLog.error.loadTitle': 'Could not load meals',
+  'mealLog.error.loadMessage': 'Something went wrong. Try again.',
   'mealLog.summary.total': 'Daily total',
   'mealLog.favorites.errorLoad': 'Failed to load favorites.',
   'mealLog.favorites.errorDelete': 'Failed to delete favorite.',
