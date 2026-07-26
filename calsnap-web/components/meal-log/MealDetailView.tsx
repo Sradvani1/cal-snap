@@ -1,7 +1,6 @@
 import type { MealEntry } from '@/lib/models/meal-entry';
 import type { EditableFoodItem } from '@/lib/scanner/editable-food-item';
 import type { MealTotals } from '@/lib/scanner/meal-totals';
-import { ConfidenceBadge } from '@/components/design/ConfidenceBadge';
 import { EditableFoodItemCard } from '@/components/scanner/EditableFoodItemCard';
 import { NutrientStatRow } from '@/components/design/NutrientStatRow';
 import { EstimationNotesAccordion } from '@/components/scanner/EstimationNotesAccordion';
@@ -9,7 +8,6 @@ import { FoodItemRowView } from '@/components/design/FoodItemRowView';
 import { MEAL_TYPE_LABELS } from '@/components/meal-log/meal-type-display';
 import { copy } from '@/lib/copy';
 import { typography } from '@/lib/design/typography';
-import { confidenceLevelFromScore } from '@/lib/scanner/meal-totals';
 import { cn } from '@/lib/utils/cn';
 
 interface MealDetailViewProps {
@@ -33,7 +31,6 @@ export function MealDetailView({
   onWeightChange,
   onDeleteItem,
 }: MealDetailViewProps) {
-  const confidenceLevel = confidenceLevelFromScore(meal.geminiConfidence);
   const grams = copy('common.macro.grams');
   const totals = totalsOverride ?? {
     totalCalories: meal.totalCalories,
@@ -71,7 +68,6 @@ export function MealDetailView({
           <p className={typography.csLargeCalorie} data-testid="meal-detail-total-calories">
             {totals.totalCalories} {copy('common.macro.kcal')}
           </p>
-          <ConfidenceBadge level={confidenceLevel} score={meal.geminiConfidence} />
         </div>
         <div className="grid grid-cols-3 gap-2">
           <NutrientStatRow
