@@ -39,7 +39,7 @@ describe('meal-analysis-zod normalization', () => {
   it('coerces flagged item objects to names', () => {
     const normalized = normalizeMealAnalysisRaw({
       items: [],
-      meal_total: { calories: 0, protein_g: 0, carbs_g: 0, fat_g: 0, saturated_fat_g: 0, unsaturated_fat_g: 0, fiber_g: 0 },
+      meal_total: { calories: 0, protein_g: 0, carbs_g: 0, saturated_fat_g: 0, unsaturated_fat_g: 0, fiber_g: 0 },
       flagged_items: [{ name: 'hidden sauce' }],
       estimation_notes: 'notes',
     });

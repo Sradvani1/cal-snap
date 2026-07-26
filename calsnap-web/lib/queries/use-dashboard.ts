@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import { aggregateTodaysMeals } from '@/lib/dashboard/aggregate-meals';
 import { dashboardFormattedDate, dashboardGreeting } from '@/lib/dashboard/greeting';
+import { AppConstants } from '@/lib/constants';
 import { macroTargets } from '@/lib/nutrition/calculator';
 import { useProfile } from '@/lib/queries/use-profile';
 import { useTodaysMeals } from '@/lib/queries/use-todays-meals';
@@ -21,11 +22,11 @@ export function useDashboard(uid: string | undefined) {
 
   const target = profile?.dailyCalorieTarget ?? 0;
   const ringSegments = [
-    { calories: aggregation.todaysProteinG * 4,                         macro: 'protein' as const },
-    { calories: Math.max(0, aggregation.todaysCarbsG) * 4, macro: 'carbs' as const },
-    { calories: aggregation.todaysSaturatedFatG * 9,                  macro: 'saturatedFat' as const },
-    { calories: aggregation.todaysUnsaturatedFatG * 9,                macro: 'unsaturatedFat' as const },
-    { calories: aggregation.todaysFiberG * 2,                          macro: 'fiber' as const },
+    { calories: aggregation.todaysProteinG * AppConstants.Nutrition.proteinCalPerGram,               macro: 'protein' as const },
+    { calories: Math.max(0, aggregation.todaysCarbsG) * AppConstants.Nutrition.carbsCalPerGram, macro: 'carbs' as const },
+    { calories: aggregation.todaysSaturatedFatG * AppConstants.Nutrition.fatCalPerGram,        macro: 'saturatedFat' as const },
+    { calories: aggregation.todaysUnsaturatedFatG * AppConstants.Nutrition.fatCalPerGram,      macro: 'unsaturatedFat' as const },
+    { calories: aggregation.todaysFiberG * AppConstants.Nutrition.fiberCalPerGram,              macro: 'fiber' as const },
   ].filter(s => s.calories > 0);
   const macros = profile
     ? macroTargets(

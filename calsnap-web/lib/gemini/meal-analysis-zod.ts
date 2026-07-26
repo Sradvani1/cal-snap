@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { MealAnalysisResponse } from '@/lib/gemini/meal-analysis-types';
+import { AppConstants } from '@/lib/constants';
 
 function asNumber(value: unknown, fallback = 0): number {
   if (typeof value === 'number' && Number.isFinite(value)) {
@@ -47,19 +48,21 @@ function normalizeFoodItem(raw: unknown): Record<string, unknown> | null {
 
   const carbs_g = asNumber(readField(item, 'carbs_g', 'carbsG'));
   const protein_g = asNumber(readField(item, 'protein_g', 'proteinG'));
-  const fat_g = asNumber(readField(item, 'fat_g', 'fatG'));
   const fiber_g = asNumber(readField(item, 'fiber_g', 'fiberG'));
+  const saturated_fat_g = asNumber(readField(item, 'saturated_fat_g', 'saturatedFatG'));
+  const unsaturated_fat_g = asNumber(readField(item, 'unsaturated_fat_g', 'unsaturatedFatG'));
+  const fat_g = saturated_fat_g + unsaturated_fat_g;
   const netCarbs = Math.max(0, carbs_g - fiber_g);
 
   return {
     name,
     estimated_weight_g: asNumber(readField(item, 'estimated_weight_g', 'estimatedWeightG')),
-    calories: Math.round((netCarbs * 4) + (protein_g * 4) + (fat_g * 9) + (fiber_g * 2)),
+    calories: Math.round((netCarbs * AppConstants.Nutrition.carbsCalPerGram) + (protein_g * AppConstants.Nutrition.proteinCalPerGram) + (fat_g * AppConstants.Nutrition.fatCalPerGram) + (fiber_g * AppConstants.Nutrition.fiberCalPerGram)),
     protein_g,
     carbs_g: netCarbs,
     fat_g,
-    saturated_fat_g: asNumber(readField(item, 'saturated_fat_g', 'saturatedFatG')),
-    unsaturated_fat_g: asNumber(readField(item, 'unsaturated_fat_g', 'unsaturatedFatG')),
+    saturated_fat_g,
+    unsaturated_fat_g,
     fiber_g,
     confidence: asNumber(readField(item, 'confidence', 'confidence')),
   };

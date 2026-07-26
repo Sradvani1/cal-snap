@@ -45,12 +45,12 @@ function scaleItem(item: FoodItem, newWeight: number): FoodItem {
     ...item,
     estimatedWeightG: newWeight,
     calories: Math.round(item.calories * ratio),
-    proteinG: Math.round(item.proteinG * ratio),
-    carbsG: Math.round(item.carbsG * ratio),
-    fatG: Math.round(item.fatG * ratio),
-    saturatedFatG: Math.round(item.saturatedFatG * ratio),
-    unsaturatedFatG: Math.round(item.unsaturatedFatG * ratio),
-    fiberG: Math.round(item.fiberG * ratio),
+    proteinG: item.proteinG * ratio,
+    carbsG: item.carbsG * ratio,
+    fatG: item.fatG * ratio,
+    saturatedFatG: item.saturatedFatG * ratio,
+    unsaturatedFatG: item.unsaturatedFatG * ratio,
+    fiberG: item.fiberG * ratio,
   };
 }
 

@@ -53,7 +53,6 @@ ${JSON.stringify(EMPTY_PAYLOAD)}`;
           calories: 1,
           protein_g: 0,
           carbs_g: 0,
-          fat_g: 0,
           fiber_g: 0,
           confidence: 0.9,
         },
