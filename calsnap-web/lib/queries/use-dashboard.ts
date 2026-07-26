@@ -52,6 +52,7 @@ export function useDashboard(uid: string | undefined) {
     greeting: dashboardGreeting(profile?.name, now),
     formattedDate: dashboardFormattedDate(now),
     target,
+    consumedCalories: aggregation.todaysCalories,
     ringSegments,
     macros,
     fiberConsumed: aggregation.todaysFiberG,

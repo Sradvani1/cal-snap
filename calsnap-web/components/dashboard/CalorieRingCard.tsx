@@ -4,17 +4,20 @@ import { SectionCard } from '@/components/design/SectionCard';
 interface CalorieRingCardProps {
   segments: RingSegment[];
   target: number;
+  consumed?: number;
 }
 
 export function CalorieRingCard({
   segments,
   target,
+  consumed,
 }: CalorieRingCardProps) {
   return (
     <SectionCard>
       <CalorieRingView
         segments={segments}
         target={target}
+        consumed={consumed}
       />
     </SectionCard>
   );

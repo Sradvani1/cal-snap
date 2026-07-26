@@ -43,16 +43,18 @@ function bandTextClass(band: CalorieProgressBand): string {
 interface CalorieRingViewProps {
   segments: RingSegment[];
   target: number;
+  consumed?: number;
   showBandLabel?: boolean;
 }
 
 export function CalorieRingView({
   segments,
   target,
+  consumed: consumedOverride,
   showBandLabel = false,
 }: CalorieRingViewProps) {
   const reducedMotion = useReducedMotion();
-  const consumed = Math.round(segments.reduce((sum, s) => sum + s.calories, 0));
+  const consumed = consumedOverride ?? Math.round(segments.reduce((sum, s) => sum + s.calories, 0));
   const remaining = target - consumed;
   const progress = target > 0 ? consumed / target : 0;
   const band = calorieProgressBand(progress);
