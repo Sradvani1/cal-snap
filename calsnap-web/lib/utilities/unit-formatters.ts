@@ -54,8 +54,7 @@ export function validateWeightKg(kg: number): boolean {
 
 export function normalizeWeightKg(kg: number, useLbs = false): number {
   const display = snappedDisplayWeight(useLbs ? kgToLbs(kg) : kg, useLbs);
-  const normalizedKg = kgFromDisplayWeight(display, useLbs);
-  return Math.round(normalizedKg * 10) / 10;
+  return kgFromDisplayWeight(display, useLbs);
 }
 
 export function validateHeightCm(cm: number): boolean {
