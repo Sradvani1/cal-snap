@@ -24,7 +24,7 @@ export function favoriteToMealEntry(favorite: FavoriteMeal): MealEntry {
     totalFiberG: favorite.totalFiberG,
     geminiConfidence: 0,
     isManuallyAdjusted: true,
-    items: favorite.items.map((i) => ({ ...i })),
+    items: favorite.items.map((i) => ({ ...i, id: crypto.randomUUID() })),
   };
 }
 

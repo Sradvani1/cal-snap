@@ -85,7 +85,7 @@ function mealEntryFromItems(userId: string, items: FoodItem[], mealType: MealTyp
     totalFiberG: totals.fiber,
     geminiConfidence: 0,
     isManuallyAdjusted: true,
-    items: items.map((i) => ({ ...i })),
+    items: items.map((i) => ({ ...i, id: crypto.randomUUID() })),
   };
 }
 
