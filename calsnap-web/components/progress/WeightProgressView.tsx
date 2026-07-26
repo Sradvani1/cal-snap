@@ -88,6 +88,7 @@ export function WeightProgressView({
       <WeightProgressChart
         weighIns={stats.chartWeighInsAscending}
         projectionPoints={stats.projectionPoints}
+        startingWeightKg={profile.startingWeightKg}
         goalWeightKg={profile.goalWeightKg}
         useLbs={useLbs}
         ariaLabel={progress.chartAriaLabel}

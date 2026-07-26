@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils/cn';
 interface WeightProgressChartProps {
   weighIns: WeighIn[];
   projectionPoints: Array<{ date: Date; weightKg: number }>;
+  startingWeightKg: number;
   goalWeightKg: number;
   useLbs: boolean;
   ariaLabel: string;
@@ -43,6 +44,7 @@ function formatAxisDate(date: Date): string {
 export function WeightProgressChart({
   weighIns,
   projectionPoints,
+  startingWeightKg,
   goalWeightKg,
   useLbs,
   ariaLabel,
@@ -100,6 +102,7 @@ export function WeightProgressChart({
   }
 
   chartData.sort((a, b) => a.dateMs - b.dateMs || a.id.localeCompare(b.id));
+  const startDisplay = displayWeight(startingWeightKg, useLbs);
   const goalDisplay = displayWeight(goalWeightKg, useLbs);
   const showProjection = weighIns.length >= 2 && projectionPoints.length > 0;
 
@@ -121,6 +124,17 @@ export function WeightProgressChart({
             tick={{ fontSize: 11, fill: chartColors.muted }}
             domain={['auto', 'auto']}
             width={40}
+          />
+          <ReferenceLine
+            y={startDisplay}
+            stroke={chartColors.muted}
+            strokeDasharray="8 4"
+            label={{
+              value: copy('progress.chart.startLabel'),
+              position: 'insideTopLeft',
+              fontSize: 11,
+              fill: chartColors.muted,
+            }}
           />
           <ReferenceLine
             y={goalDisplay}

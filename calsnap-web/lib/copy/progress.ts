@@ -20,6 +20,7 @@ export const progressCopy = {
   'progress.chart.empty': 'Track your weight over time',
   'progress.chart.firstWeighIn': 'Log your first weigh-in',
   'progress.chart.goalLabel': 'Goal',
+  'progress.chart.startLabel': 'Start',
   'progress.chart.a11y.empty': 'No weigh-ins logged yet',
   'progress.chart.a11y.label': 'Weight progress chart',
   'progress.chart.a11y.summary':
