@@ -5,31 +5,50 @@ import { typography } from '@/lib/design/typography';
 import type { FavoriteMeal } from '@/lib/models/favorite-meal';
 import { cn } from '@/lib/utils/cn';
 
+const MEAL_BRIEF_LIMIT = 22;
+
+function favoriteBrief(favorite: FavoriteMeal): string {
+  const names = favorite.items.map((i) => i.name);
+  if (names.length === 0) return copy('mealLog.row.empty');
+
+  const suffix = names.length === 1 ? '' : ` +${names.length - 1}`;
+  const first = names[0];
+
+  if (first.length + suffix.length <= MEAL_BRIEF_LIMIT) {
+    return first + suffix;
+  }
+
+  const words = first.split(' ');
+  for (let i = words.length; i > 0; i--) {
+    const candidate = words.slice(0, i).join(' ') + suffix;
+    if (candidate.length <= MEAL_BRIEF_LIMIT) return candidate;
+  }
+
+  return suffix || '…';
+}
+
 interface FavoriteMealRowProps {
   favorite: FavoriteMeal;
   onUse: () => void;
 }
 
 export function FavoriteMealRow({ favorite, onUse }: FavoriteMealRowProps) {
+  const brief = favoriteBrief(favorite);
+
   return (
     <div
       role="button"
       tabIndex={0}
       onClick={onUse}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onUse(); }}
-      className="flex cursor-pointer items-center gap-2 rounded-lg bg-cs-muted/10 px-3 py-2 transition-colors hover:bg-cs-muted/15"
+      className="flex cursor-pointer items-center justify-between rounded-lg bg-cs-muted/10 px-3 py-2 transition-colors hover:bg-cs-muted/15"
     >
-      <div className="min-w-0 flex-1">
-        <p className={cn(typography.csBody, 'font-medium truncate')}>{favorite.name}</p>
-        <p className={cn(typography.csCaption, 'tabular-nums')}>
-          {Math.round(favorite.totalCalories)} {copy('common.macro.kcal')}
-          <span className="text-cs-muted">
-            {' '}&middot; {copy('common.macro.protein')} {Math.round(favorite.totalProteinG)}{copy('common.macro.grams')}{' '}
-            {copy('common.macro.carbs')} {Math.round(favorite.totalCarbsG)}{copy('common.macro.grams')}{' '}
-            {copy('common.macro.fat')} {Math.round(favorite.totalFatG)}{copy('common.macro.grams')}
-          </span>
-        </p>
-      </div>
+      <span className={cn(typography.csCaption, 'min-w-0 truncate text-cs-foreground')}>
+        {brief}
+      </span>
+      <span className={cn(typography.csCaption, 'font-medium tabular-nums shrink-0 text-cs-foreground')}>
+        {Math.round(favorite.totalCalories)} {copy('common.macro.kcal')}
+      </span>
     </div>
   );
 }

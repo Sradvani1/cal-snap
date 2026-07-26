@@ -239,12 +239,14 @@ export default function LogPage() {
 
       {/* Favorites tab */}
       {activeTab === 'favorites' && (
-        <FavoritesGrid
-          favorites={favorites}
-          isLoading={favoritesQuery.isLoading}
-          isError={favoritesQuery.isError}
-          onUse={(fav) => openSheetForFavorite(fav, 'favorites')}
-        />
+        <SectionCard title={copy('mealLog.favorites.title')}>
+          <FavoritesGrid
+            favorites={favorites}
+            isLoading={favoritesQuery.isLoading}
+            isError={favoritesQuery.isError}
+            onUse={(fav) => openSheetForFavorite(fav, 'favorites')}
+          />
+        </SectionCard>
       )}
 
       {/* History tab */}
