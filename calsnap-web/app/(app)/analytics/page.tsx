@@ -8,18 +8,15 @@ import { useAuth } from '@/lib/auth/auth-context';
 import { EmptyStateView } from '@/components/design/EmptyStateView';
 import { SectionCardSkeleton } from '@/components/design/SectionCard';
 import { AnalyticsCustomRangeSheet } from '@/components/analytics/AnalyticsCustomRangeSheet';
-import { AnalyticsInsightCard } from '@/components/analytics/AnalyticsInsightCard';
 import { AnalyticsTimeframePicker } from '@/components/analytics/AnalyticsTimeframePicker';
 
 import {
   AnalyticsDateRange,
-  analyticsRangeKey,
 } from '@/lib/analytics/analytics-types';
 import { buildAnalyticsSnapshot } from '@/lib/analytics/build-analytics-snapshot';
 import { useAnalyticsMeals } from '@/lib/queries/use-analytics-meals';
 import { useAnalyticsWeighIns } from '@/lib/queries/use-analytics-weigh-ins';
 import { useAnalyticsTimeframe } from '@/lib/queries/use-analytics-timeframe';
-import { useAnalyticsInsight } from '@/lib/queries/use-analytics-insight';
 import { useProfile } from '@/lib/queries/use-profile';
 import { copy } from '@/lib/copy';
 import { layout } from '@/lib/design/layout';
@@ -87,29 +84,6 @@ function AnalyticsContent({ uid }: { uid: string | undefined }) {
     });
   }, [profile, mealsQuery.data, weighInsQuery.data, timeframe.selectedRange, referenceDate]);
 
-  const weighInFingerprint = weighInsQuery.data
-    ? `${weighInsQuery.data.length}-${weighInsQuery.dataUpdatedAt}`
-    : '';
-
-  const insightContextKey = useMemo(() => {
-    if (!profile || !snapshot) return '';
-    return [
-      profile.dailyCalorieTarget,
-      profile.updatedAt.getTime(),
-      analyticsRangeKey(timeframe.selectedRange, referenceDate),
-      snapshot.loggedDayCount,
-      snapshot.adherencePct,
-      weighInFingerprint,
-    ].join('-');
-  }, [profile, snapshot, timeframe.selectedRange, referenceDate, weighInFingerprint]);
-
-  const insight = useAnalyticsInsight(snapshot, insightContextKey);
-
-  useEffect(() => {
-    insight.clearInsight();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [timeframe.selectedRange]);
-
   const customRangeStart =
     timeframe.selectedRange.kind === 'custom'
       ? timeframe.selectedRange.start
@@ -173,19 +147,8 @@ function AnalyticsContent({ uid }: { uid: string | undefined }) {
                 </ErrorBoundary>
                 <ErrorBoundary>
                   <PatternsSection
-                    dayOfWeekBreakdown={snapshot.dayOfWeekBreakdown}
-                    timeOfDayBreakdown={snapshot.timeOfDayBreakdown}
                     weekendAverageCalories={snapshot.weekendAverageCalories}
                     weekdayAverageCalories={snapshot.weekdayAverageCalories}
-                  />
-                </ErrorBoundary>
-                <ErrorBoundary>
-                  <AnalyticsInsightCard
-                    hasEnoughData={snapshot.hasEnoughData}
-                    insightText={insight.insightText}
-                    insightError={insight.insightError}
-                    isGenerating={insight.isGenerating}
-                    onGenerate={() => void insight.handleGenerateInsight()}
                   />
                 </ErrorBoundary>
               </>

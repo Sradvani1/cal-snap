@@ -2,11 +2,9 @@ import {
   adherencePercent,
   averageDailyCalories,
   chartDailySeries,
-  dayOfWeekBreakdown,
   daysMeetingFiberTarget,
   loggedDailySummaries,
   macroSplit,
-  timeOfDayBreakdown,
   topFoods,
   weekendWeekdayAverages,
 } from '@/lib/analytics/analytics-aggregator';
@@ -16,9 +14,7 @@ import {
   type AnalyticsDateRange as AnalyticsDateRangeType,
   type AnalyticsInsightPayload,
   type DailyNutritionSummary,
-  type TimeOfDayBucket,
   type TopFoodEntry,
-  type Weekday,
 } from '@/lib/analytics/analytics-types';
 import type { MealEntry } from '@/lib/models/meal-entry';
 import type { MacroSplit } from '@/lib/models/macro-split';
@@ -41,8 +37,6 @@ export interface AnalyticsSnapshot {
   targetMacroSplit: MacroSplit;
   fiberTargetG: number;
   daysMeetingFiberTarget: number;
-  dayOfWeekBreakdown: Record<Weekday, number>;
-  timeOfDayBreakdown: Record<TimeOfDayBucket, number>;
   topFoods: TopFoodEntry[];
   weekendAverageCalories: number | null;
   weekdayAverageCalories: number | null;
@@ -131,8 +125,6 @@ export function buildAnalyticsSnapshot(
 
   const fiberTarget = fiberTargetG(calorieTarget);
   const daysMeetingFiber = daysMeetingFiberTarget(loggedDays, fiberTarget);
-  const dowBreakdown = dayOfWeekBreakdown(input.meals);
-  const todBreakdown = timeOfDayBreakdown(input.meals);
   const topFoodEntries = topFoods(input.meals, 5);
 
   const weekendWeekday = weekendWeekdayAverages(loggedDays);
@@ -173,8 +165,6 @@ export function buildAnalyticsSnapshot(
     targetMacroSplit,
     fiberTargetG: fiberTarget,
     daysMeetingFiberTarget: daysMeetingFiber,
-    dayOfWeekBreakdown: dowBreakdown,
-    timeOfDayBreakdown: todBreakdown,
     topFoods: topFoodEntries,
     weekendAverageCalories,
     weekdayAverageCalories,
