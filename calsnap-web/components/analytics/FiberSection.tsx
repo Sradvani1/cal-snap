@@ -73,7 +73,7 @@ export function FiberSection({
               tick={{ fontSize: 11, fill: chartColors.muted }}
               interval={chartData.length > 14 ? Math.floor(chartData.length / 7) : 0}
             />
-            <YAxis tick={{ fontSize: 11, fill: chartColors.muted }} width={40} />
+            <YAxis tick={{ fontSize: 11, fill: chartColors.muted }} width={40} domain={[0, 50]} />
             <ReferenceLine
               y={fiberTargetG}
               stroke={chartColors.muted}

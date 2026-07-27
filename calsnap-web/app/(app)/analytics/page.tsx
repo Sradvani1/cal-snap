@@ -161,8 +161,6 @@ function AnalyticsContent({ uid }: { uid: string | undefined }) {
                 <ErrorBoundary>
                   <MacroTrendsSection
                     chartDailySeries={snapshot.chartDailySeries}
-                    actualMacroSplit={snapshot.actualMacroSplit}
-                    targetMacroSplit={snapshot.targetMacroSplit}
                   />
                 </ErrorBoundary>
                 <ErrorBoundary>

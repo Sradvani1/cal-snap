@@ -5,22 +5,19 @@ import {
   BarChart,
   CartesianGrid,
   ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
 } from 'recharts';
 import { SectionCard } from '@/components/design/SectionCard';
 import { AppConstants } from '@/lib/constants';
 import type { DailyNutritionSummary } from '@/lib/analytics/analytics-types';
-import type { MacroSplit } from '@/lib/models/macro-split';
 import { copy } from '@/lib/copy';
 import { useChartColors } from '@/lib/design/use-chart-colors';
 import { useReducedMotion } from '@/lib/design/motion';
-import { typography } from '@/lib/design/typography';
 
 interface MacroTrendsSectionProps {
   chartDailySeries: DailyNutritionSummary[];
-  actualMacroSplit: MacroSplit;
-  targetMacroSplit: MacroSplit;
 }
 
 interface ChartRow {
@@ -34,18 +31,20 @@ function formatAxisDate(date: Date): string {
   return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
 
-function macroSplitLabel(split: MacroSplit): string {
-  return copy('analytics.macro.split', {
-    protein: split.proteinPct,
-    carbs: split.carbsPct,
-    fat: split.fatPct,
-  });
-}
+const tooltipContainerStyle = {
+  backgroundColor: 'var(--cs-surface)',
+  border: '1px solid var(--cs-border)',
+  borderRadius: 8,
+  fontSize: 12,
+  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+  color: 'var(--cs-foreground)',
+};
+
+const tooltipLabelStyle = { fontWeight: 600, color: 'var(--cs-foreground)' };
+const tooltipItemStyle = { color: 'var(--cs-muted)' };
 
 export function MacroTrendsSection({
   chartDailySeries,
-  actualMacroSplit,
-  targetMacroSplit,
 }: MacroTrendsSectionProps) {
   const chartColors = useChartColors();
   const reducedMotion = useReducedMotion();
@@ -57,21 +56,10 @@ export function MacroTrendsSection({
     fatKcal: day.fatG * AppConstants.Nutrition.fatCalPerGram,
   }));
 
-  const ariaLabel = `${copy('analytics.section.macroTrends')}: ${copy('analytics.macro.actual')} ${macroSplitLabel(actualMacroSplit)}, ${copy('analytics.macro.target')} ${macroSplitLabel(targetMacroSplit)}`;
+  const ariaLabel = copy('analytics.section.macroTrends');
 
   return (
     <SectionCard title={copy('analytics.section.macroTrends')}>
-      <div className="mb-4 grid grid-cols-2 gap-3 text-sm">
-        <div>
-          <p className={typography.csCaption}>{copy('analytics.macro.actual')}</p>
-          <p className={typography.csCaption}>{macroSplitLabel(actualMacroSplit)}</p>
-        </div>
-        <div>
-          <p className={typography.csCaption}>{copy('analytics.macro.target')}</p>
-          <p className={typography.csCaption}>{macroSplitLabel(targetMacroSplit)}</p>
-        </div>
-      </div>
-
       <div className="mb-3 flex gap-4 text-xs text-cs-muted">
         <span className="flex items-center gap-1">
           <span className="inline-block h-2.5 w-2.5 rounded-sm" style={{ backgroundColor: chartColors.protein }} />
@@ -97,6 +85,19 @@ export function MacroTrendsSection({
               interval={chartData.length > 14 ? Math.floor(chartData.length / 7) : 0}
             />
             <YAxis tick={{ fontSize: 11, fill: chartColors.muted }} width={40} />
+            <Tooltip
+              contentStyle={tooltipContainerStyle}
+              labelStyle={tooltipLabelStyle}
+              itemStyle={tooltipItemStyle}
+              formatter={(value: number, name: string) => {
+                const labels: Record<string, string> = {
+                  proteinKcal: copy('analytics.macro.legendProtein'),
+                  carbsKcal: copy('analytics.macro.legendCarbs'),
+                  fatKcal: copy('analytics.macro.legendFat'),
+                };
+                return [`${Math.round(value)} kcal`, labels[name] ?? name];
+              }}
+            />
             <Bar
               dataKey="proteinKcal"
               stackId="macros"
