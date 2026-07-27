@@ -47,14 +47,6 @@ const FiberSection = dynamic(
   { ssr: false, loading: () => <SectionCardSkeleton /> },
 );
 
-const PatternsSection = dynamic(
-  () =>
-    import('@/components/analytics/PatternsSection').then((m) => ({
-      default: m.PatternsSection,
-    })),
-  { ssr: false, loading: () => <SectionCardSkeleton /> },
-);
-
 function AnalyticsContent({ uid }: { uid: string | undefined }) {
   const profileQuery = useProfile(uid);
 
@@ -143,12 +135,6 @@ function AnalyticsContent({ uid }: { uid: string | undefined }) {
                     fiberTargetG={snapshot.fiberTargetG}
                     daysMeetingFiberTarget={snapshot.daysMeetingFiberTarget}
                     loggedDayCount={snapshot.loggedDayCount}
-                  />
-                </ErrorBoundary>
-                <ErrorBoundary>
-                  <PatternsSection
-                    weekendAverageCalories={snapshot.weekendAverageCalories}
-                    weekdayAverageCalories={snapshot.weekdayAverageCalories}
                   />
                 </ErrorBoundary>
               </>

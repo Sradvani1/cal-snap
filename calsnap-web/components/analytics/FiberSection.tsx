@@ -77,6 +77,7 @@ export function FiberSection({
             <YAxis tick={{ fontSize: 11, fill: chartColors.muted }} width={40} domain={[0, 50]} />
             <Tooltip
               cursor={false}
+              formatter={(value: number) => [`${Math.round(value)}g`, copy('analytics.section.fiber')]}
               contentStyle={{
                 backgroundColor: 'var(--cs-surface)',
                 border: '1px solid var(--cs-border)',
@@ -93,7 +94,7 @@ export function FiberSection({
               strokeDasharray="4 4"
               label={{
                 value: copy('analytics.macro.target'),
-                position: 'insideTopRight',
+                position: 'left',
                 fontSize: 11,
                 fill: chartColors.muted,
               }}

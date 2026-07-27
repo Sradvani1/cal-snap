@@ -27,9 +27,6 @@ export const analyticsCopy = {
   'analytics.macro.split': '{{protein}}% P · {{carbs}}% C · {{fat}}% F',
   'analytics.section.fiber': 'Fiber',
   'analytics.fiber.summary': '{{met}} of {{total}} logged days met fiber target',
-  'analytics.section.patterns': 'Patterns',
-  'analytics.patterns.weekendWeekday':
-    'Weekend avg: {{weekend}} kcal · Weekday avg: {{weekday}} kcal',
   'analytics.macro.legendProtein': 'Protein',
   'analytics.macro.legendCarbs': 'Carbs',
   'analytics.macro.legendFat': 'Fat',

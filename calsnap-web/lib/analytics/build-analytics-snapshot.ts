@@ -39,8 +39,6 @@ export interface AnalyticsSnapshot {
   fiberTargetG: number;
   daysMeetingFiberTarget: number;
   topFoods: TopFoodEntry[];
-  weekendAverageCalories: number | null;
-  weekdayAverageCalories: number | null;
   insightPayload: AnalyticsInsightPayload;
 }
 
@@ -177,8 +175,6 @@ export function buildAnalyticsSnapshot(
     fiberTargetG: fiberTarget,
     daysMeetingFiberTarget: daysMeetingFiber,
     topFoods: topFoodEntries,
-    weekendAverageCalories,
-    weekdayAverageCalories,
     insightPayload,
   };
 }

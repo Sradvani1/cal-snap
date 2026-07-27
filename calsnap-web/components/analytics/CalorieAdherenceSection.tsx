@@ -109,7 +109,7 @@ export function CalorieAdherenceSection({
               strokeDasharray="4 4"
               label={{
                 value: copy('analytics.calorie.target'),
-                position: 'insideTopRight',
+                position: 'left',
                 fontSize: 11,
                 fill: chartColors.muted,
               }}
