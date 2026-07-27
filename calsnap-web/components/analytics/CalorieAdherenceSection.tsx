@@ -92,6 +92,7 @@ export function CalorieAdherenceSection({
             />
             <YAxis tick={{ fontSize: 11, fill: chartColors.muted }} width={40} />
             <Tooltip
+              cursor={false}
               contentStyle={{
                 backgroundColor: 'var(--cs-surface)',
                 border: '1px solid var(--cs-border)',

@@ -7,6 +7,7 @@ import {
   Cell,
   ReferenceLine,
   ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
 } from 'recharts';
@@ -74,6 +75,18 @@ export function FiberSection({
               interval={chartData.length > 14 ? Math.floor(chartData.length / 7) : 0}
             />
             <YAxis tick={{ fontSize: 11, fill: chartColors.muted }} width={40} domain={[0, 50]} />
+            <Tooltip
+              cursor={false}
+              contentStyle={{
+                backgroundColor: 'var(--cs-surface)',
+                border: '1px solid var(--cs-border)',
+                borderRadius: 8,
+                fontSize: 12,
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+              }}
+              labelStyle={{ fontWeight: 600, color: 'var(--cs-foreground)' }}
+              itemStyle={{ color: 'var(--cs-muted)' }}
+            />
             <ReferenceLine
               y={fiberTargetG}
               stroke={chartColors.muted}

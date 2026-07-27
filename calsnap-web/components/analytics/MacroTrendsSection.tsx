@@ -86,16 +86,19 @@ export function MacroTrendsSection({
             />
             <YAxis tick={{ fontSize: 11, fill: chartColors.muted }} width={40} />
             <Tooltip
+              cursor={false}
               contentStyle={tooltipContainerStyle}
               labelStyle={tooltipLabelStyle}
               itemStyle={tooltipItemStyle}
-              formatter={(value: number, name: string) => {
+              formatter={(value: number, name: string, _entry: unknown, _idx: unknown, payload: Array<{ value?: number }>) => {
+                const total = payload.reduce((s, p) => s + (p.value ?? 0), 0);
+                const pct = total > 0 ? Math.round((value / total) * 100) : 0;
                 const labels: Record<string, string> = {
                   proteinKcal: copy('analytics.macro.legendProtein'),
                   carbsKcal: copy('analytics.macro.legendCarbs'),
                   fatKcal: copy('analytics.macro.legendFat'),
                 };
-                return [`${Math.round(value)} kcal`, labels[name] ?? name];
+                return [`${pct}%`, labels[name] ?? name];
               }}
             />
             <Bar

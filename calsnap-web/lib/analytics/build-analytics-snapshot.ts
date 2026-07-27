@@ -20,6 +20,7 @@ import type { MealEntry } from '@/lib/models/meal-entry';
 import type { MacroSplit } from '@/lib/models/macro-split';
 import type { UserProfile } from '@/lib/models/user-profile';
 import type { WeighIn } from '@/lib/models/weigh-in';
+import { startOfLocalDay } from '@/lib/dashboard/date-window';
 import { fiberTargetG } from '@/lib/nutrition/calculator';
 import { compareWeighInsChronological } from '@/lib/progress/progress-stats';
 
@@ -102,9 +103,19 @@ export function buildAnalyticsSnapshot(
 ): AnalyticsSnapshot {
   const referenceDate = input.referenceDate ?? new Date();
   const rangeStart = AnalyticsDateRange.resolvedStart(input.range, referenceDate);
-  const rangeEnd = AnalyticsDateRange.resolvedEnd(input.range, referenceDate);
+  let rangeEnd = AnalyticsDateRange.resolvedEnd(input.range, referenceDate);
 
-  const loggedDays = loggedDailySummaries(input.meals);
+  const today = startOfLocalDay(referenceDate);
+  if (rangeEnd.getTime() >= today.getTime()) {
+    rangeEnd = new Date(rangeEnd);
+    rangeEnd.setDate(rangeEnd.getDate() - 1);
+  }
+
+  const meals = input.meals.filter(
+    (m) => startOfLocalDay(m.timestamp).getTime() <= rangeEnd.getTime(),
+  );
+
+  const loggedDays = loggedDailySummaries(meals);
   const chartSeries = chartDailySeries(loggedDays, rangeStart, rangeEnd);
   const loggedDayCount = loggedDays.length;
   const hasEnoughData = loggedDayCount >= ANALYTICS_MIN_INSIGHT_LOGGED_DAYS;
@@ -125,7 +136,7 @@ export function buildAnalyticsSnapshot(
 
   const fiberTarget = fiberTargetG(calorieTarget);
   const daysMeetingFiber = daysMeetingFiberTarget(loggedDays, fiberTarget);
-  const topFoodEntries = topFoods(input.meals, 5);
+  const topFoodEntries = topFoods(meals, 5);
 
   const weekendWeekday = weekendWeekdayAverages(loggedDays);
   const weekendAverageCalories = weekendWeekday
