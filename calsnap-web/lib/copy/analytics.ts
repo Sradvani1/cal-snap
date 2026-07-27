@@ -22,9 +22,7 @@ export const analyticsCopy = {
   'analytics.calorie.a11y':
     'Calorie adherence: average {{avg}} kcal per day, target {{target}}, {{pct}}% of logged days on target',
   'analytics.section.macroTrends': 'Macro trends',
-  'analytics.macro.actual': 'Actual',
   'analytics.macro.target': 'Target',
-  'analytics.macro.split': '{{protein}}% P · {{carbs}}% C · {{fat}}% F',
   'analytics.section.fiber': 'Fiber',
   'analytics.fiber.summary': '{{met}} of {{total}} logged days met fiber target',
   'analytics.macro.legendProtein': 'Protein',
