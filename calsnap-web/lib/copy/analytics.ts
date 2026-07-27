@@ -32,8 +32,6 @@ export const analyticsCopy = {
   'analytics.patterns.caloriesByTod': 'Calories by time of day',
   'analytics.patterns.weekendWeekday':
     'Weekend avg: {{weekend}} kcal · Weekday avg: {{weekday}} kcal',
-  'analytics.patterns.topFoods': 'Top foods',
-  'analytics.patterns.foodEntry': '{{count}}× · ~{{avg}} kcal',
   'analytics.section.aiInsight': 'AI insight',
   'analytics.insight.description':
     'Get a short coaching summary based on your aggregated stats — no meal photos sent.',
@@ -43,7 +41,9 @@ export const analyticsCopy = {
   'analytics.insight.error': 'Failed to generate insight',
   'analytics.insight.unavailable': 'Insight unavailable',
   'analytics.insight.empty': 'Empty insight response',
-  'analytics.section.weightProgress': 'Weight progress',
+  'analytics.macro.legendProtein': 'Protein',
+  'analytics.macro.legendCarbs': 'Carbs',
+  'analytics.macro.legendFat': 'Fat',
 } as const;
 
 export type AnalyticsCopyKey = keyof typeof analyticsCopy;

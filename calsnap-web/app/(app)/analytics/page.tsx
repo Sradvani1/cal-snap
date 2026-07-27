@@ -1,27 +1,25 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
+import { ErrorBoundary } from '@/components/design/ErrorBoundary';
 import { InlineErrorMessage } from '@/components/design/InlineErrorMessage';
 import { useAuth } from '@/lib/auth/auth-context';
 import { EmptyStateView } from '@/components/design/EmptyStateView';
-import { SectionCard, SectionCardSkeleton } from '@/components/design/SectionCard';
+import { SectionCardSkeleton } from '@/components/design/SectionCard';
 import { AnalyticsCustomRangeSheet } from '@/components/analytics/AnalyticsCustomRangeSheet';
 import { AnalyticsInsightCard } from '@/components/analytics/AnalyticsInsightCard';
 import { AnalyticsTimeframePicker } from '@/components/analytics/AnalyticsTimeframePicker';
-import { PlateauAlertSheet } from '@/components/dashboard/PlateauAlertSheet';
-import { WeighInSheet } from '@/components/progress/WeighInSheet';
-import { WeightProgressView } from '@/components/progress/WeightProgressView';
+
 import {
   AnalyticsDateRange,
   analyticsRangeKey,
-  normalizeCustomRange,
-  presetToDateRange,
-  type AnalyticsTimeframePreset,
 } from '@/lib/analytics/analytics-types';
-import { useAnalytics } from '@/lib/queries/use-analytics';
-import { useGenerateInsight } from '@/lib/queries/use-generate-insight';
-import { usePlateauAlert } from '@/lib/queries/use-plateau-alert';
+import { buildAnalyticsSnapshot } from '@/lib/analytics/build-analytics-snapshot';
+import { useAnalyticsMeals } from '@/lib/queries/use-analytics-meals';
+import { useAnalyticsWeighIns } from '@/lib/queries/use-analytics-weigh-ins';
+import { useAnalyticsTimeframe } from '@/lib/queries/use-analytics-timeframe';
+import { useAnalyticsInsight } from '@/lib/queries/use-analytics-insight';
 import { useProfile } from '@/lib/queries/use-profile';
 import { copy } from '@/lib/copy';
 import { layout } from '@/lib/design/layout';
@@ -61,108 +59,68 @@ const PatternsSection = dynamic(
 );
 
 function AnalyticsContent({ uid }: { uid: string | undefined }) {
-  const plateau = usePlateauAlert(uid);
   const profileQuery = useProfile(uid);
-  const [timeframePreset, setTimeframePreset] = useState<AnalyticsTimeframePreset>('7D');
-  const [selectedRange, setSelectedRange] = useState(() => AnalyticsDateRange.days(7));
-  const [presetBeforeCustom, setPresetBeforeCustom] = useState<AnalyticsTimeframePreset>('7D');
-  const [customSheetOpen, setCustomSheetOpen] = useState(false);
-  const [showWeighInSheet, setShowWeighInSheet] = useState(false);
-  const [insightState, setInsightState] = useState<{
-    text: string;
-    contextKey: string;
-  } | null>(null);
-  const [insightError, setInsightError] = useState<{
-    message: string;
-    contextKey: string;
-  } | null>(null);
 
-  const analyticsQuery = useAnalytics(uid, selectedRange);
-  const generateInsight = useGenerateInsight();
+  const [referenceDate, setReferenceDate] = useState(() => new Date());
+  useEffect(() => {
+    const handler = () => {
+      if (document.visibilityState === 'visible') setReferenceDate(new Date());
+    };
+    document.addEventListener('visibilitychange', handler);
+    return () => document.removeEventListener('visibilitychange', handler);
+  }, []);
 
-  const profile = profileQuery.data?.profile;
-  const profileExtras = profileQuery.data?.extras;
-  const snapshot = analyticsQuery.data?.snapshot;
+  const timeframe = useAnalyticsTimeframe();
+  const mealsQuery = useAnalyticsMeals(uid, timeframe.selectedRange, referenceDate);
+  const weighInsQuery = useAnalyticsWeighIns(uid, timeframe.selectedRange, referenceDate);
 
-  const insightContextKey =
-    profile && snapshot
-      ? [
-          profile.dailyCalorieTarget,
-          profile.updatedAt.getTime(),
-          analyticsRangeKey(selectedRange),
-          snapshot.loggedDayCount,
-          snapshot.adherencePct,
-        ].join('-')
-      : '';
-  const insightText =
-    insightState?.contextKey === insightContextKey ? insightState.text : null;
-  const activeInsightError =
-    insightError?.contextKey === insightContextKey ? insightError.message : null;
+  const profile = profileQuery.data?.profile ?? null;
 
-  const clearInsight = () => {
-    setInsightState(null);
-    setInsightError(null);
-  };
+  const snapshot = useMemo(() => {
+    if (!profile || !mealsQuery.data) return null;
+    return buildAnalyticsSnapshot({
+      meals: mealsQuery.data,
+      profile,
+      range: timeframe.selectedRange,
+      weighInsInRange: weighInsQuery.data ?? [],
+      referenceDate,
+    });
+  }, [profile, mealsQuery.data, weighInsQuery.data, timeframe.selectedRange, referenceDate]);
 
-  const handlePresetChange = (preset: AnalyticsTimeframePreset) => {
-    if (preset === 'custom') {
-      setPresetBeforeCustom(timeframePreset === 'custom' ? '7D' : timeframePreset);
-      setTimeframePreset('custom');
-      setCustomSheetOpen(true);
-      return;
-    }
-    setTimeframePreset(preset);
-    setSelectedRange(presetToDateRange(preset));
-    clearInsight();
-  };
+  const weighInFingerprint = weighInsQuery.data
+    ? `${weighInsQuery.data.length}-${weighInsQuery.dataUpdatedAt}`
+    : '';
 
-  const revertCustomPresetIfNeeded = () => {
-    if (timeframePreset === 'custom') {
-      setTimeframePreset(presetBeforeCustom);
-      setSelectedRange(presetToDateRange(presetBeforeCustom));
-    }
-    setCustomSheetOpen(false);
-  };
+  const insightContextKey = useMemo(() => {
+    if (!profile || !snapshot) return '';
+    return [
+      profile.dailyCalorieTarget,
+      profile.updatedAt.getTime(),
+      analyticsRangeKey(timeframe.selectedRange, referenceDate),
+      snapshot.loggedDayCount,
+      snapshot.adherencePct,
+      weighInFingerprint,
+    ].join('-');
+  }, [profile, snapshot, timeframe.selectedRange, referenceDate, weighInFingerprint]);
 
-  const handleCustomApply = (start: Date, end: Date) => {
-    const normalized = normalizeCustomRange(start, end);
-    if (normalized.kind === 'custom') {
-      setSelectedRange(normalized);
-      setTimeframePreset('custom');
-      clearInsight();
-    }
-    setCustomSheetOpen(false);
-  };
+  const insight = useAnalyticsInsight(snapshot, insightContextKey);
 
-  const handleGenerateInsight = async () => {
-    if (!snapshot?.hasEnoughData) {
-      return;
-    }
-    setInsightError(null);
-    try {
-      const text = await generateInsight.mutateAsync(snapshot.insightPayload);
-      setInsightState({ text, contextKey: insightContextKey });
-    } catch (error) {
-      if (error instanceof DOMException && error.name === 'AbortError') {
-        return;
-      }
-      setInsightState(null);
-      setInsightError({
-        message:
-          error instanceof Error ? error.message : copy('analytics.insight.error'),
-        contextKey: insightContextKey,
-      });
-    }
-  };
+  useEffect(() => {
+    insight.clearInsight();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeframe.selectedRange]);
 
   const customRangeStart =
-    selectedRange.kind === 'custom'
-      ? selectedRange.start
-      : AnalyticsDateRange.resolvedStart(selectedRange);
+    timeframe.selectedRange.kind === 'custom'
+      ? timeframe.selectedRange.start
+      : AnalyticsDateRange.resolvedStart(timeframe.selectedRange, referenceDate);
   const customRangeEnd =
-    selectedRange.kind === 'custom'
-      ? selectedRange.end
-      : AnalyticsDateRange.resolvedEnd(selectedRange);
+    timeframe.selectedRange.kind === 'custom'
+      ? timeframe.selectedRange.end
+      : AnalyticsDateRange.resolvedEnd(timeframe.selectedRange, referenceDate);
+
+  const isInitialLoad = profileQuery.isLoading || (mealsQuery.isLoading && !snapshot);
+  const hasFatalError = (profileQuery.isError || mealsQuery.isError) && !snapshot;
 
   return (
     <>
@@ -171,64 +129,67 @@ function AnalyticsContent({ uid }: { uid: string | undefined }) {
 
         <div className="mb-6">
           <AnalyticsTimeframePicker
-            selectedPreset={timeframePreset}
-            onPresetChange={handlePresetChange}
+            selectedPreset={timeframe.timeframePreset}
+            onPresetChange={timeframe.handlePresetChange}
           />
         </div>
 
-        {plateau.actionError && (
-          <div className="mb-4">
-            <InlineErrorMessage message={plateau.actionError} />
-          </div>
-        )}
-
-        {analyticsQuery.isLoading && (
-          <div className="flex flex-col gap-6">
-            <SectionCardSkeleton />
-            <SectionCardSkeleton />
-            <SectionCardSkeleton />
-          </div>
-        )}
-
-        {analyticsQuery.isError && (
+        {hasFatalError && (
           <InlineErrorMessage message={copy('analytics.error.loadFailed')} />
         )}
 
-        {!analyticsQuery.isLoading && snapshot && (
+        {!hasFatalError && isInitialLoad && (
+          <div className="flex flex-col gap-6">
+            <SectionCardSkeleton />
+            <SectionCardSkeleton />
+            <SectionCardSkeleton />
+          </div>
+        )}
+
+        {!isInitialLoad && snapshot && (
           <div className="flex flex-col gap-6">
             {snapshot.hasEnoughData ? (
               <>
-                <CalorieAdherenceSection
-                  chartDailySeries={snapshot.chartDailySeries}
-                  calorieTarget={snapshot.calorieTarget}
-                  averageDailyCalories={snapshot.averageDailyCalories}
-                  adherencePct={snapshot.adherencePct}
-                />
-                <MacroTrendsSection
-                  chartDailySeries={snapshot.chartDailySeries}
-                  actualMacroSplit={snapshot.actualMacroSplit}
-                  targetMacroSplit={snapshot.targetMacroSplit}
-                />
-                <FiberSection
-                  chartDailySeries={snapshot.chartDailySeries}
-                  fiberTargetG={snapshot.fiberTargetG}
-                  daysMeetingFiberTarget={snapshot.daysMeetingFiberTarget}
-                  loggedDayCount={snapshot.loggedDayCount}
-                />
-                <PatternsSection
-                  dayOfWeekBreakdown={snapshot.dayOfWeekBreakdown}
-                  timeOfDayBreakdown={snapshot.timeOfDayBreakdown}
-                  weekendAverageCalories={snapshot.weekendAverageCalories}
-                  weekdayAverageCalories={snapshot.weekdayAverageCalories}
-                  topFoods={snapshot.topFoods}
-                />
-                <AnalyticsInsightCard
-                  hasEnoughData={snapshot.hasEnoughData}
-                  insightText={insightText}
-                  insightError={activeInsightError}
-                  isGenerating={generateInsight.isPending}
-                  onGenerate={() => void handleGenerateInsight()}
-                />
+                <ErrorBoundary>
+                  <CalorieAdherenceSection
+                    chartDailySeries={snapshot.chartDailySeries}
+                    calorieTarget={snapshot.calorieTarget}
+                    averageDailyCalories={snapshot.averageDailyCalories}
+                    adherencePct={snapshot.adherencePct}
+                  />
+                </ErrorBoundary>
+                <ErrorBoundary>
+                  <MacroTrendsSection
+                    chartDailySeries={snapshot.chartDailySeries}
+                    actualMacroSplit={snapshot.actualMacroSplit}
+                    targetMacroSplit={snapshot.targetMacroSplit}
+                  />
+                </ErrorBoundary>
+                <ErrorBoundary>
+                  <FiberSection
+                    chartDailySeries={snapshot.chartDailySeries}
+                    fiberTargetG={snapshot.fiberTargetG}
+                    daysMeetingFiberTarget={snapshot.daysMeetingFiberTarget}
+                    loggedDayCount={snapshot.loggedDayCount}
+                  />
+                </ErrorBoundary>
+                <ErrorBoundary>
+                  <PatternsSection
+                    dayOfWeekBreakdown={snapshot.dayOfWeekBreakdown}
+                    timeOfDayBreakdown={snapshot.timeOfDayBreakdown}
+                    weekendAverageCalories={snapshot.weekendAverageCalories}
+                    weekdayAverageCalories={snapshot.weekdayAverageCalories}
+                  />
+                </ErrorBoundary>
+                <ErrorBoundary>
+                  <AnalyticsInsightCard
+                    hasEnoughData={snapshot.hasEnoughData}
+                    insightText={insight.insightText}
+                    insightError={insight.insightError}
+                    isGenerating={insight.isGenerating}
+                    onGenerate={() => void insight.handleGenerateInsight()}
+                  />
+                </ErrorBoundary>
               </>
             ) : (
               <EmptyStateView
@@ -242,44 +203,19 @@ function AnalyticsContent({ uid }: { uid: string | undefined }) {
           </div>
         )}
 
-        {uid && (
-          <div className={`flex flex-col gap-6 ${snapshot || analyticsQuery.isLoading ? 'mt-6' : ''}`}>
-            <SectionCard title={copy('analytics.section.weightProgress')}>
-              <WeightProgressView
-                uid={uid}
-                presentation="embedded"
-                onLogWeighIn={() => setShowWeighInSheet(true)}
-              />
-            </SectionCard>
-          </div>
-        )}
+
       </div>
 
-      <AnalyticsCustomRangeSheet
-        open={customSheetOpen}
-        initialStart={customRangeStart}
-        initialEnd={customRangeEnd}
-        onApply={handleCustomApply}
-        onClose={revertCustomPresetIfNeeded}
-      />
-
-      {profile && profileExtras && uid && (
-        <WeighInSheet
-          open={showWeighInSheet}
-          uid={uid}
-          profile={profile}
-          profileExtras={profileExtras}
-          onClose={() => setShowWeighInSheet(false)}
-          onSaved={() => setShowWeighInSheet(false)}
+      {timeframe.customSheetOpen && (
+        <AnalyticsCustomRangeSheet
+          open={timeframe.customSheetOpen}
+          initialStart={customRangeStart}
+          initialEnd={customRangeEnd}
+          onApply={timeframe.handleCustomApply}
+          onClose={timeframe.revertCustomPresetIfNeeded}
         />
       )}
 
-      <PlateauAlertSheet
-        open={plateau.showPlateauAlert}
-        onDietBreak={() => void plateau.applyDietBreak()}
-        onSmallReduction={() => void plateau.applySmallReduction()}
-        onDismiss={plateau.dismissPlateauAlert}
-      />
     </>
   );
 }

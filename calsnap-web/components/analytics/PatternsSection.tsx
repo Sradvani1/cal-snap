@@ -15,7 +15,6 @@ import {
   timeOfDayDisplayLabel,
   weekdayShortLabel,
   type TimeOfDayBucket,
-  type TopFoodEntry,
 } from '@/lib/analytics/analytics-types';
 import { copy } from '@/lib/copy';
 import { useChartColors } from '@/lib/design/use-chart-colors';
@@ -27,7 +26,6 @@ interface PatternsSectionProps {
   timeOfDayBreakdown: Record<TimeOfDayBucket, number>;
   weekendAverageCalories: number | null;
   weekdayAverageCalories: number | null;
-  topFoods: TopFoodEntry[];
 }
 
 const WEEKDAY_ORDER: Weekday[] = [
@@ -45,7 +43,6 @@ export function PatternsSection({
   timeOfDayBreakdown,
   weekendAverageCalories,
   weekdayAverageCalories,
-  topFoods,
 }: PatternsSectionProps) {
   const chartColors = useChartColors();
   const reducedMotion = useReducedMotion();
@@ -120,29 +117,6 @@ export function PatternsSection({
           </p>
         )}
 
-        {topFoods.length > 0 && (
-          <div>
-            <h3 className={`${typography.csMacroLabel} mb-2`}>
-              {copy('analytics.patterns.topFoods')}
-            </h3>
-            <ul className="divide-y divide-cs-border rounded-lg border border-cs-border">
-              {topFoods.map((food) => (
-                <li
-                  key={food.name}
-                  className="flex items-center justify-between px-3 py-2 text-sm"
-                >
-                  <span className={typography.csMacroLabel}>{food.name}</span>
-                  <span className={typography.csCaption}>
-                    {copy('analytics.patterns.foodEntry', {
-                      count: food.count,
-                      avg: food.avgCalories,
-                    })}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
       </div>
     </SectionCard>
   );

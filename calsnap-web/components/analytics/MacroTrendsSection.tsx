@@ -64,12 +64,27 @@ export function MacroTrendsSection({
       <div className="mb-4 grid grid-cols-2 gap-3 text-sm">
         <div>
           <p className={typography.csCaption}>{copy('analytics.macro.actual')}</p>
-          <p className={typography.csCardTitle}>{macroSplitLabel(actualMacroSplit)}</p>
+          <p className={typography.csCaption}>{macroSplitLabel(actualMacroSplit)}</p>
         </div>
         <div>
           <p className={typography.csCaption}>{copy('analytics.macro.target')}</p>
-          <p className={typography.csCardTitle}>{macroSplitLabel(targetMacroSplit)}</p>
+          <p className={typography.csCaption}>{macroSplitLabel(targetMacroSplit)}</p>
         </div>
+      </div>
+
+      <div className="mb-3 flex gap-4 text-xs text-cs-muted">
+        <span className="flex items-center gap-1">
+          <span className="inline-block h-2.5 w-2.5 rounded-sm" style={{ backgroundColor: chartColors.protein }} />
+          {copy('analytics.macro.legendProtein')}
+        </span>
+        <span className="flex items-center gap-1">
+          <span className="inline-block h-2.5 w-2.5 rounded-sm" style={{ backgroundColor: chartColors.carbs }} />
+          {copy('analytics.macro.legendCarbs')}
+        </span>
+        <span className="flex items-center gap-1">
+          <span className="inline-block h-2.5 w-2.5 rounded-sm" style={{ backgroundColor: chartColors.fat }} />
+          {copy('analytics.macro.legendFat')}
+        </span>
       </div>
 
       <div role="img" aria-label={ariaLabel} className="min-w-0">
