@@ -19,6 +19,15 @@ function getGrams(item: FoodItem, macro: MacroKey): number {
   return item[MACRO_FIELD[macro]] as number;
 }
 
+function displayFatSplit(item: FoodItem, totalGrams: number): string {
+  const sat = Math.round(item.saturatedFatG);
+  const unsat = Math.round(item.unsaturatedFatG);
+  if (sat + unsat > 0 || totalGrams <= 0) {
+    return `${sat}g / ${unsat}g`;
+  }
+  return `${Math.round(totalGrams)}${copy('common.macro.grams')}`;
+}
+
 interface MacroBreakdownSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -52,6 +61,10 @@ export function MacroBreakdownSheet({
           >
             {sorted.map((item) => {
               const grams = getGrams(item, macro);
+              const valueLabel =
+                macro === 'fat'
+                  ? displayFatSplit(item, grams)
+                  : `${Math.round(grams)}${copy('common.macro.grams')}`;
               return (
                 <div
                   key={item.id}
@@ -66,7 +79,7 @@ export function MacroBreakdownSheet({
                     </p>
                   </div>
                   <span className={cn(typography.csCaption, 'tabular-nums shrink-0 ml-2')}>
-                    {Math.round(grams)}{copy('common.macro.grams')}
+                    {valueLabel}
                   </span>
                 </div>
               );
