@@ -8,7 +8,7 @@ describe('copy module', () => {
   it('interpolates placeholders', () => {
     expect(
       copy('designSystem.calorieRing.ofGoal', { target: 2000 }),
-    ).toBe('of 2000 kcal goal');
+    ).toBe('2000 kcal goal');
   });
 
   it('returns template when params omitted', () => {
