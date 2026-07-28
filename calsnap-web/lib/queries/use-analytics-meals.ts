@@ -7,6 +7,7 @@ import {
   analyticsRangeKey,
   type AnalyticsDateRange as AnalyticsDateRangeType,
 } from '@/lib/analytics/analytics-types';
+import { startOfLocalDay } from '@/lib/dashboard/date-window';
 import { fetchMealsInRange } from '@/lib/repositories/meals';
 
 export function useAnalyticsMeals(
@@ -23,6 +24,12 @@ export function useAnalyticsMeals(
     [range, referenceDate],
   );
 
+  const fetchStart = useMemo(() => {
+    const start = startOfLocalDay(rangeStart);
+    start.setDate(start.getDate() - 1);
+    return start;
+  }, [rangeStart]);
+
   return useQuery({
     queryKey: [
       'analyticsMeals',
@@ -31,7 +38,7 @@ export function useAnalyticsMeals(
       rangeStart.getTime(),
       rangeEnd.getTime(),
     ],
-    queryFn: () => fetchMealsInRange(uid!, rangeStart, rangeEnd),
+    queryFn: () => fetchMealsInRange(uid!, fetchStart, rangeEnd),
     enabled: Boolean(uid),
     staleTime: 0,
   });

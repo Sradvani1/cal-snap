@@ -7,7 +7,7 @@ import {
   analyticsRangeKey,
   type AnalyticsDateRange as AnalyticsDateRangeType,
 } from '@/lib/analytics/analytics-types';
-import { endOfLocalDayExclusive } from '@/lib/dashboard/date-window';
+import { endOfLocalDayExclusive, startOfLocalDay } from '@/lib/dashboard/date-window';
 import { fetchWeighInsInWindow } from '@/lib/repositories/weigh-ins';
 
 export function useAnalyticsWeighIns(
@@ -24,6 +24,12 @@ export function useAnalyticsWeighIns(
     [range, referenceDate],
   );
 
+  const fetchStart = useMemo(() => {
+    const start = startOfLocalDay(rangeStart);
+    start.setDate(start.getDate() - 1);
+    return start;
+  }, [rangeStart]);
+
   const windowEnd = useMemo(
     () => endOfLocalDayExclusive(rangeEnd),
     [rangeEnd],
@@ -37,7 +43,7 @@ export function useAnalyticsWeighIns(
       rangeStart.getTime(),
       rangeEnd.getTime(),
     ],
-    queryFn: () => fetchWeighInsInWindow(uid!, rangeStart, windowEnd),
+    queryFn: () => fetchWeighInsInWindow(uid!, fetchStart, windowEnd),
     enabled: Boolean(uid),
     staleTime: 0,
   });

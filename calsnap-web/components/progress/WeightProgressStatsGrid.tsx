@@ -36,7 +36,7 @@ export function WeightProgressStatsGrid({
           <p className={cn(typography.csCaption, 'text-xs font-medium uppercase tracking-wide')}>
             {copy(item.labelKey)}
           </p>
-          <p className={`mt-1 ${item.large ? `${typography.csCardTitle} text-base` : typography.csCaption}`}>
+          <p className={`mt-1 ${item.large ? `${typography.csCardTitle} text-base` : `${typography.csCaption} font-semibold`}`}>
             {item.value}
           </p>
         </div>
