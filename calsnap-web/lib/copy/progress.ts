@@ -9,7 +9,6 @@ export const progressCopy = {
   'progress.header.goal': 'Goal',
   'progress.bar.label': 'Progress to goal',
   'progress.bar.a11y': '{{percent}}% toward goal',
-  'progress.balance.title': 'Balance trend',
   'progress.stats.lostSoFar': 'Lost so far',
   'progress.stats.toGoal': 'To goal',
   'progress.stats.weeklyRate': 'Weekly rate',
@@ -30,7 +29,7 @@ export const progressCopy = {
   'progress.history.title': 'History',
   'progress.history.empty': 'No weigh-ins yet',
   'progress.history.emptyAction': 'Log weigh-in',
-  'progress.history.bmiDeficit': 'BMI {{bmi}} · Balance {{deficit}} kcal',
+  'progress.history.bmiTdee': 'BMI {{bmi}} · TDEE {{tdee}} kcal',
   'progress.history.showMore': 'Show more ({{count}} remaining)',
   'progress.weighIn.title': 'Log weigh-in',
   'progress.weighIn.targetAdjust':

@@ -25,12 +25,8 @@ function formatHistoryDate(date: Date): string {
 }
 
 function formatDeficit(entry: WeighIn): string {
-  if (entry.calculatedTDEE === undefined || entry.adjustedDailyTarget === undefined) {
-    return '';
-  }
-  const deficit = entry.calculatedTDEE - entry.adjustedDailyTarget;
-  const sign = deficit >= 0 ? '+' : '';
-  return `${sign}${Math.round(deficit)}`;
+  if (entry.calculatedTDEE === undefined) return '';
+  return `${Math.round(entry.calculatedTDEE)}`;
 }
 
 export function WeighInHistoryList({
@@ -67,9 +63,9 @@ export function WeighInHistoryList({
                 </p>
                 {entry.bmi !== undefined && deficitStr && (
                   <p className={typography.csCaption}>
-                    {copy('progress.history.bmiDeficit', {
+                    {copy('progress.history.bmiTdee', {
                       bmi: entry.bmi.toFixed(1),
-                      deficit: deficitStr,
+                      tdee: deficitStr,
                     })}
                   </p>
                 )}

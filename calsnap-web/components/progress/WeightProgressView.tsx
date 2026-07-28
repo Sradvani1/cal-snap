@@ -2,10 +2,6 @@
 import { InlineErrorMessage } from '@/components/design/InlineErrorMessage';
 import { PrimaryButton } from '@/components/design/PrimaryButton';
 import {
-  CumulativeBalanceChart,
-  CumulativeBalanceChartSkeleton,
-} from '@/components/progress/CumulativeBalanceChart';
-import {
   WeightProgressBar,
   WeightProgressBarSkeleton,
 } from '@/components/progress/WeightProgressBar';
@@ -25,10 +21,8 @@ import {
   WeighInHistoryList,
   WeighInHistoryListSkeleton,
 } from '@/components/progress/WeighInHistoryList';
-import { startOfLocalDay } from '@/lib/dashboard/date-window';
 import { copy } from '@/lib/copy';
 import { typography } from '@/lib/design/typography';
-import { useDailyCalorieSummaries } from '@/lib/queries/use-daily-calorie-summaries';
 import { useProgress } from '@/lib/queries/use-progress';
 
 interface WeightProgressViewProps {
@@ -44,24 +38,12 @@ export function WeightProgressView({
 }: WeightProgressViewProps) {
   const progress = useProgress(uid);
 
-  const today = startOfLocalDay(new Date());
-  const endDate = new Date(today);
-  endDate.setDate(endDate.getDate() - 1);
-
-  const startDate = progress.weighIns.length > 0
-    ? startOfLocalDay(progress.weighIns[progress.weighIns.length - 1].date)
-    : new Date(endDate);
-  startDate.setDate(startDate.getDate() - 30);
-
-  const calorieSummariesQuery = useDailyCalorieSummaries(uid, startDate, endDate);
-
   if (progress.isLoading) {
     return (
       <div className="flex flex-col gap-6">
         <WeightProgressHeaderSkeleton />
         <WeightProgressBarSkeleton />
         <WeightProgressChartSkeleton />
-        <CumulativeBalanceChartSkeleton />
         <WeightProgressStatsGridSkeleton />
         <WeighInHistoryListSkeleton />
       </div>
@@ -110,11 +92,6 @@ export function WeightProgressView({
         useLbs={useLbs}
         ariaLabel={progress.chartAriaLabel}
         onLogWeighIn={onLogWeighIn}
-      />
-
-      <CumulativeBalanceChart
-        dailySummaries={calorieSummariesQuery.data ?? []}
-        dailyTarget={profile.dailyCalorieTarget}
       />
 
       <WeightProgressStatsGrid
