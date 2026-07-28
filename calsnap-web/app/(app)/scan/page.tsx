@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect, useLayoutEffect, useState } from 'react';
+import { Suspense, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { ConfirmAlertDialog } from '@/components/design/ConfirmAlertDialog';
 import { MealAnalysisResultView } from '@/components/scanner/MealAnalysisResultView';
@@ -42,6 +42,7 @@ function ScanPageContent() {
   const [pendingHref, setPendingHref] = useState<string | null>(null);
 
   const initialMealType = parseMealTypeParam(searchParams.get('mealType'));
+  const logDateParam = searchParams.get('date');
 
   const scanner = useMealScanner({
     userId: user?.uid ?? '',
@@ -106,13 +107,24 @@ function ScanPageContent() {
     window.location.replace('/dashboard');
   };
 
+  const logDate = useMemo(() => {
+    if (!logDateParam || !/^\d{4}-\d{2}-\d{2}$/.test(logDateParam)) return undefined;
+    const [y, m, d] = logDateParam.split('-').map(Number);
+    const date = new Date(y, m - 1, d, 12, 0, 0);
+    const max = new Date();
+    max.setDate(max.getDate() + 3);
+    max.setHours(23, 59, 59, 999);
+    if (date.getTime() > max.getTime()) return undefined;
+    return date;
+  }, [logDateParam]);
+
   const handleLog = async () => {
     if (!user || !scanner.canLog) {
       return;
     }
     scanner.setLogError(null);
     const mealId = crypto.randomUUID();
-    const entry = scanner.makeMealEntry(mealId);
+    const entry = scanner.makeMealEntry(mealId, logDate);
 
     try {
       await logMealMutation.mutateAsync({
@@ -121,7 +133,11 @@ function ScanPageContent() {
       });
       scanner.discard();
       setHasUnsavedWork(false);
-      window.location.replace('/dashboard');
+      if (logDateParam) {
+        window.location.replace(`/log?date=${logDateParam}`);
+      } else {
+        window.location.replace('/dashboard');
+      }
       return;
     } catch {
       scanner.setLogError(copy('scanner.error.logFailed'));

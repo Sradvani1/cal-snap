@@ -1,7 +1,7 @@
 'use client';
 
-import { useCallback, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useCallback, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { ConfirmAlertDialog } from '@/components/design/ConfirmAlertDialog';
 import { EmptyStateView } from '@/components/design/EmptyStateView';
 import { SectionCard, SectionCardSkeleton } from '@/components/design/SectionCard';
@@ -33,15 +33,6 @@ import { useQueryClient } from '@tanstack/react-query';
 
 type Tab = 'favorites' | 'history';
 
-function isToday(date: Date): boolean {
-  const now = new Date();
-  return (
-    date.getFullYear() === now.getFullYear() &&
-    date.getMonth() === now.getMonth() &&
-    date.getDate() === now.getDate()
-  );
-}
-
 function TabButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
     <button
@@ -58,7 +49,7 @@ function TabButton({ active, onClick, children }: { active: boolean; onClick: ()
   );
 }
 
-function mealEntryFromItems(userId: string, items: FoodItem[], mealType: MealType): MealEntry {
+function mealEntryFromItems(userId: string, items: FoodItem[], mealType: MealType, date: Date): MealEntry {
   const totals = items.reduce(
     (acc, item) => ({
       calories: acc.calories + item.calories,
@@ -74,7 +65,7 @@ function mealEntryFromItems(userId: string, items: FoodItem[], mealType: MealTyp
   return {
     id: crypto.randomUUID(),
     userId,
-    timestamp: new Date(),
+    timestamp: date,
     mealType,
     totalCalories: totals.calories,
     totalProteinG: totals.protein,
@@ -89,11 +80,22 @@ function mealEntryFromItems(userId: string, items: FoodItem[], mealType: MealTyp
   };
 }
 
-export default function LogPage() {
+function LogPageContent() {
   const { user } = useAuth();
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<Tab>('favorites');
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState<Tab>(() => {
+    const dateParam = searchParams.get('date');
+    return dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam) ? 'history' : 'favorites';
+  });
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const dateParam = searchParams.get('date');
+    if (dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam)) {
+      const [y, m, d] = dateParam.split('-').map(Number);
+      return new Date(y, m - 1, d, 12, 0, 0);
+    }
+    return new Date();
+  });
 
   const queryClient = useQueryClient();
   const mealsQuery = useTodaysMeals(user?.uid, selectedDate);
@@ -146,13 +148,13 @@ export default function LogPage() {
     setSheetOpen(true);
   }, []);
 
-  const handleSheetLogForToday = useCallback(
+  const handleSheetLog = useCallback(
     async (items: FoodItem[], mealType: MealType) => {
       if (!user) return;
       const favId = sheetData?.favoriteId;
       setIsLogging(true);
       try {
-        const entry = mealEntryFromItems(user.uid, items, mealType);
+        const entry = mealEntryFromItems(user.uid, items, mealType, new Date());
         await createMeal(entry);
         const dayKey = localDayKey(entry.timestamp);
         void queryClient.invalidateQueries({ queryKey: queryKeys.todaysMeals(user.uid, dayKey) });
@@ -263,21 +265,16 @@ export default function LogPage() {
               titleKey="mealLog.error.loadTitle"
               messageKey="mealLog.error.loadMessage"
             />
-          ) : !hasMeals ? (
-            <EmptyStateView
-              icon="🍽️"
-              titleKey={isToday(selectedDate) ? 'mealLog.empty.title' : 'mealLog.empty.pastTitle'}
-              messageKey={isToday(selectedDate) ? 'mealLog.empty.subtitle' : 'mealLog.empty.pastSubtitle'}
-            />
           ) : (
             <SectionCard className="overflow-hidden">
               <MealListSection
                 mealsByType={aggregation.mealsByType}
-                showAddButton={isToday(selectedDate)}
+                showAddButton
+                dateKey={localDayKey(selectedDate)}
                 showRowActions={false}
                 onOpenSheet={openSheetForHistory}
               />
-              <DailySummaryBar aggregation={aggregation} />
+              {hasMeals && <DailySummaryBar aggregation={aggregation} />}
             </SectionCard>
           )}
         </>
@@ -296,7 +293,7 @@ export default function LogPage() {
           onOpenChange={(open) => { if (!open) { setSheetOpen(false); setSheetData(null); } }}
           meal={sheetData.meal}
           skipAutoSave={sheetData.context === 'favorites'}
-          onLogForToday={sheetData.context === 'favorites' ? handleSheetLogForToday : undefined}
+          onLog={sheetData.context === 'favorites' ? handleSheetLog : undefined}
           isLogging={isLogging}
           onFavorite={sheetData.context === 'favorites' ? undefined : handleSheetFavorite}
           onDeleteMeal={handleSheetDeleteMeal}
@@ -332,5 +329,13 @@ export default function LogPage() {
         onConfirm={() => void handleConfirmDeleteMeal()}
       />
     </div>
+  );
+}
+
+export default function LogPage() {
+  return (
+    <Suspense>
+      <LogPageContent />
+    </Suspense>
   );
 }

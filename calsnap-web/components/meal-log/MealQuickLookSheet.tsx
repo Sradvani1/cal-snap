@@ -18,7 +18,7 @@ interface MealQuickLookSheetProps {
   onOpenChange: (open: boolean) => void;
   meal: MealEntry | null;
   skipAutoSave?: boolean;
-  onLogForToday?: (items: FoodItem[], mealType: MealType) => void;
+  onLog?: (items: FoodItem[], mealType: MealType) => void;
   isLogging?: boolean;
   onFavorite?: () => void;
   onDeleteMeal?: (meal: MealEntry) => void;
@@ -71,7 +71,7 @@ export function MealQuickLookSheet({
   onOpenChange,
   meal,
   skipAutoSave = false,
-  onLogForToday,
+  onLog,
   isLogging = false,
   onFavorite,
   onDeleteMeal,
@@ -148,10 +148,10 @@ export function MealQuickLookSheet({
     [],
   );
 
-  const handleLogForToday = useCallback(() => {
-    onLogForToday?.(adjustedItems, mealType);
+  const handleLog = useCallback(() => {
+    onLog?.(adjustedItems, mealType);
     onOpenChange(false);
-  }, [adjustedItems, mealType, onLogForToday, onOpenChange]);
+  }, [adjustedItems, mealType, onLog, onOpenChange]);
 
   const handleFavorite = useCallback(() => {
     setFaveClicked((prev) => !prev);
@@ -164,7 +164,7 @@ export function MealQuickLookSheet({
     onOpenChange(false);
   }, [onDeleteMeal, onOpenChange, meal]);
 
-  const hasActions = !!(onLogForToday || viewHref || onDeleteMeal);
+  const hasActions = !!(onLog || viewHref || onDeleteMeal);
 
   if (!meal) return null;
 
@@ -274,9 +274,9 @@ export function MealQuickLookSheet({
 
             {hasActions && (
               <div className="flex gap-1.5">
-                {onLogForToday && (
+                {onLog && (
                   <ActionButton
-                    onClick={handleLogForToday}
+                    onClick={handleLog}
                     disabled={isLogging}
                     className="bg-cs-primary/10 text-cs-primary hover:bg-cs-primary/15"
                   >

@@ -9,11 +9,11 @@ import { queryKeys } from '@/lib/queries/query-keys';
 import { createMeal } from '@/lib/repositories/meals';
 import { logFavorite } from '@/lib/repositories/favorites';
 
-export function favoriteToMealEntry(favorite: FavoriteMeal): MealEntry {
+export function favoriteToMealEntry(favorite: FavoriteMeal, logDate?: Date): MealEntry {
   return {
     id: crypto.randomUUID(),
     userId: favorite.userId,
-    timestamp: new Date(),
+    timestamp: logDate ?? new Date(),
     mealType: favorite.mealType,
     totalCalories: favorite.totalCalories,
     totalProteinG: favorite.totalProteinG,

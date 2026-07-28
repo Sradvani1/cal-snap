@@ -11,6 +11,8 @@ interface DateNavBarProps {
   onDateChange: (date: Date) => void;
 }
 
+const FORWARD_LIMIT_DAYS = 3;
+
 function isToday(date: Date): boolean {
   const now = new Date();
   return (
@@ -18,6 +20,21 @@ function isToday(date: Date): boolean {
     date.getMonth() === now.getMonth() &&
     date.getDate() === now.getDate()
   );
+}
+
+function isAtMaxDate(date: Date): boolean {
+  const limit = new Date();
+  limit.setDate(limit.getDate() + FORWARD_LIMIT_DAYS);
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  limit.setHours(0, 0, 0, 0);
+  return d.getTime() >= limit.getTime();
+}
+
+function maxDate(): Date {
+  const d = new Date();
+  d.setDate(d.getDate() + FORWARD_LIMIT_DAYS);
+  return d;
 }
 
 function prevDay(date: Date): Date {
@@ -43,6 +60,7 @@ function formatDate(date: Date): string {
 
 export function DateNavBar({ date, onDateChange }: DateNavBarProps) {
   const today = isToday(date);
+  const atMax = isAtMaxDate(date);
   const nativeRef = useRef<HTMLInputElement>(null);
 
   const toLocalDateValue = (d: Date): string => {
@@ -99,11 +117,11 @@ export function DateNavBar({ date, onDateChange }: DateNavBarProps) {
         <button
           type="button"
           aria-label="Next day"
-          disabled={today}
+          disabled={atMax}
           onClick={() => onDateChange(nextDay(date))}
           className={cn(
             'flex h-10 w-10 items-center justify-center rounded-lg',
-            today ? 'text-cs-muted/30' : 'text-cs-foreground',
+            atMax ? 'text-cs-muted/30' : 'text-cs-foreground',
             formFieldFocusRingClassName,
           )}
         >
@@ -116,7 +134,7 @@ export function DateNavBar({ date, onDateChange }: DateNavBarProps) {
           ref={nativeRef}
           type="date"
           value={toLocalDateValue(date)}
-          max={toLocalDateValue(new Date())}
+          max={toLocalDateValue(maxDate())}
           onChange={handleNativeChange}
           className="pointer-events-none fixed h-px w-px overflow-hidden opacity-0"
           tabIndex={-1}

@@ -268,7 +268,7 @@ export function useMealScanner({
   }, []);
 
   const makeMealEntry = useCallback(
-    (mealId?: string): MealEntry => {
+    (mealId?: string, logDate?: Date): MealEntry => {
       const description = textDescription.trim();
       const adjusted = hasAdjustedItems(
         editableItems,
@@ -278,7 +278,7 @@ export function useMealScanner({
       return {
         id: mealId ?? crypto.randomUUID(),
         userId,
-        timestamp: new Date(),
+        timestamp: logDate ?? new Date(),
         mealType,
         textDescription: description || undefined,
         totalCalories: totals.totalCalories,

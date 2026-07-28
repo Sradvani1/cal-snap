@@ -22,12 +22,14 @@ interface MealListSectionProps {
   onDeleteFromSheet?: (meal: MealEntry) => void;
   onFavorite?: (meal: MealEntry) => void;
   favoritesData?: FavoriteMeal[];
+  dateKey?: string;
 }
 
-function AddMealLink({ mealType }: { mealType: MealType }) {
+function AddMealLink({ mealType, dateKey }: { mealType: MealType; dateKey?: string }) {
+  const href = `/scan?mealType=${mealType}${dateKey ? `&date=${dateKey}` : ''}`;
   return (
     <Link
-      href={`/scan?mealType=${mealType}`}
+      href={href}
       className={cn(
         typography.csCaption,
         'underline underline-offset-2 hover:text-cs-foreground',
@@ -48,6 +50,7 @@ export function MealListSection({
   onDeleteFromSheet,
   onFavorite,
   favoritesData,
+  dateKey,
 }: MealListSectionProps) {
   return (
     <div className="space-y-4">
@@ -61,7 +64,7 @@ export function MealListSection({
               </h3>
               {showAddButton && (
                 <Link
-                  href={`/scan?mealType=${mealType}`}
+                  href={`/scan?mealType=${mealType}${dateKey ? `&date=${dateKey}` : ''}`}
                   aria-label={copy('mealLog.addMeal', { mealType: MEAL_TYPE_LABELS[mealType] })}
                   className="flex h-6 w-6 items-center justify-center rounded-full text-cs-muted hover:bg-cs-muted/15 hover:text-cs-foreground"
                 >
@@ -70,7 +73,7 @@ export function MealListSection({
               )}
             </div>
             {meals.length === 0 ? (
-              showAddButton ? <AddMealLink mealType={mealType} /> : null
+              showAddButton ? <AddMealLink mealType={mealType} dateKey={dateKey} /> : null
             ) : (
               <div className="space-y-2">
                 {meals.map((meal) => (
