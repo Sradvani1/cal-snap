@@ -15,11 +15,15 @@ export function WeightProgressStatsGrid({
   weeklyRateLabel,
   projectedDateLabel,
 }: WeightProgressStatsGridProps) {
-  const items = [
-    { labelKey: 'progress.stats.lostSoFar' as const, value: lostSoFarLabel },
-    { labelKey: 'progress.stats.toGoal' as const, value: toGoalLabel },
-    { labelKey: 'progress.stats.weeklyRate' as const, value: weeklyRateLabel },
-    { labelKey: 'progress.stats.estimatedGoalDate' as const, value: projectedDateLabel },
+  const items: Array<{
+    labelKey: 'progress.stats.lostSoFar' | 'progress.stats.toGoal' | 'progress.stats.weeklyRate' | 'progress.stats.estimatedGoalDate';
+    value: string;
+    large: boolean;
+  }> = [
+    { labelKey: 'progress.stats.lostSoFar', value: lostSoFarLabel, large: true },
+    { labelKey: 'progress.stats.toGoal', value: toGoalLabel, large: true },
+    { labelKey: 'progress.stats.weeklyRate', value: weeklyRateLabel, large: false },
+    { labelKey: 'progress.stats.estimatedGoalDate', value: projectedDateLabel, large: false },
   ];
 
   return (
@@ -32,7 +36,9 @@ export function WeightProgressStatsGrid({
           <p className={cn(typography.csCaption, 'text-xs font-medium uppercase tracking-wide')}>
             {copy(item.labelKey)}
           </p>
-          <p className={`${typography.csCardTitle} mt-1 text-base`}>{item.value}</p>
+          <p className={`mt-1 ${item.large ? `${typography.csCardTitle} text-base` : typography.csCaption}`}>
+            {item.value}
+          </p>
         </div>
       ))}
     </div>

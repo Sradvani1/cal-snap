@@ -4,6 +4,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -18,6 +19,7 @@ import { useReducedMotion } from '@/lib/design/motion';
 
 interface MacroTrendsSectionProps {
   chartDailySeries: DailyNutritionSummary[];
+  calorieTarget: number;
 }
 
 interface ChartRow {
@@ -45,6 +47,7 @@ const tooltipItemStyle = { color: 'var(--cs-muted)' };
 
 export function MacroTrendsSection({
   chartDailySeries,
+  calorieTarget,
 }: MacroTrendsSectionProps) {
   const chartColors = useChartColors();
   const reducedMotion = useReducedMotion();
@@ -100,6 +103,11 @@ export function MacroTrendsSection({
                 };
                 return [`${pct}%`, labels[name] ?? name];
               }}
+            />
+            <ReferenceLine
+              y={calorieTarget}
+              stroke={chartColors.muted}
+              strokeDasharray="4 4"
             />
             <Bar
               dataKey="proteinKcal"

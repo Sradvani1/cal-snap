@@ -127,6 +127,7 @@ function AnalyticsContent({ uid }: { uid: string | undefined }) {
                 <ErrorBoundary>
                   <MacroTrendsSection
                     chartDailySeries={snapshot.chartDailySeries}
+                    calorieTarget={snapshot.calorieTarget}
                   />
                 </ErrorBoundary>
                 <ErrorBoundary>

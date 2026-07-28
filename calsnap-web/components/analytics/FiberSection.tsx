@@ -92,12 +92,6 @@ export function FiberSection({
               y={fiberTargetG}
               stroke={chartColors.muted}
               strokeDasharray="4 4"
-              label={{
-                value: copy('analytics.macro.target'),
-                position: 'left',
-                fontSize: 11,
-                fill: chartColors.muted,
-              }}
             />
             <Bar dataKey="fiberG" radius={[4, 4, 0, 0]} isAnimationActive={!reducedMotion}>
               {chartData.map((row) => (

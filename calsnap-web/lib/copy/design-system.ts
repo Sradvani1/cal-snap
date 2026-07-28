@@ -8,7 +8,7 @@ export const designSystemCopy = {
   'designSystem.calorieRing.band.over': 'Over goal',
   'designSystem.calorieRing.band.under': 'Under goal',
   'designSystem.calorieRing.consumed': '{{consumed}} kcal consumed',
-  'designSystem.calorieRing.ofGoal': 'of {{target}} kcal goal',
+  'designSystem.calorieRing.ofGoal': '{{target}} kcal goal',
   'designSystem.calorieRing.over': 'over',
   'designSystem.calorieRing.remaining': 'remaining',
   'designSystem.confidence.accessibility': '{{level}}, {{percent}} percent',

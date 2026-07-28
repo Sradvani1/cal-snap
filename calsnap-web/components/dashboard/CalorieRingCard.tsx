@@ -5,12 +5,14 @@ interface CalorieRingCardProps {
   segments: RingSegment[];
   target: number;
   consumed?: number;
+  onClick?: () => void;
 }
 
 export function CalorieRingCard({
   segments,
   target,
   consumed,
+  onClick,
 }: CalorieRingCardProps) {
   return (
     <SectionCard>
@@ -18,6 +20,7 @@ export function CalorieRingCard({
         segments={segments}
         target={target}
         consumed={consumed}
+        onClick={onClick}
       />
     </SectionCard>
   );

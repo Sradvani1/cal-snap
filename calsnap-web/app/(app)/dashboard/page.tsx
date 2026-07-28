@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
 import { useAuth } from '@/lib/auth/auth-context';
 import { useDashboard } from '@/lib/queries/use-dashboard';
@@ -39,6 +40,7 @@ import { cn } from '@/lib/utils/cn';
 import { useWeighInReminder } from '@/lib/queries/use-weigh-in-reminder';
 
 function DashboardContent({ uid }: { uid: string | undefined }) {
+  const router = useRouter();
   const dashboard = useDashboard(uid);
   const profileQuery = useProfile(uid);
   const plateau = usePlateauAlert(uid);
@@ -159,6 +161,7 @@ function DashboardContent({ uid }: { uid: string | undefined }) {
           segments={dashboard.ringSegments}
           target={dashboard.target}
           consumed={dashboard.consumedCalories}
+          onClick={() => router.push('/analytics')}
         />
 
         <MacroBarCard

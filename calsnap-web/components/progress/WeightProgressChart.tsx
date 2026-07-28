@@ -129,23 +129,11 @@ export function WeightProgressChart({
             y={startDisplay}
             stroke={chartColors.muted}
             strokeDasharray="8 4"
-            label={{
-              value: copy('progress.chart.startLabel'),
-              position: 'insideTopLeft',
-              fontSize: 11,
-              fill: chartColors.muted,
-            }}
           />
           <ReferenceLine
             y={goalDisplay}
             stroke={chartColors.muted}
             strokeDasharray="4 4"
-            label={{
-              value: copy('progress.chart.goalLabel'),
-              position: 'insideTopRight',
-              fontSize: 11,
-              fill: chartColors.muted,
-            }}
           />
           <Line
             type="monotone"

@@ -17,8 +17,8 @@ export function WeightProgressHeader({
   useLbs,
 }: WeightProgressHeaderProps) {
   const items = [
-    { labelKey: 'progress.header.current' as const, value: formatWeight(currentWeightKg, useLbs) },
     { labelKey: 'progress.header.start' as const, value: formatWeight(startingWeightKg, useLbs) },
+    { labelKey: 'progress.header.current' as const, value: formatWeight(currentWeightKg, useLbs) },
     { labelKey: 'progress.header.goal' as const, value: formatWeight(goalWeightKg, useLbs) },
   ];
 

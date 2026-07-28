@@ -1,10 +1,6 @@
 'use client';
 
-import type { CalorieProgressBand } from '@/lib/dashboard/calorie-progress';
-import { calorieProgressBand } from '@/lib/dashboard/calorie-progress';
 import {
-  calorieBandIcon,
-  calorieBandLabel,
   calorieRingAccessibilityLabel,
   calorieRingAccessibilityValue,
 } from '@/lib/design/calorie-ring-accessibility';
@@ -13,6 +9,7 @@ import { RING_SPRING_EASING, RING_SPRING_MS, useReducedMotion } from '@/lib/desi
 import { typography } from '@/lib/design/typography';
 import { copy } from '@/lib/copy';
 import { cn } from '@/lib/utils/cn';
+import { useCallback } from 'react';
 
 export type RingMacro = 'protein' | 'carbs' | 'saturatedFat' | 'unsaturatedFat' | 'fiber';
 
@@ -29,35 +26,31 @@ const RING_SEGMENT_COLORS: Record<RingMacro, string> = {
   fiber: 'stroke-cs-success',
 };
 
-function bandTextClass(band: CalorieProgressBand): string {
-  switch (band) {
-    case 'under':
-      return 'text-cs-success';
-    case 'onTrack':
-      return 'text-cs-warning-text';
-    case 'over':
-      return 'text-cs-danger-text';
-  }
-}
-
 interface CalorieRingViewProps {
   segments: RingSegment[];
   target: number;
   consumed?: number;
-  showBandLabel?: boolean;
+  onClick?: () => void;
 }
 
 export function CalorieRingView({
   segments,
   target,
   consumed: consumedOverride,
-  showBandLabel = false,
+  onClick,
 }: CalorieRingViewProps) {
   const reducedMotion = useReducedMotion();
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (onClick && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        onClick();
+      }
+    },
+    [onClick],
+  );
   const consumed = consumedOverride ?? Math.round(segments.reduce((sum, s) => sum + s.calories, 0));
   const remaining = target - consumed;
-  const progress = target > 0 ? consumed / target : 0;
-  const band = calorieProgressBand(progress);
   const { size, strokeWidth } = layout.calorieRing;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -79,14 +72,17 @@ export function CalorieRingView({
   return (
     <div className="flex flex-col items-center gap-3">
       <div
-        className="relative min-w-0"
+        className={cn('relative min-w-0', onClick && 'cursor-pointer')}
         style={{ width: size, height: size }}
-        role="progressbar"
+        role={onClick ? 'button' : 'progressbar'}
+        tabIndex={onClick ? 0 : undefined}
         aria-label={calorieRingAccessibilityLabel()}
         aria-valuenow={Math.abs(remaining)}
         aria-valuemin={0}
         aria-valuemax={target}
         aria-valuetext={calorieRingAccessibilityValue(remaining, target)}
+        onClick={onClick}
+        onKeyDown={handleKeyDown}
       >
         <svg width={size} height={size} className="-rotate-90" aria-hidden>
           <circle
@@ -123,16 +119,6 @@ export function CalorieRingView({
 
         </svg>
         <div className="absolute inset-0 flex min-w-0 flex-col items-center justify-center px-2">
-          <span
-            className={cn(
-              'contrast-more:flex forced-colors:flex hidden items-center gap-1 text-xs font-semibold',
-              showBandLabel && 'flex',
-              bandTextClass(band),
-            )}
-          >
-            <span aria-hidden>{calorieBandIcon(band)}</span>
-            {calorieBandLabel(band)}
-          </span>
           <span className={cn(typography.csLargeCalorie, 'min-w-0 max-w-full truncate')}>
             {Math.abs(remaining)}
           </span>
@@ -146,7 +132,7 @@ export function CalorieRingView({
       <p className={typography.csCaption}>
         {copy('designSystem.calorieRing.ofGoal', { target })}
       </p>
-      <p className="text-xs text-cs-muted">
+      <p className={typography.csCaption}>
         {copy('designSystem.calorieRing.consumed', { consumed })}
       </p>
     </div>

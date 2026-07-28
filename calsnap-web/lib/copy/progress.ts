@@ -9,6 +9,7 @@ export const progressCopy = {
   'progress.header.goal': 'Goal',
   'progress.bar.label': 'Progress to goal',
   'progress.bar.a11y': '{{percent}}% toward goal',
+  'progress.balance.title': 'Balance trend',
   'progress.stats.lostSoFar': 'Lost so far',
   'progress.stats.toGoal': 'To goal',
   'progress.stats.weeklyRate': 'Weekly rate',
@@ -19,8 +20,6 @@ export const progressCopy = {
   'progress.stats.weeklyRateLbs': '{{rate}} lbs/week',
   'progress.chart.empty': 'Track your weight over time',
   'progress.chart.firstWeighIn': 'Log your first weigh-in',
-  'progress.chart.goalLabel': 'Goal',
-  'progress.chart.startLabel': 'Start',
   'progress.chart.a11y.empty': 'No weigh-ins logged yet',
   'progress.chart.a11y.label': 'Weight progress chart',
   'progress.chart.a11y.summary':
@@ -31,7 +30,8 @@ export const progressCopy = {
   'progress.history.title': 'History',
   'progress.history.empty': 'No weigh-ins yet',
   'progress.history.emptyAction': 'Log weigh-in',
-  'progress.history.bmiTdee': 'BMI {{bmi}} · TDEE {{tdee}} kcal',
+  'progress.history.bmiDeficit': 'BMI {{bmi}} · Balance {{deficit}} kcal',
+  'progress.history.showMore': 'Show more ({{count}} remaining)',
   'progress.weighIn.title': 'Log weigh-in',
   'progress.weighIn.targetAdjust':
     'Your target adjusts from {{prev}} to {{next}} kcal/day (TDEE {{prevTdee}} → {{nextTdee}})',

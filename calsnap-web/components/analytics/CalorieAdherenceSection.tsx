@@ -76,7 +76,6 @@ export function CalorieAdherenceSection({
           <p className={`${typography.csCardTitle} text-base`}>{calorieTarget}</p>
         </div>
         <div>
-          <p className={typography.csCaption}>{copy('analytics.calorie.onTarget')}</p>
           <p className={`${typography.csCardTitle} text-base`}>{adherencePct.toFixed(0)}%</p>
         </div>
       </div>
@@ -107,12 +106,6 @@ export function CalorieAdherenceSection({
               y={calorieTarget}
               stroke={chartColors.muted}
               strokeDasharray="4 4"
-              label={{
-                value: copy('analytics.calorie.target'),
-                position: 'left',
-                fontSize: 11,
-                fill: chartColors.muted,
-              }}
             />
             <Bar dataKey="calories" radius={[4, 4, 0, 0]} isAnimationActive={!reducedMotion}>
               {chartData.map((row) => (

@@ -100,13 +100,18 @@ export function buildAnalyticsSnapshot(
   input: BuildAnalyticsSnapshotInput,
 ): AnalyticsSnapshot {
   const referenceDate = input.referenceDate ?? new Date();
-  const rangeStart = AnalyticsDateRange.resolvedStart(input.range, referenceDate);
+  let rangeStart = AnalyticsDateRange.resolvedStart(input.range, referenceDate);
   let rangeEnd = AnalyticsDateRange.resolvedEnd(input.range, referenceDate);
 
   const today = startOfLocalDay(referenceDate);
   if (rangeEnd.getTime() >= today.getTime()) {
     rangeEnd = new Date(rangeEnd);
     rangeEnd.setDate(rangeEnd.getDate() - 1);
+    if (input.range.kind === 'days') {
+      const newStart = new Date(rangeEnd);
+      newStart.setDate(newStart.getDate() - (input.range.count - 1));
+      rangeStart = startOfLocalDay(newStart);
+    }
   }
 
   const meals = input.meals.filter(
