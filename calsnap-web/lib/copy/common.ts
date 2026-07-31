@@ -42,6 +42,7 @@ export const commonCopy = {
   'common.macro.dailyTarget': 'Daily target',
   'common.macro.kcal': 'kcal',
   'common.macro.grams': 'g',
+  'common.macro.lessThanOneGram': '<1g',
   'common.mealType.breakfast': 'Brekkie',
   'common.mealType.lunch': 'Lunch',
   'common.mealType.dinner': 'Dinner',
