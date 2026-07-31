@@ -33,6 +33,7 @@ export const mealLogCopy = {
   'mealLog.row.actions': 'Meal actions',
   'mealLog.row.empty': '(no items)',
   'mealLog.row.view': 'View',
+  'mealLog.sheet.deleteItem': 'Delete {{item}}',
   'mealLog.dateNav.today': 'Today',
   'mealLog.error.loadTitle': 'Could not load meals',
   'mealLog.error.loadMessage': 'Something went wrong. Try again.',

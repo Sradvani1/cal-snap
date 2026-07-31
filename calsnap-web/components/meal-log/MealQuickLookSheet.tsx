@@ -82,6 +82,7 @@ export function MealQuickLookSheet({
   const { user } = useAuth();
   const updateMeal = useUpdateMeal(user?.uid);
   const [weights, setWeights] = useState<Record<string, number>>({});
+  const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set());
   const [expandedItemId, setExpandedItemId] = useState<string | null>(null);
   const [mealType, setMealType] = useState<MealType>(meal?.mealType ?? 'breakfast');
   const [faveClicked, setFaveClicked] = useState(() => isFavorited);
@@ -92,12 +93,14 @@ export function MealQuickLookSheet({
   const adjustedItems = useMemo(
     () =>
       meal
-        ? meal.items.map((item) => {
-            const newWeight = weights[item.id];
-            return newWeight !== undefined ? scaleItem(item, newWeight) : item;
-          })
+        ? meal.items
+            .filter((item) => !deletedIds.has(item.id))
+            .map((item) => {
+              const newWeight = weights[item.id];
+              return newWeight !== undefined ? scaleItem(item, newWeight) : item;
+            })
         : [],
-    [meal, weights],
+    [meal, weights, deletedIds],
   );
 
   const totals = useMemo(() => computeTotals(adjustedItems), [adjustedItems]);
@@ -105,15 +108,17 @@ export function MealQuickLookSheet({
   const hasWeightChanges = useMemo(
     () =>
       meal
-        ? Object.keys(weights).some(
-            (id) => weights[id] !== meal.items.find((i) => i.id === id)?.estimatedWeightG,
-          )
+        ? Object.keys(weights).some((id) => {
+            const original = meal.items.find((i) => i.id === id);
+            return original ? weights[id] !== original.estimatedWeightG : false;
+          })
         : false,
     [meal, weights],
   );
 
   const hasMealTypeChange = meal ? mealType !== meal.mealType : false;
-  const hasChanges = hasWeightChanges || hasMealTypeChange;
+  const hasDeletions = meal ? meal.items.some((i) => deletedIds.has(i.id)) : false;
+  const hasChanges = hasWeightChanges || hasMealTypeChange || hasDeletions;
 
   useEffect(() => {
     hasChangesRef.current = hasChanges;
@@ -140,6 +145,10 @@ export function MealQuickLookSheet({
     },
     [],
   );
+
+  const handleDeleteItem = useCallback((itemId: string) => {
+    setDeletedIds((prev) => new Set(prev).add(itemId));
+  }, []);
 
   const toggleExpanded = useCallback(
     (itemId: string) => {
@@ -210,6 +219,7 @@ export function MealQuickLookSheet({
                     tabIndex={0}
                     onClick={() => toggleExpanded(item.id)}
                     onKeyDown={(e) => {
+                      if (e.target !== e.currentTarget) return;
                       if (e.key === 'Enter' || e.key === ' ') toggleExpanded(item.id);
                     }}
                     className="flex w-full items-center justify-between rounded-lg bg-cs-muted/10 px-3 py-2"
@@ -222,10 +232,23 @@ export function MealQuickLookSheet({
                         {Math.round(item.calories)} {copy('common.macro.kcal')}
                       </p>
                     </div>
-                    <span className={cn(typography.csCaption, 'tabular-nums shrink-0 ml-2')}>
-                      {Math.round(item.estimatedWeightG)}
-                      {copy('common.macro.grams')}
-                    </span>
+                    <div className="flex items-center gap-1">
+                      <span className={cn(typography.csCaption, 'tabular-nums shrink-0')}>
+                        {Math.round(item.estimatedWeightG)}
+                        {copy('common.macro.grams')}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteItem(item.id);
+                        }}
+                        className="flex min-h-8 min-w-8 items-center justify-center rounded-lg text-sm text-cs-muted hover:bg-cs-muted/10"
+                        aria-label={copy('mealLog.sheet.deleteItem', { item: item.name })}
+                      >
+                        ✕
+                      </button>
+                    </div>
                   </div>
 
                   {isExpanded && range.max > range.min && (
