@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Drawer } from 'vaul';
 import { useAuth } from '@/lib/auth/auth-context';
 import { MealTypeSelector } from '@/components/scanner/MealTypeSelector';
+import { SwipeToDeleteItem } from '@/components/meal-log/SwipeToDeleteItem';
 import { useUpdateMeal } from '@/lib/queries/use-update-meal';
 import { copy } from '@/lib/copy';
 import { typography } from '@/lib/design/typography';
@@ -83,6 +84,7 @@ export function MealQuickLookSheet({
   const updateMeal = useUpdateMeal(user?.uid);
   const [weights, setWeights] = useState<Record<string, number>>({});
   const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set());
+  const [openSwipeItemId, setOpenSwipeItemId] = useState<string | null>(null);
   const [expandedItemId, setExpandedItemId] = useState<string | null>(null);
   const [mealType, setMealType] = useState<MealType>(meal?.mealType ?? 'breakfast');
   const [faveClicked, setFaveClicked] = useState(() => isFavorited);
@@ -167,18 +169,26 @@ export function MealQuickLookSheet({
     onFavorite?.();
   }, [onFavorite]);
 
+  const handleOpenChange = useCallback(
+    (nextOpen: boolean) => {
+      if (!nextOpen) setOpenSwipeItemId(null);
+      onOpenChange(nextOpen);
+    },
+    [onOpenChange],
+  );
+
   const handleDelete = useCallback(() => {
     if (!meal) return;
     onDeleteMeal?.(meal);
-    onOpenChange(false);
-  }, [onDeleteMeal, onOpenChange, meal]);
+    handleOpenChange(false);
+  }, [onDeleteMeal, handleOpenChange, meal]);
 
   const hasActions = !!(onLog || viewHref || onDeleteMeal);
 
   if (!meal) return null;
 
   return (
-    <Drawer.Root open={open} onOpenChange={onOpenChange}>
+    <Drawer.Root open={open} onOpenChange={handleOpenChange}>
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 bg-black/40" />
         <Drawer.Content
@@ -206,6 +216,8 @@ export function MealQuickLookSheet({
           <div
             className="overflow-y-auto p-6 pt-4 space-y-4"
             style={{ paddingBottom: 'calc(var(--app-tab-bar-content-height, 0px) + 0.5rem)' }}
+            onPointerDown={() => setOpenSwipeItemId(null)}
+            onScroll={() => setOpenSwipeItemId(null)}
           >
             {adjustedItems.map((item) => {
               const original = meal.items.find((i) => i.id === item.id);
@@ -214,15 +226,18 @@ export function MealQuickLookSheet({
 
               return (
                 <div key={item.id}>
-                  <div
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => toggleExpanded(item.id)}
-                    onKeyDown={(e) => {
-                      if (e.target !== e.currentTarget) return;
-                      if (e.key === 'Enter' || e.key === ' ') toggleExpanded(item.id);
+                  <SwipeToDeleteItem
+                    open={openSwipeItemId === item.id}
+                    onOpenChange={(open) => setOpenSwipeItemId(open ? item.id : null)}
+                    onActivate={() => {
+                      toggleExpanded(item.id);
+                      setOpenSwipeItemId(null);
                     }}
-                    className="flex w-full items-center justify-between rounded-lg bg-cs-muted/10 px-3 py-2"
+                    onDelete={() => {
+                      handleDeleteItem(item.id);
+                      setOpenSwipeItemId(null);
+                    }}
+                    deleteLabel={copy('mealLog.sheet.deleteItem', { item: item.name })}
                   >
                     <div className="min-w-0">
                       <p className="text-sm font-medium text-cs-foreground truncate">
@@ -232,24 +247,11 @@ export function MealQuickLookSheet({
                         {Math.round(item.calories)} {copy('common.macro.kcal')}
                       </p>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <span className={cn(typography.csCaption, 'tabular-nums shrink-0')}>
-                        {Math.round(item.estimatedWeightG)}
-                        {copy('common.macro.grams')}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteItem(item.id);
-                        }}
-                        className="flex min-h-8 min-w-8 items-center justify-center rounded-lg text-sm text-cs-muted hover:bg-cs-muted/10"
-                        aria-label={copy('mealLog.sheet.deleteItem', { item: item.name })}
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  </div>
+                    <span className={cn(typography.csCaption, 'tabular-nums shrink-0')}>
+                      {Math.round(item.estimatedWeightG)}
+                      {copy('common.macro.grams')}
+                    </span>
+                  </SwipeToDeleteItem>
 
                   {isExpanded && range.max > range.min && (
                     <div className="mt-1 px-3">
