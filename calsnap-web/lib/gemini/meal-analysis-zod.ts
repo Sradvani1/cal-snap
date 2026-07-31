@@ -155,8 +155,7 @@ const mealAnalysisRawSchema = z.object({
   estimation_notes: z.string(),
 });
 
-export function parseMealAnalysisResponse(raw: unknown): MealAnalysisResponse {
-  const parsed = mealAnalysisRawSchema.parse(normalizeMealAnalysisRaw(raw));
+function toMealAnalysisResponse(parsed: z.infer<typeof mealAnalysisRawSchema>): MealAnalysisResponse {
   return {
     items: parsed.items.map((item) => ({
       name: item.name,
@@ -176,6 +175,11 @@ export function parseMealAnalysisResponse(raw: unknown): MealAnalysisResponse {
   };
 }
 
+export function parseMealAnalysisResponse(raw: unknown): MealAnalysisResponse {
+  const parsed = mealAnalysisRawSchema.parse(normalizeMealAnalysisRaw(raw));
+  return toMealAnalysisResponse(parsed);
+}
+
 export function safeParseMealAnalysisResponse(
   raw: unknown,
 ): { success: true; data: MealAnalysisResponse } | { success: false; error: z.ZodError } {
@@ -183,5 +187,5 @@ export function safeParseMealAnalysisResponse(
   if (!result.success) {
     return { success: false, error: result.error };
   }
-  return { success: true, data: parseMealAnalysisResponse(result.data) };
+  return { success: true, data: toMealAnalysisResponse(result.data) };
 }

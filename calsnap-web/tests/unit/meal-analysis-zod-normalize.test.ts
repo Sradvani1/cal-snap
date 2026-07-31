@@ -48,6 +48,19 @@ describe('meal-analysis-zod normalization', () => {
     });
   });
 
+  it('safeParse success path matches single-pass totals', () => {
+    const result = safeParseMealAnalysisResponse(mealAnalysisFixture);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.mealTotal.calories).toBe(366);
+      expect(result.data.items[1]).toMatchObject({
+        name: 'Brown rice',
+        carbsG: 28,
+        calories: 137,
+      });
+    }
+  });
+
   it('reports validation errors for non-object payloads', () => {
     const result = safeParseMealAnalysisResponse('not-json');
     expect(result.success).toBe(false);
