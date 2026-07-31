@@ -114,9 +114,10 @@ export function buildAnalyticsSnapshot(
     }
   }
 
-  const meals = input.meals.filter(
-    (m) => startOfLocalDay(m.timestamp).getTime() <= rangeEnd.getTime(),
-  );
+  const meals = input.meals.filter((m) => {
+    const day = startOfLocalDay(m.timestamp);
+    return day.getTime() >= rangeStart.getTime() && day.getTime() <= rangeEnd.getTime();
+  });
 
   const loggedDays = loggedDailySummaries(meals);
   const chartSeries = chartDailySeries(loggedDays, rangeStart, rangeEnd);
