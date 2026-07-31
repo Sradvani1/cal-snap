@@ -5,6 +5,7 @@ import { copy } from '@/lib/copy';
 import { typography } from '@/lib/design/typography';
 import { cn } from '@/lib/utils/cn';
 import type { FoodItem } from '@/lib/models/food-item';
+import { AppConstants } from '@/lib/constants';
 
 type MacroKey = 'protein' | 'carbs' | 'fat' | 'fiber';
 
@@ -15,8 +16,19 @@ const MACRO_FIELD: Record<MacroKey, keyof FoodItem> = {
   fiber: 'fiberG',
 };
 
+const MACRO_CAL_PER_GRAM: Record<MacroKey, number> = {
+  protein: AppConstants.Nutrition.proteinCalPerGram,
+  carbs: AppConstants.Nutrition.carbsCalPerGram,
+  fat: AppConstants.Nutrition.fatCalPerGram,
+  fiber: AppConstants.Nutrition.fiberCalPerGram,
+};
+
 function getGrams(item: FoodItem, macro: MacroKey): number {
   return item[MACRO_FIELD[macro]] as number;
+}
+
+function macroCalories(grams: number, macro: MacroKey): number {
+  return Math.round(grams * MACRO_CAL_PER_GRAM[macro]);
 }
 
 function displayFatSplit(item: FoodItem, totalGrams: number): string {
@@ -75,7 +87,7 @@ export function MacroBreakdownSheet({
                       {item.name}
                     </p>
                     <p className={cn(typography.csCaption, 'tabular-nums')}>
-                      {Math.round(item.calories)} {copy('common.macro.kcal')}
+                      {macroCalories(grams, macro)} {copy('common.macro.kcal')}
                     </p>
                   </div>
                   <span className={cn(typography.csCaption, 'tabular-nums shrink-0 ml-2')}>
