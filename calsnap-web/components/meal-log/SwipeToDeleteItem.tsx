@@ -77,9 +77,9 @@ export function SwipeToDeleteItem({
         className={cn(
           'relative flex w-full cursor-pointer items-center justify-between bg-[color-mix(in_srgb,var(--cs-muted)_10%,var(--cs-surface))] px-3 py-2',
           dragging ? 'transition-none' : 'transition-transform',
-          'group-focus-within:-translate-x-20',
+          'group-has-[button:focus-visible]:-translate-x-20',
         )}
-        style={px !== 0 ? { transform: `translateX(${px}px)` } : undefined}
+        style={px !== 0 ? { translate: `${px}px` } : undefined}
       >
         {children}
       </div>
