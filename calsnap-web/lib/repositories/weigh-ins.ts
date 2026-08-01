@@ -9,9 +9,10 @@ import {
   type Firestore,
 } from 'firebase/firestore';
 import { AppConstants } from '@/lib/constants';
-import { daysBetween, startOfLocalDay } from '@/lib/dashboard/date-window';
+import { startOfLocalDay } from '@/lib/dashboard/date-window';
 import { getFirestoreDb } from '@/lib/firebase/client';
 import type { WeighIn } from '@/lib/models/weigh-in';
+import { selectPlateauWeighIns } from '@/lib/progress/progress-stats';
 import {
   weighInDocToEntry,
   type WeighInDoc,
@@ -59,28 +60,25 @@ export async function fetchWeeklyPlateauWeighIns(
     weighInDocToEntry(docSnap.id, docSnap.data() as WeighInDoc),
   );
 
-  if (recent.length === 0) {
-    return [];
-  }
+  return selectPlateauWeighIns(recent, count, minimumDaySpacing);
+}
 
-  const selected: WeighIn[] = [];
-  let lastDate: Date | undefined;
+export async function fetchLatestWeighIn(
+  uid: string,
+  db: Firestore = getFirestoreDb(),
+): Promise<WeighIn | undefined> {
+  const weighInsRef = collection(db, 'users', uid, 'weighIns');
+  const latestQuery = query(
+    weighInsRef,
+    orderBy('date', 'desc'),
+    limit(1),
+  );
 
-  for (const weighIn of recent) {
-    if (lastDate) {
-      const days = daysBetween(weighIn.date, lastDate);
-      if (days < minimumDaySpacing) {
-        continue;
-      }
-    }
-    selected.unshift(weighIn);
-    lastDate = weighIn.date;
-    if (selected.length === count) {
-      break;
-    }
-  }
-
-  return selected;
+  const snapshot = await getDocs(latestQuery);
+  const docSnap = snapshot.docs[0];
+  return docSnap
+    ? weighInDocToEntry(docSnap.id, docSnap.data() as WeighInDoc)
+    : undefined;
 }
 
 export async function fetchAllWeighIns(

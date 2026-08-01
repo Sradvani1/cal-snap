@@ -1,7 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useEffect, useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { ErrorBoundary } from '@/components/design/ErrorBoundary';
 import { InlineErrorMessage } from '@/components/design/InlineErrorMessage';
 import { useAuth } from '@/lib/auth/auth-context';
@@ -9,6 +9,7 @@ import { EmptyStateView } from '@/components/design/EmptyStateView';
 import { SectionCardSkeleton } from '@/components/design/SectionCard';
 import { AnalyticsCustomRangeSheet } from '@/components/analytics/AnalyticsCustomRangeSheet';
 import { AnalyticsTimeframePicker } from '@/components/analytics/AnalyticsTimeframePicker';
+import { useNow } from '@/lib/hooks/use-now';
 
 import {
   AnalyticsDateRange,
@@ -50,14 +51,7 @@ const FiberSection = dynamic(
 function AnalyticsContent({ uid }: { uid: string | undefined }) {
   const profileQuery = useProfile(uid);
 
-  const [referenceDate, setReferenceDate] = useState(() => new Date());
-  useEffect(() => {
-    const handler = () => {
-      if (document.visibilityState === 'visible') setReferenceDate(new Date());
-    };
-    document.addEventListener('visibilitychange', handler);
-    return () => document.removeEventListener('visibilitychange', handler);
-  }, []);
+  const referenceDate = useNow();
 
   const timeframe = useAnalyticsTimeframe();
   const mealsQuery = useAnalyticsMeals(uid, timeframe.selectedRange, referenceDate);

@@ -1,7 +1,7 @@
 'use client';
 
 import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
+import { useCallback, useState, useSyncExternalStore } from 'react';
 import { copy } from '@/lib/copy';
 import { executePlateauDietBreak } from '@/lib/dashboard/plateau-actions';
 import {
@@ -15,7 +15,11 @@ import { invalidateAnalyticsQueries } from '@/lib/queries/invalidate-analytics';
 import { updateCalorieTargets } from '@/lib/repositories/profile';
 import { queryKeys } from '@/lib/queries/query-keys';
 import { useProfile } from '@/lib/queries/use-profile';
-import { useRecentWeighIns } from '@/lib/queries/use-recent-weigh-ins';
+import { useNow } from '@/lib/hooks/use-now';
+import {
+  useRecentWeighIns,
+  type WeighInSource,
+} from '@/lib/queries/use-recent-weigh-ins';
 
 function useClientMounted(): boolean {
   return useSyncExternalStore(
@@ -25,11 +29,14 @@ function useClientMounted(): boolean {
   );
 }
 
-export function usePlateauAlert(uid: string | undefined) {
+export function usePlateauAlert(
+  uid: string | undefined,
+  options?: { weighInSource?: WeighInSource },
+) {
   const queryClient = useQueryClient();
-  const now = useMemo(() => new Date(), []);
+  const now = useNow();
   const profileQuery = useProfile(uid);
-  const weighInsQuery = useRecentWeighIns(uid, now);
+  const weighInsQuery = useRecentWeighIns(uid, now, options?.weighInSource);
   const [plateauDismissed, setPlateauDismissed] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const plateauStorageReady = useClientMounted();

@@ -161,9 +161,3 @@ export function WeightProgressChart({
     </div>
   );
 }
-
-export function WeightProgressChartSkeleton() {
-  return (
-    <div className="h-[272px] animate-pulse rounded-2xl border border-cs-border bg-cs-muted/20" />
-  );
-}

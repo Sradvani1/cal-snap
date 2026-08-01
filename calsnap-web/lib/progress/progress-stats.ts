@@ -1,6 +1,8 @@
 import type { UserProfile } from '@/lib/models/user-profile';
 import type { WeighIn } from '@/lib/models/weigh-in';
 import { copy } from '@/lib/copy';
+import { AppConstants } from '@/lib/constants';
+import { daysBetween } from '@/lib/dashboard/date-window';
 import {
   ageFromDateOfBirth,
   projectedGoalDate,
@@ -39,6 +41,36 @@ export function latestWeighIn(weighIns: WeighIn[]): WeighIn | undefined {
     return undefined;
   }
   return [...weighIns].sort(compareWeighInsByRecency)[0];
+}
+
+/** Selects up to `count` weigh-ins from `recent` (newest first), dropping any closer than `minimumDaySpacing` days to the previously selected entry. */
+export function selectPlateauWeighIns(
+  recent: WeighIn[],
+  count: number = AppConstants.Plateau.weeksToDetect,
+  minimumDaySpacing: number = AppConstants.Plateau.weeklyMinimumDaySpacing,
+): WeighIn[] {
+  if (count <= 0) {
+    return [];
+  }
+
+  const selected: WeighIn[] = [];
+  let lastDate: Date | undefined;
+
+  for (const weighIn of recent) {
+    if (lastDate) {
+      const days = daysBetween(weighIn.date, lastDate);
+      if (days < minimumDaySpacing) {
+        continue;
+      }
+    }
+    selected.unshift(weighIn);
+    lastDate = weighIn.date;
+    if (selected.length === count) {
+      break;
+    }
+  }
+
+  return selected;
 }
 
 export function currentWeightKg(

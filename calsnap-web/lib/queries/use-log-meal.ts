@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { notSignedInError } from '@/lib/copy/errors';
 import { localDayKey } from '@/lib/dashboard/date-window';
 import type { MealEntry } from '@/lib/models/meal-entry';
+import { invalidateAnalyticsQueries } from '@/lib/queries/invalidate-analytics';
 import { queryKeys } from '@/lib/queries/query-keys';
 import {
   createMeal,
@@ -89,6 +90,7 @@ export function useLogMeal(uid: string | undefined) {
         void queryClient.invalidateQueries({
           queryKey: queryKeys.todaysMeals(uid, context.dayKey),
         });
+        invalidateAnalyticsQueries(queryClient, uid);
       }
     },
   });

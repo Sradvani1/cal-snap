@@ -7,6 +7,7 @@ import {
   deriveProgressStats,
   lostSoFarKg,
   progressFraction,
+  selectPlateauWeighIns,
   sortWeighInsNewestFirst,
   toGoalKg,
 } from '@/lib/progress/progress-stats';
@@ -100,5 +101,47 @@ describe('progress-stats', () => {
       { id: 'new', userId, date: new Date('2026-06-27'), weightKg: 78 },
     ];
     expect(sortWeighInsNewestFirst(weighIns)[0]?.id).toBe('new');
+  });
+});
+
+describe('selectPlateauWeighIns', () => {
+  const userId = 'user-1';
+  const today = new Date('2026-06-27');
+
+  function weighIn(daysAgo: number, weightKg: number, id: string): WeighIn {
+    const date = new Date(today);
+    date.setDate(date.getDate() - daysAgo);
+    return { id, userId, date, weightKg };
+  }
+
+  it('returns an empty array for no input', () => {
+    expect(selectPlateauWeighIns([])).toEqual([]);
+  });
+
+  it('returns an empty array for a non-positive count', () => {
+    const recent = [weighIn(0, 80, 'w0'), weighIn(7, 80.05, 'w1')];
+    expect(selectPlateauWeighIns(recent, 0, 6)).toEqual([]);
+  });
+
+  it('selects weekly-spaced weigh-ins up to the count', () => {
+    const recent = [
+      weighIn(0, 80, 'w0'),
+      weighIn(7, 80.05, 'w1'),
+      weighIn(14, 80.1, 'w2'),
+      weighIn(15, 80.2, 'w3'),
+    ];
+    const selected = selectPlateauWeighIns(recent, 3, 6);
+    expect(selected).toHaveLength(3);
+    expect(selected.map((entry) => entry.weightKg)).toEqual([80.1, 80.05, 80]);
+  });
+
+  it('returns fewer entries when spacing filters them out', () => {
+    const recent = [
+      weighIn(0, 80, 'w0'),
+      weighIn(2, 80.05, 'w1'),
+      weighIn(3, 80.1, 'w2'),
+    ];
+    const selected = selectPlateauWeighIns(recent, 3, 6);
+    expect(selected.map((entry) => entry.weightKg)).toEqual([80]);
   });
 });

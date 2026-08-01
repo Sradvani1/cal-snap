@@ -40,6 +40,5 @@ export function useAnalyticsMeals(
     ],
     queryFn: () => fetchMealsInRange(uid!, fetchStart, rangeEnd),
     enabled: Boolean(uid),
-    staleTime: 0,
   });
 }

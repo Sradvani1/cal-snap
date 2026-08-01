@@ -45,6 +45,5 @@ export function useAnalyticsWeighIns(
     ],
     queryFn: () => fetchWeighInsInWindow(uid!, fetchStart, windowEnd),
     enabled: Boolean(uid),
-    staleTime: 0,
   });
 }

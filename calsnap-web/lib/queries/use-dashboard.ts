@@ -7,9 +7,10 @@ import { AppConstants } from '@/lib/constants';
 import { macroTargets } from '@/lib/nutrition/calculator';
 import { useProfile } from '@/lib/queries/use-profile';
 import { useTodaysMeals } from '@/lib/queries/use-todays-meals';
+import { useNow } from '@/lib/hooks/use-now';
 
 export function useDashboard(uid: string | undefined) {
-  const now = useMemo(() => new Date(), []);
+  const now = useNow();
   const profileQuery = useProfile(uid);
   const mealsQuery = useTodaysMeals(uid, now);
 

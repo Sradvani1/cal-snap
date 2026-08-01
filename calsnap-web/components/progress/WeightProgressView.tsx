@@ -1,14 +1,11 @@
 'use client';
+import dynamic from 'next/dynamic';
 import { InlineErrorMessage } from '@/components/design/InlineErrorMessage';
 import { PrimaryButton } from '@/components/design/PrimaryButton';
 import {
   WeightProgressBar,
   WeightProgressBarSkeleton,
 } from '@/components/progress/WeightProgressBar';
-import {
-  WeightProgressChart,
-  WeightProgressChartSkeleton,
-} from '@/components/progress/WeightProgressChart';
 import {
   WeightProgressHeader,
   WeightProgressHeaderSkeleton,
@@ -24,6 +21,20 @@ import {
 import { copy } from '@/lib/copy';
 import { typography } from '@/lib/design/typography';
 import { useProgress } from '@/lib/queries/use-progress';
+
+const WeightProgressChart = dynamic(
+  () =>
+    import('@/components/progress/WeightProgressChart').then((m) => ({
+      default: m.WeightProgressChart,
+    })),
+  { ssr: false, loading: () => <WeightProgressChartSkeleton /> },
+);
+
+function WeightProgressChartSkeleton() {
+  return (
+    <div className="h-[272px] animate-pulse rounded-2xl border border-cs-border bg-cs-muted/20" />
+  );
+}
 
 interface WeightProgressViewProps {
   uid: string;

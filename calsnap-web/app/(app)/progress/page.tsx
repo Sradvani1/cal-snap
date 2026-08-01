@@ -15,7 +15,7 @@ import { typography } from '@/lib/design/typography';
 import { cn } from '@/lib/utils/cn';
 
 function ProgressContent({ uid }: { uid: string | undefined }) {
-  const plateau = usePlateauAlert(uid);
+  const plateau = usePlateauAlert(uid, { weighInSource: 'all' });
   const profileQuery = useProfile(uid);
   const [showWeighInSheet, setShowWeighInSheet] = useState(false);
 

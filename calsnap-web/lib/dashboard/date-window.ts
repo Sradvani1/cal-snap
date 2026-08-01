@@ -26,14 +26,14 @@ export function localDayKey(day: Date): string {
   return `${year}-${month}-${date}`;
 }
 
-export function lastNDaysWindow(
-  dayCount: number,
-  referenceDate: Date = new Date(),
-): { start: Date; end: Date } {
-  const end = endOfLocalDayExclusive(referenceDate);
-  const start = startOfLocalDay(referenceDate);
-  start.setDate(start.getDate() - (dayCount - 1));
-  return { start, end };
+export function nextLocalMidnight(date: Date): Date {
+  const result = new Date(date);
+  result.setHours(24, 0, 0, 0);
+  return result;
+}
+
+export function msUntilNextLocalMidnight(date: Date): number {
+  return Math.max(0, nextLocalMidnight(date).getTime() - date.getTime());
 }
 
 export function daysBetween(start: Date, end: Date): number {

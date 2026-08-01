@@ -23,6 +23,7 @@ import type { FavoriteMeal } from '@/lib/models/favorite-meal';
 import { useDeleteFavorite } from '@/lib/queries/use-delete-favorite';
 import { useDeleteMeal } from '@/lib/queries/use-delete-meal';
 import { useFavorites } from '@/lib/queries/use-favorites';
+import { invalidateAnalyticsQueries } from '@/lib/queries/invalidate-analytics';
 import { useSaveFavorite } from '@/lib/queries/use-save-favorite';
 import { queryKeys } from '@/lib/queries/query-keys';
 import { useTodaysMeals } from '@/lib/queries/use-todays-meals';
@@ -158,6 +159,7 @@ function LogPageContent() {
         await createMeal(entry);
         const dayKey = localDayKey(entry.timestamp);
         void queryClient.invalidateQueries({ queryKey: queryKeys.todaysMeals(user.uid, dayKey) });
+        invalidateAnalyticsQueries(queryClient, user.uid);
         if (favId) {
           await logFavorite(user.uid, favId);
           void queryClient.invalidateQueries({ queryKey: queryKeys.favorites(user.uid) });

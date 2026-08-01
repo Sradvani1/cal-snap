@@ -4,6 +4,7 @@ export const queryKeys = {
   meal: (uid: string, mealId: string) => ['meal', uid, mealId] as const,
   weighIns: (uid: string, windowKey: string) => ['weighIns', uid, windowKey] as const,
   allWeighIns: (uid: string) => ['allWeighIns', uid] as const,
+  latestWeighIn: (uid: string) => ['latestWeighIn', uid] as const,
   analyticsMeals: (uid: string, rangeKey: string) =>
     ['analyticsMeals', uid, rangeKey] as const,
   favorites: (uid: string) => ['favorites', uid] as const,
