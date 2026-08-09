@@ -15,6 +15,14 @@ function asNumber(value: unknown, fallback = 0): number {
   return fallback;
 }
 
+function nonNegative(value: unknown): number {
+  return Math.max(0, asNumber(value));
+}
+
+function clampConfidence(value: unknown): number {
+  return Math.min(1, Math.max(0, asNumber(value)));
+}
+
 function asString(value: unknown, fallback = ''): string {
   if (typeof value === 'string') {
     return value;
@@ -46,17 +54,23 @@ function normalizeFoodItem(raw: unknown): Record<string, unknown> | null {
     return null;
   }
 
-  const carbs_g = asNumber(readField(item, 'carbs_g', 'carbsG'));
-  const protein_g = asNumber(readField(item, 'protein_g', 'proteinG'));
-  const fiber_g = asNumber(readField(item, 'fiber_g', 'fiberG'));
-  const saturated_fat_g = asNumber(readField(item, 'saturated_fat_g', 'saturatedFatG'));
-  const unsaturated_fat_g = asNumber(readField(item, 'unsaturated_fat_g', 'unsaturatedFatG'));
+  const carbs_g = nonNegative(readField(item, 'carbs_g', 'carbsG'));
+  const protein_g = nonNegative(readField(item, 'protein_g', 'proteinG'));
+  const fiber_g = nonNegative(readField(item, 'fiber_g', 'fiberG'));
+  const saturated_fat_g = nonNegative(
+    readField(item, 'saturated_fat_g', 'saturatedFatG'),
+  );
+  const unsaturated_fat_g = nonNegative(
+    readField(item, 'unsaturated_fat_g', 'unsaturatedFatG'),
+  );
   const fat_g = saturated_fat_g + unsaturated_fat_g;
   const netCarbs = Math.max(0, carbs_g - fiber_g);
 
   return {
     name,
-    estimated_weight_g: asNumber(readField(item, 'estimated_weight_g', 'estimatedWeightG')),
+    estimated_weight_g: nonNegative(
+      readField(item, 'estimated_weight_g', 'estimatedWeightG'),
+    ),
     calories: Math.round((netCarbs * AppConstants.Nutrition.carbsCalPerGram) + (protein_g * AppConstants.Nutrition.proteinCalPerGram) + (fat_g * AppConstants.Nutrition.fatCalPerGram) + (fiber_g * AppConstants.Nutrition.fiberCalPerGram)),
     protein_g,
     carbs_g: netCarbs,
@@ -64,7 +78,7 @@ function normalizeFoodItem(raw: unknown): Record<string, unknown> | null {
     saturated_fat_g,
     unsaturated_fat_g,
     fiber_g,
-    confidence: asNumber(readField(item, 'confidence', 'confidence')),
+    confidence: clampConfidence(readField(item, 'confidence', 'confidence')),
   };
 }
 

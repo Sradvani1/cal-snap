@@ -7,7 +7,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { initializeTestEnvironment, type RulesTestEnvironment } from '@firebase/rules-unit-testing';
 import { doc, setDoc, Timestamp } from 'firebase/firestore';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { startOfLocalDay } from '@/lib/dashboard/date-window';
 import type { MealEntryDoc } from '@/lib/models/meal-entry-doc';
 import type { WeighInDoc } from '@/lib/models/weigh-in-doc';
@@ -75,6 +75,47 @@ describe('dashboard Firestore reads', () => {
     expect(meals.map((meal) => meal.totalCalories)).toEqual([400, 600]);
   });
 
+  it('skips malformed meals and warns without rejecting the day read', async () => {
+    const uid = 'dashboard-malformed-meal-user';
+    const db = testEnv.authenticatedContext(uid).firestore();
+    const today = startOfLocalDay(new Date());
+    const baseDoc = (timestamp: Date, calories: number): MealEntryDoc => ({
+      userId: uid,
+      timestamp: Timestamp.fromDate(timestamp),
+      mealType: 'lunch',
+      totalCalories: calories,
+      totalProteinG: 20,
+      totalCarbsG: 30,
+      totalFatG: 10,
+      totalSaturatedFatG: 0,
+      totalUnsaturatedFatG: 0,
+      totalFiberG: 4,
+      geminiConfidence: 0.9,
+      isManuallyAdjusted: false,
+      items: [],
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
+    });
+
+    await setDoc(doc(db, 'users', uid, 'meals', 'valid'), baseDoc(today, 400));
+    const malformed = { ...baseDoc(today, 500) } as Record<string, unknown>;
+    delete malformed.totalSaturatedFatG;
+    await setDoc(doc(db, 'users', uid, 'meals', 'malformed'), malformed);
+
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      const meals = await fetchMealsForCalendarDay(uid, today, db);
+
+      expect(meals.map((meal) => meal.totalCalories)).toEqual([400]);
+      expect(warn).toHaveBeenCalledWith(
+        expect.stringContaining('Skipping malformed meals doc malformed'),
+        expect.any(Error),
+      );
+    } finally {
+      warn.mockRestore();
+    }
+  });
+
   it('fetchWeeklyPlateauWeighIns returns weekly-spaced entries', async () => {
     const uid = 'dashboard-weighins-user';
     const alice = testEnv.authenticatedContext(uid);
@@ -127,6 +168,53 @@ describe('dashboard Firestore reads', () => {
     const db = alice.firestore();
 
     expect(await fetchLatestWeighIn(uid, db)).toBeUndefined();
+  });
+
+  it('throws when the returned latest weigh-in is malformed', async () => {
+    const uid = 'dashboard-malformed-latest-user';
+    const db = testEnv.authenticatedContext(uid).firestore();
+    const today = startOfLocalDay(new Date());
+
+    await setDoc(doc(db, 'users', uid, 'weighIns', 'malformed'), {
+      userId: uid,
+      date: Timestamp.fromDate(today),
+      createdAt: Timestamp.now(),
+    });
+
+    await expect(fetchLatestWeighIn(uid, db)).rejects.toThrow(
+      'Invalid Firestore document weighIns/malformed',
+    );
+  });
+
+  it('skips malformed weigh-ins in list reads', async () => {
+    const uid = 'dashboard-malformed-weighin-user';
+    const db = testEnv.authenticatedContext(uid).firestore();
+    const today = startOfLocalDay(new Date());
+
+    await setDoc(doc(db, 'users', uid, 'weighIns', 'valid'), {
+      userId: uid,
+      date: Timestamp.fromDate(today),
+      weightKg: 80,
+      createdAt: Timestamp.now(),
+    });
+    await setDoc(doc(db, 'users', uid, 'weighIns', 'malformed'), {
+      userId: uid,
+      date: Timestamp.fromDate(new Date(today.getTime() - 86_400_000)),
+      createdAt: Timestamp.now(),
+    });
+
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      const weighIns = await fetchAllWeighIns(uid, true, db);
+
+      expect(weighIns.map((weighIn) => weighIn.id)).toEqual(['valid']);
+      expect(warn).toHaveBeenCalledWith(
+        expect.stringContaining('Skipping malformed weighIns doc malformed'),
+        expect.any(Error),
+      );
+    } finally {
+      warn.mockRestore();
+    }
   });
 
   it('selectPlateauWeighIns over fetchAllWeighIns matches fetchWeeklyPlateauWeighIns', async () => {

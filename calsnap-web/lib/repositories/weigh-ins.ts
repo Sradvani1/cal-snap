@@ -15,8 +15,8 @@ import type { WeighIn } from '@/lib/models/weigh-in';
 import { selectPlateauWeighIns } from '@/lib/progress/progress-stats';
 import {
   weighInDocToEntry,
-  type WeighInDoc,
 } from '@/lib/models/weigh-in-doc';
+import { mapValidFirestoreDocs } from '@/lib/models/validate-doc';
 
 export async function fetchWeighInsInWindow(
   uid: string,
@@ -34,8 +34,10 @@ export async function fetchWeighInsInWindow(
   );
 
   const snapshot = await getDocs(weighInsQuery);
-  return snapshot.docs.map((docSnap) =>
-    weighInDocToEntry(docSnap.id, docSnap.data() as WeighInDoc),
+  return mapValidFirestoreDocs(
+    snapshot.docs,
+    'weighIns',
+    (docId, raw) => weighInDocToEntry(docId, raw),
   );
 }
 
@@ -56,8 +58,10 @@ export async function fetchWeeklyPlateauWeighIns(
     limit(count * 4),
   );
   const snapshot = await getDocs(recentQuery);
-  const recent = snapshot.docs.map((docSnap) =>
-    weighInDocToEntry(docSnap.id, docSnap.data() as WeighInDoc),
+  const recent = mapValidFirestoreDocs(
+    snapshot.docs,
+    'weighIns',
+    (docId, raw) => weighInDocToEntry(docId, raw),
   );
 
   return selectPlateauWeighIns(recent, count, minimumDaySpacing);
@@ -77,7 +81,7 @@ export async function fetchLatestWeighIn(
   const snapshot = await getDocs(latestQuery);
   const docSnap = snapshot.docs[0];
   return docSnap
-    ? weighInDocToEntry(docSnap.id, docSnap.data() as WeighInDoc)
+    ? weighInDocToEntry(docSnap.id, docSnap.data())
     : undefined;
 }
 
@@ -93,7 +97,9 @@ export async function fetchAllWeighIns(
   );
 
   const snapshot = await getDocs(weighInsQuery);
-  return snapshot.docs.map((docSnap) =>
-    weighInDocToEntry(docSnap.id, docSnap.data() as WeighInDoc),
+  return mapValidFirestoreDocs(
+    snapshot.docs,
+    'weighIns',
+    (docId, raw) => weighInDocToEntry(docId, raw),
   );
 }

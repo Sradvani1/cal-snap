@@ -92,6 +92,32 @@ describe('meal CRUD Firestore', () => {
     await expect(deleteMeal(uid, 'missing-meal', db)).rejects.toThrow(MealNotFoundError);
   });
 
+  it('preserves optional fields when an edit omits them', async () => {
+    const uid = 'meal-crud-preserve-optionals';
+    const db = testEnv.authenticatedContext(uid).firestore();
+    const entry = makeEntry({
+      userId: uid,
+      photoStoragePath: `users/${uid}/meals/preserve/photo.jpg`,
+      textDescription: 'Original description',
+      estimationNotes: 'Original notes',
+    });
+
+    await createMeal(entry, db);
+    const fetched = await fetchMeal(uid, entry.id, db);
+    const editedWithoutOptionals = { ...fetched.entry };
+    delete editedWithoutOptionals.photoStoragePath;
+    delete editedWithoutOptionals.textDescription;
+    delete editedWithoutOptionals.estimationNotes;
+
+    await updateMeal(editedWithoutOptionals, db);
+
+    const refetched = await fetchMeal(uid, entry.id, db);
+    expect(refetched.entry.photoStoragePath).toBe(entry.photoStoragePath);
+    expect(refetched.entry.textDescription).toBe(entry.textDescription);
+    expect(refetched.entry.estimationNotes).toBe(entry.estimationNotes);
+    expect(refetched.createdAt).toEqual(fetched.createdAt);
+  });
+
   it('denies cross-uid write on meals', async () => {
     const bob = testEnv.authenticatedContext('bob');
     const db = bob.firestore();

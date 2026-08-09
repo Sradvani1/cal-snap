@@ -6,17 +6,23 @@ vi.mock('@/lib/repositories/meals', () => ({
   uploadMealPhoto: vi.fn(),
   createMeal: vi.fn(),
   deleteMealPhoto: vi.fn(),
+  mealPhotoStoragePath: vi.fn(
+    (uid: string, mealId: string) => `users/${uid}/meals/${mealId}/photo.jpg`,
+  ),
+  setMealPhotoPath: vi.fn(),
 }));
 
 import {
   uploadMealPhoto,
   createMeal,
   deleteMealPhoto,
+  setMealPhotoPath,
 } from '@/lib/repositories/meals';
 
 const mockedUpload = vi.mocked(uploadMealPhoto);
 const mockedCreate = vi.mocked(createMeal);
 const mockedDeletePhoto = vi.mocked(deleteMealPhoto);
+const mockedSetPhotoPath = vi.mocked(setMealPhotoPath);
 
 function makeEntry(overrides: Partial<MealEntry> = {}): MealEntry {
   return {
@@ -43,9 +49,10 @@ describe('logMeal', () => {
     vi.clearAllMocks();
   });
 
-  it('uploads photo then creates meal', async () => {
+  it('creates the meal pathless, then persists the uploaded photo path', async () => {
     mockedUpload.mockResolvedValue('users/user-1/meals/meal-1/photo.jpg');
     mockedCreate.mockResolvedValue('meal-1');
+    mockedSetPhotoPath.mockResolvedValue();
 
     const entry = makeEntry();
     const photoBlob = new Blob(['photo'], { type: 'image/jpeg' });
@@ -54,10 +61,33 @@ describe('logMeal', () => {
     expect(mockedUpload).toHaveBeenCalledWith('user-1', 'meal-1', photoBlob);
     expect(mockedCreate).toHaveBeenCalledWith({
       ...entry,
-      photoStoragePath: 'users/user-1/meals/meal-1/photo.jpg',
+      photoStoragePath: undefined,
     });
+    expect(mockedSetPhotoPath).toHaveBeenCalledWith(
+      'user-1',
+      'meal-1',
+      'users/user-1/meals/meal-1/photo.jpg',
+    );
     expect(mockedDeletePhoto).not.toHaveBeenCalled();
     expect(result.photoStoragePath).toBe('users/user-1/meals/meal-1/photo.jpg');
+  });
+
+  it('saves a new meal pathless when photo upload fails', async () => {
+    mockedUpload.mockRejectedValue(new Error('Storage upload failed'));
+    mockedCreate.mockResolvedValue('meal-1');
+
+    const entry = makeEntry();
+    const photoBlob = new Blob(['photo'], { type: 'image/jpeg' });
+
+    const result = await logMeal('user-1', { entry, photoBlob });
+
+    expect(mockedCreate).toHaveBeenCalledWith({
+      ...entry,
+      photoStoragePath: undefined,
+    });
+    expect(mockedSetPhotoPath).not.toHaveBeenCalled();
+    expect(mockedDeletePhoto).toHaveBeenCalledWith('users/user-1/meals/meal-1/photo.jpg');
+    expect(result.photoStoragePath).toBeUndefined();
   });
 
   it('deletes uploaded photo when createMeal fails', async () => {
@@ -97,6 +127,20 @@ describe('logMeal', () => {
       photoStoragePath: 'users/user-1/meals/meal-1/photo.jpg',
     });
     expect(result.photoStoragePath).toBe('users/user-1/meals/meal-1/photo.jpg');
+  });
+
+  it('keeps the meal save successful when the photo path update fails', async () => {
+    mockedUpload.mockResolvedValue('users/user-1/meals/meal-1/photo.jpg');
+    mockedCreate.mockResolvedValue('meal-1');
+    mockedSetPhotoPath.mockRejectedValue(new Error('Firestore update failed'));
+
+    const entry = makeEntry();
+    const photoBlob = new Blob(['photo'], { type: 'image/jpeg' });
+
+    const result = await logMeal('user-1', { entry, photoBlob });
+
+    expect(result.photoStoragePath).toBeUndefined();
+    expect(mockedDeletePhoto).toHaveBeenCalledWith('users/user-1/meals/meal-1/photo.jpg');
   });
 
   it('rethrows createMeal error when compensating delete fails', async () => {

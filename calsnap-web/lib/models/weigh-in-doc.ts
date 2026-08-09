@@ -1,5 +1,7 @@
 import { Timestamp } from 'firebase/firestore';
+import { z } from 'zod';
 import type { WeighIn } from '@/lib/models/weigh-in';
+import { parseFirestoreDoc } from '@/lib/models/validate-doc';
 
 /** Firestore document at `users/{uid}/weighIns/{weighInId}`. */
 export interface WeighInDoc {
@@ -13,7 +15,25 @@ export interface WeighInDoc {
   createdAt: Timestamp;
 }
 
-export function weighInDocToEntry(id: string, doc: WeighInDoc): WeighIn {
+const finiteNumber = z.number().finite();
+
+export const weighInDocSchema = z.object({
+  userId: z.string(),
+  date: z.instanceof(Timestamp),
+  weightKg: finiteNumber,
+  calculatedTDEE: finiteNumber.optional(),
+  adjustedDailyTarget: finiteNumber.optional(),
+  bmi: finiteNumber.optional(),
+  source: z.enum(['manual']).optional(),
+  createdAt: z.instanceof(Timestamp),
+});
+
+export function parseWeighInDoc(id: string, raw: unknown): WeighInDoc {
+  return parseFirestoreDoc(weighInDocSchema, 'weighIns', id, raw);
+}
+
+export function weighInDocToEntry(id: string, raw: unknown): WeighIn {
+  const doc = parseWeighInDoc(id, raw);
   return {
     id,
     userId: doc.userId,

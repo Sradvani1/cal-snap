@@ -8,6 +8,7 @@ import {
   type AnalyticsDateRange as AnalyticsDateRangeType,
 } from '@/lib/analytics/analytics-types';
 import { endOfLocalDayExclusive, startOfLocalDay } from '@/lib/dashboard/date-window';
+import { queryKeys } from '@/lib/queries/query-keys';
 import { fetchWeighInsInWindow } from '@/lib/repositories/weigh-ins';
 
 export function useAnalyticsWeighIns(
@@ -37,9 +38,10 @@ export function useAnalyticsWeighIns(
 
   return useQuery({
     queryKey: [
-      'analyticsWeighIns',
-      uid ?? '',
-      analyticsRangeKey(range, referenceDate),
+      ...queryKeys.analyticsWeighIns(
+        uid ?? '',
+        analyticsRangeKey(range, referenceDate),
+      ),
       rangeStart.getTime(),
       rangeEnd.getTime(),
     ],

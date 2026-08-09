@@ -1,7 +1,48 @@
 import { Timestamp } from 'firebase/firestore';
+import { z } from 'zod';
 import { foodItemDocToEntry, foodItemToDoc } from '@/lib/models/food-item-doc';
 import type { MealEntry } from '@/lib/models/meal-entry';
 import type { MealType } from '@/lib/models/meal-type';
+import { parseFirestoreDoc } from '@/lib/models/validate-doc';
+
+const finiteNumber = z.number().finite();
+
+export const foodItemDocSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  estimatedWeightG: finiteNumber,
+  calories: finiteNumber,
+  proteinG: finiteNumber,
+  carbsG: finiteNumber,
+  fatG: finiteNumber,
+  saturatedFatG: finiteNumber,
+  unsaturatedFatG: finiteNumber,
+  fiberG: finiteNumber,
+  confidence: finiteNumber,
+  usdaFoodId: z.string().optional(),
+  isFlagged: z.boolean(),
+});
+
+export const mealEntryDocSchema = z.object({
+  userId: z.string(),
+  timestamp: z.instanceof(Timestamp),
+  mealType: z.enum(['breakfast', 'lunch', 'dinner', 'snack']),
+  photoStoragePath: z.string().optional(),
+  textDescription: z.string().optional(),
+  totalCalories: finiteNumber,
+  totalProteinG: finiteNumber,
+  totalCarbsG: finiteNumber,
+  totalFatG: finiteNumber,
+  totalSaturatedFatG: finiteNumber,
+  totalUnsaturatedFatG: finiteNumber,
+  totalFiberG: finiteNumber,
+  geminiConfidence: finiteNumber,
+  isManuallyAdjusted: z.boolean(),
+  estimationNotes: z.string().optional(),
+  items: z.array(foodItemDocSchema),
+  createdAt: z.instanceof(Timestamp),
+  updatedAt: z.instanceof(Timestamp),
+});
 
 export interface FoodItemDoc {
   id: string;
@@ -41,7 +82,11 @@ export interface MealEntryDoc {
   updatedAt: Timestamp;
 }
 
-export function mealDocToEntry(id: string, doc: MealEntryDoc): MealEntry {
+export function parseMealEntryDoc(id: string, raw: unknown): MealEntryDoc {
+  return parseFirestoreDoc(mealEntryDocSchema, 'meals', id, raw);
+}
+
+export function mealEntryDocToEntry(id: string, doc: MealEntryDoc): MealEntry {
   return {
     id,
     userId: doc.userId,
@@ -53,14 +98,18 @@ export function mealDocToEntry(id: string, doc: MealEntryDoc): MealEntry {
     totalProteinG: doc.totalProteinG,
     totalCarbsG: doc.totalCarbsG,
     totalFatG: doc.totalFatG,
-    totalSaturatedFatG: doc.totalSaturatedFatG ?? 0,
-    totalUnsaturatedFatG: doc.totalUnsaturatedFatG ?? 0,
+    totalSaturatedFatG: doc.totalSaturatedFatG,
+    totalUnsaturatedFatG: doc.totalUnsaturatedFatG,
     totalFiberG: doc.totalFiberG,
     geminiConfidence: doc.geminiConfidence,
     isManuallyAdjusted: doc.isManuallyAdjusted,
     estimationNotes: doc.estimationNotes,
     items: doc.items.map(foodItemDocToEntry),
   };
+}
+
+export function mealDocToEntry(id: string, raw: unknown): MealEntry {
+  return mealEntryDocToEntry(id, parseMealEntryDoc(id, raw));
 }
 
 export function mealEntryToDoc(entry: MealEntry, createdAt?: Timestamp): MealEntryDoc {
@@ -86,5 +135,4 @@ export function mealEntryToDoc(entry: MealEntry, createdAt?: Timestamp): MealEnt
     ...(entry.estimationNotes !== undefined ? { estimationNotes: entry.estimationNotes } : {}),
   };
 }
-
 

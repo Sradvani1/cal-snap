@@ -12,7 +12,10 @@ import {
   weighInToDoc,
 } from '@/lib/models/weigh-in-doc';
 import type { UserProfile } from '@/lib/models/user-profile';
-import type { ProfileExtras } from '@/lib/models/profile-doc';
+import {
+  profileDocSchema,
+  type ProfileExtras,
+} from '@/lib/models/profile-doc';
 import { docToProfile, profileToDoc } from '@/lib/repositories/profile';
 
 const fixedTimestamp = Timestamp.fromDate(new Date('2026-06-27T12:00:00Z'));
@@ -145,5 +148,44 @@ describe('model mappers', () => {
 
     expect(restored.goalTargetDate).toBeNull();
     expect(restored).toEqual(original);
+  });
+
+  it('rejects a meal document missing a required macro field', () => {
+    const doc = mealEntryToDoc(makeMealEntry());
+    const malformed = { ...doc } as Record<string, unknown>;
+    delete malformed.totalSaturatedFatG;
+
+    expect(() => mealDocToEntry('meal-1', malformed)).toThrow(
+      'Invalid Firestore document meals/meal-1',
+    );
+  });
+
+  it('rejects a meal document with an invalid nested food item', () => {
+    const doc = mealEntryToDoc(makeMealEntry());
+    const malformed = {
+      ...doc,
+      items: [{ ...doc.items[0], confidence: 'unknown' }],
+    };
+
+    expect(() => mealDocToEntry('meal-1', malformed)).toThrow(
+      'Invalid Firestore document meals/meal-1',
+    );
+  });
+
+  it('rejects a weigh-in document missing its weight', () => {
+    const doc = weighInToDoc(makeWeighIn());
+    const malformed = { ...doc } as Record<string, unknown>;
+    delete malformed.weightKg;
+
+    expect(() => weighInDocToEntry('weigh-in-1', malformed)).toThrow(
+      'Invalid Firestore document weighIns/weigh-in-1',
+    );
+  });
+
+  it('accepts a profile document with a null goalTargetDate', () => {
+    const profile = makeProfile();
+    const doc = profileToDoc({ ...profile, goalTargetDate: null }, makeProfileExtras());
+
+    expect(profileDocSchema.parse(doc).goalTargetDate).toBeNull();
   });
 });

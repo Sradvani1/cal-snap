@@ -14,9 +14,10 @@ import {
   type RulesTestEnvironment,
 } from '@firebase/rules-unit-testing';
 import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
-import { afterAll, beforeAll, describe, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { ProfileDoc } from '@/lib/models/profile-doc';
 import { PROFILE_DOC_ID } from '@/lib/models/profile-doc';
+import { getProfile } from '@/lib/repositories/profile';
 
 let testEnv: RulesTestEnvironment;
 
@@ -88,5 +89,25 @@ describe('profile Firestore rules', () => {
     const unauthDb = unauth.firestore();
 
     await assertFails(getDoc(doc(unauthDb, 'users', 'alice', 'profile', PROFILE_DOC_ID)));
+  });
+
+  it('accepts null goalTargetDate and rejects malformed profile data', async () => {
+    const uid = 'profile-validation-user';
+    const db = testEnv.authenticatedContext(uid).firestore();
+    await setDoc(
+      doc(db, 'users', uid, 'profile', PROFILE_DOC_ID),
+      { ...sampleProfileDoc(), goalTargetDate: null },
+    );
+
+    const profile = await getProfile(uid, db);
+    expect(profile?.goalTargetDate).toBeNull();
+
+    const malformed = { ...sampleProfileDoc() } as Record<string, unknown>;
+    delete malformed.createdAt;
+    await setDoc(doc(db, 'users', uid, 'profile', PROFILE_DOC_ID), malformed);
+
+    await expect(getProfile(uid, db)).rejects.toThrow(
+      'Invalid Firestore document users/profile-validation-user/profile/main',
+    );
   });
 });

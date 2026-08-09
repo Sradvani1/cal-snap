@@ -12,9 +12,11 @@ import {
 } from '@/lib/models/user-profile';
 import {
   PROFILE_DOC_ID,
+  profileDocSchema,
   type ProfileDoc,
   type ProfileExtras,
 } from '@/lib/models/profile-doc';
+import { parseFirestoreDoc } from '@/lib/models/validate-doc';
 import type { ProfileDraft } from '@/lib/onboarding/profile-draft';
 import { trimmedName } from '@/lib/onboarding/profile-draft';
 import {
@@ -132,7 +134,12 @@ export async function getProfileDoc(
   if (!snapshot.exists()) {
     return null;
   }
-  return snapshot.data() as ProfileDoc;
+  return parseFirestoreDoc(
+    profileDocSchema,
+    `users/${uid}/profile`,
+    PROFILE_DOC_ID,
+    snapshot.data(),
+  );
 }
 
 export async function getProfile(
@@ -144,14 +151,6 @@ export async function getProfile(
     return null;
   }
   return docToProfile(docData, uid);
-}
-
-export async function isOnboardingComplete(
-  uid: string,
-  db: Firestore = getFirestoreDb(),
-): Promise<boolean> {
-  const docData = await getProfileDoc(uid, db);
-  return docData?.onboardingCompleted === true;
 }
 
 export async function saveProfile(

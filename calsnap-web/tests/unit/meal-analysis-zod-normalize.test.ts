@@ -65,4 +65,41 @@ describe('meal-analysis-zod normalization', () => {
     const result = safeParseMealAnalysisResponse('not-json');
     expect(result.success).toBe(false);
   });
+
+  it('clamps negative nutrition values and confidence to valid bounds', () => {
+    const parsed = parseMealAnalysisResponse({
+      items: [
+        {
+          name: 'unexpected model output',
+          estimated_weight_g: -10,
+          protein_g: -20,
+          carbs_g: -30,
+          fiber_g: -4,
+          saturated_fat_g: -5,
+          unsaturated_fat_g: -6,
+          confidence: 2,
+        },
+      ],
+    });
+
+    expect(parsed.items[0]).toMatchObject({
+      estimatedWeightG: 0,
+      proteinG: 0,
+      carbsG: 0,
+      fatG: 0,
+      saturatedFatG: 0,
+      unsaturatedFatG: 0,
+      fiberG: 0,
+      confidence: 1,
+      calories: 0,
+    });
+  });
+
+  it('clamps confidence below zero to zero', () => {
+    const parsed = parseMealAnalysisResponse({
+      items: [{ name: 'confidence test', confidence: -1 }],
+    });
+
+    expect(parsed.items[0]?.confidence).toBe(0);
+  });
 });

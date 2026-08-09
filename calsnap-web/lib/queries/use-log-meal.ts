@@ -9,6 +9,8 @@ import { queryKeys } from '@/lib/queries/query-keys';
 import {
   createMeal,
   deleteMealPhoto,
+  mealPhotoStoragePath,
+  setMealPhotoPath,
   uploadMealPhoto,
 } from '@/lib/repositories/meals';
 
@@ -25,38 +27,53 @@ export async function logMeal(
     throw notSignedInError();
   }
 
-  const photoPath = photoBlob
-    ? `users/${uid}/meals/${entry.id}/photo.jpg`
-    : undefined;
+  if (!photoBlob) {
+    await createMeal(entry);
+    return entry;
+  }
 
-  const entryWithPhoto: MealEntry = {
+  const photoPath = mealPhotoStoragePath(uid, entry.id);
+  const initialEntry: MealEntry = {
     ...entry,
-    photoStoragePath: photoPath ?? entry.photoStoragePath,
+    photoStoragePath: undefined,
   };
-
-  const photoPromise = photoBlob
-    ? uploadMealPhoto(uid, entry.id, photoBlob)
-    : undefined;
-
-  const [mealResult] = await Promise.allSettled([
-    createMeal(entryWithPhoto),
-    photoPromise,
+  const [mealResult, photoResult] = await Promise.allSettled([
+    createMeal(initialEntry),
+    uploadMealPhoto(uid, entry.id, photoBlob),
   ]);
 
-  if (mealResult.status === 'rejected') {
-    if (photoBlob) {
-      try {
-        await deleteMealPhoto(photoPath!);
-      } catch {
-        // Best-effort cleanup — original meal write error takes precedence.
-      }
+  const cleanupPhoto = async (path: string): Promise<void> => {
+    try {
+      await deleteMealPhoto(path);
+    } catch (error) {
+      console.warn('Failed to clean up meal photo after log failure:', error);
     }
+  };
+
+  if (mealResult.status === 'rejected') {
+    await cleanupPhoto(
+      photoResult.status === 'fulfilled' ? photoResult.value : photoPath,
+    );
     throw mealResult.reason;
   }
 
-  // Photo upload failure is non-fatal — meal data is intact.
+  if (photoResult.status === 'rejected') {
+    await cleanupPhoto(photoPath);
+    console.warn('Meal photo upload failed; meal saved without a photo:', photoResult.reason);
+    return initialEntry;
+  }
 
-  return entryWithPhoto;
+  try {
+    await setMealPhotoPath(uid, entry.id, photoResult.value);
+    return {
+      ...initialEntry,
+      photoStoragePath: photoResult.value,
+    };
+  } catch (error) {
+    await cleanupPhoto(photoResult.value);
+    console.warn('Meal photo path update failed; meal saved without a photo:', error);
+    return initialEntry;
+  }
 }
 
 export function useLogMeal(uid: string | undefined) {
