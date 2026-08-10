@@ -113,7 +113,7 @@ describe('logMeal', () => {
     expect(mockedDeletePhoto).not.toHaveBeenCalled();
   });
 
-  it('preserves existing photoStoragePath when no photoBlob', async () => {
+  it('creates a new meal without a photo path when no photoBlob is provided', async () => {
     mockedCreate.mockResolvedValue('meal-1');
 
     const entry = makeEntry({
@@ -124,9 +124,9 @@ describe('logMeal', () => {
     expect(mockedUpload).not.toHaveBeenCalled();
     expect(mockedCreate).toHaveBeenCalledWith({
       ...entry,
-      photoStoragePath: 'users/user-1/meals/meal-1/photo.jpg',
+      photoStoragePath: undefined,
     });
-    expect(result.photoStoragePath).toBe('users/user-1/meals/meal-1/photo.jpg');
+    expect(result.photoStoragePath).toBeUndefined();
   });
 
   it('keeps the meal save successful when the photo path update fails', async () => {
@@ -137,16 +137,20 @@ describe('logMeal', () => {
     const entry = makeEntry();
     const photoBlob = new Blob(['photo'], { type: 'image/jpeg' });
 
-    const result = await logMeal('user-1', { entry, photoBlob });
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      const result = await logMeal('user-1', { entry, photoBlob });
 
-    expect(result.photoStoragePath).toBeUndefined();
-    expect(mockedDeletePhoto).toHaveBeenCalledWith('users/user-1/meals/meal-1/photo.jpg');
+      expect(result.photoStoragePath).toBeUndefined();
+      expect(mockedDeletePhoto).not.toHaveBeenCalled();
+    } finally {
+      warn.mockRestore();
+    }
   });
 
-  it('rethrows createMeal error when compensating delete fails', async () => {
+  it('keeps the create error when photo cleanup is attempted', async () => {
     mockedUpload.mockResolvedValue('users/user-1/meals/meal-1/photo.jpg');
     mockedCreate.mockRejectedValue(new Error('Firestore write failed'));
-    mockedDeletePhoto.mockRejectedValue(new Error('Storage delete failed'));
 
     const entry = makeEntry();
     const photoBlob = new Blob(['photo'], { type: 'image/jpeg' });

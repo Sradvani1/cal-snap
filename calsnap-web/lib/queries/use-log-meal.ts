@@ -28,8 +28,12 @@ export async function logMeal(
   }
 
   if (!photoBlob) {
-    await createMeal(entry);
-    return entry;
+    const entryWithoutPhoto: MealEntry = {
+      ...entry,
+      photoStoragePath: undefined,
+    };
+    await createMeal(entryWithoutPhoto);
+    return entryWithoutPhoto;
   }
 
   const photoPath = mealPhotoStoragePath(uid, entry.id);
@@ -42,23 +46,15 @@ export async function logMeal(
     uploadMealPhoto(uid, entry.id, photoBlob),
   ]);
 
-  const cleanupPhoto = async (path: string): Promise<void> => {
-    try {
-      await deleteMealPhoto(path);
-    } catch (error) {
-      console.warn('Failed to clean up meal photo after log failure:', error);
-    }
-  };
-
   if (mealResult.status === 'rejected') {
-    await cleanupPhoto(
+    await deleteMealPhoto(
       photoResult.status === 'fulfilled' ? photoResult.value : photoPath,
     );
     throw mealResult.reason;
   }
 
   if (photoResult.status === 'rejected') {
-    await cleanupPhoto(photoPath);
+    await deleteMealPhoto(photoPath);
     console.warn('Meal photo upload failed; meal saved without a photo:', photoResult.reason);
     return initialEntry;
   }
@@ -70,7 +66,6 @@ export async function logMeal(
       photoStoragePath: photoResult.value,
     };
   } catch (error) {
-    await cleanupPhoto(photoResult.value);
     console.warn('Meal photo path update failed; meal saved without a photo:', error);
     return initialEntry;
   }

@@ -4,10 +4,11 @@ import { usePathname } from 'next/navigation';
 import { useLayoutEffect, useRef } from 'react';
 import { AppShellSkeleton } from '@/components/app/AppShellSkeleton';
 import { BottomTabNav } from '@/components/app/BottomTabNav';
+import { ProfileLoadError } from '@/components/auth/ProfileLoadError';
 import { InstallPromptBanner } from '@/components/pwa/InstallPromptBanner';
 import { scrollMainToTop } from '@/lib/app/scroll-main';
 import { isTabRootPathname } from '@/lib/app/tab-navigation';
-import { useRequireAuth } from '@/lib/auth/auth-context';
+import { useAuth, useRequireAuth } from '@/lib/auth/auth-context';
 import { NavVisibilityProvider, useNavVisibility } from '@/lib/app/nav-visibility-context';
 import { layout } from '@/lib/design/layout';
 import { UnsavedWorkProvider } from '@/lib/scanner/unsaved-work-context';
@@ -15,7 +16,8 @@ import { cn } from '@/lib/utils/cn';
 
 function AppLayoutContent({ children }: { children: React.ReactNode }) {
   const { hidden } = useNavVisibility();
-  const { user, ready } = useRequireAuth();
+  const { user, ready, profileError, retryProfile } = useRequireAuth();
+  const { signOut } = useAuth();
   const pathname = usePathname();
   const mainScrollRef = useRef<HTMLElement>(null);
   const prevPathnameRef = useRef<string | null>(null);
@@ -30,6 +32,19 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
       scrollMainToTop(mainScrollRef.current);
     }
   }, [pathname]);
+
+  if (profileError) {
+    return (
+      <main
+        className={cn(
+          layout.content.mainScrollClass,
+          'min-h-dvh overflow-x-hidden bg-cs-background p-6',
+        )}
+      >
+        <ProfileLoadError onRetry={retryProfile} onSignOut={() => void signOut()} />
+      </main>
+    );
+  }
 
   if (!ready) {
     return (

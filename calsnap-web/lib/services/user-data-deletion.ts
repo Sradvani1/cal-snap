@@ -71,18 +71,13 @@ async function deleteStoragePrefix(
   try {
     const folderRef = ref(storage, prefix);
     const listing = await listAll(folderRef);
-    await Promise.all(
-      listing.items.map((item) =>
-        deleteObject(item).catch((error) => {
-          console.warn('Failed to delete Storage object:', item.fullPath, error);
-        }),
-      ),
-    );
+    await Promise.all(listing.items.map((item) => deleteObject(item)));
     await Promise.all(
       listing.prefixes.map((subfolder) => deleteStoragePrefix(storage, subfolder.fullPath)),
     );
   } catch (error) {
-    console.warn('Failed to list Storage prefix:', prefix, error);
+    console.warn('Failed to clean Storage prefix:', prefix, error);
+    throw error;
   }
 }
 

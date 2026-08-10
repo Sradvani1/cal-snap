@@ -99,8 +99,8 @@ Sprint plan: [OPTIMIZATION-MASTER-PLAN.md](../plans/OPTIMIZATION-MASTER-PLAN.md)
 | Doc | Status |
 |-----|--------|
 | [V1-REVIEW.md](../plans/V1-REVIEW.md) | Plan written + stress-tested; fixes pending (phases 0–4) |
-| [PHASE-02-BRITTLE-DATA-CONTRACTS.md](./PHASE-02-BRITTLE-DATA-CONTRACTS.md) | Implemented; automated gate passed; five-profile preflight pending |
-| [PHASE-02-BRITTLE-CONTRACTS.md](../calsnap-web/docs/build/phase-02-brittle-data-contracts.md) | Phase 2 implemented; automated gate passed; five-profile preflight pending |
+| [PHASE-02-BRITTLE-DATA-CONTRACTS.md](./PHASE-02-BRITTLE-DATA-CONTRACTS.md) | Implemented (`0819e78`) + release-blocker follow-up; automated gate passed; five-profile preflight pending |
+| [PHASE-02-BRITTLE-CONTRACTS.md](../calsnap-web/docs/build/phase-02-brittle-data-contracts.md) | Phase 2 implemented + release-blocker follow-up; automated gate passed; five-profile preflight pending |
 | [PHASE-03-LATENT-BUGS-DATES.md](../calsnap-web/docs/build/phase-03-latent-bugs-and-dates.md) | Phase 3 plan written; not yet implemented |
 
 ## Source of truth

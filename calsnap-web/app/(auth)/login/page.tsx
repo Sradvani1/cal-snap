@@ -3,8 +3,10 @@
 import Link from 'next/link';
 import { FormEvent, useEffect, useState } from 'react';
 import { AuthFormSkeleton } from '@/components/auth/AuthFormSkeleton';
+import { ProfileLoadError } from '@/components/auth/ProfileLoadError';
 import { PrimaryButton, SecondaryButton } from '@/components/design/PrimaryButton';
 import { useAuth } from '@/lib/auth/auth-context';
+import { resolveProfileRoute } from '@/lib/auth/resolve-profile-route';
 import { copy } from '@/lib/copy';
 import { typography } from '@/lib/design/typography';
 import { formFieldInputClassName } from '@/lib/design/form-field';
@@ -12,21 +14,25 @@ import { useProfile } from '@/lib/queries/use-profile';
 import { cn } from '@/lib/utils/cn';
 
 export default function LoginPage() {
-  const { user, loading, authError, signInWithEmail, signInWithGoogle } = useAuth();
+  const { user, loading, authError, signInWithEmail, signInWithGoogle, signOut } = useAuth();
   const profile = useProfile(user?.uid);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const profileRoute = resolveProfileRoute({
+    authLoading: loading,
+    hasUser: user != null,
+    profilePending: profile.isPending,
+    profileError: profile.isError,
+    onboardingCompleted: profile.data?.extras.onboardingCompleted,
+  });
 
   useEffect(() => {
-    if (loading || !user || profile.isPending) {
-      return;
+    if (profileRoute === '/dashboard' || profileRoute === '/onboarding') {
+      window.location.replace(profileRoute);
     }
-    window.location.replace(
-      profile.data?.extras.onboardingCompleted === true ? '/dashboard' : '/onboarding',
-    );
-  }, [user, loading, profile.isPending, profile.data]);
+  }, [profileRoute]);
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -48,6 +54,10 @@ export default function LoginPage() {
     } catch (err) {
       setError(err instanceof Error ? err.message : copy('auth.login.googleError'));
     }
+  }
+
+  if (profile.isError) {
+    return <ProfileLoadError onRetry={() => void profile.refetch()} onSignOut={() => void signOut()} />;
   }
 
   if (loading || user) {

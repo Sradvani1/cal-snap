@@ -25,6 +25,7 @@ import {
 import { copy, type CopyKey } from '@/lib/copy';
 import { getFirebaseAuth } from '@/lib/firebase/client';
 import { useProfile } from '@/lib/queries/use-profile';
+import { resolveProfileRoute } from '@/lib/auth/resolve-profile-route';
 
 type AuthErrorFallback = Extract<
   CopyKey,
@@ -172,28 +173,33 @@ export function useRequireAuth() {
 
   const profileBootstrapping = Boolean(user) && profile.isPending;
   const loading = authLoading || profileBootstrapping;
+  const route = resolveProfileRoute({
+    authLoading,
+    hasUser: user != null,
+    profilePending: profile.isPending,
+    profileError: profile.isError,
+    onboardingCompleted: profile.data?.extras.onboardingCompleted,
+  });
 
   useEffect(() => {
-    if (authLoading) {
-      return;
-    }
-    if (!user) {
+    if (route === '/login') {
       router.replace('/login');
       return;
     }
-    if (profile.isPending) {
-      return;
-    }
-    if (profile.data?.extras.onboardingCompleted !== true) {
+    if (route === '/onboarding') {
       router.replace('/onboarding');
     }
-  }, [authLoading, user, profile.isPending, profile.data, router]);
+  }, [route, router]);
 
-  const ready =
-    !authLoading &&
-    user != null &&
-    !profile.isPending &&
-    profile.data?.extras.onboardingCompleted === true;
+  const ready = route === '/dashboard';
 
-  return { user, loading, ready };
+  return {
+    user,
+    loading,
+    ready,
+    profileError: profile.isError ? profile.error : null,
+    retryProfile: () => {
+      void profile.refetch();
+    },
+  };
 }

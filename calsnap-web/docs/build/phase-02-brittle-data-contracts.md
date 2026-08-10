@@ -3,8 +3,9 @@
 Master plan: [docs/plans/V1-REVIEW.md](../../docs/plans/V1-REVIEW.md) — §"Phase 2 — Contracts
 & data integrity (B1–B8)". Build index: [docs/build/README.md](../../docs/build/README.md).
 
-**Status: implemented — automated verification passed; manual five-profile production preflight
-pending.** Phase 3 remains on hold until the preflight is complete.
+**Status: implemented — focused robustness follow-up implemented; automated verification passed;
+manual five-profile production preflight pending.** Phase 3 remains on hold until the preflight
+is complete.
 
 ## Locked scope decisions (from review + stress test)
 
@@ -17,12 +18,13 @@ pending.** Phase 3 remains on hold until the preflight is complete.
 | Validation depth | **Minimal semantic checks** — required fields, Firestore `Timestamp`, finite numbers, arrays + nested item shapes, enum values, booleans. No product business-range policy (max weight, calorie plausibility, etc.). |
 | Legacy missing fields | **Skip and warn.** No migration, no read-time defaults, no silent compatibility repair. Older records missing now-required fields can disappear from list results. |
 | Silent defaults | Remove all `?? 0` / `?? ''` / `?? null` for **required** persisted fields. Optional fields stay optional only where the doc contract defines them. |
-| Profile failure | Malformed profile → validation error; `getProfile`/`getProfileWithExtras` fail with retry. **Auth-guard UI stays in Phase 3** (deferred, see residual risks). |
+| Profile failure | Malformed profile → validation error; `getProfile`/`getProfileWithExtras` fail with retry. App, onboarding, login, and signup gates show a retry state and never redirect a profile read error into onboarding. |
 | `isOnboardingComplete()` | No Phase 2 schema work. The function has no callers; remove it as dead code in this phase rather than adding a new validation abstraction. |
 | B4 fat semantics | **Accepted, unchanged** — `fatG = saturatedFatG + unsaturatedFatG`. |
 | AI numerics (B3) | Clamp negatives to 0 and `confidence` to `[0,1]` in `normalizeFoodItem`, **before** derived calorie/net-carb math. |
 | B5/B6 query keys | B6 is **already fixed** in the tree (`invalidateWeighInQueries` → `invalidateAnalyticsQueries` → `analyticsWeighIns`). This phase adds the missing `analyticsWeighIns` key factory + hook usage (B5) and only **verifies** B6. |
-| B7 photo failure | Scope to the scan-flow `useLogMeal` creation path. Initially create the meal pathless, upload in parallel, and add the deterministic path only after upload succeeds. Upload/path-update failures are non-fatal: clean up the uploaded object best-effort, return the meal without the new path, and warn. Photo replacement is deferred because the deterministic path would overwrite the old object. |
+| B7 photo failure | Scope to the scan-flow `useLogMeal` creation path. Initially create pathless, upload in parallel, and add the deterministic path only after upload succeeds. Upload failure cleanup remains best-effort; an ambiguous final path-update failure is non-fatal and does **not** delete the uploaded object. Photo replacement is deferred because the deterministic path would overwrite the old object. |
+| Weigh-in reminder failure | If the latest-weigh-in query errors, suppress the reminder rather than treating unknown data as no weigh-in. No new error screen. |
 | B8 optional-field preservation | `updateMeal` merges existing optional fields into the edited entry before the full replace. `usdaFoodId` preservation stays deferred (B9). |
 | B7 numbering | The master plan labels both photo failure and `usdaFoodId` erasure "B7". Photo failure is this phase's item; `usdaFoodId` is renamed **B9** (deferred residual) to avoid ambiguity. |
 | Verification gate | `pnpm lint && pnpm test && pnpm build --webpack && pnpm test:integration`. Shared model/repository changes require the production build and emulator verification. |
@@ -125,6 +127,9 @@ continue. Never catch the whole query.
 - `updateCalorieTargets` already calls `getProfileDoc` → inherits the failure.
 - `isOnboardingComplete` has no repository callers. Remove it as dead code in this phase; do
   not add a second profile schema for an unused function.
+- `useRequireAuth`, the app layout, onboarding layout, login page, and signup page distinguish
+  profile errors from a missing profile. They keep the user out of onboarding and offer retry or
+  sign-out recovery.
 
 ---
 
@@ -193,12 +198,15 @@ defer the new path:
    perform a restoration write.
 5. Both succeed → persist the new path with a targeted
    `setMealPhotoPath(uid, mealId, path)` write via `updateDoc`.
-6. Final path update fails → log a warning, best-effort delete the newly uploaded object, leave
-   the meal pathless, return the meal without a photo path, and do **not** reject the meal
-   mutation. Photo failure is non-fatal; the meal data is authoritative.
+6. Final path update fails → log a warning, leave the uploaded object in Storage, leave the
+   meal pathless in the returned result, and do **not** reject the meal mutation. The write may
+   have succeeded on the server despite an ambiguous client error; preserving the object is
+   safer than deleting a file the document may now reference. Account deletion cleans the
+   Storage prefix later.
 
-Persistence rule: a new meal never persists `photoStoragePath` unless the corresponding upload
-has succeeded. A failed upload or failed path update never leaves a ghost path.
+Persistence rule: a new meal never claims a photo before the corresponding upload has succeeded.
+An ambiguous path-update failure may leave a temporary orphan or may have succeeded on the
+server; never delete the uploaded object in that ambiguous case.
 
 Add `setMealPhotoPath` to `lib/repositories/meals.ts` (or a merge write) and update
 `use-log-meal.ts` to return the entry that reflects reality. The extra path update is the
@@ -232,7 +240,15 @@ await setDoc(docRef, mealEntryToDoc(updatedEntry, existing.createdAt));
 
 ---
 
-## Workstream 7 — Keep account deletion resilient
+## Workstream 7 — Suppress reminders on weigh-in read errors
+
+`useWeighInReminder` must not interpret a failed `latestWeighIn` query as an empty result. If
+`weighInsQuery.isError` is true, return `shouldShow: false` while retaining the existing
+loading behavior. No new error surface is required for this banner.
+
+---
+
+## Workstream 8 — Keep account deletion resilient
 
 Phase 2 validation makes `mealDocToEntry` throw for malformed meal documents. Without a
 per-document guard, `deleteAllUserData` can stop halfway through a user's meal collection.
@@ -243,7 +259,8 @@ Include this narrow safety fix now rather than waiting for Phase 3:
 - On mapper failure, `console.warn` with the meal document id and validation error.
 - Skip photo cleanup for that malformed document.
 - Still add `docSnap.ref` to the delete batch so the corrupt Firestore document is removed.
-- Keep the existing best-effort Storage cleanup behavior for valid meal documents.
+- Keep valid-meal cleanup best-effort, then clean the owner-authorized Storage prefix and surface
+  prefix cleanup failures to the deletion mutation.
 - Do not add pagination or a new deletion abstraction.
 
 This keeps account deletion complete even when a meal cannot be converted to a domain entry.
@@ -265,7 +282,7 @@ This keeps account deletion complete even when a meal cannot be converted to a d
   clamped values.
 - `tests/unit/use-log-meal.test.ts` — upload success persists the new path; upload failure
   leaves a new meal pathless; meal write failure cleans up the uploaded object; final path
-  update failure cleans up the new object without rejecting the meal; returned entry reflects
+  update failure preserves the new object without rejecting the meal; returned entry reflects
   reality. Do not add replacement-upload cases; replacement requires unique Storage paths and
   is out of scope.
 - `tests/unit/query-keys.test.ts` — `analyticsMeals`/`analyticsWeighIns` factories produce the
@@ -325,7 +342,7 @@ pnpm exec vitest run tests/integration/meal-crud-firestore.test.ts
   - Break a new photo upload (network off) mid-log; the meal saves pathless and without a
     broken/blank photo state.
   - Break the final photo-path update; the meal still saves pathless and the new Storage object
-    is cleaned up best-effort.
+    is preserved because the update may have succeeded on the server.
   - Edit a meal that has a photo; the photo stays after saving.
   - Run account deletion with a malformed meal; deletion continues and removes the document.
 
@@ -348,7 +365,9 @@ Phase 2 is complete only when:
 - Analytics hooks use centralized `queryKeys` factories; B6 invalidation is covered by a test.
 - Failed new-meal photo uploads/path updates never leave a persisted ghost path; new meals
   remain pathless on photo failure, and photo failures do not reject the authoritative meal
-  mutation. Replacement uploads are not part of this phase.
+  mutation. An ambiguous final path-update failure preserves the uploaded object rather than
+  deleting a file the server may already reference. Replacement uploads are not part of this
+  phase.
 - `updateMeal` preserves omitted optional fields.
 - Account deletion still deletes malformed meal documents instead of aborting halfway.
 - `pnpm lint && pnpm test && pnpm build --webpack && pnpm test:integration` pass.
@@ -366,7 +385,6 @@ Phase 2 is complete only when:
   `fetchWeeklyPlateauWeighIns`).
 - Photo replacement uploads; deterministic per-meal Storage paths cannot safely distinguish an
   old object from a replacement. Unique paths per upload are deferred.
-- Profile auth-guard redirect fix and retry UI (Phase 3 A1).
 - `usdaFoodId` preservation on edit (B9, deferred).
 - Data migration / read-time repair of legacy docs.
 - Business-range validation of persisted nutrition/profile values.
@@ -378,12 +396,12 @@ Phase 2 is complete only when:
 
 | Item | Risk |
 |------|------|
-| Profile-error onboarding redirect | Phase 2 validation makes malformed profiles fail, but `useRequireAuth` still redirects a profile error to `/onboarding` (`auth-context.tsx:176-190`) where a save could overwrite data. **Phase 3 A1 must land before production sign-off.** |
+| Profile-error handling | Auth and onboarding gates now distinguish profile errors from missing profiles and expose retry plus sign-out recovery. The five-profile production preflight remains required before sign-off. |
 | Limited-query malformed windows | A malformed newest weigh-in throws from `fetchLatestWeighIn`; only a missing document returns `undefined`. A malformed plateau candidate reduces the pool. Accepted (returned-window-only). |
 | Favorites unvalidated | `favorites.ts` / `favorite-meal-doc.ts` retain unsafe casts and silent defaults; a corrupt favorite can blank the favorites list. Tracked, not fixed. |
 | Legacy missing fields skipped | Older valid docs missing now-required fields can disappear from list results until migrated; no read-time repair. |
 | Export omissions | Exports use validated list reads, so malformed records are omitted and warned rather than exported. No separate export error/report is added this phase. |
-| Photo path update write | New photo meals incur one additional Firestore write after upload succeeds; a failed update is non-fatal, leaves the meal pathless, and cleans up the new object best-effort. |
+| Photo path update write | New photo meals incur one additional Firestore write after upload succeeds; an ambiguous failed update is non-fatal and leaves the object for later account-prefix cleanup. |
 | Photo replacement | Existing deterministic paths would overwrite the old object, making safe rollback impossible. Replacement requires unique Storage paths per upload and is deferred. |
 | B9 `usdaFoodId` erasure (deferred) | Editing a meal drops the dormant `usdaFoodId` field (no consumer; USDA fallback deferred). Preserve on edit when/if the field becomes live. |
-| B4 fat semantics (accepted) | `fat = sat + unsat`; if Gemini omits the split, fat silently reads 0. Accepted by design. |
+| B4 fat semantics (accepted) | `fat = sat + unsat`; missing required split fields remain a validation failure. |

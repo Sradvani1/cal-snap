@@ -3,6 +3,7 @@ import type { WeighIn } from '@/lib/models/weigh-in';
 import { defaultReminderPrefs } from '@/lib/progress/reminder-prefs';
 import { shouldShowWeighInReminderBanner } from '@/lib/progress/weigh-in-reminder';
 import { snoozeWeighInUntilTomorrow } from '@/lib/progress/weigh-in-snooze';
+import { shouldShowReminderAfterQuery } from '@/lib/queries/use-weigh-in-reminder';
 
 const UID = 'test-user';
 const NOW = new Date(2026, 5, 28, 12, 0, 0);
@@ -137,6 +138,18 @@ describe('shouldShowWeighInReminderBanner', () => {
       shouldShowWeighInReminderBanner({
         prefs: defaultReminderPrefs(),
         latestWeighIn: weighIn(0),
+        profileCreatedAt: profileCreatedAt(30),
+        uid: UID,
+        now: NOW,
+      }),
+    ).toBe(false);
+  });
+
+  it('suppresses the reminder when the latest weigh-in query fails', () => {
+    expect(
+      shouldShowReminderAfterQuery(true, {
+        prefs: defaultReminderPrefs(),
+        latestWeighIn: undefined,
         profileCreatedAt: profileCreatedAt(30),
         uid: UID,
         now: NOW,

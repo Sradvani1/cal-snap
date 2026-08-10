@@ -82,4 +82,17 @@ describe('deleteAllUserData', () => {
       warn.mockRestore();
     }
   });
+
+  it('deletes objects found under the user meal prefix', async () => {
+    const item = { fullPath: 'users/user-1/meals/meal-1/photo.jpg' };
+    mocks.getDocs.mockResolvedValue({ docs: [] });
+    mocks.listAll.mockResolvedValue({ items: [item], prefixes: [] });
+
+    await deleteAllUserData('user-1', {
+      db: {} as never,
+      storage: {} as never,
+    });
+
+    expect(mocks.deleteObject).toHaveBeenCalledWith(item);
+  });
 });

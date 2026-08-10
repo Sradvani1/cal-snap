@@ -1,7 +1,7 @@
 # Phase 2 — Brittle Data Contracts
 
-**Status:** Implemented — automated verification passed; manual five-profile production
-preflight remains pending.
+**Status:** Implemented — focused robustness follow-up implemented; automated verification passed;
+manual five-profile production preflight remains pending.
 
 **App:** `calsnap-web` (Next.js 16 App Router PWA)
 
@@ -9,7 +9,9 @@ preflight remains pending.
 
 **Parent review:** [V1-REVIEW.md](../plans/V1-REVIEW.md)
 
-**Implementation commit:** This build record is committed with the Phase 2 implementation.
+**Implementation commit:** `0819e78 feat(phase2): harden brittle data contracts`. The release-
+blocker follow-up is currently uncommitted and is included in the updated implementation notes
+below.
 
 ---
 
@@ -17,9 +19,9 @@ preflight remains pending.
 
 Make persisted data failures local and visible instead of allowing one malformed record to
 break an entire screen or silently turn corrupt values into valid-looking data. The phase
-covers meals, weigh-ins, profiles, AI nutrition output, meal photos, edit preservation, and
-account deletion. Favorites validation, data migration, security-rule changes, and the Phase 3
-auth error UI remain outside this phase.
+covers meals, weigh-ins, profiles, AI nutrition output, meal photos, edit preservation, account
+deletion, and safety behavior around profile errors and reminders. Favorites validation, data
+migration, security-rule changes, and the remaining Phase 3 work remain outside this phase.
 
 ---
 
@@ -31,12 +33,13 @@ auth error UI remain outside this phase.
 | Validation errors | Added `parseFirestoreDoc` with collection/document context and `mapValidFirestoreDocs` for per-document list handling. |
 | Meal reads | Calendar-day, range, and full meal reads skip malformed returned documents with `console.warn`; single meal reads fail. |
 | Weigh-in reads | Window and full-collection reads skip malformed returned documents; latest weigh-in fails when its returned document is malformed; plateau reads skip malformed candidates inside the existing limited window. |
-| Profile reads | Full profile reads validate before conversion. `goalTargetDate: null` remains valid. Malformed profiles reject and are retryable through the profile query. Unused `isOnboardingComplete` was removed. |
+| Profile reads | Full profile reads validate before conversion. `goalTargetDate: null` remains valid. Malformed profiles reject and are retryable through the profile query. App, onboarding, login, and signup gates show retry instead of treating a profile error as a missing profile. Unused `isOnboardingComplete` was removed. |
 | AI numerics | Negative nutrition values are clamped to zero and confidence is clamped to `[0, 1]` before calories, fat, and net-carbohydrate calculations. |
 | Analytics keys | Added the missing `analyticsWeighIns` key factory and changed both analytics hooks to use centralized key factories. Existing weigh-in analytics invalidation was verified and unchanged. |
-| New meal photos | New meals are initially written without a photo path. Upload and meal creation run in parallel; the Storage path is added only after upload succeeds. Photo/upload-path failures are non-fatal and cleaned up best-effort. |
+| New meal photos | New meals are initially written without a photo path. Upload and meal creation run in parallel; the Storage path is added only after upload succeeds. Upload failures are cleaned up best-effort; an ambiguous final path-update failure is non-fatal and does not delete the uploaded object. |
+| Weigh-in reminders | A latest-weigh-in query error suppresses the reminder instead of being interpreted as no weigh-in. |
 | Meal edits | `updateMeal` preserves existing `photoStoragePath`, `textDescription`, and `estimationNotes` when an edit omits them. |
-| Account deletion | Malformed meal cleanup is warned and skipped, but the Firestore document is still included in the deletion batch. |
+| Account deletion | Malformed meal cleanup is warned and skipped, but the Firestore document is still included in the deletion batch. The owner-authorized Storage prefix cleanup now surfaces failures. |
 
 ---
 
@@ -77,8 +80,8 @@ scan meal
               +--> upload fails: keep meal pathless, warn, clean up best-effort
               +--> upload succeeds: update Firestore photoStoragePath
                                       |
-                                      +--> update fails: warn, clean up best-effort,
-                                          keep meal pathless
+               +--> update fails: warn, preserve object,
+                                           keep meal pathless in result
 ```
 
 The deterministic path is `users/{uid}/meals/{mealId}/photo.jpg`. This flow is for new scan
@@ -126,8 +129,8 @@ delete the user's Storage prefix and remaining local state
 | Domain normalization | `meal-analysis-zod.ts` | Normalizes Gemini output before it becomes a loggable meal. |
 | Data deletion | `user-data-deletion.ts` | Deletes user data while tolerating malformed meal records. |
 
-No live client-facing route or API contract changed. No Firestore or Storage security rules were
-changed.
+No live client-facing route or API contract changed. Storage rules now permit owner-only prefix
+listing so account deletion can remove uploaded objects left after a partial failure.
 
 ---
 
@@ -159,6 +162,8 @@ The profile repository validates raw data in `getProfileDoc` before `getProfile`
   returned document is malformed.
 - `getProfile` and `getProfileWithExtras` reject malformed profiles; `useProfile` retains the
   default TanStack Query retry behavior.
+- Profile errors are distinct from missing profiles in the app, onboarding, login, and signup
+  gates; each gate offers retry or sign-out recovery rather than redirecting to onboarding.
 
 ### Query keys
 
@@ -193,18 +198,23 @@ Required persisted fields are no longer read with silent zero/string defaults. O
 
 ## Verification
 
-The required Phase 2 gate passed:
+The follow-up verification gate passed:
 
 ```text
 pnpm lint                         passed
-pnpm test                         51 files, 280 tests passed
+pnpm test                         52 files, 284 tests passed
 pnpm build --webpack              passed
-pnpm test:integration             5 files, 23 tests passed
+integration (alternate ports)     5 files, 23 tests passed
 ```
 
+The integration suite was run with the Firebase emulator config at
+`/var/folders/fj/3_687x1s2r10_tzb_cjrv6y00000gn/T/opencode/calsnap-emulators.json` because the
+default emulator ports were occupied by another local workspace. The equivalent
+`pnpm test:integration` command can run once those ports are free.
+
 Coverage added for malformed meal/weigh-in records, profile validation and nullable goal dates,
-AI numeric bounds, photo failure paths, optional-field preservation, query invalidation, and
-malformed-meal account deletion.
+profile-error routing, AI numeric bounds, photo failure paths, optional-field preservation, query
+invalidation, weigh-in reminder errors, and malformed-meal account deletion.
 
 ---
 
@@ -215,10 +225,12 @@ malformed-meal account deletion.
   mapper sees them; no additional integrity scan was added.
 - Limited weigh-in queries do not search beyond their existing returned window.
 - Legacy documents missing required fields may be skipped or rejected; no migration was added.
-- Best-effort Storage cleanup can leave an orphaned object if cleanup itself fails.
+- An ambiguous final photo-path update can leave an orphaned object or may have succeeded on the
+  server; the object is preserved because deleting it could remove the document's newly written
+  reference. Account deletion cleans the user's Storage prefix later.
 - `usdaFoodId` preservation during edits remains deferred because the field is dormant.
-- A malformed profile can still fall through the current auth gate into `/onboarding`; the
-  Phase 3 auth-error guard must land before production sign-off.
+- A profile error now has retry and sign-out recovery in the auth and onboarding gates, but the
+  five-profile production preflight is still required before sign-off.
 
 ---
 
@@ -227,7 +239,7 @@ malformed-meal account deletion.
 Phase 3 remains on hold until the manual preflight confirms all five existing production profile
 documents contain the required fields and types.
 
-Before production sign-off, Phase 3 should address the profile-error onboarding redirect and
-provide a retry/error surface. Future follow-ups may also address query-excluded malformed
-documents, user ID/path consistency in Firestore rules, favorites validation, and unique Storage
-paths if photo replacement becomes a product requirement.
+Before production sign-off, the five existing production profiles must pass the manual preflight.
+Future follow-ups may address query-excluded malformed documents, user ID/path consistency in
+Firestore rules, favorites validation, and unique Storage paths if photo replacement becomes a
+product requirement.
