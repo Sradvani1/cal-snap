@@ -1,8 +1,32 @@
 import { describe, expect, it } from 'vitest';
 import {
+  daysBetween,
+  localDayKey,
   msUntilNextLocalMidnight,
   nextLocalMidnight,
 } from '@/lib/dashboard/date-window';
+
+const springDstObserved =
+  new Date(2026, 2, 7, 12).getTimezoneOffset() !==
+  new Date(2026, 2, 8, 12).getTimezoneOffset();
+const fallDstObserved =
+  new Date(2026, 9, 31, 12).getTimezoneOffset() !==
+  new Date(2026, 10, 1, 12).getTimezoneOffset();
+
+describe('calendar day helpers', () => {
+  it('counts ordinary calendar days', () => {
+    expect(daysBetween(new Date(2026, 6, 1, 23), new Date(2026, 6, 3, 1))).toBe(2);
+    expect(localDayKey(new Date(2026, 6, 1, 23))).toBe('2026-07-01');
+  });
+
+  it.skipIf(!springDstObserved)('counts days across spring-forward', () => {
+    expect(daysBetween(new Date(2026, 2, 7), new Date(2026, 2, 9))).toBe(2);
+  });
+
+  it.skipIf(!fallDstObserved)('counts days across fall-back', () => {
+    expect(daysBetween(new Date(2026, 9, 31), new Date(2026, 10, 2))).toBe(2);
+  });
+});
 
 describe('nextLocalMidnight', () => {
   it('returns the next calendar day at 00:00', () => {

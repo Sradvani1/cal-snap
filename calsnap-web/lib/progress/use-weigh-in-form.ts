@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
-import { startOfLocalDay } from '@/lib/dashboard/date-window';
 import type { UserProfile } from '@/lib/models/user-profile';
 import { recalculateWeighIn } from '@/lib/services/weigh-in-service';
 import {
@@ -10,18 +9,11 @@ import {
   WEIGHT_RANGE_KG,
   weightDisplayRange,
 } from '@/lib/utilities/unit-formatters';
-
-function toDateInputValue(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-
-function dateFromInputValue(value: string): Date {
-  const [year, month, day] = value.split('-').map(Number);
-  return startOfLocalDay(new Date(year, month - 1, day));
-}
+import {
+  dateFromLocalDateInput,
+  isValidLocalDateInputValue,
+  toLocalDateInputValue,
+} from '@/lib/utilities/date-input';
 
 export function useWeighInForm(
   profile: UserProfile,
@@ -32,7 +24,7 @@ export function useWeighInForm(
   const [weightInput, setWeightInput] = useState(() =>
     String(displayWeight(currentWeightKg, initialUseLbs)),
   );
-  const [selectedDate, setSelectedDate] = useState(() => toDateInputValue(new Date()));
+  const [selectedDate, setSelectedDate] = useState(() => toLocalDateInputValue(new Date()));
 
   const weightKg = useMemo(
     () => kgFromDisplayWeight(Number.parseFloat(weightInput) || 0, useLbs),
@@ -47,14 +39,16 @@ export function useWeighInForm(
   const range = weightDisplayRange(useLbs);
   const step = 0.1;
 
+  const isDateValid = isValidLocalDateInputValue(selectedDate);
+
   const canSave = useMemo(() => {
     const parsed = Number.parseFloat(weightInput);
     if (!Number.isFinite(parsed) || parsed <= 0) {
       return false;
     }
     const kg = kgFromDisplayWeight(parsed, useLbs);
-    return kg > 0 && kg >= WEIGHT_RANGE_KG.min && kg <= WEIGHT_RANGE_KG.max;
-  }, [weightInput, useLbs]);
+    return isDateValid && kg > 0 && kg >= WEIGHT_RANGE_KG.min && kg <= WEIGHT_RANGE_KG.max;
+  }, [isDateValid, weightInput, useLbs]);
 
   const setUseLbs = useCallback(
     (newValue: boolean) => {
@@ -73,11 +67,11 @@ export function useWeighInForm(
   }, []);
 
   const selectedDateValue = useMemo(
-    () => dateFromInputValue(selectedDate),
-    [selectedDate],
+    () => (isDateValid ? dateFromLocalDateInput(selectedDate) : null),
+    [isDateValid, selectedDate],
   );
 
-  const maxDateInput = toDateInputValue(new Date());
+  const maxDateInput = toLocalDateInputValue(new Date());
 
   return {
     useLbs,
@@ -88,6 +82,7 @@ export function useWeighInForm(
     selectedDate,
     setDateInputValue,
     selectedDateValue,
+    isDateValid,
     maxDateInput,
     step,
     range,

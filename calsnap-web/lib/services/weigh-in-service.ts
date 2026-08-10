@@ -84,6 +84,10 @@ function validateWeighInInput(newWeightKg: number, date: Date, now: Date = new D
     throw new WeighInValidationError(copy('progress.validation.weightRange'));
   }
 
+  if (Number.isNaN(date.getTime())) {
+    throw new WeighInValidationError(copy('progress.validation.dateRequired'));
+  }
+
   const normalizedDate = startOfLocalDay(date);
   const todayStart = startOfLocalDay(now);
   if (normalizedDate > todayStart) {

@@ -67,8 +67,11 @@ export function mapFirebaseAuthError(
 
 let redirectPromise: Promise<UserCredential | null> | undefined;
 
-function consumeRedirect(auth: Auth) {
-  redirectPromise ??= getRedirectResult(auth);
+export function consumeRedirect(auth: Auth) {
+  redirectPromise ??= getRedirectResult(auth).catch((error) => {
+    redirectPromise = undefined;
+    throw error;
+  });
   return redirectPromise;
 }
 

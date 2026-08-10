@@ -84,16 +84,10 @@ export function useLogMeal(uid: string | undefined) {
         queryKey: queryKeys.todaysMeals(uid, dayKey),
       });
 
-      const previous = queryClient.getQueryData<MealEntry[]>(
+      queryClient.setQueryData<MealEntry[]>(
         queryKeys.todaysMeals(uid, dayKey),
+        (previous) => [...(previous ?? []), input.entry],
       );
-
-      if (previous) {
-        queryClient.setQueryData(queryKeys.todaysMeals(uid, dayKey), [
-          ...previous,
-          input.entry,
-        ]);
-      }
 
       return { dayKey };
     },

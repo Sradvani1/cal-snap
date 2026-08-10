@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Drawer } from 'vaul';
 import { useAuth } from '@/lib/auth/auth-context';
+import { InlineErrorMessage } from '@/components/design/InlineErrorMessage';
 import { MealTypeSelector } from '@/components/scanner/MealTypeSelector';
 import { SwipeToDeleteItem } from '@/components/meal-log/SwipeToDeleteItem';
 import { useUpdateMeal } from '@/lib/queries/use-update-meal';
@@ -19,9 +20,11 @@ interface MealQuickLookSheetProps {
   onOpenChange: (open: boolean) => void;
   meal: MealEntry | null;
   skipAutoSave?: boolean;
-  onLog?: (items: FoodItem[], mealType: MealType) => void;
+  onLog?: (items: FoodItem[], mealType: MealType) => Promise<void> | void;
   isLogging?: boolean;
-  onFavorite?: () => void;
+  onFavorite?: () => Promise<boolean | void> | boolean | void;
+  isFavoritePending?: boolean;
+  error?: string | null;
   onDeleteMeal?: (meal: MealEntry) => void;
   viewHref?: string;
   isFavorited?: boolean;
@@ -75,6 +78,8 @@ export function MealQuickLookSheet({
   onLog,
   isLogging = false,
   onFavorite,
+  isFavoritePending = false,
+  error = null,
   onDeleteMeal,
   viewHref,
   isFavorited = false,
@@ -159,15 +164,28 @@ export function MealQuickLookSheet({
     [],
   );
 
-  const handleLog = useCallback(() => {
-    onLog?.(adjustedItems, mealType);
-    onOpenChange(false);
+  const handleLog = useCallback(async () => {
+    try {
+      await onLog?.(adjustedItems, mealType);
+      onOpenChange(false);
+    } catch {
+      // The parent owns the user-facing error state; keep the sheet open.
+    }
   }, [adjustedItems, mealType, onLog, onOpenChange]);
 
   const handleFavorite = useCallback(() => {
-    setFaveClicked((prev) => !prev);
-    onFavorite?.();
-  }, [onFavorite]);
+    if (isFavoritePending) return;
+    void (async () => {
+      try {
+        const result = await onFavorite?.();
+        if (result !== false) {
+          setFaveClicked((prev) => !prev);
+        }
+      } catch {
+        // The parent owns the user-facing error state; keep the star unchanged.
+      }
+    })();
+  }, [isFavoritePending, onFavorite]);
 
   const handleOpenChange = useCallback(
     (nextOpen: boolean) => {
@@ -201,14 +219,15 @@ export function MealQuickLookSheet({
             <div className="flex justify-end px-6 pt-3 pb-0">
               <button
                 type="button"
+                disabled={isFavoritePending}
                 onClick={(e) => { e.stopPropagation(); handleFavorite(); }}
                 className={cn(
-                  'text-lg transition-colors',
+                  'text-lg transition-colors disabled:opacity-50',
                   faveClicked ? 'text-cs-warning' : 'text-cs-muted hover:text-cs-warning',
                 )}
                 aria-label={faveClicked ? 'Remove from favorites' : 'Add to favorites'}
               >
-                {faveClicked ? '★' : '☆'}
+                {isFavoritePending ? '⋯' : faveClicked ? '★' : '☆'}
               </button>
             </div>
           )}
@@ -296,6 +315,8 @@ export function MealQuickLookSheet({
             </div>
 
             {!hideMealType && <MealTypeSelector compact value={mealType} onChange={setMealType} />}
+
+            <InlineErrorMessage message={error} />
 
             {hasActions && (
               <div className="flex gap-1.5">

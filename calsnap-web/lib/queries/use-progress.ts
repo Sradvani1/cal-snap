@@ -71,12 +71,14 @@ export function useProgress(uid: string | undefined, referenceDate: Date = new D
   const isLoading = profileQuery.isLoading || weighInsQuery.isLoading;
   const profileLoadFailed =
     !isLoading && (profileQuery.isError || (profileQuery.isSuccess && !profile));
+  const weighInsLoadFailed = !weighInsQuery.isLoading && weighInsQuery.isError;
   const error =
     profileQuery.error ?? weighInsQuery.error ?? null;
 
   return {
     isLoading,
     profileLoadFailed,
+    weighInsLoadFailed,
     error,
     profile,
     profileExtras: profileQuery.data?.extras ?? null,

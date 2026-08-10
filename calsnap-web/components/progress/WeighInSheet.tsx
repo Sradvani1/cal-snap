@@ -58,6 +58,9 @@ function WeighInSheetForm({
     if (!form.canSave || logMutation.isPending) {
       return;
     }
+    if (!form.selectedDateValue) {
+      return;
+    }
     setSaveError(null);
     try {
       const result = await logMutation.mutateAsync({
@@ -134,6 +137,11 @@ function WeighInSheetForm({
           onChange={(event) => form.setDateInputValue(event.target.value)}
           className={formFieldInputClassName}
         />
+        {!form.isDateValid && (
+          <p className="mt-2 text-sm text-cs-danger-text" role="alert">
+            {copy('progress.validation.dateRequired')}
+          </p>
+        )}
       </label>
 
       <p className={cn(typography.csCaption, 'mt-4')}>

@@ -46,7 +46,7 @@ export interface BuildAnalyticsSnapshotInput {
   meals: MealEntry[];
   profile: UserProfile;
   range: AnalyticsDateRangeType;
-  weighInsInRange: WeighIn[];
+  weighInsInRange?: WeighIn[];
   referenceDate?: Date;
 }
 
@@ -100,6 +100,7 @@ export function buildAnalyticsSnapshot(
   input: BuildAnalyticsSnapshotInput,
 ): AnalyticsSnapshot {
   const referenceDate = input.referenceDate ?? new Date();
+  const weighInsInRange = input.weighInsInRange ?? [];
   let rangeStart = AnalyticsDateRange.resolvedStart(input.range, referenceDate);
   let rangeEnd = AnalyticsDateRange.resolvedEnd(input.range, referenceDate);
 
@@ -163,7 +164,7 @@ export function buildAnalyticsSnapshot(
     weekendAverageCalories,
     weekdayAverageCalories,
     topFoodEntries,
-    input.weighInsInRange,
+    weighInsInRange,
   );
 
   return {

@@ -3,7 +3,10 @@ import { AppConstants } from '@/lib/constants';
 import {
   dateFromLocalDateInput,
   dateOfBirthInputBounds,
+  calendarDaysBetween,
   isCompleteDateInputValue,
+  isValidLocalDateInputValue,
+  toLocalDayKey,
   toLocalDateInputValue,
 } from '@/lib/utilities/date-input';
 
@@ -15,6 +18,16 @@ describe('date-input', () => {
     expect(dateFromLocalDateInput(inputValue).getFullYear()).toBe(1991);
     expect(dateFromLocalDateInput(inputValue).getMonth()).toBe(5);
     expect(dateFromLocalDateInput(inputValue).getDate()).toBe(14);
+    expect(toLocalDayKey(date)).toBe(inputValue);
+  });
+
+  it('counts ordinary local calendar days independently of time of day', () => {
+    expect(
+      calendarDaysBetween(
+        new Date(2026, 6, 1, 23, 59),
+        new Date(2026, 6, 3, 0, 1),
+      ),
+    ).toBe(2);
   });
 
   it('detects complete date input values', () => {
@@ -22,6 +35,8 @@ describe('date-input', () => {
     expect(isCompleteDateInputValue('1991-06-1')).toBe(false);
     expect(isCompleteDateInputValue('1991-06')).toBe(false);
     expect(isCompleteDateInputValue('')).toBe(false);
+    expect(isValidLocalDateInputValue('1991-06-14')).toBe(true);
+    expect(isValidLocalDateInputValue('2026-02-31')).toBe(false);
   });
 
   it('returns date-of-birth input bounds for 16–90 years', () => {

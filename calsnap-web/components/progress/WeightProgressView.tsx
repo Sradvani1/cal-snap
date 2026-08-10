@@ -61,7 +61,12 @@ export function WeightProgressView({
     );
   }
 
-  if (progress.profileLoadFailed || !progress.profile || !progress.stats) {
+  if (
+    progress.profileLoadFailed ||
+    progress.weighInsLoadFailed ||
+    !progress.profile ||
+    !progress.stats
+  ) {
     return <InlineErrorMessage message={copy('progress.error.loadFailed')} />;
   }
 

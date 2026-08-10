@@ -8,6 +8,7 @@ import { updateProfileAfterWeighIn } from '@/lib/repositories/profile';
 import {
   recalculateWeighIn,
   saveWeighIn,
+  WeighInValidationError,
 } from '@/lib/services/weigh-in-service';
 import {
   currentWeightKg,
@@ -126,6 +127,18 @@ describe('weigh-in service', () => {
     expect(result.didTriggerPlateau).toBe(true);
     expect(result.weighIn.weightKg).toBe(80);
     expect(result.updatedProfile.tdee).toBe(result.weighIn.calculatedTDEE);
+  });
+
+  it('rejects an invalid date before writing', async () => {
+    await expect(
+      saveWeighIn({
+        uid: 'user-1',
+        profile: makeProfile(),
+        profileExtras: makeExtras(),
+        newWeightKg: 80,
+        date: new Date(Number.NaN),
+      }, { db: {} as never }),
+    ).rejects.toBeInstanceOf(WeighInValidationError);
   });
 
   it('updateProfileAfterWeighIn sets current weight, targets, and goal date', () => {

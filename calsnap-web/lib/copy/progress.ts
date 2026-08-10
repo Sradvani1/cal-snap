@@ -37,6 +37,7 @@ export const progressCopy = {
   'progress.weighIn.save': 'Save weigh-in',
   'progress.weighIn.remindTomorrow': 'Remind me tomorrow',
   'progress.weighIn.error.saveFailed': 'Failed to save weigh-in',
+  'progress.validation.dateRequired': 'Enter a valid date.',
   'progress.validation.weightRange': 'Weight must be within a valid range.',
   'progress.validation.futureDate': 'Weigh-in date cannot be in the future.',
 } as const;

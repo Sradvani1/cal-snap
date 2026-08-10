@@ -162,6 +162,19 @@ describe('NutritionCalculator', () => {
     expect(rate ?? 0).toBeCloseTo(1, 0);
   });
 
+  it.skipIf(
+    new Date(2026, 2, 7, 12).getTimezoneOffset() ===
+      new Date(2026, 2, 8, 12).getTimezoneOffset(),
+  )('weeklyLossRateKg counts a DST week as seven calendar days', () => {
+    const userId = 'user-1';
+    const weighIns: WeighIn[] = [
+      { id: '1', userId, date: new Date(2026, 2, 7), weightKg: 80 },
+      { id: '2', userId, date: new Date(2026, 2, 14), weightKg: 79 },
+    ];
+
+    expect(weeklyLossRateKg(weighIns)).toBeCloseTo(1, 5);
+  });
+
   it('projectedGoalDate returns null at goal or zero deficit', () => {
     const referenceDate = new Date('2026-06-27');
     expect(

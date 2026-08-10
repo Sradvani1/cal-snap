@@ -16,7 +16,6 @@ import {
 } from '@/lib/analytics/analytics-types';
 import { buildAnalyticsSnapshot } from '@/lib/analytics/build-analytics-snapshot';
 import { useAnalyticsMeals } from '@/lib/queries/use-analytics-meals';
-import { useAnalyticsWeighIns } from '@/lib/queries/use-analytics-weigh-ins';
 import { useAnalyticsTimeframe } from '@/lib/queries/use-analytics-timeframe';
 import { useProfile } from '@/lib/queries/use-profile';
 import { copy } from '@/lib/copy';
@@ -55,7 +54,6 @@ function AnalyticsContent({ uid }: { uid: string | undefined }) {
 
   const timeframe = useAnalyticsTimeframe();
   const mealsQuery = useAnalyticsMeals(uid, timeframe.selectedRange, referenceDate);
-  const weighInsQuery = useAnalyticsWeighIns(uid, timeframe.selectedRange, referenceDate);
 
   const profile = profileQuery.data?.profile ?? null;
 
@@ -65,10 +63,9 @@ function AnalyticsContent({ uid }: { uid: string | undefined }) {
       meals: mealsQuery.data,
       profile,
       range: timeframe.selectedRange,
-      weighInsInRange: weighInsQuery.data ?? [],
       referenceDate,
     });
-  }, [profile, mealsQuery.data, weighInsQuery.data, timeframe.selectedRange, referenceDate]);
+  }, [profile, mealsQuery.data, timeframe.selectedRange, referenceDate]);
 
   const customRangeStart =
     timeframe.selectedRange.kind === 'custom'

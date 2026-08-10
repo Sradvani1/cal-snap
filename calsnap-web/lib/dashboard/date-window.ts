@@ -1,5 +1,10 @@
 /** Calendar-day helpers using the browser's local timezone. */
 
+export {
+  calendarDaysBetween as daysBetween,
+  toLocalDayKey as localDayKey,
+} from '@/lib/utilities/date-input';
+
 export function startOfLocalDay(date: Date): Date {
   const result = new Date(date);
   result.setHours(0, 0, 0, 0);
@@ -18,14 +23,6 @@ export function calendarDayRange(day: Date): { start: Date; end: Date } {
   return { start, end: endOfLocalDayExclusive(day) };
 }
 
-export function localDayKey(day: Date): string {
-  const start = startOfLocalDay(day);
-  const year = start.getFullYear();
-  const month = String(start.getMonth() + 1).padStart(2, '0');
-  const date = String(start.getDate()).padStart(2, '0');
-  return `${year}-${month}-${date}`;
-}
-
 export function nextLocalMidnight(date: Date): Date {
   const result = new Date(date);
   result.setHours(24, 0, 0, 0);
@@ -34,10 +31,4 @@ export function nextLocalMidnight(date: Date): Date {
 
 export function msUntilNextLocalMidnight(date: Date): number {
   return Math.max(0, nextLocalMidnight(date).getTime() - date.getTime());
-}
-
-export function daysBetween(start: Date, end: Date): number {
-  const startDay = startOfLocalDay(start);
-  const endDay = startOfLocalDay(end);
-  return Math.floor((endDay.getTime() - startDay.getTime()) / (1000 * 60 * 60 * 24));
 }

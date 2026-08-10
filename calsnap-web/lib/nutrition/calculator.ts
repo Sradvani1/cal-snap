@@ -4,6 +4,7 @@ import { activityMultiplier, type ActivityLevel } from '@/lib/models/activity-le
 import type { BiologicalSex } from '@/lib/models/biological-sex';
 import type { MacroSplit } from '@/lib/models/macro-split';
 import type { WeighIn } from '@/lib/models/weigh-in';
+import { calendarDaysBetween } from '@/lib/utilities/date-input';
 
 export function bmr(
   weightKg: number,
@@ -164,9 +165,7 @@ export function weeklyLossRateKg(weighIns: WeighIn[]): number | null {
 
   const first = recent[0];
   const last = recent[recent.length - 1];
-  const days = Math.floor(
-    (last.date.getTime() - first.date.getTime()) / (1000 * 60 * 60 * 24),
-  );
+  const days = calendarDaysBetween(first.date, last.date);
 
   if (days <= 0) {
     return null;

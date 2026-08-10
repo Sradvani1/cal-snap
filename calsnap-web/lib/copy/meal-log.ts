@@ -41,6 +41,8 @@ export const mealLogCopy = {
   'mealLog.favorites.errorLoad': 'Failed to load favorites.',
   'mealLog.favorites.errorDelete': 'Failed to delete favorite.',
   'mealLog.favorites.errorUse': 'Failed to log favorite meal.',
+  'mealLog.sheet.error.logFailed': 'Could not save this meal. Try again.',
+  'mealLog.favorites.errorSave': 'Failed to save favorite. Try again.',
   'mealLog.favorites.logAction': 'Log for today',
   'mealLog.favorites.logging': 'Logging\u2026',
 } as const;

@@ -110,6 +110,7 @@ function LogPageContent() {
   type SheetData = { meal: MealEntry; context: 'favorites' | 'history'; favoriteId?: string } | null;
   const [sheetData, setSheetData] = useState<SheetData>(null);
   const [isLogging, setIsLogging] = useState(false);
+  const [sheetError, setSheetError] = useState<string | null>(null);
   // Delete favorite dialog
   const [deleteFavDialogOpen, setDeleteFavDialogOpen] = useState(false);
   const [deleteFavTarget, setDeleteFavTarget] = useState<FavoriteMeal | null>(null);
@@ -140,11 +141,13 @@ function LogPageContent() {
       isManuallyAdjusted: true,
       items: fav.items.map((i) => ({ ...i })),
     };
+    setSheetError(null);
     setSheetData({ meal: entry, context, favoriteId: fav.id });
     setSheetOpen(true);
   }, []);
 
   const openSheetForHistory = useCallback((meal: MealEntry) => {
+    setSheetError(null);
     setSheetData({ meal, context: 'history' });
     setSheetOpen(true);
   }, []);
@@ -156,13 +159,23 @@ function LogPageContent() {
       setIsLogging(true);
       try {
         const entry = mealEntryFromItems(user.uid, items, mealType, new Date());
-        await createMeal(entry);
+        try {
+          await createMeal(entry);
+        } catch (error) {
+          setSheetError(copy('mealLog.sheet.error.logFailed'));
+          throw error;
+        }
+
         const dayKey = localDayKey(entry.timestamp);
         void queryClient.invalidateQueries({ queryKey: queryKeys.todaysMeals(user.uid, dayKey) });
         invalidateAnalyticsQueries(queryClient, user.uid);
         if (favId) {
-          await logFavorite(user.uid, favId);
-          void queryClient.invalidateQueries({ queryKey: queryKeys.favorites(user.uid) });
+          try {
+            await logFavorite(user.uid, favId);
+            void queryClient.invalidateQueries({ queryKey: queryKeys.favorites(user.uid) });
+          } catch (error) {
+            console.warn('Meal saved but favorite usage update failed:', error);
+          }
         }
         router.push('/dashboard');
       } finally {
@@ -173,20 +186,32 @@ function LogPageContent() {
   );
 
   const handleSheetFavorite = useCallback(async () => {
-    if (!user || !sheetData) return;
-    const mealId = sheetData.meal.id;
-    const existingFav = favoritesQuery.data?.find((f) => f.originalMealId === mealId);
-    if (existingFav) {
-      await deleteFavoriteMutation.mutateAsync(existingFav.id);
-    } else {
-      const favEntry: MealEntry = {
-        ...sheetData.meal,
-        geminiConfidence: 0,
-        isManuallyAdjusted: true,
-      };
-      await saveFavoriteMutation.mutateAsync(favEntry);
+    if (
+      !user ||
+      !sheetData ||
+      saveFavoriteMutation.isPending ||
+      deleteFavoriteMutation.isPending
+    ) return false;
+    setSheetError(null);
+    try {
+      const mealId = sheetData.meal.id;
+      const existingFav = favoritesQuery.data?.find((f) => f.originalMealId === mealId);
+      if (existingFav) {
+        await deleteFavoriteMutation.mutateAsync(existingFav.id);
+      } else {
+        const favEntry: MealEntry = {
+          ...sheetData.meal,
+          geminiConfidence: 0,
+          isManuallyAdjusted: true,
+        };
+        await saveFavoriteMutation.mutateAsync(favEntry);
+      }
+      void queryClient.invalidateQueries({ queryKey: queryKeys.favorites(user.uid) });
+      return true;
+    } catch {
+      setSheetError(copy('mealLog.favorites.errorSave'));
+      return false;
     }
-    void queryClient.invalidateQueries({ queryKey: queryKeys.favorites(user.uid) });
   }, [user, sheetData, saveFavoriteMutation, deleteFavoriteMutation, favoritesQuery.data, queryClient]);
 
   const handleSheetDeleteMeal = useCallback((meal: MealEntry) => {
@@ -292,12 +317,20 @@ function LogPageContent() {
         <MealQuickLookSheet
           key={sheetData.meal.id}
           open={sheetOpen}
-          onOpenChange={(open) => { if (!open) { setSheetOpen(false); setSheetData(null); } }}
+          onOpenChange={(open) => {
+            if (!open) {
+              setSheetOpen(false);
+              setSheetData(null);
+              setSheetError(null);
+            }
+          }}
           meal={sheetData.meal}
           skipAutoSave={sheetData.context === 'favorites'}
           onLog={sheetData.context === 'favorites' ? handleSheetLog : undefined}
           isLogging={isLogging}
           onFavorite={sheetData.context === 'favorites' ? undefined : handleSheetFavorite}
+          isFavoritePending={saveFavoriteMutation.isPending || deleteFavoriteMutation.isPending}
+          error={sheetError}
           onDeleteMeal={handleSheetDeleteMeal}
           viewHref={sheetData.context === 'history' ? `/log/${sheetData.meal.id}` : undefined}
           hideMealType={sheetData.context !== 'favorites'}
