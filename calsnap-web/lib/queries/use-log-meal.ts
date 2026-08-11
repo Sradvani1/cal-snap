@@ -66,6 +66,7 @@ export async function logMeal(
       photoStoragePath: photoResult.value,
     };
   } catch (error) {
+    await deleteMealPhoto(photoResult.value);
     console.warn('Meal photo path update failed; meal saved without a photo:', error);
     return initialEntry;
   }

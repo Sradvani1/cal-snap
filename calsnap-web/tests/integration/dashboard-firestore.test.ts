@@ -170,7 +170,7 @@ describe('dashboard Firestore reads', () => {
     expect(await fetchLatestWeighIn(uid, db)).toBeUndefined();
   });
 
-  it('throws when the returned latest weigh-in is malformed', async () => {
+  it('skips a malformed latest weigh-in', async () => {
     const uid = 'dashboard-malformed-latest-user';
     const db = testEnv.authenticatedContext(uid).firestore();
     const today = startOfLocalDay(new Date());
@@ -181,9 +181,7 @@ describe('dashboard Firestore reads', () => {
       createdAt: Timestamp.now(),
     });
 
-    await expect(fetchLatestWeighIn(uid, db)).rejects.toThrow(
-      'Invalid Firestore document weighIns/malformed',
-    );
+    expect(await fetchLatestWeighIn(uid, db)).toBeUndefined();
   });
 
   it('skips malformed weigh-ins in list reads', async () => {

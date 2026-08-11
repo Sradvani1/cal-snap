@@ -67,17 +67,18 @@ async function deleteMealPhoto(path: string, storage: ReturnType<typeof getFireb
 async function deleteStoragePrefix(
   storage: ReturnType<typeof getFirebaseStorage>,
   prefix: string,
-): Promise<void> {
+): Promise<boolean> {
   try {
     const folderRef = ref(storage, prefix);
     const listing = await listAll(folderRef);
     await Promise.all(listing.items.map((item) => deleteObject(item)));
-    await Promise.all(
+    const childResults = await Promise.all(
       listing.prefixes.map((subfolder) => deleteStoragePrefix(storage, subfolder.fullPath)),
     );
+    return childResults.every(Boolean);
   } catch (error) {
     console.warn('Failed to clean Storage prefix:', prefix, error);
-    throw error;
+    return false;
   }
 }
 
@@ -117,7 +118,11 @@ export async function deleteAllUserData(
 
   await deleteDoc(doc(db, 'users', uid, 'profile', PROFILE_DOC_ID));
 
-  await deleteStoragePrefix(storage, `users/${uid}/meals`);
+  const storageCleanupSucceeded = await deleteStoragePrefix(storage, `users/${uid}/meals`);
 
   clearUserLocalStorage(uid);
+
+  if (!storageCleanupSucceeded) {
+    console.warn(`User data deleted but Storage cleanup remains incomplete for ${uid}`);
+  }
 }

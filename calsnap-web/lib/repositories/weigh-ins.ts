@@ -49,14 +49,15 @@ export async function fetchLatestWeighIn(
   const latestQuery = query(
     weighInsRef,
     orderBy('date', 'desc'),
-    limit(1),
+    limit(5),
   );
 
   const snapshot = await getDocs(latestQuery);
-  const docSnap = snapshot.docs[0];
-  return docSnap
-    ? weighInDocToEntry(docSnap.id, docSnap.data())
-    : undefined;
+  return mapValidFirestoreDocs(
+    snapshot.docs,
+    'weighIns',
+    (docId, raw) => weighInDocToEntry(docId, raw),
+  )[0];
 }
 
 export async function fetchAllWeighIns(

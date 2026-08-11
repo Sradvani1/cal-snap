@@ -3,8 +3,8 @@ import {
   collection,
   deleteDoc,
   doc,
-  getDoc,
   getDocs,
+  increment,
   setDoc,
   updateDoc,
   type Firestore,
@@ -15,9 +15,9 @@ import {
   autoFavoriteName,
   favoriteEntryToDoc,
   favoriteDocToEntry,
-  type FavoriteMealDoc,
 } from '@/lib/models/favorite-meal-doc';
 import type { FavoriteMeal } from '@/lib/models/favorite-meal';
+import { mapValidFirestoreDocs } from '@/lib/models/validate-doc';
 
 export async function fetchFavorites(
   uid: string,
@@ -25,8 +25,10 @@ export async function fetchFavorites(
 ): Promise<FavoriteMeal[]> {
   const ref = collection(db, 'users', uid, 'favorites');
   const snapshot = await getDocs(ref);
-  const result = snapshot.docs.map((d) =>
-    favoriteDocToEntry(d.id, d.data() as FavoriteMealDoc),
+  const result = mapValidFirestoreDocs(
+    snapshot.docs,
+    'favorites',
+    (docId, raw) => favoriteDocToEntry(docId, raw),
   );
   result.sort((a, b) => {
     const useDiff = (b.useCount ?? 0) - (a.useCount ?? 0);
@@ -45,12 +47,9 @@ export async function logFavorite(
   db: Firestore = getFirestoreDb(),
 ): Promise<void> {
   const docRef = doc(db, 'users', uid, 'favorites', favoriteId);
-  const snap = await getDoc(docRef);
-  if (!snap.exists()) return;
-  const data = snap.data() as FavoriteMealDoc;
   const now = Timestamp.fromDate(new Date());
   await updateDoc(docRef, {
-    useCount: (data.useCount ?? 0) + 1,
+    useCount: increment(1),
     lastUsedAt: now,
     updatedAt: now,
   });

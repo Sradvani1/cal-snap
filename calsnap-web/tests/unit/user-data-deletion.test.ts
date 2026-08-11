@@ -95,4 +95,25 @@ describe('deleteAllUserData', () => {
 
     expect(mocks.deleteObject).toHaveBeenCalledWith(item);
   });
+
+  it('completes database deletion when Storage cleanup fails', async () => {
+    mocks.getDocs.mockResolvedValue({ docs: [] });
+    mocks.listAll.mockRejectedValue(new Error('Storage unavailable'));
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    try {
+      await expect(
+        deleteAllUserData('user-1', {
+          db: {} as never,
+          storage: {} as never,
+        }),
+      ).resolves.toBeUndefined();
+      expect(mocks.deleteDoc).toHaveBeenCalled();
+      expect(warn).toHaveBeenCalledWith(
+        expect.stringContaining('Storage cleanup remains incomplete'),
+      );
+    } finally {
+      warn.mockRestore();
+    }
+  });
 });

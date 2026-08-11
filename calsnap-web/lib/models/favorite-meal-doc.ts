@@ -1,9 +1,11 @@
 import { Timestamp } from 'firebase/firestore';
+import { z } from 'zod';
 import type { FoodItem } from '@/lib/models/food-item';
 import { foodItemToDoc, foodItemDocToEntry } from '@/lib/models/food-item-doc';
-import type { FoodItemDoc } from '@/lib/models/meal-entry-doc';
+import { foodItemDocSchema, type FoodItemDoc } from '@/lib/models/meal-entry-doc';
 import type { FavoriteMeal } from '@/lib/models/favorite-meal';
 import type { MealType } from '@/lib/models/meal-type';
+import { parseFirestoreDoc } from '@/lib/models/validate-doc';
 
 export interface FavoriteMealDoc {
   userId: string;
@@ -22,6 +24,25 @@ export interface FavoriteMealDoc {
   updatedAt: Timestamp;
 }
 
+const finiteNumber = z.number().finite();
+
+export const favoriteMealDocSchema = z.object({
+  userId: z.string(),
+  originalMealId: z.string(),
+  name: z.string(),
+  mealType: z.enum(['breakfast', 'lunch', 'dinner', 'snack']),
+  totalCalories: finiteNumber,
+  totalProteinG: finiteNumber,
+  totalCarbsG: finiteNumber,
+  totalFatG: finiteNumber,
+  totalFiberG: finiteNumber,
+  items: z.array(foodItemDocSchema),
+  useCount: finiteNumber,
+  lastUsedAt: z.instanceof(Timestamp).nullable(),
+  createdAt: z.instanceof(Timestamp),
+  updatedAt: z.instanceof(Timestamp),
+});
+
 export function autoFavoriteName(items: FoodItem[]): string {
   const nonEmpty = items.filter((i) => i.name.length > 0);
   if (nonEmpty.length === 0) return 'Meal';
@@ -33,11 +54,16 @@ export function autoFavoriteName(items: FoodItem[]): string {
   return full.length > 40 ? `${full.slice(0, 37)}...` : full;
 }
 
-export function favoriteDocToEntry(id: string, doc: FavoriteMealDoc): FavoriteMeal {
+export function parseFavoriteMealDoc(id: string, raw: unknown): FavoriteMealDoc {
+  return parseFirestoreDoc(favoriteMealDocSchema, 'favorites', id, raw);
+}
+
+export function favoriteDocToEntry(id: string, raw: unknown): FavoriteMeal {
+  const doc = parseFavoriteMealDoc(id, raw);
   return {
     id,
     userId: doc.userId,
-    originalMealId: doc.originalMealId ?? '',
+    originalMealId: doc.originalMealId,
     name: doc.name,
     mealType: doc.mealType,
     totalCalories: doc.totalCalories,
@@ -46,7 +72,7 @@ export function favoriteDocToEntry(id: string, doc: FavoriteMealDoc): FavoriteMe
     totalFatG: doc.totalFatG,
     totalFiberG: doc.totalFiberG,
     items: doc.items.map(foodItemDocToEntry),
-    useCount: doc.useCount ?? 0,
+    useCount: doc.useCount,
     lastUsedAt: doc.lastUsedAt?.toDate() ?? null,
     createdAt: doc.createdAt.toDate(),
     updatedAt: doc.updatedAt.toDate(),

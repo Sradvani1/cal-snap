@@ -22,19 +22,30 @@ export interface RetryStep {
   quality: number;
 }
 
-/** Pure retry grid matching iOS MealPhotoProcessor nested loop order. */
+/** Bounded retry sequence that preserves resolution before final quality fallbacks. */
 export function mealPhotoRetrySteps(): RetryStep[] {
   const steps: RetryStep[] = [];
-  for (const maxLongEdge of AppConstants.MealPhoto.longEdgeRetrySteps) {
-    if (maxLongEdge < AppConstants.MealPhoto.minLongEdgePx) {
-      continue;
-    }
-    for (const quality of AppConstants.MealPhoto.qualityRetrySteps) {
-      if (quality < AppConstants.MealPhoto.minJPEGQuality) {
-        continue;
-      }
-      steps.push({ maxLongEdge, quality });
-    }
+  const longEdges = AppConstants.MealPhoto.longEdgeRetrySteps.filter(
+    (maxLongEdge) => maxLongEdge >= AppConstants.MealPhoto.minLongEdgePx,
+  );
+  const qualities = AppConstants.MealPhoto.qualityRetrySteps.filter(
+    (quality) => quality >= AppConstants.MealPhoto.minJPEGQuality,
+  );
+  const preferredQuality = qualities[0];
+  const smallestLongEdge = longEdges.at(-1);
+
+  if (preferredQuality === undefined || smallestLongEdge === undefined) {
+    return steps;
+  }
+
+  for (const quality of qualities) {
+    steps.push({ maxLongEdge: longEdges[0], quality });
+  }
+  for (const maxLongEdge of longEdges.slice(1)) {
+    steps.push({ maxLongEdge, quality: preferredQuality });
+  }
+  for (const quality of qualities.slice(1)) {
+    steps.push({ maxLongEdge: smallestLongEdge, quality });
   }
   return steps;
 }

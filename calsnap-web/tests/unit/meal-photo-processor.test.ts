@@ -7,9 +7,12 @@ import {
 } from '@/lib/services/meal-photo-processor';
 
 describe('mealPhotoRetrySteps', () => {
-  it('orders long edge before quality descending', () => {
+  it('uses a bounded resolution and quality retry sequence', () => {
     const steps = mealPhotoRetrySteps();
-    expect(steps.length).toBeGreaterThan(0);
+    expect(steps.length).toBeLessThan(
+      AppConstants.MealPhoto.longEdgeRetrySteps.length *
+        AppConstants.MealPhoto.qualityRetrySteps.length,
+    );
     expect(steps[0]).toEqual({
       maxLongEdge: AppConstants.MealPhoto.longEdgeRetrySteps[0],
       quality: AppConstants.MealPhoto.qualityRetrySteps[0],

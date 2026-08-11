@@ -75,7 +75,7 @@ const SAFETY_SETTINGS = [
 
 function isRetryableAnalysisError(error: unknown): boolean {
   if (error instanceof GeminiAnalysisError) {
-    if (error.code === 'emptyResponse' || error.code === 'invalidJSON' || error.code === 'safetyBlocked') {
+    if (error.code === 'emptyResponse' || error.code === 'invalidJSON') {
       return true;
     }
     if (error.code === 'requestFailed') {
@@ -100,6 +100,7 @@ export async function analyzeMealImage(
   const deadline = Date.now() + ANALYSIS_TIMEOUT_MS;
   const abortController = new AbortController();
   const timeout = setTimeout(() => abortController.abort(), ANALYSIS_TIMEOUT_MS);
+  const imageBase64 = input.imageBytes?.toString('base64');
   const prompt = buildMealAnalysisPrompt({
     hasImage: Boolean(input.imageBytes),
     description: input.description,
@@ -115,11 +116,11 @@ export async function analyzeMealImage(
           { text: string } | { inlineData: { mimeType: string; data: string } }
         > = [{ text: prompt }];
 
-        if (input.imageBytes) {
+        if (imageBase64 !== undefined) {
           parts.push({
             inlineData: {
               mimeType: input.mimeType ?? 'image/jpeg',
-              data: input.imageBytes.toString('base64'),
+              data: imageBase64,
             },
           });
         }

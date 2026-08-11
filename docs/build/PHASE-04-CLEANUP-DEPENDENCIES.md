@@ -149,7 +149,7 @@ removed analytics query or insight route.
 | Check | Result |
 |------|--------|
 | `pnpm lint` | Passed |
-| `pnpm test` | Passed: 52 files / 282 tests |
+| `pnpm test` | Passed: 53 files / 285 tests |
 | `pnpm build --webpack` | Passed |
 | `pnpm test:integration` | Passed: 5 files / 23 tests |
 | `git diff --check` | Passed |
@@ -178,3 +178,21 @@ stopped before the final successful run.
   than restoring the deleted client-trusted payload path.
 - The remaining known product decisions, including zero-weight AI items and dormant `usdaFoodId`
   preservation, remain deferred as documented in `V1-REVIEW.md`.
+
+## V1 Hardening Follow-Up
+
+The post-Phase-4 residual audit produced a focused hardening pass without changing the V1 data
+model or feature scope:
+
+- Favorites now validate Firestore documents, skip malformed entries, and increment usage counts
+  atomically.
+- Latest weigh-in lookup skips malformed candidates within a bounded five-document window.
+- Successful photo uploads are cleaned up if attaching the Storage path to the meal fails.
+- Account deletion completes database cleanup even when Storage cleanup is temporarily unavailable;
+  incomplete cleanup is logged for retry/operations follow-up.
+- Photo preparation uses a bounded retry sequence instead of the full resolution/quality grid.
+- Gemini image Base64 encoding is performed once per request, and safety-blocked responses are not
+  retried.
+
+Follow-up verification passed with **53 unit-test files / 285 tests**, the production webpack build,
+and **5 integration files / 23 tests**.

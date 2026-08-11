@@ -142,7 +142,7 @@ describe('logMeal', () => {
       const result = await logMeal('user-1', { entry, photoBlob });
 
       expect(result.photoStoragePath).toBeUndefined();
-      expect(mockedDeletePhoto).not.toHaveBeenCalled();
+      expect(mockedDeletePhoto).toHaveBeenCalledWith('users/user-1/meals/meal-1/photo.jpg');
     } finally {
       warn.mockRestore();
     }
