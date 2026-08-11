@@ -16,7 +16,7 @@ import { useChartColors } from '@/lib/design/use-chart-colors';
 import { useReducedMotion } from '@/lib/design/motion';
 import { typography } from '@/lib/design/typography';
 import { compareWeighInsChronological } from '@/lib/progress/progress-stats';
-import { displayWeight } from '@/lib/utilities/unit-formatters';
+import { displayWeight, formatDateShort } from '@/lib/utilities/unit-formatters';
 import { cn } from '@/lib/utils/cn';
 
 interface WeightProgressChartProps {
@@ -35,10 +35,6 @@ interface ChartPoint {
   dateLabel: string;
   actual?: number;
   projected?: number;
-}
-
-function formatAxisDate(date: Date): string {
-  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
 
 export function WeightProgressChart({
@@ -82,7 +78,7 @@ export function WeightProgressChart({
   const chartData: ChartPoint[] = actualSorted.map((entry) => ({
     id: entry.id,
     dateMs: entry.date.getTime(),
-    dateLabel: formatAxisDate(entry.date),
+    dateLabel: formatDateShort(entry.date),
     actual: displayWeight(entry.weightKg, useLbs),
   }));
 
@@ -95,7 +91,7 @@ export function WeightProgressChart({
       chartData.push({
         id: `projection-${dateMs}`,
         dateMs,
-        dateLabel: formatAxisDate(point.date),
+      dateLabel: formatDateShort(point.date),
         projected: displayWeight(point.weightKg, useLbs),
       });
     }

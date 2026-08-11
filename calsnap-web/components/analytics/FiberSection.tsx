@@ -18,6 +18,7 @@ import { fiberProgressColor } from '@/lib/design/colors';
 import { useChartColors } from '@/lib/design/use-chart-colors';
 import { useReducedMotion } from '@/lib/design/motion';
 import { typography } from '@/lib/design/typography';
+import { formatDateShort } from '@/lib/utilities/unit-formatters';
 
 interface FiberSectionProps {
   chartDailySeries: DailyNutritionSummary[];
@@ -32,10 +33,6 @@ interface ChartRow {
   metTarget: boolean;
 }
 
-function formatAxisDate(date: Date): string {
-  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-}
-
 export function FiberSection({
   chartDailySeries,
   fiberTargetG,
@@ -46,7 +43,7 @@ export function FiberSection({
   const reducedMotion = useReducedMotion();
 
   const chartData: ChartRow[] = chartDailySeries.map((day) => ({
-    dateLabel: formatAxisDate(day.date),
+    dateLabel: formatDateShort(day.date),
     fiberG: day.fiberG,
     metTarget: day.fiberG >= fiberTargetG,
   }));

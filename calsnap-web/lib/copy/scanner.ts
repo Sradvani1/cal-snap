@@ -1,10 +1,8 @@
 export const scannerCopy = {
   'scanner.title': 'Scan meal',
-  'scanner.edit.title': 'Edit meal',
   'scanner.discard': 'Discard',
   'scanner.confirm.discardScan':
     'Discard unsaved meal scan? Your progress will be lost.',
-  'scanner.confirm.discardScanShort': 'Discard unsaved meal scan?',
   'scanner.confirm.discardEdits': 'Discard unsaved edits? Your changes will be lost.',
   'scanner.confirm.discardTitle': 'Discard changes?',
   'scanner.capture.prompt': 'Take a photo, or describe your meal below',
@@ -45,15 +43,10 @@ export const scannerCopy = {
   'scanner.result.photoAlt': 'Meal',
   'scanner.error.logFailed': 'Failed to log meal. Try again.',
   'scanner.error.saveFailed': 'Failed to save meal. Try again.',
-  'scanner.error.mealNotFound': 'Meal not found.',
-  'scanner.error.mealLoadFailed': 'Could not load meal.',
-  'scanner.error.backToLog': 'Back to log',
   'scanner.mealType.title': 'Meal type',
-  'scanner.mealType.suggested': 'Suggested: {{type}}',
   'scanner.confidence.high': 'High confidence',
   'scanner.confidence.medium': 'Medium confidence',
   'scanner.confidence.low': 'Low confidence',
-  'scanner.item.review': 'Review',
   'scanner.item.edit': 'Edit',
   'scanner.notes.title': 'Estimation notes',
 } as const;

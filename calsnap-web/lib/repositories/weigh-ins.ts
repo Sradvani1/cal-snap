@@ -4,12 +4,9 @@ import {
   limit,
   orderBy,
   query,
-  Timestamp,
-  where,
   type Firestore,
 } from 'firebase/firestore';
 import { AppConstants } from '@/lib/constants';
-import { startOfLocalDay } from '@/lib/dashboard/date-window';
 import { getFirestoreDb } from '@/lib/firebase/client';
 import type { WeighIn } from '@/lib/models/weigh-in';
 import { selectPlateauWeighIns } from '@/lib/progress/progress-stats';
@@ -17,29 +14,6 @@ import {
   weighInDocToEntry,
 } from '@/lib/models/weigh-in-doc';
 import { mapValidFirestoreDocs } from '@/lib/models/validate-doc';
-
-export async function fetchWeighInsInWindow(
-  uid: string,
-  start: Date,
-  end: Date,
-  db: Firestore = getFirestoreDb(),
-): Promise<WeighIn[]> {
-  const windowStart = startOfLocalDay(start);
-  const mealsRef = collection(db, 'users', uid, 'weighIns');
-  const weighInsQuery = query(
-    mealsRef,
-    where('date', '>=', Timestamp.fromDate(windowStart)),
-    where('date', '<', Timestamp.fromDate(end)),
-    orderBy('date'),
-  );
-
-  const snapshot = await getDocs(weighInsQuery);
-  return mapValidFirestoreDocs(
-    snapshot.docs,
-    'weighIns',
-    (docId, raw) => weighInDocToEntry(docId, raw),
-  );
-}
 
 export async function fetchWeeklyPlateauWeighIns(
   uid: string,

@@ -72,18 +72,6 @@ export function normalizeHeightCm(cm: number): number {
   );
 }
 
-export function clampFeet(value: number): number {
-  return Math.min(8, Math.max(4, value));
-}
-
-export function clampInches(value: number): number {
-  return Math.min(11, Math.max(0, value));
-}
-
-export function normalizeHeightCmFromFeetInches(feet: number, inches: number): number {
-  return normalizeHeightCm(feetInchesToCm(clampFeet(feet), clampInches(inches)));
-}
-
 export function cmToFeetInches(cm: number): { feet: number; inches: number } {
   const totalInches = cm / CM_PER_INCH;
   const feet = Math.floor(totalInches / 12);
@@ -100,14 +88,6 @@ export function formatWeight(kg: number, useLbs: boolean): string {
     return `${kgToLbs(kg).toFixed(1)} lbs`;
   }
   return `${kg.toFixed(1)} kg`;
-}
-
-export function formatHeight(cm: number, useImperial: boolean): string {
-  if (useImperial) {
-    const { feet, inches } = cmToFeetInches(cm);
-    return `${feet}' ${inches}"`;
-  }
-  return `${Math.round(cm)} cm`;
 }
 
 export function formatMacroGrams(grams: number, fractionLength = 0): string {

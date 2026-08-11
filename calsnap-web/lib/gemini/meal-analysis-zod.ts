@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import type { MealAnalysisResponse } from '@/lib/gemini/meal-analysis-types';
 import { AppConstants } from '@/lib/constants';
+import { addMealTotals, emptyMealTotals } from '@/lib/models/meal-totals';
 
 function asNumber(value: unknown, fallback = 0): number {
   if (typeof value === 'number' && Number.isFinite(value)) {
@@ -129,25 +130,29 @@ export function normalizeMealAnalysisRaw(raw: unknown): unknown {
 }
 
 function itemsSumMealTotal(items: { protein_g: number; carbs_g: number; fat_g: number; saturated_fat_g: number; unsaturated_fat_g: number; fiber_g: number; calories: number }[]) {
-  let calories = 0;
-  let protein_g = 0;
-  let carbs_g = 0;
-  let fat_g = 0;
-  let saturated_fat_g = 0;
-  let unsaturated_fat_g = 0;
-  let fiber_g = 0;
+  const totals = emptyMealTotals();
 
   for (const item of items) {
-    calories += item.calories;
-    protein_g += item.protein_g;
-    carbs_g += item.carbs_g;
-    fat_g += item.fat_g;
-    saturated_fat_g += item.saturated_fat_g;
-    unsaturated_fat_g += item.unsaturated_fat_g;
-    fiber_g += item.fiber_g;
+    addMealTotals(totals, {
+      totalCalories: item.calories,
+      totalProteinG: item.protein_g,
+      totalCarbsG: item.carbs_g,
+      totalFatG: item.fat_g,
+      totalSaturatedFatG: item.saturated_fat_g,
+      totalUnsaturatedFatG: item.unsaturated_fat_g,
+      totalFiberG: item.fiber_g,
+    });
   }
 
-  return { calories, proteinG: protein_g, carbsG: carbs_g, fatG: fat_g, saturatedFatG: saturated_fat_g, unsaturatedFatG: unsaturated_fat_g, fiberG: fiber_g };
+  return {
+    calories: totals.totalCalories,
+    proteinG: totals.totalProteinG,
+    carbsG: totals.totalCarbsG,
+    fatG: totals.totalFatG,
+    saturatedFatG: totals.totalSaturatedFatG,
+    unsaturatedFatG: totals.totalUnsaturatedFatG,
+    fiberG: totals.totalFiberG,
+  };
 }
 
 const foodItemSchema = z.object({

@@ -28,14 +28,3 @@ export function calorieBandLabel(band: CalorieProgressBand): string {
       return copy('designSystem.calorieRing.band.over');
   }
 }
-
-export function calorieBandIcon(band: CalorieProgressBand): string {
-  switch (band) {
-    case 'under':
-      return '↓';
-    case 'onTrack':
-      return '✓';
-    case 'over':
-      return '↑';
-  }
-}

@@ -1,9 +1,6 @@
 import { describe, expect, it, beforeEach, afterEach } from 'vitest';
 import { aggregateTodaysMeals } from '@/lib/dashboard/aggregate-meals';
-import {
-  calorieProgressBand,
-  fiberProgressBand,
-} from '@/lib/dashboard/calorie-progress';
+import { calorieProgressBand } from '@/lib/dashboard/calorie-progress';
 import { fiberTargetG } from '@/lib/nutrition/calculator';
 import {
   applyDietBreakTargets,
@@ -160,12 +157,6 @@ describe('dashboard aggregation', () => {
 
   it('fiberTargetG at 2000 kcal', () => {
     expect(fiberTargetG(2000)).toBe(28);
-  });
-
-  it('fiberProgressBand thresholds', () => {
-    expect(fiberProgressBand(26.6 / 28)).toBe('onTrack');
-    expect(fiberProgressBand(21 / 28)).toBe('moderate');
-    expect(fiberProgressBand(10 / 28)).toBe('low');
   });
 
   it('shouldShowPlateauAlert respects snooze, maintenance, and isOnPlateau', () => {

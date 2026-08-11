@@ -134,6 +134,10 @@ Phase 4 C4.2) because the consolidation is coupled to the DST-safe `daysBetween`
   `weighInsInRange` input field and `buildInsightPayload`. Update the Phase 4 C7/C2 checklist and
   affected query-key/invalidation tests to name these files explicitly before beginning Phase 4.
 
+> **Phase 4 handoff completed:** The historical `weighInsInRange`, `buildInsightPayload`, analytics
+> weigh-in hook, repository fetch, query key, and invalidation references described above were
+> removed in Phase 4 C7. The remaining sections below are historical Phase 3 implementation notes.
+
 ### E1/E2 — Date consolidation + DST-safe day counting
 
 - `lib/utilities/date-input.ts` — add:

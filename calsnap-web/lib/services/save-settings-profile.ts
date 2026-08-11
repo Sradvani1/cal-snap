@@ -1,24 +1,15 @@
 import type { ProfileExtras } from '@/lib/models/profile-doc';
 import type { UserProfile } from '@/lib/models/user-profile';
 import type { ProfileDraft } from '@/lib/onboarding/profile-draft';
+import { normalizeDraftMeasurements } from '@/lib/onboarding/validation';
 import type { ResolvedReminderPrefs } from '@/lib/progress/reminder-prefs';
 import { saveProfile } from '@/lib/repositories/profile';
 import {
   apply,
   applyMacroTargets,
 } from '@/lib/services/profile-update-service';
-import { normalizeHeightCm, normalizeWeightKg } from '@/lib/utilities/unit-formatters';
+import { normalizeWeightKg } from '@/lib/utilities/unit-formatters';
 import type { Firestore } from 'firebase/firestore';
-
-function normalizeSettingsDraft(
-  draft: ProfileDraft,
-): ProfileDraft {
-  return {
-    ...draft,
-    heightCm: normalizeHeightCm(draft.heightCm),
-    goalWeightKg: normalizeWeightKg(draft.goalWeightKg, draft.useLbsGoalWeight),
-  };
-}
 
 export function normalizeSettingsFormValues(
   draft: ProfileDraft,
@@ -26,7 +17,7 @@ export function normalizeSettingsFormValues(
   useLbsForWeight: boolean,
 ): { draft: ProfileDraft; startingWeightKg: number } {
   return {
-    draft: normalizeSettingsDraft(draft),
+    draft: normalizeDraftMeasurements(draft),
     startingWeightKg: normalizeWeightKg(startingWeightKg, useLbsForWeight),
   };
 }

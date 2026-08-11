@@ -1,8 +1,6 @@
 import { daysBetween, localDayKey, startOfLocalDay } from '@/lib/dashboard/date-window';
-import { copy } from '@/lib/copy';
-import type { MacroSplit } from '@/lib/models/macro-split';
 
-export const ANALYTICS_MAX_CUSTOM_SPAN_DAYS = 365;
+const ANALYTICS_MAX_CUSTOM_SPAN_DAYS = 365;
 
 export const ANALYTICS_MIN_INSIGHT_LOGGED_DAYS = 3;
 
@@ -18,8 +16,6 @@ export const AnalyticsDateRange = {
   custom(start: Date, end: Date): AnalyticsDateRange {
     return { kind: 'custom', start, end };
   },
-
-  maxCustomSpanDays: ANALYTICS_MAX_CUSTOM_SPAN_DAYS,
 
   resolvedEnd(range: AnalyticsDateRange, reference: Date = new Date()): Date {
     const today = startOfLocalDay(reference);
@@ -45,15 +41,6 @@ export const AnalyticsDateRange = {
     return normalizedEnd;
   },
 
-  displayLabel(range: AnalyticsDateRange): string {
-    if (range.kind === 'days') {
-      if (range.count === 7) return copy('analytics.timeframe.7d');
-      if (range.count === 30) return copy('analytics.timeframe.30d');
-      if (range.count === 90) return copy('analytics.timeframe.90d');
-      return `${range.count} days`;
-    }
-    return copy('analytics.timeframe.custom');
-  },
 };
 
 export type AnalyticsTimeframePreset = '7D' | '30D' | '90D' | 'custom';
@@ -120,6 +107,27 @@ export function normalizeCustomRange(
   return AnalyticsDateRange.custom(startDay, endDay);
 }
 
+export function analyticsWindow(
+  range: AnalyticsDateRange,
+  reference: Date = new Date(),
+): { start: Date; end: Date } {
+  let start = AnalyticsDateRange.resolvedStart(range, reference);
+  let end = AnalyticsDateRange.resolvedEnd(range, reference);
+  const today = startOfLocalDay(reference);
+
+  if (end.getTime() >= today.getTime()) {
+    end = new Date(end);
+    end.setDate(end.getDate() - 1);
+    if (range.kind === 'days') {
+      const newStart = new Date(end);
+      newStart.setDate(newStart.getDate() - (range.count - 1));
+      start = startOfLocalDay(newStart);
+    }
+  }
+
+  return { start, end };
+}
+
 export interface DailyNutritionSummary {
   date: Date;
   calories: number;
@@ -131,121 +139,8 @@ export interface DailyNutritionSummary {
   fiberG: number;
 }
 
-export enum Weekday {
-  sunday = 1,
-  monday = 2,
-  tuesday = 3,
-  wednesday = 4,
-  thursday = 5,
-  friday = 6,
-  saturday = 7,
-}
-
-export function toWeekday(date: Date): Weekday | null {
-  const jsDay = date.getDay();
-  const rawValue = jsDay + 1;
-  if (rawValue >= Weekday.sunday && rawValue <= Weekday.saturday) {
-    return rawValue as Weekday;
-  }
-  return null;
-}
-
-export function weekdayShortLabel(weekday: Weekday): string {
-  switch (weekday) {
-    case Weekday.sunday:
-      return copy('common.weekdayShort.sun');
-    case Weekday.monday:
-      return copy('common.weekdayShort.mon');
-    case Weekday.tuesday:
-      return copy('common.weekdayShort.tue');
-    case Weekday.wednesday:
-      return copy('common.weekdayShort.wed');
-    case Weekday.thursday:
-      return copy('common.weekdayShort.thu');
-    case Weekday.friday:
-      return copy('common.weekdayShort.fri');
-    case Weekday.saturday:
-      return copy('common.weekdayShort.sat');
-  }
-}
-
-export function isWeekendWeekday(weekday: Weekday): boolean {
-  return weekday === Weekday.saturday || weekday === Weekday.sunday;
-}
-
-export enum TimeOfDayBucket {
-  morning = 'morning',
-  midday = 'midday',
-  evening = 'evening',
-  night = 'night',
-}
-
-export const TIME_OF_DAY_BUCKETS: TimeOfDayBucket[] = [
-  TimeOfDayBucket.morning,
-  TimeOfDayBucket.midday,
-  TimeOfDayBucket.evening,
-  TimeOfDayBucket.night,
-];
-
-export function timeOfDayBucketForHour(hour: number): TimeOfDayBucket {
-  if (hour >= 5 && hour < 11) return TimeOfDayBucket.morning;
-  if (hour >= 11 && hour < 15) return TimeOfDayBucket.midday;
-  if (hour >= 15 && hour < 21) return TimeOfDayBucket.evening;
-  return TimeOfDayBucket.night;
-}
-
-export function timeOfDayDisplayLabel(bucket: TimeOfDayBucket): string {
-  switch (bucket) {
-    case TimeOfDayBucket.morning:
-      return copy('common.timeOfDay.morning');
-    case TimeOfDayBucket.midday:
-      return copy('common.timeOfDay.midday');
-    case TimeOfDayBucket.evening:
-      return copy('common.timeOfDay.evening');
-    case TimeOfDayBucket.night:
-      return copy('common.timeOfDay.night');
-  }
-}
-
 export interface TopFoodEntry {
   name: string;
   count: number;
   avgCalories: number;
-}
-
-export interface AnalyticsInsightPayload {
-  timeframeLabel: string;
-  loggedDayCount: number;
-  averageDailyCalories: number;
-  calorieTarget: number;
-  adherencePercent: number;
-  actualMacroSplit: MacroSplit;
-  targetMacroSplit: MacroSplit;
-  averageDailyFiberG: number;
-  fiberTargetG: number;
-  weekendAverageCalories: number | null;
-  weekdayAverageCalories: number | null;
-  topFoods: TopFoodEntry[];
-  weightChangeKg: number | null;
-}
-
-export function emptyWeekdayBreakdown(): Record<Weekday, number> {
-  return {
-    [Weekday.sunday]: 0,
-    [Weekday.monday]: 0,
-    [Weekday.tuesday]: 0,
-    [Weekday.wednesday]: 0,
-    [Weekday.thursday]: 0,
-    [Weekday.friday]: 0,
-    [Weekday.saturday]: 0,
-  };
-}
-
-export function emptyTimeOfDayBreakdown(): Record<TimeOfDayBucket, number> {
-  return {
-    [TimeOfDayBucket.morning]: 0,
-    [TimeOfDayBucket.midday]: 0,
-    [TimeOfDayBucket.evening]: 0,
-    [TimeOfDayBucket.night]: 0,
-  };
 }

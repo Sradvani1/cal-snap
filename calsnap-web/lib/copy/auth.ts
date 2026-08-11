@@ -17,8 +17,6 @@ export const authCopy = {
   'auth.signup.signInLink': 'Sign in',
   'auth.signup.error': 'Sign up failed',
   'auth.signup.googleError': 'Google sign up failed',
-  'auth.session.establishFailed': 'Failed to establish session',
-  'auth.session.refreshFailed': 'Failed to refresh session',
   'auth.session.googleRedirectFailed': 'Google sign-in could not be completed. Try again.',
   'auth.session.googleAccountExists':
     'An account already exists with this email. Sign in with email and password, then link Google in settings.',

@@ -15,5 +15,3 @@ export function createAnalyzeGenerationGuard() {
     },
   };
 }
-
-export type AnalyzeGenerationGuard = ReturnType<typeof createAnalyzeGenerationGuard>;

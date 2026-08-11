@@ -17,7 +17,10 @@ import {
   type MacroKind,
 } from '@/lib/services/profile-update-service';
 import { computeGoalTargetDate } from '@/lib/nutrition/goal-pathway';
-import { type ResolvedReminderPrefs } from '@/lib/progress/reminder-prefs';
+import {
+  resolveReminderPrefsFromExtras,
+  type ResolvedReminderPrefs,
+} from '@/lib/progress/reminder-prefs';
 
 interface SettingsSnapshot {
   draft: ProfileDraft;
@@ -39,12 +42,6 @@ function macroIntsFromProfile(profile: UserProfile): [number, number, number] {
   return normalizedMacroPercents(...raw);
 }
 
-function reminderPrefsFromExtras(extras: ProfileExtras): ResolvedReminderPrefs {
-  return {
-    weighInReminderEnabled: extras.weighInReminderEnabled ?? true,
-  };
-}
-
 function buildInitialSnapshot(
   profile: UserProfile,
   extras: ProfileExtras,
@@ -58,7 +55,7 @@ function buildInitialSnapshot(
     startingWeightKg: profile.startingWeightKg,
     useLbsForWeight: extras.useLbsForWeight,
     useImperialForHeight: extras.useImperialForHeight,
-    reminderPrefs: reminderPrefsFromExtras(extras),
+    reminderPrefs: resolveReminderPrefsFromExtras(extras),
   };
 }
 

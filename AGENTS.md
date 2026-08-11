@@ -42,7 +42,7 @@ pnpm dev                           # http://localhost:3000
 ## Auth & API security (server-side)
 
 - Protected routes use `useRequireAuth()` in `app/(app)/layout.tsx` (client gate). This is not a server middleware.
-- API routes (`app/api/analyze-meal`, `app/api/generate-insight`) verify `Authorization: Bearer <idToken>` with the Firebase **admin** SDK (`lib/auth/verify-bearer-token.ts`). Client never holds `FIREBASE_ADMIN_*` or `GEMINI_API_KEY`.
+- The AI route (`app/api/analyze-meal`) verifies `Authorization: Bearer <idToken>` with the Firebase **admin** SDK (`lib/auth/verify-bearer-token.ts`). Client never holds `FIREBASE_ADMIN_*` or `GEMINI_API_KEY`.
 - `GEMINI_API_KEY` is **server-only**. CI fails the build if it leaks into `.next/static` — never import it into client components or send it to the browser.
 - Auth: email/password + Google via `signInWithRedirect` only (no popup). Mobile Safari needs the `/__/auth/*` reverse proxy in `next.config.ts` and `authDomain` matching the host (`lib/firebase/resolve-auth-domain.ts`).
 
@@ -66,5 +66,5 @@ Keys live in `lib/copy/keys.ts` + per-feature modules. Add new keys there; do no
 ## Conventions
 
 - No husky / lint-staged / prettier / commitlint configured. Commit style is conventional-commit-ish but not enforced.
-- CI (` .github/workflows/calsnap-web.yml`) triggers on `calsnap-web/**`; runs lint → unit → build → integration → e2e.
+- CI (` .github/workflows/calsnap-web.yml`) triggers on `calsnap-web/**`; runs lint → unit → build → integration.
 - iOS code in `archive/ios/` is preserved for reference only; do not port from it unless asked.

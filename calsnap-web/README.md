@@ -40,7 +40,7 @@ pnpm emulators        # Start Auth + Firestore + Storage emulators
 1. User signs in via email/password or Google redirect (`signInWithRedirect` only)
 2. Firebase Auth SDK holds client session; no httpOnly cookies or middleware
 3. Protected routes: `(app)/layout` uses `useRequireAuth()` + `useProfile()` for onboarding gate
-4. Gemini API routes (`/api/analyze-meal`, `/api/generate-insight`) verify `Authorization: Bearer` ID tokens server-side
+4. The Gemini API route (`/api/analyze-meal`) verifies `Authorization: Bearer` ID tokens server-side
 
 ### Google OAuth setup
 

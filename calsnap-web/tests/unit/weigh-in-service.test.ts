@@ -17,7 +17,6 @@ import {
   sortWeighInsNewestFirst,
   toGoalKg,
 } from '@/lib/progress/progress-stats';
-import { setUseLbsConvertsWeight } from '@/lib/progress/use-weigh-in-form';
 
 const { mockWriteBatch, mockDoc } = vi.hoisted(() => ({
   mockWriteBatch: vi.fn(),
@@ -179,16 +178,6 @@ describe('weigh-in service', () => {
 
     expect(updated.profile.goalTargetDate).toBeNull();
     expect(updated.profile.startingWeightKg).toBe(profile.startingWeightKg);
-  });
-});
-
-describe('weigh-in form unit conversion', () => {
-  it('setUseLbs converts weight without changing kg value', () => {
-    const toLbs = setUseLbsConvertsWeight(80, false, true);
-    expect(toLbs.kg).toBeCloseTo(80, 0);
-
-    const backToKg = setUseLbsConvertsWeight(toLbs.kg, true, false);
-    expect(backToKg.kg).toBeCloseTo(80, 0);
   });
 });
 

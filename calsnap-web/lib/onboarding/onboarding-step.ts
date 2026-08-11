@@ -1,6 +1,6 @@
 import { copy } from '@/lib/copy';
 
-export const ONBOARDING_STEPS = [
+const ONBOARDING_STEPS = [
   'welcome',
   'profileSetup',
   'goalSetup',
@@ -18,7 +18,7 @@ export const ONBOARDING_STEP_TITLES: Record<OnboardingStep, string> = {
   done: copy('onboarding.step.done'),
 };
 
-export function onboardingStepIndex(step: OnboardingStep): number {
+function onboardingStepIndex(step: OnboardingStep): number {
   return ONBOARDING_STEPS.indexOf(step);
 }
 

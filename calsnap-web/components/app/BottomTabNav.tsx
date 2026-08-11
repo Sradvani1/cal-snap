@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { ChartLine, House, List, ScanLine, Settings } from 'lucide-react';
 import { copy, type CopyKey } from '@/lib/copy';
 import { formFieldFocusRingClassName } from '@/lib/design/form-field';
 import { layout } from '@/lib/design/layout';
@@ -9,98 +10,15 @@ import { cn } from '@/lib/utils/cn';
 import { useUnsavedWork } from '@/lib/scanner/unsaved-work-context';
 
 const TABS = [
-  { href: '/dashboard', labelKey: 'common.nav.dashboard' as CopyKey, icon: DashboardIcon },
-  { href: '/log', labelKey: 'common.nav.log' as CopyKey, icon: LogIcon },
-  { href: '/scan', labelKey: 'common.nav.scan' as CopyKey, icon: ScanIcon },
-  { href: '/progress', labelKey: 'common.nav.progress' as CopyKey, icon: ProgressIcon },
-  { href: '/settings', labelKey: 'common.nav.settings' as CopyKey, icon: SettingsIcon },
+  { href: '/dashboard', labelKey: 'common.nav.dashboard' as CopyKey, icon: House },
+  { href: '/log', labelKey: 'common.nav.log' as CopyKey, icon: List },
+  { href: '/scan', labelKey: 'common.nav.scan' as CopyKey, icon: ScanLine },
+  { href: '/progress', labelKey: 'common.nav.progress' as CopyKey, icon: ChartLine },
+  { href: '/settings', labelKey: 'common.nav.settings' as CopyKey, icon: Settings },
 ] as const;
 
 function iconClass(active: boolean): string {
   return cn('h-6 w-6', active ? 'text-cs-foreground' : 'text-cs-muted');
-}
-
-function DashboardIcon({ active }: { active: boolean }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      className={iconClass(active)}
-      aria-hidden
-    >
-      <path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" />
-    </svg>
-  );
-}
-
-function LogIcon({ active }: { active: boolean }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      className={iconClass(active)}
-      aria-hidden
-    >
-      <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
-    </svg>
-  );
-}
-
-function ScanIcon({ active }: { active: boolean }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      className={iconClass(active)}
-      aria-hidden
-    >
-      <path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3" />
-      <rect x="7" y="7" width="10" height="10" rx="1" />
-    </svg>
-  );
-}
-
-function ProgressIcon({ active }: { active: boolean }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      className={iconClass(active)}
-      aria-hidden
-    >
-      <path d="M3 3v18h18" />
-      <path d="m7 14 4-4 3 3 5-6" />
-    </svg>
-  );
-}
-
-function SettingsIcon({ active }: { active: boolean }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      className={iconClass(active)}
-      aria-hidden
-    >
-      <circle cx="12" cy="12" r="3" />
-      <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
-    </svg>
-  );
 }
 
 function TabLink({
@@ -111,7 +29,7 @@ function TabLink({
 }: {
   href: string;
   labelKey: CopyKey;
-  icon: typeof DashboardIcon;
+  icon: (typeof TABS)[number]['icon'];
   active: boolean;
 }) {
   const router = useRouter();
@@ -141,7 +59,7 @@ function TabLink({
         formFieldFocusRingClassName,
       )}
     >
-      <Icon active={active} />
+      <Icon className={iconClass(active)} aria-hidden />
       <span className={active ? 'text-cs-primary' : 'text-cs-muted'}>{label}</span>
     </Link>
   );

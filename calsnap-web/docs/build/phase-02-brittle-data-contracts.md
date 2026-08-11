@@ -150,6 +150,10 @@ validation.
 
 ## Workstream 4 — Analytics query keys (B5) + verify B6
 
+> **Superseded by Phase 4:** The analytics weigh-in query, query key, and related invalidation
+> path were removed with the dormant insight feature. The historical implementation details below
+> are retained for traceability only.
+
 ### B5 — keys
 
 - Add `analyticsWeighIns` to `lib/queries/query-keys.ts` (mirroring `analyticsMeals`).

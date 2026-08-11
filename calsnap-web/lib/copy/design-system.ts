@@ -26,8 +26,6 @@ export const designSystemCopy = {
   'designSystem.macroBar.fat': 'Fat',
   'designSystem.macroBar.noData': 'No macro data',
   'designSystem.macroBar.protein': 'Protein',
-  'designSystem.nutrient.calories': 'Calories',
-  'designSystem.nutrient.caloriesValue': '{{calories}} kcal',
   'designSystem.nutrientStat.accessibility.basic': '{{label}}, {{value}}',
   'designSystem.nutrientStat.accessibility.withTarget': '{{label}}, {{value}}, target {{target}}',
   'designSystem.nutrientStat.target': 'Target {{target}}',

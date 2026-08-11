@@ -3,22 +3,15 @@ export const layout = {
   calorieRing: {
     size: 180,
     strokeWidth: 16,
-    overStrokeWidth: 20,
   },
   macroBar: {
     height: 12,
     radius: 6,
   },
-  sectionCard: {
-    radius: 'rounded-2xl',
-    padding: 'p-4 sm:p-6',
-  },
   /** Constrains app pages to the content column and blocks horizontal overflow on mobile. */
   pageShell:
     'mx-auto flex w-full min-w-0 max-w-lg flex-col overflow-x-hidden px-4',
   tabBar: {
-    /** Documented content row height before safe-area inset (min-h-11 + py-2 + border). */
-    height: 'var(--app-tab-bar-content-height)',
     /** In-flow flex footer — parent shell must be h-dvh overflow-hidden so only main scrolls. */
     nav: 'shrink-0 z-10 border-t border-cs-border bg-cs-surface pb-safe',
   },
@@ -32,5 +25,4 @@ export const layout = {
     mainScrollClass: 'app-main',
     onboardingMainScrollClass: 'onboarding-main',
   },
-  touchTarget: 'min-h-11 min-w-11',
 } as const;

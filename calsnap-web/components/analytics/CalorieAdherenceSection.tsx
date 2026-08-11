@@ -22,6 +22,7 @@ import { calorieProgressColor } from '@/lib/design/colors';
 import { useChartColors } from '@/lib/design/use-chart-colors';
 import { useReducedMotion } from '@/lib/design/motion';
 import { typography } from '@/lib/design/typography';
+import { formatDateShort } from '@/lib/utilities/unit-formatters';
 
 interface CalorieAdherenceSectionProps {
   chartDailySeries: DailyNutritionSummary[];
@@ -36,10 +37,6 @@ interface ChartRow {
   band: CalorieProgressBand;
 }
 
-function formatAxisDate(date: Date): string {
-  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-}
-
 export function CalorieAdherenceSection({
   chartDailySeries,
   calorieTarget,
@@ -52,7 +49,7 @@ export function CalorieAdherenceSection({
   const chartData: ChartRow[] = chartDailySeries.map((day) => {
     const ratio = calorieTarget > 0 ? day.calories / calorieTarget : 0;
     return {
-      dateLabel: formatAxisDate(day.date),
+      dateLabel: formatDateShort(day.date),
       calories: day.calories,
       band: calorieProgressBand(ratio),
     };

@@ -24,8 +24,7 @@ export function validateDateOfBirth(
 
 export function normalizeProfileSetupDraft(draft: ProfileDraft): ProfileDraft {
   return {
-    ...draft,
-    heightCm: normalizeHeightCm(draft.heightCm),
+    ...normalizeDraftMeasurements(draft, false),
     weightKg: normalizeWeightKg(draft.weightKg, draft.useLbsWeight),
     useLbsGoalWeight: draft.useLbsWeight,
   };
@@ -33,8 +32,21 @@ export function normalizeProfileSetupDraft(draft: ProfileDraft): ProfileDraft {
 
 export function normalizeGoalSetupDraft(draft: ProfileDraft): ProfileDraft {
   return {
-    ...draft,
+    ...normalizeDraftMeasurements(draft),
     goalWeightKg: normalizeWeightKg(draft.goalWeightKg, draft.useLbsGoalWeight),
+  };
+}
+
+export function normalizeDraftMeasurements(
+  draft: ProfileDraft,
+  normalizeGoalWeight = true,
+): ProfileDraft {
+  return {
+    ...draft,
+    heightCm: normalizeHeightCm(draft.heightCm),
+    goalWeightKg: normalizeGoalWeight
+      ? normalizeWeightKg(draft.goalWeightKg, draft.useLbsGoalWeight)
+      : draft.goalWeightKg,
   };
 }
 

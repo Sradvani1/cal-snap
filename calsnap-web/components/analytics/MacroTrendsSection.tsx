@@ -16,6 +16,7 @@ import type { DailyNutritionSummary } from '@/lib/analytics/analytics-types';
 import { copy } from '@/lib/copy';
 import { useChartColors } from '@/lib/design/use-chart-colors';
 import { useReducedMotion } from '@/lib/design/motion';
+import { formatDateShort } from '@/lib/utilities/unit-formatters';
 
 interface MacroTrendsSectionProps {
   chartDailySeries: DailyNutritionSummary[];
@@ -27,10 +28,6 @@ interface ChartRow {
   proteinKcal: number;
   carbsKcal: number;
   fatKcal: number;
-}
-
-function formatAxisDate(date: Date): string {
-  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
 
 const tooltipContainerStyle = {
@@ -53,7 +50,7 @@ export function MacroTrendsSection({
   const reducedMotion = useReducedMotion();
 
   const chartData: ChartRow[] = chartDailySeries.map((day) => ({
-    dateLabel: formatAxisDate(day.date),
+    dateLabel: formatDateShort(day.date),
     proteinKcal: day.proteinG * AppConstants.Nutrition.proteinCalPerGram,
     carbsKcal: day.carbsG * AppConstants.Nutrition.carbsCalPerGram,
     fatKcal: day.fatG * AppConstants.Nutrition.fatCalPerGram,

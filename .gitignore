@@ -8,6 +8,7 @@
 .agents/
 
 # CalSnap Web (Next.js)
+/.env.local
 calsnap-web/node_modules/
 calsnap-web/.next/
 calsnap-web/.env.local

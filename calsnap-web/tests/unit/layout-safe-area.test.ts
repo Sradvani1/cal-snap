@@ -6,7 +6,6 @@ import { layout } from '@/lib/design/layout';
 
 describe('layout safe-area tokens', () => {
   it('exports tabBar and content token groups', () => {
-    expect(layout.tabBar.height).toBe('var(--app-tab-bar-content-height)');
     expect(layout.tabBar.nav).toContain('pb-safe');
     expect(layout.tabBar.nav).toContain('shrink-0');
     expect(layout.tabBar.nav).not.toContain('fixed');

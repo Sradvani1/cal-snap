@@ -1,5 +1,6 @@
 import type { MealEntry } from '@/lib/models/meal-entry';
 import type { MealType } from '@/lib/models/meal-type';
+import { addMealTotals, emptyMealTotals } from '@/lib/models/meal-totals';
 
 export type MealsByType = Partial<Record<MealType, MealEntry[]>>;
 
@@ -15,24 +16,12 @@ export interface AggregatedMeals {
 }
 
 export function aggregateTodaysMeals(meals: MealEntry[]): AggregatedMeals {
-  let todaysCalories = 0;
-  let todaysProteinG = 0;
-  let todaysCarbsG = 0;
-  let todaysFatG = 0;
-  let todaysSaturatedFatG = 0;
-  let todaysUnsaturatedFatG = 0;
-  let todaysFiberG = 0;
+  const totals = emptyMealTotals();
 
   const grouped: MealsByType = {};
 
   for (const meal of meals) {
-    todaysCalories += meal.totalCalories;
-    todaysProteinG += meal.totalProteinG;
-    todaysCarbsG += meal.totalCarbsG;
-    todaysFatG += meal.totalFatG;
-    todaysSaturatedFatG += meal.totalSaturatedFatG;
-    todaysUnsaturatedFatG += meal.totalUnsaturatedFatG;
-    todaysFiberG += meal.totalFiberG;
+    addMealTotals(totals, meal);
 
     const bucket = grouped[meal.mealType] ?? [];
     bucket.push(meal);
@@ -44,13 +33,13 @@ export function aggregateTodaysMeals(meals: MealEntry[]): AggregatedMeals {
   }
 
   return {
-    todaysCalories,
-    todaysProteinG,
-    todaysCarbsG,
-    todaysFatG,
-    todaysSaturatedFatG,
-    todaysUnsaturatedFatG,
-    todaysFiberG,
+    todaysCalories: totals.totalCalories,
+    todaysProteinG: totals.totalProteinG,
+    todaysCarbsG: totals.totalCarbsG,
+    todaysFatG: totals.totalFatG,
+    todaysSaturatedFatG: totals.totalSaturatedFatG,
+    todaysUnsaturatedFatG: totals.totalUnsaturatedFatG,
+    todaysFiberG: totals.totalFiberG,
     mealsByType: grouped,
   };
 }

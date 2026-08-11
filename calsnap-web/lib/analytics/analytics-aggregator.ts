@@ -2,52 +2,33 @@ import { isCalorieIntakeOnTarget } from '@/lib/dashboard/calorie-progress';
 import { startOfLocalDay } from '@/lib/dashboard/date-window';
 import type { MealEntry } from '@/lib/models/meal-entry';
 import type { MacroSplit } from '@/lib/models/macro-split';
+import { addMealTotals, emptyMealTotals } from '@/lib/models/meal-totals';
 import { macroPercents } from '@/lib/nutrition/calculator';
-import {
-  emptyTimeOfDayBreakdown,
-  emptyWeekdayBreakdown,
-  isWeekendWeekday,
-  timeOfDayBucketForHour,
-  toWeekday,
-  type DailyNutritionSummary,
-  type TimeOfDayBucket,
-  type TopFoodEntry,
-  type Weekday,
-} from '@/lib/analytics/analytics-types';
+import type { DailyNutritionSummary, TopFoodEntry } from '@/lib/analytics/analytics-types';
 
 export function loggedDailySummaries(meals: MealEntry[]): DailyNutritionSummary[] {
-  const byDay = new Map<number, DailyNutritionSummary>();
+  const byDay = new Map<number, { date: Date; totals: ReturnType<typeof emptyMealTotals> }>();
 
   for (const meal of meals) {
     const day = startOfLocalDay(meal.timestamp);
     const key = day.getTime();
-    const existing = byDay.get(key);
-    if (existing) {
-      byDay.set(key, {
-        date: day,
-        calories: existing.calories + meal.totalCalories,
-        proteinG: existing.proteinG + meal.totalProteinG,
-        carbsG: existing.carbsG + meal.totalCarbsG,
-        fatG: existing.fatG + meal.totalFatG,
-        saturatedFatG: existing.saturatedFatG + meal.totalSaturatedFatG,
-        unsaturatedFatG: existing.unsaturatedFatG + meal.totalUnsaturatedFatG,
-        fiberG: existing.fiberG + meal.totalFiberG,
-      });
-    } else {
-      byDay.set(key, {
-        date: day,
-        calories: meal.totalCalories,
-        proteinG: meal.totalProteinG,
-        carbsG: meal.totalCarbsG,
-        fatG: meal.totalFatG,
-        saturatedFatG: meal.totalSaturatedFatG,
-        unsaturatedFatG: meal.totalUnsaturatedFatG,
-        fiberG: meal.totalFiberG,
-      });
-    }
+    const existing = byDay.get(key) ?? { date: day, totals: emptyMealTotals() };
+    addMealTotals(existing.totals, meal);
+    byDay.set(key, existing);
   }
 
-  return [...byDay.values()].sort((a, b) => a.date.getTime() - b.date.getTime());
+  return [...byDay.values()]
+    .map(({ date, totals }) => ({
+      date,
+      calories: totals.totalCalories,
+      proteinG: totals.totalProteinG,
+      carbsG: totals.totalCarbsG,
+      fatG: totals.totalFatG,
+      saturatedFatG: totals.totalSaturatedFatG,
+      unsaturatedFatG: totals.totalUnsaturatedFatG,
+      fiberG: totals.totalFiberG,
+    }))
+    .sort((a, b) => a.date.getTime() - b.date.getTime());
 }
 
 export function chartDailySeries(
@@ -128,57 +109,6 @@ export function daysMeetingFiberTarget(
     return 0;
   }
   return loggedDays.filter((day) => day.fiberG >= fiberTargetG).length;
-}
-
-export function dayOfWeekBreakdown(meals: MealEntry[]): Record<Weekday, number> {
-  const totals = emptyWeekdayBreakdown();
-  for (const meal of meals) {
-    const weekday = toWeekday(meal.timestamp);
-    if (weekday === null) {
-      continue;
-    }
-    totals[weekday] += meal.totalCalories;
-  }
-  return totals;
-}
-
-export function timeOfDayBreakdown(meals: MealEntry[]): Record<TimeOfDayBucket, number> {
-  const totals = emptyTimeOfDayBreakdown();
-  for (const meal of meals) {
-    const hour = meal.timestamp.getHours();
-    const bucket = timeOfDayBucketForHour(hour);
-    totals[bucket] += meal.totalCalories;
-  }
-  return totals;
-}
-
-export function weekendWeekdayAverages(
-  loggedDays: DailyNutritionSummary[],
-): { weekend: number; weekday: number } | null {
-  const weekendDays: DailyNutritionSummary[] = [];
-  const weekdayDays: DailyNutritionSummary[] = [];
-
-  for (const day of loggedDays) {
-    const weekday = toWeekday(day.date);
-    if (weekday === null) {
-      continue;
-    }
-    if (isWeekendWeekday(weekday)) {
-      weekendDays.push(day);
-    } else {
-      weekdayDays.push(day);
-    }
-  }
-
-  if (weekendDays.length === 0 || weekdayDays.length === 0) {
-    return null;
-  }
-
-  const weekendAvg =
-    weekendDays.reduce((sum, day) => sum + day.calories, 0) / weekendDays.length;
-  const weekdayAvg =
-    weekdayDays.reduce((sum, day) => sum + day.calories, 0) / weekdayDays.length;
-  return { weekend: weekendAvg, weekday: weekdayAvg };
 }
 
 export function topFoods(meals: MealEntry[], limit: number): TopFoodEntry[] {

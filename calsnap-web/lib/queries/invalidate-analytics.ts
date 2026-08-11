@@ -5,5 +5,4 @@ export function invalidateAnalyticsQueries(
   uid: string,
 ): void {
   void queryClient.invalidateQueries({ queryKey: ['analyticsMeals', uid] });
-  void queryClient.invalidateQueries({ queryKey: ['analyticsWeighIns', uid] });
 }

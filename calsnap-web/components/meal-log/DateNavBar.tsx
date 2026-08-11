@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useRef } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { copy } from '@/lib/copy';
 import { formFieldFocusRingClassName } from '@/lib/design/form-field';
 import { typography } from '@/lib/design/typography';
@@ -97,9 +98,7 @@ export function DateNavBar({ date, onDateChange }: DateNavBarProps) {
             formFieldFocusRingClassName,
           )}
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-            <path d="M15 18l-6-6 6-6" />
-          </svg>
+          <ChevronLeft className="h-5 w-5" aria-hidden />
         </button>
 
         <button
@@ -125,9 +124,7 @@ export function DateNavBar({ date, onDateChange }: DateNavBarProps) {
             formFieldFocusRingClassName,
           )}
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-            <path d="M9 18l6-6-6-6" />
-          </svg>
+          <ChevronRight className="h-5 w-5" aria-hidden />
         </button>
 
         <input

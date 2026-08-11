@@ -429,7 +429,7 @@ Add for **Production** and **Preview**:
 | `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | From config |
 | `NEXT_PUBLIC_FIREBASE_APP_ID` | From config |
 | `NEXT_PUBLIC_USE_FIREBASE_EMULATOR` | `false` |
-| `FIREBASE_ADMIN_PROJECT_ID` | Service account (Bearer verification on `/api/analyze-meal`, `/api/generate-insight`) |
+| `FIREBASE_ADMIN_PROJECT_ID` | Service account (Bearer verification on `/api/analyze-meal`) |
 | `FIREBASE_ADMIN_CLIENT_EMAIL` | Service account |
 | `FIREBASE_ADMIN_PRIVATE_KEY` | Private key with `\n` |
 | `GEMINI_API_KEY` | Google AI Studio key |

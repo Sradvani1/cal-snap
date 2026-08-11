@@ -1,36 +1,22 @@
 import type { EditableFoodItem } from '@/lib/scanner/editable-food-item';
+import { addMealTotals, emptyMealTotals, type MealTotals } from '@/lib/models/meal-totals';
 
-export interface MealTotals {
-  totalCalories: number;
-  totalProteinG: number;
-  totalCarbsG: number;
-  totalFatG: number;
-  totalSaturatedFatG: number;
-  totalUnsaturatedFatG: number;
-  totalFiberG: number;
-}
+export type { MealTotals } from '@/lib/models/meal-totals';
 
 export function sumEditableItems(items: EditableFoodItem[]): MealTotals {
-  return items.reduce(
-    (acc, item) => ({
-      totalCalories: acc.totalCalories + item.calories,
-      totalProteinG: acc.totalProteinG + item.proteinG,
-      totalCarbsG: acc.totalCarbsG + item.carbsG,
-      totalFatG: acc.totalFatG + item.fatG,
-      totalSaturatedFatG: acc.totalSaturatedFatG + item.saturatedFatG,
-      totalUnsaturatedFatG: acc.totalUnsaturatedFatG + item.unsaturatedFatG,
-      totalFiberG: acc.totalFiberG + item.fiberG,
-    }),
-    {
-      totalCalories: 0,
-      totalProteinG: 0,
-      totalCarbsG: 0,
-      totalFatG: 0,
-      totalSaturatedFatG: 0,
-      totalUnsaturatedFatG: 0,
-      totalFiberG: 0,
-    },
-  );
+  const totals = emptyMealTotals();
+  for (const item of items) {
+    addMealTotals(totals, {
+      totalCalories: item.calories,
+      totalProteinG: item.proteinG,
+      totalCarbsG: item.carbsG,
+      totalFatG: item.fatG,
+      totalSaturatedFatG: item.saturatedFatG,
+      totalUnsaturatedFatG: item.unsaturatedFatG,
+      totalFiberG: item.fiberG,
+    });
+  }
+  return totals;
 }
 
 export function overallConfidence(items: EditableFoodItem[]): number {

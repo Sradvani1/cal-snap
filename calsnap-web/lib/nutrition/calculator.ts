@@ -123,9 +123,6 @@ export function weightProjection(
   let currentWeight = startWeightKg;
 
   for (let week = 1; week <= weeks; week += 1) {
-    const currentBMR = bmr(currentWeight, heightCm, ageYears, sex);
-    const currentTDEE = tdee(currentBMR, activityLevel);
-    void currentTDEE; // retained for W06 dynamic deficit recalculation
     const weeklyDeficit = dailyDeficitKcal * 7;
     const adaptationFactor = week > 4 ? 0.95 : 1.0;
     const effectiveDeficit = weeklyDeficit * adaptationFactor;

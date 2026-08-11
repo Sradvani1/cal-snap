@@ -5,10 +5,6 @@ import { mealEntryToDoc } from '@/lib/models/meal-entry-doc';
 import type { MealEntry } from '@/lib/models/meal-entry';
 import type { FoodItem } from '@/lib/models/food-item';
 import { updateEditableItemWeight } from '@/lib/scanner/editable-food-item';
-import {
-  assertScannerEditMode,
-  MealScannerNotInEditModeError,
-} from '@/lib/scanner/edit-baseline';
 
 function makeMeal(
   overrides: Partial<MealEntry> & Pick<MealEntry, 'mealType' | 'totalCalories'>,
@@ -17,8 +13,6 @@ function makeMeal(
     id: overrides.id ?? 'meal-1',
     userId: overrides.userId ?? 'user-1',
     timestamp: overrides.timestamp ?? new Date('2026-06-27T12:00:00'),
-    mealType: overrides.mealType,
-    totalCalories: overrides.totalCalories,
     totalProteinG: overrides.totalProteinG ?? 0,
     totalCarbsG: overrides.totalCarbsG ?? 0,
     totalFatG: overrides.totalFatG ?? 0,
@@ -150,8 +144,4 @@ describe('meal log CRUD', () => {
     expect(doc.updatedAt.toMillis()).toBeGreaterThanOrEqual(createdAt.toMillis());
   });
 
-  it('testUpdateMealRequiresEditMode', () => {
-    expect(() => assertScannerEditMode(false)).toThrow(MealScannerNotInEditModeError);
-    expect(() => assertScannerEditMode(true)).not.toThrow();
-  });
 });

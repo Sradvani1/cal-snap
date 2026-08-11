@@ -6,7 +6,7 @@ import type { ScannerErrorKind } from '@/lib/scanner/use-meal-scanner';
  * - `discard`: reset to capture (the current input can't be reused, e.g. a
  *   photo that failed preparation).
  */
-export type ErrorRetryAction = 'retry' | 'discard';
+type ErrorRetryAction = 'retry' | 'discard';
 
 export function errorRetryAction(error: ScannerErrorKind): ErrorRetryAction {
   return error === 'photoPrep' ? 'discard' : 'retry';

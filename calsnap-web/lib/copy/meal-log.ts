@@ -14,7 +14,6 @@ export const mealLogCopy = {
   'mealLog.detail.notFound': 'Meal not found.',
   'mealLog.detail.loadFailed': 'Could not load meal.',
   'mealLog.detail.backToLog': 'Back to log',
-  'mealLog.detail.noPhoto': 'No photo',
   'mealLog.actions.delete': 'Delete',
   'mealLog.actions.deleting': 'Deleting…',
   'mealLog.actions.saveFavorite': 'Save to Favorites',
@@ -23,10 +22,6 @@ export const mealLogCopy = {
   'mealLog.favorites.title': 'Favorites',
   'mealLog.favorites.empty': 'No favorites yet',
   'mealLog.favorites.emptySubtitle': 'Save a meal from your log to quickly log it again.',
-  'mealLog.favorites.useConfirm': 'Logged {{name}} for today',
-  'mealLog.favorites.rename': 'Rename',
-  'mealLog.favorites.renameLabel': 'Name this favorite',
-  'mealLog.favorites.renamePlaceholder': 'e.g. Morning bagel',
   'mealLog.favorites.deleteConfirm': 'Delete favorite?',
   'mealLog.favorites.deleteDesc': 'This cannot be undone.',
   'mealLog.favorites.deleteAction': 'Delete',
@@ -40,11 +35,8 @@ export const mealLogCopy = {
   'mealLog.summary.total': 'Daily total',
   'mealLog.favorites.errorLoad': 'Failed to load favorites.',
   'mealLog.favorites.errorDelete': 'Failed to delete favorite.',
-  'mealLog.favorites.errorUse': 'Failed to log favorite meal.',
   'mealLog.sheet.error.logFailed': 'Could not save this meal. Try again.',
   'mealLog.favorites.errorSave': 'Failed to save favorite. Try again.',
-  'mealLog.favorites.logAction': 'Log for today',
-  'mealLog.favorites.logging': 'Logging\u2026',
 } as const;
 
 export type MealLogCopyKey = keyof typeof mealLogCopy;

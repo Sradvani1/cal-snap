@@ -1,6 +1,6 @@
 import type { MealEntry } from '@/lib/models/meal-entry';
 import type { EditableFoodItem } from '@/lib/scanner/editable-food-item';
-import type { MealTotals } from '@/lib/scanner/meal-totals';
+import type { MealTotals } from '@/lib/models/meal-totals';
 import { EditableFoodItemCard } from '@/components/scanner/EditableFoodItemCard';
 import { NutrientStatRow } from '@/components/design/NutrientStatRow';
 import { EstimationNotesAccordion } from '@/components/scanner/EstimationNotesAccordion';
@@ -37,6 +37,8 @@ export function MealDetailView({
     totalProteinG: meal.totalProteinG,
     totalCarbsG: meal.totalCarbsG,
     totalFatG: meal.totalFatG,
+    totalSaturatedFatG: meal.totalSaturatedFatG,
+    totalUnsaturatedFatG: meal.totalUnsaturatedFatG,
     totalFiberG: meal.totalFiberG,
   };
 

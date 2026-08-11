@@ -9,6 +9,7 @@ import {
   snappedDisplayWeight,
   validateHeightCm,
   validateWeightKg,
+  weightDisplayRange,
   weightInputHandlers,
 } from '@/lib/utilities/unit-formatters';
 
@@ -29,6 +30,11 @@ describe('unit-formatters weight input', () => {
   it('converts snapped lbs display back to kg', () => {
     const snapped = snappedDisplayWeight(200, true);
     expect(kgFromDisplayWeight(snapped, true)).toBeCloseTo(90.7185, 2);
+  });
+
+  it('uses the canonical weight ranges for both display units', () => {
+    expect(weightDisplayRange(false)).toEqual({ min: 35, max: 180 });
+    expect(weightDisplayRange(true)).toEqual({ min: 80, max: 400 });
   });
 });
 

@@ -78,7 +78,6 @@ function buildSnapshot(
     meals,
     profile: makeProfile(),
     range,
-    weighInsInRange: [],
     referenceDate: REFERENCE,
   });
 }

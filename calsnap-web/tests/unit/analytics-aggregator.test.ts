@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import {
   adherencePercent,
   chartDailySeries,
-  dayOfWeekBreakdown,
   topFoods,
 } from '@/lib/analytics/analytics-aggregator';
 import type { DailyNutritionSummary } from '@/lib/analytics/analytics-types';
@@ -66,22 +65,6 @@ describe('analytics aggregator', () => {
 
     const partialResult = adherencePercent(loggedDays.slice(0, 5), 2000);
     expect(partialResult).toBeCloseTo((3 / 5) * 100, 1);
-  });
-
-  it('dayOfWeekBreakdown groups meals by weekday', () => {
-    const monday = new Date(2026, 5, 8, 12, 0, 0);
-    const wednesday = new Date(2026, 5, 10, 12, 0, 0);
-
-    const meals = [
-      makeMeal({ timestamp: monday, totalCalories: 500 }),
-      makeMeal({ id: 'meal-2', timestamp: new Date(2026, 5, 8, 13, 0, 0), totalCalories: 600 }),
-      makeMeal({ id: 'meal-3', timestamp: wednesday, totalCalories: 800 }),
-    ];
-
-    const breakdown = dayOfWeekBreakdown(meals);
-    expect(breakdown[2]).toBe(1100);
-    expect(breakdown[4]).toBe(800);
-    expect(breakdown[3]).toBe(0);
   });
 
   it('topFoods sorts by frequency then name', () => {

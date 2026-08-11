@@ -8,6 +8,7 @@ import {
   kgFromDisplayWeight,
   WEIGHT_RANGE_KG,
   weightDisplayRange,
+  weightDisplayStep,
 } from '@/lib/utilities/unit-formatters';
 import {
   dateFromLocalDateInput,
@@ -37,7 +38,7 @@ export function useWeighInForm(
   );
 
   const range = weightDisplayRange(useLbs);
-  const step = 0.1;
+  const step = weightDisplayStep();
 
   const isDateValid = isValidLocalDateInputValue(selectedDate);
 
@@ -91,17 +92,5 @@ export function useWeighInForm(
     previousDailyTarget: profile.dailyCalorieTarget,
     previewTDEE: preview.tdee,
     previewDailyTarget: preview.dailyTarget,
-  };
-}
-
-export function setUseLbsConvertsWeight(
-  weightKg: number,
-  fromUseLbs: boolean,
-  toUseLbs: boolean,
-): { display: number; kg: number } {
-  const display = displayWeight(weightKg, toUseLbs);
-  return {
-    display,
-    kg: kgFromDisplayWeight(display, toUseLbs),
   };
 }
