@@ -1,6 +1,8 @@
 # PR W05: Meal Detail, Edit & Daily Log
 
 **Status:** Implemented  
+**Historical note:** This plan documents the original implementation and is not the current source
+of truth for removed dependencies or retired routes.
 **Source of truth:** [`.cursor/plans/pr_w05_meal_log_ab7d342e.plan.md`](../../../.cursor/plans/pr_w05_meal_log_ab7d342e.plan.md), [PR-W03](./PR-W03.md), [PR-W04](./PR-W04.md)
 
 ---

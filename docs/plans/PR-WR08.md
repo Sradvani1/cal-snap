@@ -1,6 +1,8 @@
 # PR WR08: Production, PWA & Security Hardening
 
 **Status:** Implemented  
+**Historical note:** This is an archived review-sprint plan; references to the removed insight route
+and former E2E counts are historical only.
 **Sprint:** Post-build review WR08 ([REVIEW-MASTER-PLAN.md](./REVIEW-MASTER-PLAN.md)) — **final review-sprint PR**  
 **Depends on:** [PR-WR07.md](./PR-WR07.md) (206 unit / 11 integration / 17 E2E)  
 **Reviews:** [PR-W10.md](./PR-W10.md) + [ROLLOUT.md](./ROLLOUT.md) Phases 4–5

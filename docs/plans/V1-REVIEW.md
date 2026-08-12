@@ -8,6 +8,9 @@ source at `file:line`.
 **Build sprint index:** [README.md](../build/README.md) · **Prior optimization:**
 [FIRESTORE-OPTIMIZATION.md](../build/FIRESTORE-OPTIMIZATION.md)
 
+**Status:** Complete — Phases 0–4 and the V1 hardening follow-up are implemented. Deferred items
+are documented in the Phase 4 build records and are not required before V2.
+
 ---
 
 ## Locked decisions

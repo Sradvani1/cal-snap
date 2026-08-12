@@ -1,6 +1,7 @@
 # PR Gemini Retry: Harden Gemini API calls with retry and safety settings
 
 **Status:** Ready for testing
+**Historical note:** Superseded by the implemented Phase 4 Gemini retry and timeout behavior.
 **Sprint:** Reliability hardening
 **Depends on:** None — standalone fix
 **Scope:** Web only (`calsnap-web/`)

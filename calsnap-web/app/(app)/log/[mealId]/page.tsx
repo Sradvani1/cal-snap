@@ -22,6 +22,7 @@ import { MealNotFoundError } from '@/lib/repositories/meal-errors';
 import {
   editableFoodItemFromFoodItem,
   editableFoodItemToFoodItem,
+  editableFoodItemsEqual,
   updateEditableItemWeight,
   type EditableFoodItem,
 } from '@/lib/scanner/editable-food-item';
@@ -88,7 +89,7 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
 
   const hasChanges = useMemo(() => {
     if (!editableItems || !originalItems) return false;
-    return JSON.stringify(editableItems) !== JSON.stringify(originalItems);
+    return !editableFoodItemsEqual(editableItems, originalItems);
   }, [editableItems, originalItems]);
 
   useEffect(() => {

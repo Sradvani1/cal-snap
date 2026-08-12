@@ -1,6 +1,9 @@
 # PHASE: Insight Gating Dedup + Dashboard Weight-Trend Redesign
 
-**Status:** Implemented (not yet committed)
+**Status:** Historical record — the insight feature described here was removed in Phase 4.
+
+> All implementation details below describe the former insight feature and are superseded by
+> Phase 4. The route, generator, and insight-specific analytics names no longer exist.
 **App:** `calsnap-web` (Next.js 16 App Router PWA)
 **Trigger:** Feature-review of two analytics surfaces — the AI insight generator and the dashboard weight-trend sparkline.
 

@@ -18,6 +18,35 @@ export interface EditableFoodItem {
   originalWeightG: number;
 }
 
+const COMPARISON_FIELDS = [
+  'id',
+  'name',
+  'weightG',
+  'calories',
+  'proteinG',
+  'carbsG',
+  'fatG',
+  'saturatedFatG',
+  'unsaturatedFatG',
+  'fiberG',
+  'confidence',
+  'isFlagged',
+  'originalWeightG',
+] as const satisfies ReadonlyArray<keyof EditableFoodItem>;
+
+export function editableFoodItemsEqual(
+  current: EditableFoodItem[],
+  original: EditableFoodItem[],
+): boolean {
+  if (current.length !== original.length) {
+    return false;
+  }
+  return current.every((item, index) => {
+    const other = original[index];
+    return other !== undefined && COMPARISON_FIELDS.every((field) => item[field] === other[field]);
+  });
+}
+
 export function updateEditableItemWeight(
   item: EditableFoodItem,
   newWeightG: number,

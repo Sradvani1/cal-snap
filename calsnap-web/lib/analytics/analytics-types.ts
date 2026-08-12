@@ -2,7 +2,7 @@ import { daysBetween, localDayKey, startOfLocalDay } from '@/lib/dashboard/date-
 
 const ANALYTICS_MAX_CUSTOM_SPAN_DAYS = 365;
 
-export const ANALYTICS_MIN_INSIGHT_LOGGED_DAYS = 3;
+export const ANALYTICS_MIN_LOGGED_DAYS = 3;
 
 export type AnalyticsDateRange =
   | { kind: 'days'; count: number }

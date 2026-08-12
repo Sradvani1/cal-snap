@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   editableFoodItemFromAnalysisResult,
+  editableFoodItemsEqual,
   updateEditableItemWeight,
 } from '@/lib/scanner/editable-food-item';
 import {
@@ -157,5 +158,24 @@ describe('sumEditableItems', () => {
     expect(totals.totalSaturatedFatG).toBe(2);
     expect(totals.totalUnsaturatedFatG).toBe(6);
     expect(totals.totalFiberG).toBe(3);
+  });
+});
+
+describe('editableFoodItemsEqual', () => {
+  it('returns true for equivalent item lists', () => {
+    const item = makeItem();
+    expect(editableFoodItemsEqual([item], [{ ...item }])).toBe(true);
+  });
+
+  it('returns false when an editable field changes', () => {
+    const item = makeItem();
+    expect(editableFoodItemsEqual([item], [{ ...item, weightG: 120 }])).toBe(false);
+  });
+
+  it('returns false when item order or length changes', () => {
+    const first = makeItem({ id: 'first' });
+    const second = makeItem({ id: 'second' });
+    expect(editableFoodItemsEqual([first, second], [second, first])).toBe(false);
+    expect(editableFoodItemsEqual([first], [first, second])).toBe(false);
   });
 });

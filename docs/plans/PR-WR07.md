@@ -1,6 +1,8 @@
 # PR WR07: Mobile UX, Accessibility & Performance
 
 **Status:** Implemented  
+**Historical note:** This is an archived review-sprint plan; E2E references describe the former
+test setup and are not current repository commands.
 **Sprint:** Post-build review WR07 ([REVIEW-MASTER-PLAN.md](./REVIEW-MASTER-PLAN.md))  
 **Depends on:** [PR-WR06.md](./PR-WR06.md) (10 E2E / 8 specs green)  
 **Reviews:** [PR-W09.md](./PR-W09.md) design system + cross-cutting polish

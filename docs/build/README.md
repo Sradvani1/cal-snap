@@ -100,11 +100,11 @@ Sprint plan: [OPTIMIZATION-MASTER-PLAN.md](../plans/OPTIMIZATION-MASTER-PLAN.md)
 |-----|--------|
 | [V1-REVIEW.md](../plans/V1-REVIEW.md) | Plan written + stress-tested; phases 0–4 implemented |
 | [PHASE-02-BRITTLE-DATA-CONTRACTS.md](./PHASE-02-BRITTLE-DATA-CONTRACTS.md) | Implemented (`0819e78`) + release-blocker follow-up; automated gate passed; five-profile preflight pending |
-| [PHASE-02-BRITTLE-CONTRACTS.md](../calsnap-web/docs/build/phase-02-brittle-data-contracts.md) | Phase 2 implemented + release-blocker follow-up; automated gate passed; five-profile preflight pending |
+| [PHASE-02-BRITTLE-CONTRACTS.md](../../calsnap-web/docs/build/phase-02-brittle-data-contracts.md) | Phase 2 implementation notes |
 | [PHASE-03-LATENT-BUGS-DATES.md](./PHASE-03-LATENT-BUGS-DATES.md) | Implemented; lint, unit tests, and production build passed |
 | [PHASE-04-CLEANUP-DEPENDENCIES.md](./PHASE-04-CLEANUP-DEPENDENCIES.md) | Implemented; lint, unit, build, and integration verification passed |
 | [PHASE-04-V1-HARDENING.md](./PHASE-04-V1-HARDENING.md) | Implemented; lint, unit, build, and integration verification passed |
-| [Phase 3 implementation plan](../calsnap-web/docs/build/phase-03-latent-bugs-and-dates.md) | Plan and implementation notes |
+| [Phase 3 implementation plan](../../calsnap-web/docs/build/phase-03-latent-bugs-and-dates.md) | Plan and implementation notes |
 
 ## Source of truth
 

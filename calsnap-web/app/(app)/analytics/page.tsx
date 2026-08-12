@@ -105,7 +105,7 @@ function AnalyticsContent({ uid }: { uid: string | undefined }) {
 
         {!isInitialLoad && snapshot && (
           <div className="flex flex-col gap-6">
-            {snapshot.hasEnoughData ? (
+            {snapshot.hasEnoughLoggedDays ? (
               <>
                 <ErrorBoundary>
                   <CalorieAdherenceSection

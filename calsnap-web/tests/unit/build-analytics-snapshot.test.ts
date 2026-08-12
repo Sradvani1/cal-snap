@@ -87,6 +87,27 @@ function localDayKeyOf(date: Date): number {
 }
 
 describe('buildAnalyticsSnapshot window bounds', () => {
+  it('reports whether the snapshot has the minimum logged days', () => {
+    const twoDays = buildSnapshot(
+      [
+        makeMeal({ timestamp: new Date(2026, 5, 8, 12), totalCalories: 500 }),
+        makeMeal({ timestamp: new Date(2026, 5, 9, 12), totalCalories: 500 }),
+      ],
+      AnalyticsDateRange.custom(new Date(2026, 5, 8), new Date(2026, 5, 14)),
+    );
+    const threeDays = buildSnapshot(
+      [
+        makeMeal({ timestamp: new Date(2026, 5, 8, 12), totalCalories: 500 }),
+        makeMeal({ timestamp: new Date(2026, 5, 9, 12), totalCalories: 500 }),
+        makeMeal({ timestamp: new Date(2026, 5, 10, 12), totalCalories: 500 }),
+      ],
+      AnalyticsDateRange.custom(new Date(2026, 5, 8), new Date(2026, 5, 14)),
+    );
+
+    expect(twoDays.hasEnoughLoggedDays).toBe(false);
+    expect(threeDays.hasEnoughLoggedDays).toBe(true);
+  });
+
   it('custom range in the past excludes meals before rangeStart', () => {
     const snapshot = buildSnapshot(
       [

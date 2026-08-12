@@ -8,7 +8,7 @@ import {
   topFoods,
 } from '@/lib/analytics/analytics-aggregator';
 import {
-  ANALYTICS_MIN_INSIGHT_LOGGED_DAYS,
+  ANALYTICS_MIN_LOGGED_DAYS,
   analyticsWindow,
   type AnalyticsDateRange as AnalyticsDateRangeType,
   type DailyNutritionSummary,
@@ -26,7 +26,7 @@ export interface AnalyticsSnapshot {
   loggedDays: DailyNutritionSummary[];
   chartDailySeries: DailyNutritionSummary[];
   loggedDayCount: number;
-  hasEnoughData: boolean;
+  hasEnoughLoggedDays: boolean;
   calorieTarget: number;
   adherencePct: number;
   averageDailyCalories: number;
@@ -58,7 +58,7 @@ export function buildAnalyticsSnapshot(
   const loggedDays = loggedDailySummaries(meals);
   const chartSeries = chartDailySeries(loggedDays, rangeStart, rangeEnd);
   const loggedDayCount = loggedDays.length;
-  const hasEnoughData = loggedDayCount >= ANALYTICS_MIN_INSIGHT_LOGGED_DAYS;
+  const hasEnoughLoggedDays = loggedDayCount >= ANALYTICS_MIN_LOGGED_DAYS;
   const calorieTarget = input.profile.dailyCalorieTarget;
 
   const adherencePct = adherencePercent(chartSeries, calorieTarget);
@@ -84,7 +84,7 @@ export function buildAnalyticsSnapshot(
     loggedDays,
     chartDailySeries: chartSeries,
     loggedDayCount,
-    hasEnoughData,
+    hasEnoughLoggedDays,
     calorieTarget,
     adherencePct,
     averageDailyCalories: averageDailyCaloriesValue,

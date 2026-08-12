@@ -158,12 +158,25 @@ Safety-blocked responses, authentication failures, configuration failures, and o
 - Bounded meal-photo retry sequence.
 - Existing integration expectation updated from “throws on malformed latest weigh-in” to “skips it.”
 
+## Post-Hardening Code Cleanup
+
+The final pre-V2 cleanup pass kept the same narrow scope:
+
+- Renamed `ANALYTICS_MIN_INSIGHT_LOGGED_DAYS` to `ANALYTICS_MIN_LOGGED_DAYS` and
+  `hasEnoughData` to `hasEnoughLoggedDays` so analytics code no longer references the removed
+  insight feature.
+- Replaced JSON serialization in meal edit dirty-state detection with direct typed field comparison,
+  preserving the existing undo-to-clean behavior.
+- Fixed broken build-document links and marked the removed insight record as historical.
+- Added focused tests for PWA install storage, overlapping optimistic meal mutations, and the
+  analytics logged-day threshold; existing time, onboarding, and settings coverage remains in place.
+
 ## Verification
 
 | Check | Result |
 |------|--------|
 | `pnpm lint` | Passed |
-| `pnpm test` | Passed: 53 files / 285 tests |
+| `pnpm test` | Passed: 55 files / 292 tests |
 | `pnpm build --webpack` | Passed |
 | `pnpm test:integration` | Passed: 5 files / 23 tests |
 | `git diff --check` | Passed |

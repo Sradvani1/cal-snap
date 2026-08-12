@@ -1,6 +1,8 @@
 # PR W07: Analytics and Insights
 
 **Status:** Implemented  
+**Historical note:** The analytics implementation remains relevant, but the insight feature and
+`/api/generate-insight` route described below were removed in Phase 4.
 **Source of truth:** [`.cursor/plans/pr_w07_analytics_3e9b60cd.plan.md`](../../../.cursor/plans/pr_w07_analytics_3e9b60cd.plan.md), [PR-W03](./PR-W03.md), [PR-W06](./PR-W06.md)
 
 ---
