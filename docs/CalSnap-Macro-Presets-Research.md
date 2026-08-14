@@ -1,4 +1,6 @@
-# Evidence-Based Macro Preset Design: Addressing Metabolic and Preference Diversity in CalSnap
+# Historical Macro Preset Research: Metabolic and Preference Diversity
+
+> **Historical archive:** Research retained from the original product-design phase.
 
 ## Overview
 
@@ -160,4 +162,3 @@ Given that population-level trial evidence shows minimal average differences bet
 30. [Mediterranean diet and metabolic syndrome: an updated ...](https://pubmed.ncbi.nlm.nih.gov/23982678/) - The metabolic syndrome is a health condition characterized by abdominal obesity, dyslipidemia, eleva...
 
 31. [International society of sports nutrition position stand: nutrient timing](https://d-nb.info/1144230713/34) - by CM Kerksick · 2017 · Cited by 959 — Recommended daily intakes of carbohydrate are commonly report...
-

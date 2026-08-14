@@ -4,7 +4,7 @@
 
 **App:** `calsnap-web` (Next.js 16 App Router PWA)
 
-**Source plan:** [V1-REVIEW.md](../plans/V1-REVIEW.md)
+**Source plan:** [V1-REVIEW.md](./V1-REVIEW.md)
 
 **Parent phases:** [Phase 2](./PHASE-02-BRITTLE-DATA-CONTRACTS.md) ·
 [Phase 3](./PHASE-03-LATENT-BUGS-DATES.md)

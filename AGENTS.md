@@ -1,6 +1,6 @@
 # AGENTS.md — CalSnap
 
-This repo is a single active app: `calsnap-web/`, a Next.js 16 PWA. The iOS native app is archived under `archive/ios/` (read-only, not under active development). `docs/plans/` holds PR specs; `docs/build/` holds the build index, rollout, and baselines.
+This repo is a single active app: `calsnap-web/`, a Next.js 16.2.9 PWA. The iOS native app is archived under `archive/ios/` (read-only, not under active development). Current documentation and all completed web plans/build records live under root `docs/`; `docs/build/` is the historical V1 record and the documentation index is `docs/README.md`.
 
 ## Next.js 16 is non-standard
 
@@ -34,6 +34,7 @@ pnpm dev                           # http://localhost:3000
 - **Single unit test:** `pnpm exec vitest run tests/unit/<file>.test.ts`
 - **Integration tests require the Firebase emulators.** The `test:integration` script boots them automatically (`firebase emulators:exec --project demo-calsnap`). Running Vitest directly against `tests/integration` without emulators fails.
 - **E2E (Playwright) was removed.** The CI `e2e` job and `tests/e2e/` were deleted; UI flows are covered by manual testing. If e2e is reintroduced later, restore `playwright.config.ts`, `tests/e2e/`, and `.env.e2e`.
+- **Current V1 state:** lint, unit, production build, client-secret scan, and emulator integration verification are complete. Remaining work is operator production smoke QA, Lighthouse capture, iPhone/Safari PWA validation, and the five-profile production preflight.
 
 ## PWA / service worker
 
@@ -66,5 +67,5 @@ Keys live in `lib/copy/keys.ts` + per-feature modules. Add new keys there; do no
 ## Conventions
 
 - No husky / lint-staged / prettier / commitlint configured. Commit style is conventional-commit-ish but not enforced.
-- CI (` .github/workflows/calsnap-web.yml`) triggers on `calsnap-web/**`; runs lint → unit → build → integration.
+- CI (`.github/workflows/calsnap-web.yml`) triggers on `calsnap-web/**`; runs lint → unit → build → client-secret scan and integration verification.
 - iOS code in `archive/ios/` is preserved for reference only; do not port from it unless asked.

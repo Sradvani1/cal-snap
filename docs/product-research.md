@@ -1,4 +1,6 @@
-# CalSnap: Science-Grounded Calorie Tracking iOS App
+# CalSnap: Historical iOS Product Research
+
+> **Historical archive:** This research and product specification was written for the original native iOS app. It is preserved for project history and does not describe the current web architecture.
 ## Full Problem Scope, Science Foundation & Application Specification
 
 ***
@@ -514,4 +516,3 @@ This prevents the common trap of "I exercised so I can eat more" mental accounti
 43. [How to Set and Adjust Your Calorie & Macro Goals Automatically](https://eatscan.ai/blog/set-adjust-calorie-macro-goals-automatically/) - Learn how to automate your calorie and macro targets - syncing activity data, leveraging AI-driven a...
 
 44. [FoodSnap Tutor — Snap a meal, get a recipe (Gemini 2.5 ...](https://dev.to/minhlong2605/foodsnap-tutor-snap-a-meal-get-a-recipe-gemini-25-flash-10lo) - This is a submission for the Google AI Studio Multimodal Challenge What I Built FoodSnap...
-

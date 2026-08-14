@@ -1,12 +1,13 @@
 # CalSnap Web
 
-Mobile-first Next.js app for CalSnap. See the [web build docs](../docs/build/README.md) for stack details and open decisions.
+Mobile-first Next.js 16.2.9 app for CalSnap. See the [documentation index](../docs/README.md)
+for current system details, operations, QA status, and historical build records.
 
-**Deploying?** Follow the phased [Rollout Guide](../docs/build/ROLLOUT.md): test on emulators first, then wire up Firebase cloud and Vercel.
+**Deploying?** Follow the [Rollout Guide](../docs/build/ROLLOUT.md): test on emulators first, then wire up Firebase cloud and Vercel.
 
 ## Prerequisites
 
-- Node.js 20+ (`.nvmrc` pins 22)
+- Node.js 22 (`.nvmrc` and CI use Node 22)
 - [pnpm](https://pnpm.io/) (`npm install -g pnpm` or `corepack enable`)
 - [Firebase CLI](https://firebase.google.com/docs/cli) for emulators (optional)
 
@@ -35,12 +36,16 @@ pnpm build            # next build --webpack (Serwist PWA)
 pnpm emulators        # Start Auth + Firestore + Storage emulators
 ```
 
-## Auth workflow (WR09)
+## Auth workflow
 
 1. User signs in via email/password or Google redirect (`signInWithRedirect` only)
 2. Firebase Auth SDK holds client session; no httpOnly cookies or middleware
 3. Protected routes: `(app)/layout` uses `useRequireAuth()` + `useProfile()` for onboarding gate
 4. The Gemini API route (`/api/analyze-meal`) verifies `Authorization: Bearer` ID tokens server-side
+
+Meal analysis accepts an optional image and/or text description, rejects requests with neither,
+and keeps Gemini credentials server-side. The edit-detail flow at `/log/[mealId]` is the canonical
+meal editor; there is no separate scan edit route or insight-generation API.
 
 ### Google OAuth setup
 
@@ -56,7 +61,7 @@ pnpm emulators        # Start Auth + Firestore + Storage emulators
 - `GEMINI_API_KEY`
 - Redeploy after env changes
 
-See [PR-WR09-auth-reset.md](../docs/plans/PR-WR09-auth-reset.md) and [ROLLOUT.md](../docs/build/ROLLOUT.md) §4.4, §5.2.
+See the historical [PR-WR09-auth-reset.md](../docs/build/PR-WR09-auth-reset.md) and [rollout guide](../docs/build/ROLLOUT.md).
 
 ## Firebase emulators
 
@@ -76,7 +81,7 @@ Deploy Firestore rules (not merge-gated):
 firebase deploy --only firestore:rules --project <your-project>
 ```
 
-## Web vs iOS deltas (W01–W02)
+## Web vs iOS deltas
 
 | Concept | iOS | Web |
 |---------|-----|-----|
@@ -88,9 +93,16 @@ firebase deploy --only firestore:rules --project <your-project>
 
 ## Vercel deploy
 
-See **[docs/build/ROLLOUT.md](../docs/build/ROLLOUT.md)** (Phases 4–5) for the full checklist. Summary: set **Root Directory** to `calsnap-web`; add all env vars from `.env.local.example`; set `NEXT_PUBLIC_USE_FIREBASE_EMULATOR=false`.
+See the [rollout guide](../docs/build/ROLLOUT.md) for the checklist. Summary: set **Root Directory** to `calsnap-web`; add all env vars from `.env.local.example`; set `NEXT_PUBLIC_USE_FIREBASE_EMULATOR=false`.
 
-## Source of truth
+## Documentation
 
-- `docs/build/README.md` — web build docs
-- `docs/plans/PR-W10.md` — W10 acceptance checklist and QA matrix
+- [`../docs/README.md`](../docs/README.md) — project documentation index
+- [`../docs/build/README.md`](../docs/build/README.md) — completed V1 plans and build records
+
+## V1 validation status
+
+Automated lint, unit, production build, client-secret scan, and Firebase emulator integration
+verification are complete. Remaining validation requires an operator: production smoke QA with
+cloud Firebase and real Gemini, Lighthouse captures, iPhone/Safari standalone-PWA checks, and
+the five-profile production preflight.

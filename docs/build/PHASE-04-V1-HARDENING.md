@@ -6,7 +6,7 @@
 
 **Parent record:** [PHASE-04-CLEANUP-DEPENDENCIES.md](./PHASE-04-CLEANUP-DEPENDENCIES.md)
 
-**Source audit:** [V1-REVIEW.md](../plans/V1-REVIEW.md) and the post-Phase-4 residual audit
+**Source audit:** [V1-REVIEW.md](./V1-REVIEW.md) and the post-Phase-4 residual audit
 
 ---
 

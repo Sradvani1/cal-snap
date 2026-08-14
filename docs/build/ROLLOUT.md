@@ -1,8 +1,10 @@
-# CalSnap Web — Rollout Guide
+# CalSnap Web — Historical Rollout Guide
+
+> **Historical archive:** This detailed rollout record was written during V1 delivery. Use [`../README.md`](../README.md) and [`../../calsnap-web/README.md`](../../calsnap-web/README.md) for current guidance.
 
 Follow this guide in order to test, debug, and deploy CalSnap Web. You do **not** need a Firebase cloud project until **Phase 4**. Phases 1–3 use local Firebase emulators only.
 
-**Related docs:** [PR-W10 QA matrix](./PR-W10.md) · [PR-WR10 Goal Pathway](./PR-WR10-goal-pathway.md) · [`calsnap-web/README.md`](../../../calsnap-web/README.md) · [`.env.local.example`](../../../calsnap-web/.env.local.example)
+**Related docs:** [PR-W10 QA matrix](./PR-W10.md) · [PR-WR10 Goal Pathway](./PR-WR10-goal-pathway.md) · [`calsnap-web/README.md`](../../calsnap-web/README.md) · [`.env.local.example`](../../calsnap-web/.env.local.example)
 
 ---
 
@@ -537,7 +539,7 @@ npx vercel --prod
 
 ## Where to get help
 
-- **Implementation details:** `docs/plans/PR-W01.md` … `PR-W10.md`
+- **Implementation details:** `docs/build/PR-W01.md` … `PR-W10.md`
 - **CI parity:** `.github/workflows/calsnap-web.yml`
 - **Env template:** `calsnap-web/.env.local.example`
 

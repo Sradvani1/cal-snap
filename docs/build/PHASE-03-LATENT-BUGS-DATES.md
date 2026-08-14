@@ -5,9 +5,9 @@ passed.
 
 **App:** `calsnap-web` (Next.js 16 App Router PWA)
 
-**Source plan:** [phase-03-latent-bugs-and-dates.md](../../calsnap-web/docs/build/phase-03-latent-bugs-and-dates.md)
+**Implementation notes:** [PHASE-03-LATENT-BUGS-DATES-IMPLEMENTATION.md](./PHASE-03-LATENT-BUGS-DATES-IMPLEMENTATION.md)
 
-**Parent review:** [V1-REVIEW.md](../plans/V1-REVIEW.md)
+**Parent review:** [V1-REVIEW.md](./V1-REVIEW.md)
 
 **Implementation:** This build-record change set contains the Phase 3 implementation and its
 regression tests.

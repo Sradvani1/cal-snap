@@ -1,4 +1,6 @@
-# MEAL-INPUT-SIMPLIFICATION: Unified Photo/Description Meal Entry
+# Historical MEAL-INPUT-SIMPLIFICATION: Unified Photo/Description Meal Entry
+
+> **Historical archive:** Completed implementation record.
 
 **Status:** Implemented
 **Depends on:** [PR-W10](./PR-W10.md) (scanner + Gemini abort foundation)

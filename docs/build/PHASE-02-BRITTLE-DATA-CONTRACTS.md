@@ -5,9 +5,9 @@ manual five-profile production preflight remains pending.
 
 **App:** `calsnap-web` (Next.js 16 App Router PWA)
 
-**Source plan:** [phase-02-brittle-data-contracts.md](../../calsnap-web/docs/build/phase-02-brittle-data-contracts.md)
+**Implementation notes:** [PHASE-02-BRITTLE-DATA-CONTRACTS-IMPLEMENTATION.md](./PHASE-02-BRITTLE-DATA-CONTRACTS-IMPLEMENTATION.md)
 
-**Parent review:** [V1-REVIEW.md](../plans/V1-REVIEW.md)
+**Parent review:** [V1-REVIEW.md](./V1-REVIEW.md)
 
 **Implementation commit:** `0819e78 feat(phase2): harden brittle data contracts`. The release-
 blocker follow-up is currently uncommitted and is included in the updated implementation notes

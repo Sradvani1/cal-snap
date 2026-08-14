@@ -1,7 +1,7 @@
 # FIRESTORE-OPTIMIZATION: Reduce Latency, Reads, and Complexity
 
 **Status:** Implemented
-**Source plan:** [docs/plans/firestore-optimization.md](../plans/firestore-optimization.md)
+**Source plan:** [FIRESTORE-OPTIMIZATION-PLAN.md](./FIRESTORE-OPTIMIZATION-PLAN.md)
 **App:** `calsnap-web` (Next.js 16 App Router PWA)
 
 ---
