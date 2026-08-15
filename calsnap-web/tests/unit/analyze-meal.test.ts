@@ -19,7 +19,7 @@ vi.mock('@google/genai', () => ({
     HARM_CATEGORY_DANGEROUS_CONTENT: 'dangerousContent',
   },
   HarmBlockThreshold: { BLOCK_NONE: 'blockNone' },
-  ThinkingLevel: { MINIMAL: 'minimal' },
+  ThinkingLevel: { LOW: 'low' },
 }));
 
 import { analyzeMealImage, GeminiAnalysisError } from '@/lib/gemini/analyze-meal';
@@ -71,7 +71,10 @@ describe('analyzeMealImage retry configuration', () => {
     });
     expect(mockGenerateContent).toHaveBeenCalledWith(
       expect.objectContaining({
-        config: expect.objectContaining({ abortSignal: expect.any(AbortSignal) }),
+        config: expect.objectContaining({
+          abortSignal: expect.any(AbortSignal),
+          thinkingConfig: { thinkingLevel: 'low' },
+        }),
       }),
     );
   });
