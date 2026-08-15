@@ -44,9 +44,9 @@ export type ChartColorPalette = typeof lightColors | typeof darkColors;
 export function calorieProgressColor(band: CalorieProgressBand): string {
   switch (band) {
     case 'under':
-      return 'var(--cs-success)';
-    case 'onTrack':
       return 'var(--cs-warning)';
+    case 'onTrack':
+      return 'var(--cs-success)';
     case 'over':
       return 'var(--cs-danger)';
   }
@@ -55,9 +55,9 @@ export function calorieProgressColor(band: CalorieProgressBand): string {
 export function calorieProgressStrokeClass(band: CalorieProgressBand): string {
   switch (band) {
     case 'under':
-      return 'stroke-cs-success';
-    case 'onTrack':
       return 'stroke-cs-warning';
+    case 'onTrack':
+      return 'stroke-cs-success';
     case 'over':
       return 'stroke-cs-danger';
   }

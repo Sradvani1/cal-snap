@@ -1,6 +1,6 @@
 export const AppConstants = {
   Gemini: {
-    model: 'gemini-3.6-flash',
+    model: 'gemini-3.7-flash',
     maxTokens: 4096,
     confidenceThreshold: 0.6,
   },
@@ -14,6 +14,28 @@ export const AppConstants = {
     defaultMacroProteinPct: 0.28,
     defaultMacroCarbsPct: 0.47,
     defaultMacroFatPct: 0.25,
+    /**
+     * Sanity guards for machine-extracted nutrition. Values above these caps
+     * are physically impossible for real food and indicate a misparse (e.g.
+     * "58.365" read as 58365). Legitimate intake never approaches them.
+     */
+    plausibleItemMax: {
+      proteinG: 200,
+      carbsG: 300,
+      saturatedFatG: 150,
+      unsaturatedFatG: 150,
+      fiberG: 100,
+      estimatedWeightG: 2000,
+    },
+    plausibleDayMax: {
+      calories: 9000,
+      proteinG: 600,
+      carbsG: 900,
+      fatG: 500,
+      saturatedFatG: 250,
+      unsaturatedFatG: 250,
+      fiberG: 250,
+    },
   },
   Deficit: {
     defaultDeficitKcal: 350,

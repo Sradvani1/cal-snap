@@ -18,6 +18,8 @@ export const analyticsCopy = {
   'analytics.section.calorieAdherence': 'Caloric intake',
   'analytics.calorie.avgIntake': 'Average',
   'analytics.calorie.target': 'Target',
+  'analytics.calorie.calories': 'Calories',
+  'analytics.calorie.onTarget': 'On target',
   'analytics.calorie.a11y':
     'Calorie adherence: average {{avg}} kcal per day, target {{target}}, {{pct}}% of logged days on target',
   'analytics.section.macroTrends': 'Macro trends',

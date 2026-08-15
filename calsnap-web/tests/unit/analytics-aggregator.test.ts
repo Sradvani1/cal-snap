@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   adherencePercent,
   chartDailySeries,
+  loggedDailySummaries,
   topFoods,
 } from '@/lib/analytics/analytics-aggregator';
 import type { DailyNutritionSummary } from '@/lib/analytics/analytics-types';
@@ -125,6 +126,83 @@ describe('analytics aggregator', () => {
     const series = chartDailySeries(loggedDays, start, end);
     expect(series).toHaveLength(3);
     expect(series.filter((day) => day.calories === 0)).toHaveLength(2);
+  });
+
+  it('chartDailySeries marks zero-fill days as unlogged', () => {
+    const start = startOfLocalDay(new Date(2026, 5, 8));
+    const end = startOfLocalDay(new Date(2026, 5, 9));
+    const loggedDays: DailyNutritionSummary[] = [
+      {
+        date: startOfLocalDay(new Date(2026, 5, 9)),
+        calories: 1800,
+        proteinG: 0,
+        carbsG: 0,
+        fatG: 0,
+        saturatedFatG: 0,
+        unsaturatedFatG: 0,
+        fiberG: 0,
+        logged: true,
+      },
+    ];
+
+    const series = chartDailySeries(loggedDays, start, end);
+    expect(series.map((day) => day.logged)).toEqual([false, true]);
+  });
+
+  it('loggedDailySummaries clamps implausible day totals to the day caps', () => {
+    const meals = [
+      makeMeal({
+        timestamp: new Date(2026, 5, 8, 12),
+        totalCalories: 58365,
+        totalProteinG: 58365,
+        totalCarbsG: 58365,
+        totalFatG: 58365,
+        totalFiberG: 58365,
+      }),
+    ];
+
+    const summaries = loggedDailySummaries(meals);
+    expect(summaries).toHaveLength(1);
+    expect(summaries[0]).toMatchObject({
+      calories: 9000,
+      proteinG: 600,
+      carbsG: 900,
+      fatG: 500,
+      fiberG: 250,
+      logged: true,
+    });
+  });
+
+  it('loggedDailySummaries floors negative totals at zero', () => {
+    const meals = [
+      makeMeal({
+        timestamp: new Date(2026, 5, 8, 12),
+        totalCalories: -200,
+        totalFiberG: -5,
+      }),
+    ];
+
+    const summaries = loggedDailySummaries(meals);
+    expect(summaries[0]).toMatchObject({
+      calories: 0,
+      fiberG: 0,
+    });
+  });
+
+  it('loggedDailySummaries coerces non-finite totals to zero', () => {
+    const meals = [
+      makeMeal({
+        timestamp: new Date(2026, 5, 8, 12),
+        totalCalories: Number.NaN,
+        totalFiberG: Number.POSITIVE_INFINITY,
+      }),
+    ];
+
+    const summaries = loggedDailySummaries(meals);
+    expect(summaries[0]).toMatchObject({
+      calories: 0,
+      fiberG: 0,
+    });
   });
 
   it('isCalorieIntakeOnTarget uses ±10% band', () => {

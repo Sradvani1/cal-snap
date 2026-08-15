@@ -35,6 +35,7 @@ interface ChartRow {
   dateLabel: string;
   calories: number;
   band: CalorieProgressBand;
+  logged: boolean;
 }
 
 export function CalorieAdherenceSection({
@@ -52,8 +53,11 @@ export function CalorieAdherenceSection({
       dateLabel: formatDateShort(day.date),
       calories: day.calories,
       band: calorieProgressBand(ratio),
+      logged: day.logged ?? false,
     };
   });
+
+  const domainMax = Math.ceil(Math.max(1, ...chartData.map((row) => row.calories), calorieTarget) * 1.1);
 
   const ariaLabel = copy('analytics.calorie.a11y', {
     avg: averageDailyCalories,
@@ -73,6 +77,7 @@ export function CalorieAdherenceSection({
           <p className={`${typography.csCardTitle} text-base`}>{calorieTarget}</p>
         </div>
         <div>
+          <p className={typography.csCaption}>{copy('analytics.calorie.onTarget')}</p>
           <p className={`${typography.csCardTitle} text-base`}>{adherencePct.toFixed(0)}%</p>
         </div>
       </div>
@@ -84,11 +89,19 @@ export function CalorieAdherenceSection({
             <XAxis
               dataKey="dateLabel"
               tick={{ fontSize: 11, fill: chartColors.muted }}
-              interval={chartData.length > 14 ? Math.floor(chartData.length / 7) : 0}
+              interval={chartData.length > 14 ? Math.floor(chartData.length / 7) : 'preserveStartEnd'}
             />
-            <YAxis tick={{ fontSize: 11, fill: chartColors.muted }} width={40} />
+            <YAxis
+              tick={{ fontSize: 11, fill: chartColors.muted }}
+              width={40}
+              domain={[0, domainMax]}
+            />
             <Tooltip
               cursor={false}
+              formatter={(value: number) => [
+                `${Math.round(value)} kcal`,
+                copy('analytics.calorie.calories'),
+              ]}
               contentStyle={{
                 backgroundColor: 'var(--cs-surface)',
                 border: '1px solid var(--cs-border)',
@@ -106,7 +119,14 @@ export function CalorieAdherenceSection({
             />
             <Bar dataKey="calories" radius={[4, 4, 0, 0]} isAnimationActive={!reducedMotion}>
               {chartData.map((row) => (
-                <Cell key={row.dateLabel} fill={calorieProgressColor(row.band)} />
+                <Cell
+                  key={row.dateLabel}
+                  fill={
+                    row.logged
+                      ? calorieProgressColor(row.band)
+                      : 'var(--cs-border)'
+                  }
+                />
               ))}
             </Bar>
           </BarChart>

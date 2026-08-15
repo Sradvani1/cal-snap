@@ -9,8 +9,8 @@ import {
 
 describe('design colors', () => {
   it('maps calorie bands to iOS semantic colors', () => {
-    expect(calorieProgressColor('under')).toBe('var(--cs-success)');
-    expect(calorieProgressColor('onTrack')).toBe('var(--cs-warning)');
+    expect(calorieProgressColor('under')).toBe('var(--cs-warning)');
+    expect(calorieProgressColor('onTrack')).toBe('var(--cs-success)');
     expect(calorieProgressColor('over')).toBe('var(--cs-danger)');
   });
 
@@ -21,8 +21,8 @@ describe('design colors', () => {
   });
 
   it('exposes stroke classes for SVG rings', () => {
-    expect(calorieProgressStrokeClass('under')).toBe('stroke-cs-success');
-    expect(calorieProgressStrokeClass('onTrack')).toBe('stroke-cs-warning');
+    expect(calorieProgressStrokeClass('under')).toBe('stroke-cs-warning');
+    expect(calorieProgressStrokeClass('onTrack')).toBe('stroke-cs-success');
     expect(calorieProgressStrokeClass('over')).toBe('stroke-cs-danger');
   });
 

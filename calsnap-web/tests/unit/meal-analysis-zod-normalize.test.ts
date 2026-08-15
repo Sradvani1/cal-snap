@@ -102,4 +102,30 @@ describe('meal-analysis-zod normalization', () => {
 
     expect(parsed.items[0]?.confidence).toBe(0);
   });
+
+  it('clamps implausibly large per-item values to the sanity caps', () => {
+    const parsed = parseMealAnalysisResponse({
+      items: [
+        {
+          name: 'magnitude misparse',
+          estimated_weight_g: 58365,
+          protein_g: 58365,
+          carbs_g: 58365,
+          fiber_g: 58365,
+          saturated_fat_g: 58365,
+          unsaturated_fat_g: 58365,
+          confidence: 0.9,
+        },
+      ],
+    });
+
+    expect(parsed.items[0]).toMatchObject({
+      estimatedWeightG: 2000,
+      proteinG: 200,
+      carbsG: 200,
+      saturatedFatG: 150,
+      unsaturatedFatG: 150,
+      fiberG: 100,
+    });
+  });
 });

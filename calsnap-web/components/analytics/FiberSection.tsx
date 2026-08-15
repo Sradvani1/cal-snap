@@ -14,6 +14,7 @@ import {
 import { SectionCard } from '@/components/design/SectionCard';
 import type { DailyNutritionSummary } from '@/lib/analytics/analytics-types';
 import { copy } from '@/lib/copy';
+import { fiberProgressBand } from '@/lib/dashboard/calorie-progress';
 import { fiberProgressColor } from '@/lib/design/colors';
 import { useChartColors } from '@/lib/design/use-chart-colors';
 import { useReducedMotion } from '@/lib/design/motion';
@@ -30,7 +31,8 @@ interface FiberSectionProps {
 interface ChartRow {
   dateLabel: string;
   fiberG: number;
-  metTarget: boolean;
+  band: 'low' | 'moderate' | 'onTrack';
+  logged: boolean;
 }
 
 export function FiberSection({
@@ -45,8 +47,11 @@ export function FiberSection({
   const chartData: ChartRow[] = chartDailySeries.map((day) => ({
     dateLabel: formatDateShort(day.date),
     fiberG: day.fiberG,
-    metTarget: day.fiberG >= fiberTargetG,
+    band: fiberProgressBand(fiberTargetG > 0 ? day.fiberG / fiberTargetG : 1),
+    logged: day.logged ?? false,
   }));
+
+  const domainMax = Math.ceil(Math.max(1, ...chartData.map((row) => row.fiberG), fiberTargetG) * 1.1);
 
   const ariaLabel = copy('analytics.fiber.summary', {
     met: daysMeetingFiberTarget,
@@ -69,9 +74,13 @@ export function FiberSection({
             <XAxis
               dataKey="dateLabel"
               tick={{ fontSize: 11, fill: chartColors.muted }}
-              interval={chartData.length > 14 ? Math.floor(chartData.length / 7) : 0}
+              interval={chartData.length > 14 ? Math.floor(chartData.length / 7) : 'preserveStartEnd'}
             />
-            <YAxis tick={{ fontSize: 11, fill: chartColors.muted }} width={40} domain={[0, 50]} />
+            <YAxis
+              tick={{ fontSize: 11, fill: chartColors.muted }}
+              width={40}
+              domain={[0, domainMax]}
+            />
             <Tooltip
               cursor={false}
               formatter={(value: number) => [`${Math.round(value)}g`, copy('analytics.section.fiber')]}
@@ -94,7 +103,9 @@ export function FiberSection({
               {chartData.map((row) => (
                 <Cell
                   key={row.dateLabel}
-                  fill={fiberProgressColor(row.metTarget ? 'onTrack' : 'moderate')}
+                  fill={
+                    row.logged ? fiberProgressColor(row.band) : 'var(--cs-border)'
+                  }
                 />
               ))}
             </Bar>

@@ -61,7 +61,7 @@ export function buildAnalyticsSnapshot(
   const hasEnoughLoggedDays = loggedDayCount >= ANALYTICS_MIN_LOGGED_DAYS;
   const calorieTarget = input.profile.dailyCalorieTarget;
 
-  const adherencePct = adherencePercent(chartSeries, calorieTarget);
+  const adherencePct = adherencePercent(loggedDays, calorieTarget);
   const averageDailyCaloriesValue = Math.round(averageDailyCalories(loggedDays));
 
   const totalProtein = loggedDays.reduce((sum, day) => sum + day.proteinG, 0);

@@ -192,4 +192,19 @@ describe('buildAnalyticsSnapshot window bounds', () => {
     expect(loggedDayTimes).not.toContain(localDayKeyOf(new Date(2026, 4, 15)));
     expect(loggedDayTimes).toContain(localDayKeyOf(new Date(2026, 4, 16)));
   });
+
+  it('adherence counts only logged days, not zero-fill window days', () => {
+    const snapshot = buildSnapshot(
+      [
+        makeMeal({ timestamp: new Date(2026, 5, 8, 12), totalCalories: 2000 }),
+        makeMeal({ timestamp: new Date(2026, 5, 9, 12), totalCalories: 2000 }),
+        makeMeal({ timestamp: new Date(2026, 5, 10, 12), totalCalories: 2000 }),
+      ],
+      AnalyticsDateRange.days(7),
+    );
+
+    expect(snapshot.loggedDayCount).toBe(3);
+    expect(snapshot.chartDailySeries).toHaveLength(7);
+    expect(snapshot.adherencePct).toBe(100);
+  });
 });

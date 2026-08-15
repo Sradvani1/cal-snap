@@ -82,7 +82,7 @@ export function MacroTrendsSection({
             <XAxis
               dataKey="dateLabel"
               tick={{ fontSize: 11, fill: chartColors.muted }}
-              interval={chartData.length > 14 ? Math.floor(chartData.length / 7) : 0}
+              interval={chartData.length > 14 ? Math.floor(chartData.length / 7) : 'preserveStartEnd'}
             />
             <YAxis tick={{ fontSize: 11, fill: chartColors.muted }} width={40} />
             <Tooltip

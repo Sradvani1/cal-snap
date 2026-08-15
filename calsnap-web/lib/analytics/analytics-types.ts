@@ -137,6 +137,8 @@ export interface DailyNutritionSummary {
   saturatedFatG: number;
   unsaturatedFatG: number;
   fiberG: number;
+  /** Whether any meal was logged on this day (vs a zero-fill day in the window). */
+  logged?: boolean;
 }
 
 export interface TopFoodEntry {

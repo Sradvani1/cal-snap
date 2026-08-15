@@ -1,10 +1,20 @@
 import { isCalorieIntakeOnTarget } from '@/lib/dashboard/calorie-progress';
 import { startOfLocalDay } from '@/lib/dashboard/date-window';
+import { AppConstants } from '@/lib/constants';
 import type { MealEntry } from '@/lib/models/meal-entry';
 import type { MacroSplit } from '@/lib/models/macro-split';
 import { addMealTotals, emptyMealTotals } from '@/lib/models/meal-totals';
 import { macroPercents } from '@/lib/nutrition/calculator';
 import type { DailyNutritionSummary, TopFoodEntry } from '@/lib/analytics/analytics-types';
+
+const DAY_MAX = AppConstants.Nutrition.plausibleDayMax;
+
+function sanitizeDayTotal(value: number, max: number): number {
+  if (!Number.isFinite(value)) {
+    return 0;
+  }
+  return Math.max(0, Math.min(value, max));
+}
 
 export function loggedDailySummaries(meals: MealEntry[]): DailyNutritionSummary[] {
   const byDay = new Map<number, { date: Date; totals: ReturnType<typeof emptyMealTotals> }>();
@@ -20,13 +30,14 @@ export function loggedDailySummaries(meals: MealEntry[]): DailyNutritionSummary[
   return [...byDay.values()]
     .map(({ date, totals }) => ({
       date,
-      calories: totals.totalCalories,
-      proteinG: totals.totalProteinG,
-      carbsG: totals.totalCarbsG,
-      fatG: totals.totalFatG,
-      saturatedFatG: totals.totalSaturatedFatG,
-      unsaturatedFatG: totals.totalUnsaturatedFatG,
-      fiberG: totals.totalFiberG,
+      calories: sanitizeDayTotal(totals.totalCalories, DAY_MAX.calories),
+      proteinG: sanitizeDayTotal(totals.totalProteinG, DAY_MAX.proteinG),
+      carbsG: sanitizeDayTotal(totals.totalCarbsG, DAY_MAX.carbsG),
+      fatG: sanitizeDayTotal(totals.totalFatG, DAY_MAX.fatG),
+      saturatedFatG: sanitizeDayTotal(totals.totalSaturatedFatG, DAY_MAX.saturatedFatG),
+      unsaturatedFatG: sanitizeDayTotal(totals.totalUnsaturatedFatG, DAY_MAX.unsaturatedFatG),
+      fiberG: sanitizeDayTotal(totals.totalFiberG, DAY_MAX.fiberG),
+      logged: true,
     }))
     .sort((a, b) => a.date.getTime() - b.date.getTime());
 }
@@ -63,6 +74,7 @@ export function chartDailySeries(
         saturatedFatG: 0,
         unsaturatedFatG: 0,
         fiberG: 0,
+        logged: false,
       });
     }
     cursor.setDate(cursor.getDate() + 1);
