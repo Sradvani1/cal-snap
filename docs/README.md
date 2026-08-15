@@ -72,11 +72,18 @@ in [`build/`](build/). The [build index](build/README.md) is the entry point.
 cal-snap/
 ├── calsnap-web/          # Active Next.js PWA
 ├── docs/                 # Current guidance and historical build records
-│   └── build/            # Completed plans, implementation records, and baselines
+│   ├── build/            # Completed web plans, implementation records, and baselines
+│   └── ios/              # iOS rebuild plan and (future) implementation records
 ├── archive/ios/          # Archived iOS app and documentation
 ├── .github/workflows/    # Web CI
 └── README.md
 ```
+
+## iOS Rebuild
+
+The native iOS app is being rebuilt from scratch for V1 feature parity with the web app, sharing
+the same Firebase backend. See the [iOS rebuild master plan](ios/MASTER-PLAN.md) and
+[documentation index](ios/README.md). The archived iOS app remains reference-only.
 
 ## Archived iOS Documentation
 
