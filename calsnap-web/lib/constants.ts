@@ -59,6 +59,10 @@ export const AppConstants = {
   WeightProjection: {
     maxWeeks: 104,
   },
+  Progress: {
+    /** Bounds the progress-page weigh-in read; export still loads everything. */
+    maxWeighInsToLoad: 500,
+  },
   Onboarding: {
     minAgeYears: 16,
     maxAgeYears: 90,

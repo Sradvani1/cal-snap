@@ -37,6 +37,19 @@ interface ChartPoint {
   projected?: number;
 }
 
+/** Renders axis weight labels cleanly: 70, 70.5, 176.4 (no trailing ".0"). */
+function formatAxisWeight(value: number): string {
+  return value.toFixed(1).replace(/\.0$/, '');
+}
+
+function formatProjectionLabel(date: Date): string {
+  return date.toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
+
 export function WeightProgressChart({
   weighIns,
   projectionPoints,
@@ -91,7 +104,7 @@ export function WeightProgressChart({
       chartData.push({
         id: `projection-${dateMs}`,
         dateMs,
-      dateLabel: formatDateShort(point.date),
+        dateLabel: formatProjectionLabel(point.date),
         projected: displayWeight(point.weightKg, useLbs),
       });
     }
@@ -115,21 +128,25 @@ export function WeightProgressChart({
             dataKey="dateLabel"
             tick={{ fontSize: 11, fill: chartColors.muted }}
             interval="preserveStartEnd"
+            allowDuplicatedCategory
           />
           <YAxis
             tick={{ fontSize: 11, fill: chartColors.muted }}
             domain={['auto', 'auto']}
             width={40}
+            tickFormatter={formatAxisWeight}
           />
           <ReferenceLine
             y={startDisplay}
             stroke={chartColors.muted}
             strokeDasharray="8 4"
+            ifOverflow="extendDomain"
           />
           <ReferenceLine
             y={goalDisplay}
             stroke={chartColors.muted}
             strokeDasharray="4 4"
+            ifOverflow="extendDomain"
           />
           <Line
             type="monotone"

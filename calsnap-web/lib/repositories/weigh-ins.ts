@@ -64,11 +64,13 @@ export async function fetchAllWeighIns(
   uid: string,
   sortDescending = true,
   db: Firestore = getFirestoreDb(),
+  maxCount?: number,
 ): Promise<WeighIn[]> {
   const weighInsRef = collection(db, 'users', uid, 'weighIns');
   const weighInsQuery = query(
     weighInsRef,
     orderBy('date', sortDescending ? 'desc' : 'asc'),
+    ...(maxCount && maxCount > 0 ? [limit(maxCount)] : []),
   );
 
   const snapshot = await getDocs(weighInsQuery);

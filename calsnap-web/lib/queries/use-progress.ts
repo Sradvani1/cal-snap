@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { copy } from '@/lib/copy';
 import { formatEstimatedGoalDate } from '@/lib/nutrition/goal-pathway';
 import {
@@ -13,6 +13,7 @@ import { useProfile } from '@/lib/queries/use-profile';
 import { formatWeight, kgToLbs } from '@/lib/utilities/unit-formatters';
 
 export function useProgress(uid: string | undefined, referenceDate: Date = new Date()) {
+  const [reference] = useState(() => referenceDate);
   const profileQuery = useProfile(uid);
   const weighInsQuery = useAllWeighIns(uid);
 
@@ -27,8 +28,8 @@ export function useProgress(uid: string | undefined, referenceDate: Date = new D
     if (!profile) {
       return null;
     }
-    return deriveProgressStats(profile, weighIns, referenceDate);
-  }, [profile, weighIns, referenceDate]);
+    return deriveProgressStats(profile, weighIns, reference);
+  }, [profile, weighIns, reference]);
 
   const formatWeightDisplay = (kg: number) => formatWeight(kg, useLbs);
 
