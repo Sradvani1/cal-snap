@@ -1,7 +1,8 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/design/ErrorBoundary';
 import { InlineErrorMessage } from '@/components/design/InlineErrorMessage';
 import { useAuth } from '@/lib/auth/auth-context';
@@ -13,9 +14,10 @@ import { useNow } from '@/lib/hooks/use-now';
 
 import {
   AnalyticsDateRange,
+  presetToDateRange,
 } from '@/lib/analytics/analytics-types';
 import { buildAnalyticsSnapshot } from '@/lib/analytics/build-analytics-snapshot';
-import { useAnalyticsMeals } from '@/lib/queries/use-analytics-meals';
+import { useAnalyticsMeals, analyticsMealsQueryOptions } from '@/lib/queries/use-analytics-meals';
 import { useAnalyticsTimeframe } from '@/lib/queries/use-analytics-timeframe';
 import { useProfile } from '@/lib/queries/use-profile';
 import { copy } from '@/lib/copy';
@@ -54,6 +56,17 @@ function AnalyticsContent({ uid }: { uid: string | undefined }) {
 
   const timeframe = useAnalyticsTimeframe();
   const mealsQuery = useAnalyticsMeals(uid, timeframe.selectedRange, referenceDate);
+
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (!uid) return;
+    for (const preset of ['30D', '90D'] as const) {
+      void queryClient.prefetchQuery(
+        analyticsMealsQueryOptions(uid, presetToDateRange(preset), referenceDate),
+      );
+    }
+  }, [uid, queryClient, referenceDate]);
 
   const profile = profileQuery.data?.profile ?? null;
 
