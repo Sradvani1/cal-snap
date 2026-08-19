@@ -23,7 +23,8 @@ import {
 } from '@/lib/models/meal-entry-doc';
 import { mapValidFirestoreDocs } from '@/lib/models/validate-doc';
 import { calendarDayRange, endOfLocalDayExclusive, startOfLocalDay } from '@/lib/dashboard/date-window';
-import { MealNotFoundError } from '@/lib/repositories/meal-errors';
+import { isLoggableDate } from '@/lib/meal-log/log-date';
+import { MealDateOutOfRangeError, MealNotFoundError } from '@/lib/repositories/meal-errors';
 
 export function mealPhotoStoragePath(uid: string, mealId: string): string {
   return `users/${uid}/meals/${mealId}/photo.jpg`;
@@ -44,6 +45,9 @@ export async function createMeal(
   entry: MealEntry,
   db: Firestore = getFirestoreDb(),
 ): Promise<string> {
+  if (!isLoggableDate(entry.timestamp)) {
+    throw new MealDateOutOfRangeError();
+  }
   const docRef = doc(db, 'users', entry.userId, 'meals', entry.id);
   await setDoc(docRef, mealEntryToDoc(entry));
   return entry.id;

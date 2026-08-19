@@ -1,10 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { Timestamp } from 'firebase/firestore';
+import type { Firestore } from 'firebase/firestore';
 import { aggregateTodaysMeals } from '@/lib/dashboard/aggregate-meals';
 import { mealEntryToDoc } from '@/lib/models/meal-entry-doc';
 import type { MealEntry } from '@/lib/models/meal-entry';
 import type { FoodItem } from '@/lib/models/food-item';
 import { updateEditableItemWeight } from '@/lib/scanner/editable-food-item';
+import { createMeal } from '@/lib/repositories/meals';
+import { MealDateOutOfRangeError } from '@/lib/repositories/meal-errors';
 
 function makeMeal(
   overrides: Partial<MealEntry> & Pick<MealEntry, 'mealType' | 'totalCalories'>,
@@ -142,6 +145,18 @@ describe('meal log CRUD', () => {
 
     expect(doc.createdAt).toEqual(createdAt);
     expect(doc.updatedAt.toMillis()).toBeGreaterThanOrEqual(createdAt.toMillis());
+  });
+
+  it('rejects meal creation more than three calendar days ahead', async () => {
+    const futureDate = new Date();
+    futureDate.setDate(futureDate.getDate() + 4);
+
+    await expect(
+      createMeal(
+        makeMeal({ timestamp: futureDate, mealType: 'lunch', totalCalories: 500 }),
+        {} as Firestore,
+      ),
+    ).rejects.toBeInstanceOf(MealDateOutOfRangeError);
   });
 
 });

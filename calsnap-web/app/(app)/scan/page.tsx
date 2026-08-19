@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { Suspense, useEffect, useLayoutEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { ConfirmAlertDialog } from '@/components/design/ConfirmAlertDialog';
 import { MealAnalysisResultView } from '@/components/scanner/MealAnalysisResultView';
@@ -19,6 +19,9 @@ import { useUnsavedWork } from '@/lib/scanner/unsaved-work-context';
 import { useMealScanner } from '@/lib/scanner/use-meal-scanner';
 import { useNavVisibility } from '@/lib/app/nav-visibility-context';
 import { MealType, type MealType as MealTypeValue } from '@/lib/models/meal-type';
+import { parseLogDateParam } from '@/lib/meal-log/log-date';
+import { localDayKey } from '@/lib/dashboard/date-window';
+import { MealDateOutOfRangeError } from '@/lib/repositories/meal-errors';
 
 const VALID_MEAL_TYPES = new Set<string>(Object.values(MealType));
 
@@ -107,19 +110,13 @@ function ScanPageContent() {
     window.location.replace('/dashboard');
   };
 
-  const logDate = useMemo(() => {
-    if (!logDateParam || !/^\d{4}-\d{2}-\d{2}$/.test(logDateParam)) return undefined;
-    const [y, m, d] = logDateParam.split('-').map(Number);
-    const date = new Date(y, m - 1, d, 12, 0, 0);
-    const max = new Date();
-    max.setDate(max.getDate() + 3);
-    max.setHours(23, 59, 59, 999);
-    if (date.getTime() > max.getTime()) return undefined;
-    return date;
-  }, [logDateParam]);
-
   const handleLog = async () => {
     if (!user || !scanner.canLog) {
+      return;
+    }
+    const logDate = parseLogDateParam(logDateParam);
+    if (logDateParam && !logDate) {
+      scanner.setLogError(copy('scanner.error.invalidLogDate'));
       return;
     }
     scanner.setLogError(null);
@@ -133,14 +130,18 @@ function ScanPageContent() {
       });
       scanner.discard();
       setHasUnsavedWork(false);
-      if (logDateParam) {
-        window.location.replace(`/log?date=${logDateParam}`);
+      if (logDate) {
+        window.location.replace(`/log?date=${localDayKey(logDate)}`);
       } else {
         window.location.replace('/dashboard');
       }
       return;
-    } catch {
-      scanner.setLogError(copy('scanner.error.logFailed'));
+    } catch (error) {
+      scanner.setLogError(
+        error instanceof MealDateOutOfRangeError
+          ? copy('scanner.error.invalidLogDate')
+          : copy('scanner.error.logFailed'),
+      );
     }
   };
 

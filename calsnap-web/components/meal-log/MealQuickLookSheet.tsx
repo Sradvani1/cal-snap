@@ -21,6 +21,7 @@ interface MealQuickLookSheetProps {
   meal: MealEntry | null;
   skipAutoSave?: boolean;
   onLog?: (items: FoodItem[], mealType: MealType) => Promise<void> | void;
+  logLabel?: string;
   isLogging?: boolean;
   onFavorite?: () => Promise<boolean | void> | boolean | void;
   isFavoritePending?: boolean;
@@ -76,6 +77,7 @@ export function MealQuickLookSheet({
   meal,
   skipAutoSave = false,
   onLog,
+  logLabel,
   isLogging = false,
   onFavorite,
   isFavoritePending = false,
@@ -126,6 +128,7 @@ export function MealQuickLookSheet({
   const hasMealTypeChange = meal ? mealType !== meal.mealType : false;
   const hasDeletions = meal ? meal.items.some((i) => deletedIds.has(i.id)) : false;
   const hasChanges = hasWeightChanges || hasMealTypeChange || hasDeletions;
+  const canLog = adjustedItems.length > 0;
 
   useEffect(() => {
     hasChangesRef.current = hasChanges;
@@ -316,17 +319,19 @@ export function MealQuickLookSheet({
 
             {!hideMealType && <MealTypeSelector compact value={mealType} onChange={setMealType} />}
 
-            <InlineErrorMessage message={error} />
+            <InlineErrorMessage
+              message={error ?? (onLog && !canLog ? copy('mealLog.actions.noItems') : null)}
+            />
 
             {hasActions && (
               <div className="flex gap-1.5">
                 {onLog && (
                   <ActionButton
                     onClick={handleLog}
-                    disabled={isLogging}
+                    disabled={isLogging || !canLog}
                     className="bg-cs-primary/10 text-cs-primary hover:bg-cs-primary/15"
                   >
-                    {isLogging ? '...' : copy('common.action.log')}
+                    {isLogging ? '...' : (logLabel ?? copy('common.action.log'))}
                   </ActionButton>
                 )}
                 {viewHref && (

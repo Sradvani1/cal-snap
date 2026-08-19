@@ -5,14 +5,14 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { copy } from '@/lib/copy';
 import { formFieldFocusRingClassName } from '@/lib/design/form-field';
 import { typography } from '@/lib/design/typography';
+import { MAX_FUTURE_LOG_DAYS } from '@/lib/meal-log/log-date';
+import { toLocalDateInputValue } from '@/lib/utilities/date-input';
 import { cn } from '@/lib/utils/cn';
 
 interface DateNavBarProps {
   date: Date;
   onDateChange: (date: Date) => void;
 }
-
-const FORWARD_LIMIT_DAYS = 3;
 
 function isToday(date: Date): boolean {
   const now = new Date();
@@ -25,7 +25,7 @@ function isToday(date: Date): boolean {
 
 function isAtMaxDate(date: Date): boolean {
   const limit = new Date();
-  limit.setDate(limit.getDate() + FORWARD_LIMIT_DAYS);
+  limit.setDate(limit.getDate() + MAX_FUTURE_LOG_DAYS);
   const d = new Date(date);
   d.setHours(0, 0, 0, 0);
   limit.setHours(0, 0, 0, 0);
@@ -34,7 +34,7 @@ function isAtMaxDate(date: Date): boolean {
 
 function maxDate(): Date {
   const d = new Date();
-  d.setDate(d.getDate() + FORWARD_LIMIT_DAYS);
+  d.setDate(d.getDate() + MAX_FUTURE_LOG_DAYS);
   return d;
 }
 
@@ -63,13 +63,6 @@ export function DateNavBar({ date, onDateChange }: DateNavBarProps) {
   const today = isToday(date);
   const atMax = isAtMaxDate(date);
   const nativeRef = useRef<HTMLInputElement>(null);
-
-  const toLocalDateValue = (d: Date): string => {
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${y}-${m}-${day}`;
-  };
 
   const handleNativeChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -130,8 +123,8 @@ export function DateNavBar({ date, onDateChange }: DateNavBarProps) {
         <input
           ref={nativeRef}
           type="date"
-          value={toLocalDateValue(date)}
-          max={toLocalDateValue(maxDate())}
+          value={toLocalDateInputValue(date)}
+          max={toLocalDateInputValue(maxDate())}
           onChange={handleNativeChange}
           className="pointer-events-none fixed h-px w-px overflow-hidden opacity-0"
           tabIndex={-1}

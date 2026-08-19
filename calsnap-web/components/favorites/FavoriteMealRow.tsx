@@ -36,12 +36,10 @@ export function FavoriteMealRow({ favorite, onUse }: FavoriteMealRowProps) {
   const brief = favoriteBrief(favorite);
 
   return (
-    <div
-      role="button"
-      tabIndex={0}
+    <button
+      type="button"
       onClick={onUse}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onUse(); }}
-      className="flex cursor-pointer items-center justify-between rounded-lg bg-cs-muted/10 px-3 py-2 transition-colors hover:bg-cs-muted/15"
+      className="flex w-full items-center justify-between rounded-lg bg-cs-muted/10 px-3 py-2 text-left transition-colors hover:bg-cs-muted/15"
     >
       <span className={cn(typography.csCaption, 'min-w-0 truncate text-cs-foreground')}>
         {brief}
@@ -49,6 +47,6 @@ export function FavoriteMealRow({ favorite, onUse }: FavoriteMealRowProps) {
       <span className={cn(typography.csCaption, 'font-medium tabular-nums shrink-0 text-cs-foreground')}>
         {Math.round(favorite.totalCalories)} {copy('common.macro.kcal')}
       </span>
-    </div>
+    </button>
   );
 }

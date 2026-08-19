@@ -6,6 +6,9 @@ export const mealLogCopy = {
   'mealLog.empty.pastSubtitle': 'This day has no logged meals.',
   'mealLog.empty.action': 'Scan a meal',
   'mealLog.addMeal': 'Add {{mealType}}',
+  'mealLog.addSheet.title': 'Add {{mealType}}',
+  'mealLog.addSheet.scan': 'Scan a meal',
+  'mealLog.addSheet.favorite': 'Use a favorite',
   'mealLog.confirm.deleteTitle': 'Delete meal?',
   'mealLog.confirm.delete': 'Delete this meal? This cannot be undone.',
   'mealLog.confirm.deleteAction': 'Delete meal',
@@ -20,6 +23,7 @@ export const mealLogCopy = {
   'mealLog.actions.savedFavorite': 'Saved!',
   'mealLog.actions.noItems': 'All items removed — save is disabled. Cancel to restore or delete the meal.',
   'mealLog.favorites.title': 'Favorites',
+  'mealLog.favorites.choose': 'Choose a favorite',
   'mealLog.favorites.empty': 'No favorites yet',
   'mealLog.favorites.emptySubtitle': 'Save a meal from your log to quickly log it again.',
   'mealLog.favorites.deleteConfirm': 'Delete favorite?',
@@ -36,6 +40,8 @@ export const mealLogCopy = {
   'mealLog.favorites.errorLoad': 'Failed to load favorites.',
   'mealLog.favorites.errorDelete': 'Failed to delete favorite.',
   'mealLog.sheet.error.logFailed': 'Could not save this meal. Try again.',
+  'mealLog.sheet.error.invalidLogDate': 'Choose a date within the next three days to log this meal.',
+  'mealLog.sheet.logToDate': 'Log to {{date}}',
   'mealLog.favorites.errorSave': 'Failed to save favorite. Try again.',
 } as const;
 

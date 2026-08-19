@@ -21,11 +21,35 @@ interface MealListSectionProps {
   onOpenSheet?: (meal: MealEntry) => void;
   onDeleteFromSheet?: (meal: MealEntry) => void;
   onFavorite?: (meal: MealEntry) => void;
+  onAddMeal?: (mealType: MealType) => void;
   favoritesData?: FavoriteMeal[];
   dateKey?: string;
 }
 
-function AddMealLink({ mealType, dateKey }: { mealType: MealType; dateKey?: string }) {
+function AddMealLink({
+  mealType,
+  dateKey,
+  onAddMeal,
+}: {
+  mealType: MealType;
+  dateKey?: string;
+  onAddMeal?: (mealType: MealType) => void;
+}) {
+  if (onAddMeal) {
+    return (
+      <button
+        type="button"
+        onClick={() => onAddMeal(mealType)}
+        className={cn(
+          typography.csCaption,
+          'underline underline-offset-2 hover:text-cs-foreground',
+        )}
+      >
+        {copy('mealLog.addMeal', { mealType: MEAL_TYPE_LABELS[mealType] })}
+      </button>
+    );
+  }
+
   const href = `/scan?mealType=${mealType}${dateKey ? `&date=${dateKey}` : ''}`;
   return (
     <Link
@@ -49,6 +73,7 @@ export function MealListSection({
   onOpenSheet,
   onDeleteFromSheet,
   onFavorite,
+  onAddMeal,
   favoritesData,
   dateKey,
 }: MealListSectionProps) {
@@ -63,17 +88,28 @@ export function MealListSection({
                 {MEAL_TYPE_LABELS[mealType]}
               </h3>
               {showAddButton && (
-                <Link
-                  href={`/scan?mealType=${mealType}${dateKey ? `&date=${dateKey}` : ''}`}
-                  aria-label={copy('mealLog.addMeal', { mealType: MEAL_TYPE_LABELS[mealType] })}
-                  className="flex h-6 w-6 items-center justify-center rounded-full text-cs-muted hover:bg-cs-muted/15 hover:text-cs-foreground"
-                >
-                  +
-                </Link>
+                onAddMeal ? (
+                  <button
+                    type="button"
+                    onClick={() => onAddMeal(mealType)}
+                    aria-label={copy('mealLog.addMeal', { mealType: MEAL_TYPE_LABELS[mealType] })}
+                    className="flex h-6 w-6 items-center justify-center rounded-full text-cs-muted hover:bg-cs-muted/15 hover:text-cs-foreground"
+                  >
+                    +
+                  </button>
+                ) : (
+                  <Link
+                    href={`/scan?mealType=${mealType}${dateKey ? `&date=${dateKey}` : ''}`}
+                    aria-label={copy('mealLog.addMeal', { mealType: MEAL_TYPE_LABELS[mealType] })}
+                    className="flex h-6 w-6 items-center justify-center rounded-full text-cs-muted hover:bg-cs-muted/15 hover:text-cs-foreground"
+                  >
+                    +
+                  </Link>
+                )
               )}
             </div>
             {meals.length === 0 ? (
-              showAddButton ? <AddMealLink mealType={mealType} dateKey={dateKey} /> : null
+              showAddButton ? <AddMealLink mealType={mealType} dateKey={dateKey} onAddMeal={onAddMeal} /> : null
             ) : (
               <div className="space-y-2">
                 {meals.map((meal) => (

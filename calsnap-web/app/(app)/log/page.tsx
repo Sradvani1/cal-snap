@@ -6,6 +6,8 @@ import { ConfirmAlertDialog } from '@/components/design/ConfirmAlertDialog';
 import { EmptyStateView } from '@/components/design/EmptyStateView';
 import { SectionCard, SectionCardSkeleton } from '@/components/design/SectionCard';
 import { FavoritesGrid } from '@/components/favorites/FavoritesGrid';
+import { FavoriteMealPickerSheet } from '@/components/favorites/FavoriteMealPickerSheet';
+import { AddMealSheet } from '@/components/meal-log/AddMealSheet';
 import { DailySummaryBar } from '@/components/meal-log/DailySummaryBar';
 import { DateNavBar } from '@/components/meal-log/DateNavBar';
 import { MealListSection } from '@/components/meal-log/MealListSection';
@@ -14,6 +16,7 @@ import { useAuth } from '@/lib/auth/auth-context';
 import { copy } from '@/lib/copy';
 import { aggregateTodaysMeals } from '@/lib/dashboard/aggregate-meals';
 import { localDayKey } from '@/lib/dashboard/date-window';
+import { isLoggableDate, localNoon, parseLogDateParam } from '@/lib/meal-log/log-date';
 import { formFieldFocusRingClassName } from '@/lib/design/form-field';
 import { layout } from '@/lib/design/layout';
 import type { FoodItem } from '@/lib/models/food-item';
@@ -28,6 +31,7 @@ import { useSaveFavorite } from '@/lib/queries/use-save-favorite';
 import { queryKeys } from '@/lib/queries/query-keys';
 import { useTodaysMeals } from '@/lib/queries/use-todays-meals';
 import { createMeal } from '@/lib/repositories/meals';
+import { MealDateOutOfRangeError } from '@/lib/repositories/meal-errors';
 import { logFavorite } from '@/lib/repositories/favorites';
 import { cn } from '@/lib/utils/cn';
 import { useQueryClient } from '@tanstack/react-query';
@@ -86,16 +90,10 @@ function LogPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<Tab>(() => {
-    const dateParam = searchParams.get('date');
-    return dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam) ? 'history' : 'favorites';
+    return parseLogDateParam(searchParams.get('date')) ? 'history' : 'favorites';
   });
   const [selectedDate, setSelectedDate] = useState(() => {
-    const dateParam = searchParams.get('date');
-    if (dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam)) {
-      const [y, m, d] = dateParam.split('-').map(Number);
-      return new Date(y, m - 1, d, 12, 0, 0);
-    }
-    return new Date();
+    return parseLogDateParam(searchParams.get('date')) ?? new Date();
   });
 
   const queryClient = useQueryClient();
@@ -107,10 +105,19 @@ function LogPageContent() {
 
   // Sheet state
   const [sheetOpen, setSheetOpen] = useState(false);
-  type SheetData = { meal: MealEntry; context: 'favorites' | 'history'; favoriteId?: string } | null;
+  type SheetData = {
+    meal: MealEntry;
+    context: 'favorites' | 'history';
+    favoriteId?: string;
+    targetDate?: Date;
+    targetMealType?: MealType;
+  } | null;
   const [sheetData, setSheetData] = useState<SheetData>(null);
   const [isLogging, setIsLogging] = useState(false);
   const [sheetError, setSheetError] = useState<string | null>(null);
+  const [addMealType, setAddMealType] = useState<MealType | null>(null);
+  const [addMealSheetOpen, setAddMealSheetOpen] = useState(false);
+  const [favoritePickerOpen, setFavoritePickerOpen] = useState(false);
   // Delete favorite dialog
   const [deleteFavDialogOpen, setDeleteFavDialogOpen] = useState(false);
   const [deleteFavTarget, setDeleteFavTarget] = useState<FavoriteMeal | null>(null);
@@ -124,12 +131,16 @@ function LogPageContent() {
 
   // --- Sheet handlers ---
 
-  const openSheetForFavorite = useCallback((fav: FavoriteMeal, context: 'favorites' | 'history') => {
+  const openSheetForFavorite = useCallback((
+    fav: FavoriteMeal,
+    context: 'favorites' | 'history',
+    target?: { date: Date; mealType: MealType },
+  ) => {
     const entry: MealEntry = {
       id: crypto.randomUUID(),
       userId: fav.userId,
-      timestamp: new Date(),
-      mealType: fav.mealType,
+      timestamp: target?.date ?? new Date(),
+      mealType: target?.mealType ?? fav.mealType,
       totalCalories: fav.totalCalories,
       totalProteinG: fav.totalProteinG,
       totalCarbsG: fav.totalCarbsG,
@@ -142,7 +153,13 @@ function LogPageContent() {
       items: fav.items.map((i) => ({ ...i })),
     };
     setSheetError(null);
-    setSheetData({ meal: entry, context, favoriteId: fav.id });
+    setSheetData({
+      meal: entry,
+      context,
+      favoriteId: fav.id,
+      targetDate: target?.date,
+      targetMealType: target?.mealType,
+    });
     setSheetOpen(true);
   }, []);
 
@@ -156,13 +173,27 @@ function LogPageContent() {
     async (items: FoodItem[], mealType: MealType) => {
       if (!user) return;
       const favId = sheetData?.favoriteId;
+      const targetDate = sheetData?.targetDate;
+      if (targetDate && !isLoggableDate(targetDate)) {
+        setSheetError(copy('mealLog.sheet.error.invalidLogDate'));
+        throw new Error('Meal date is out of range.');
+      }
       setIsLogging(true);
       try {
-        const entry = mealEntryFromItems(user.uid, items, mealType, new Date());
+        const entry = mealEntryFromItems(
+          user.uid,
+          items,
+          sheetData?.targetMealType ?? mealType,
+          targetDate ? localNoon(targetDate) : new Date(),
+        );
         try {
           await createMeal(entry);
         } catch (error) {
-          setSheetError(copy('mealLog.sheet.error.logFailed'));
+          setSheetError(
+            error instanceof MealDateOutOfRangeError
+              ? copy('mealLog.sheet.error.invalidLogDate')
+              : copy('mealLog.sheet.error.logFailed'),
+          );
           throw error;
         }
 
@@ -177,7 +208,7 @@ function LogPageContent() {
             console.warn('Meal saved but favorite usage update failed:', error);
           }
         }
-        router.push('/dashboard');
+        if (!targetDate) router.push('/dashboard');
       } finally {
         setIsLogging(false);
       }
@@ -240,6 +271,31 @@ function LogPageContent() {
     setActiveTab('history');
   }, []);
 
+  const handleOpenAddMeal = useCallback((mealType: MealType) => {
+    setAddMealType(mealType);
+    setAddMealSheetOpen(true);
+  }, []);
+
+  const handleScanMeal = useCallback(() => {
+    if (!addMealType) return;
+    setAddMealSheetOpen(false);
+    router.push(`/scan?mealType=${addMealType}&date=${localDayKey(selectedDate)}`);
+  }, [addMealType, router, selectedDate]);
+
+  const handleOpenFavoritePicker = useCallback(() => {
+    setAddMealSheetOpen(false);
+    setFavoritePickerOpen(true);
+  }, []);
+
+  const handleUseFavoriteForSlot = useCallback((favorite: FavoriteMeal) => {
+    if (!addMealType) return;
+    setFavoritePickerOpen(false);
+    openSheetForFavorite(favorite, 'favorites', {
+      date: localNoon(selectedDate),
+      mealType: addMealType,
+    });
+  }, [addMealType, openSheetForFavorite, selectedDate]);
+
   // --- Favorite operations ---
 
   const handleConfirmDeleteFavorite = useCallback(async () => {
@@ -300,12 +356,30 @@ function LogPageContent() {
                 dateKey={localDayKey(selectedDate)}
                 showRowActions={false}
                 onOpenSheet={openSheetForHistory}
+                onAddMeal={handleOpenAddMeal}
               />
               {hasMeals && <DailySummaryBar aggregation={aggregation} />}
             </SectionCard>
           )}
         </>
       )}
+
+      <AddMealSheet
+        open={addMealSheetOpen}
+        onOpenChange={setAddMealSheetOpen}
+        mealType={addMealType}
+        onScan={handleScanMeal}
+        onUseFavorite={handleOpenFavoritePicker}
+      />
+
+      <FavoriteMealPickerSheet
+        open={favoritePickerOpen}
+        onOpenChange={setFavoritePickerOpen}
+        favorites={favorites}
+        isLoading={favoritesQuery.isLoading}
+        isError={favoritesQuery.isError}
+        onUse={handleUseFavoriteForSlot}
+      />
 
       {/* Error messages */}
       {deleteFavoriteMutation.isError && (
@@ -327,13 +401,24 @@ function LogPageContent() {
           meal={sheetData.meal}
           skipAutoSave={sheetData.context === 'favorites'}
           onLog={sheetData.context === 'favorites' ? handleSheetLog : undefined}
+          logLabel={
+            sheetData.targetDate
+              ? copy('mealLog.sheet.logToDate', {
+                  date: sheetData.targetDate.toLocaleDateString('en-US', {
+                    weekday: 'short',
+                    month: 'short',
+                    day: 'numeric',
+                  }),
+                })
+              : undefined
+          }
           isLogging={isLogging}
           onFavorite={sheetData.context === 'favorites' ? undefined : handleSheetFavorite}
           isFavoritePending={saveFavoriteMutation.isPending || deleteFavoriteMutation.isPending}
           error={sheetError}
           onDeleteMeal={handleSheetDeleteMeal}
           viewHref={sheetData.context === 'history' ? `/log/${sheetData.meal.id}` : undefined}
-          hideMealType={sheetData.context !== 'favorites'}
+          hideMealType={sheetData.context !== 'favorites' || !!sheetData.targetMealType}
           isFavorited={
             sheetData.context === 'history'
               ? (favoritesQuery.data?.some((f) => f.originalMealId === sheetData.meal.id) ?? false)

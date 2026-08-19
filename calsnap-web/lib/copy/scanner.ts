@@ -42,6 +42,7 @@ export const scannerCopy = {
   'scanner.result.discard': 'Discard',
   'scanner.result.photoAlt': 'Meal',
   'scanner.error.logFailed': 'Failed to log meal. Try again.',
+  'scanner.error.invalidLogDate': 'Choose a date within the next three days to log this meal.',
   'scanner.error.saveFailed': 'Failed to save meal. Try again.',
   'scanner.mealType.title': 'Meal type',
   'scanner.confidence.high': 'High confidence',
