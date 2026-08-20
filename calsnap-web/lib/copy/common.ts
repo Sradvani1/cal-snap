@@ -31,6 +31,7 @@ export const commonCopy = {
   'common.label.activityLevel': 'Activity level',
   'common.label.date': 'Date',
   'common.label.weight': 'Weight',
+  'common.weight.rangeExtended': 'Weight range extended to {{min}} to {{max}} grams',
   'common.macro.protein': 'Protein',
   'common.macro.carbs': 'Carbs',
   'common.macro.fat': 'Fat',

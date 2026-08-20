@@ -1,6 +1,7 @@
 'use client';
 
-import { itemWeightRange, type EditableFoodItem } from '@/lib/scanner/editable-food-item';
+import { ExtensibleWeightSlider } from '@/components/design/ExtensibleWeightSlider';
+import type { EditableFoodItem } from '@/lib/scanner/editable-food-item';
 import { typography } from '@/lib/design/typography';
 import { cn } from '@/lib/utils/cn';
 
@@ -15,8 +16,6 @@ export function EditableFoodItemCard({
   onWeightChange,
   onDelete,
 }: EditableFoodItemCardProps) {
-  const { min, max } = itemWeightRange(item.originalWeightG);
-
   return (
     <div className="rounded-xl border border-cs-border bg-cs-surface p-3">
       <div className="flex items-start justify-between gap-2">
@@ -42,16 +41,15 @@ export function EditableFoodItemCard({
         </button>
       </div>
       <div className="mt-2 flex items-center gap-3">
-        <input
-          type="range"
-          min={min}
-          max={max}
-          step={1}
-          value={item.weightG}
-          onChange={(e) => onWeightChange(item.id, Number(e.target.value))}
-          className="flex-1 accent-cs-primary"
-          aria-label={`${item.name} weight`}
-        />
+        {item.originalWeightG > 0 && item.weightG > 0 && (
+          <ExtensibleWeightSlider
+            originalWeightG={item.originalWeightG}
+            value={item.weightG}
+            onChange={(weightG) => onWeightChange(item.id, weightG)}
+            className="flex-1 accent-cs-primary"
+            ariaLabel={`${item.name} weight`}
+          />
+        )}
         <span className="w-12 text-right text-sm tabular-nums text-cs-muted">
           {Math.round(item.weightG)}g
         </span>

@@ -110,12 +110,6 @@ export function editableFoodItemFromAnalysisResult(
   };
 }
 
-export function itemWeightRange(originalWeightG: number): { min: number; max: number } {
-  const min = Math.max(1, Math.round(originalWeightG * 0.5));
-  const max = Math.max(min + 1, Math.round(originalWeightG * 1.5));
-  return { min, max };
-}
-
 export function editableFoodItemToFoodItem(item: EditableFoodItem): FoodItem {
   return {
     id: item.id,

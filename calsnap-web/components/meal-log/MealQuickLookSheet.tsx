@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Drawer } from 'vaul';
 import { useAuth } from '@/lib/auth/auth-context';
 import { InlineErrorMessage } from '@/components/design/InlineErrorMessage';
+import { ExtensibleWeightSlider } from '@/components/design/ExtensibleWeightSlider';
 import { MealTypeSelector } from '@/components/scanner/MealTypeSelector';
 import { SwipeToDeleteItem } from '@/components/meal-log/SwipeToDeleteItem';
 import { useUpdateMeal } from '@/lib/queries/use-update-meal';
@@ -30,18 +31,6 @@ interface MealQuickLookSheetProps {
   viewHref?: string;
   isFavorited?: boolean;
   hideMealType?: boolean;
-}
-
-const WEIGHT_RANGE_FACTOR = 0.3;
-
-function getWeightRange(originalWeight?: number): { min: number; max: number } {
-  if (!originalWeight || originalWeight <= 0) {
-    return { min: 1, max: 1 };
-  }
-  return {
-    min: Math.max(1, Math.round(originalWeight * (1 - WEIGHT_RANGE_FACTOR))),
-    max: Math.round(originalWeight * (1 + WEIGHT_RANGE_FACTOR)),
-  };
 }
 
 function scaleItem(item: FoodItem, newWeight: number): FoodItem {
@@ -243,7 +232,6 @@ export function MealQuickLookSheet({
           >
             {adjustedItems.map((item) => {
               const original = meal.items.find((i) => i.id === item.id);
-              const range = getWeightRange(original?.estimatedWeightG);
               const isExpanded = expandedItemId === item.id;
 
               return (
@@ -275,18 +263,14 @@ export function MealQuickLookSheet({
                     </span>
                   </SwipeToDeleteItem>
 
-                  {isExpanded && range.max > range.min && (
+                  {isExpanded && original && original.estimatedWeightG > 0 && (
                     <div className="mt-1 px-3">
-                      <input
-                        type="range"
-                        min={range.min}
-                        max={range.max}
-                        step={1}
+                      <ExtensibleWeightSlider
+                        originalWeightG={original.estimatedWeightG}
                         value={item.estimatedWeightG}
-                        onChange={(e) =>
-                          handleWeightChange(item.id, Number(e.target.value))
-                        }
+                        onChange={(weightG) => handleWeightChange(item.id, weightG)}
                         className="w-full h-2 accent-cs-primary"
+                        ariaLabel={`${item.name} ${copy('common.label.weight')}`}
                       />
                       <p className={cn(typography.csCaption, 'text-right tabular-nums')}>
                         {Math.round(item.estimatedWeightG)}
