@@ -153,29 +153,13 @@ export function adjustMacroPercents(
       break;
     }
     case 'carbs': {
-      c = clamped;
-      const remaining = 100 - c;
-      const otherSum = protein + fat;
-      if (otherSum === 0) {
-        p = Math.floor(remaining / 2);
-        f = remaining - p;
-      } else {
-        p = Math.round((remaining * protein) / otherSum);
-        f = remaining - p;
-      }
+      c = Math.min(clamped, 100 - p);
+      f = 100 - p - c;
       break;
     }
     case 'fat': {
-      f = clamped;
-      const remaining = 100 - f;
-      const otherSum = protein + carbs;
-      if (otherSum === 0) {
-        p = Math.floor(remaining / 2);
-        c = remaining - p;
-      } else {
-        p = Math.round((remaining * protein) / otherSum);
-        c = remaining - p;
-      }
+      f = Math.min(clamped, 100 - p);
+      c = 100 - p - f;
       break;
     }
   }

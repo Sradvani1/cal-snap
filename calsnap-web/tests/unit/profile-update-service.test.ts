@@ -14,11 +14,10 @@ import type { UserProfile } from '@/lib/models/user-profile';
 
 describe('profile-update-service', () => {
   it('macro slider validation', () => {
-    const adjusted = adjustMacroPercents('protein', 40, 28, 47, 25);
-    expect(adjusted[0] + adjusted[1] + adjusted[2]).toBe(100);
-    expect(adjusted[0]).toBeGreaterThanOrEqual(0);
-    expect(adjusted[1]).toBeGreaterThanOrEqual(0);
-    expect(adjusted[2]).toBeGreaterThanOrEqual(0);
+    expect(adjustMacroPercents('protein', 40, 28, 47, 25)).toEqual([40, 39, 21]);
+    expect(adjustMacroPercents('carbs', 50, 28, 47, 25)).toEqual([28, 50, 22]);
+    expect(adjustMacroPercents('fat', 40, 28, 47, 25)).toEqual([28, 32, 40]);
+    expect(adjustMacroPercents('carbs', 100, 28, 47, 25)).toEqual([28, 72, 0]);
 
     expect(macroPercentsAreValid(30, 30, 30)).toBe(false);
 
