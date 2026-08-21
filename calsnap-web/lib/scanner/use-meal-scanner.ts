@@ -23,10 +23,18 @@ import {
 import { createAnalyzeGenerationGuard } from '@/lib/scanner/analyze-generation';
 import type { PreparedMealImage } from '@/lib/services/meal-photo-processor';
 import { prepareForAnalysisAndStorage } from '@/lib/services/meal-photo-processor';
+import { trackUsageEvent } from '@/lib/usage/client';
+import { UsageEvent } from '@/lib/usage/events';
 
 export type MealScannerPhase = 'capture' | 'analyzing' | 'results' | 'error';
 
 export type ScannerErrorKind = 'offline' | 'api' | 'parse' | 'unrecognizable' | 'photoPrep';
+
+export function scanOutcomeEvent(
+  hasResults: boolean,
+): typeof UsageEvent.ScanSucceeded | typeof UsageEvent.ScanFailed {
+  return hasResults ? UsageEvent.ScanSucceeded : UsageEvent.ScanFailed;
+}
 
 export interface UseMealScannerOptions {
   userId: string;
@@ -124,7 +132,7 @@ export function useMealScanner({
     onUnsavedWorkChange?.(hasUnsavedWork);
   }, [hasUnsavedWork, onUnsavedWorkChange]);
 
-  const applyAnalysis = useCallback((response: MealAnalysisResponse) => {
+  const applyAnalysis = useCallback((response: MealAnalysisResponse): boolean => {
     const flaggedNames = new Set(response.flaggedItems);
     const items = response.items.map((result) =>
       editableFoodItemFromAnalysisResult(result, flaggedNames),
@@ -135,13 +143,14 @@ export function useMealScanner({
     if (items.length === 0) {
       setScannerError('unrecognizable');
       setPhase('error');
-      return;
+      return false;
     }
 
     setEditableItems(items);
     setEstimationNotes(response.estimationNotes);
     setScannerError(null);
     setPhase('results');
+    return true;
   }, []);
 
   const selectPhoto = useCallback(
@@ -203,6 +212,7 @@ export function useMealScanner({
       }
 
       const idToken = await currentUser.getIdToken();
+      void trackUsageEvent(UsageEvent.ScanRequested);
       const response = await fetch('/api/analyze-meal', {
         method: 'POST',
         headers: { Authorization: `Bearer ${idToken}` },
@@ -215,6 +225,7 @@ export function useMealScanner({
       }
 
       if (!response.ok) {
+        void trackUsageEvent(UsageEvent.ScanFailed);
         let errorKind: ScannerErrorKind = 'api';
         if (response.status === 422) {
           errorKind = 'unrecognizable';
@@ -239,7 +250,8 @@ export function useMealScanner({
       if (!analyzeGenerationRef.current.isCurrent(generation)) {
         return;
       }
-      applyAnalysis(data);
+      const hasResults = applyAnalysis(data);
+      void trackUsageEvent(scanOutcomeEvent(hasResults));
     } catch (error) {
       // Aborted or superseded requests are handled by whichever action
       // triggered them (cancelAnalysis / reAnalyze / retryAnalyze / unmount),
@@ -250,6 +262,7 @@ export function useMealScanner({
       ) {
         return;
       }
+      void trackUsageEvent(UsageEvent.ScanFailed);
       setScannerError('api');
       setPhase('error');
     }

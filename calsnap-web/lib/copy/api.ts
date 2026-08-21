@@ -8,5 +8,10 @@ export const apiCopy = {
   'api.analyze.unrecognizable': 'Could not recognize food from this input',
   'api.analyze.parseFailed': 'Analysis parse failed',
   'api.analyze.failed': 'Analysis failed',
+  'api.usage.invalidRequest': 'Invalid request',
+  'api.usage.invalidEvent': 'Invalid telemetry event',
+  'api.usage.unavailable': 'Telemetry unavailable',
+  'api.usage.forbidden': 'Forbidden',
+  'api.usage.dataUnavailable': 'Usage data unavailable',
 
 } as const;

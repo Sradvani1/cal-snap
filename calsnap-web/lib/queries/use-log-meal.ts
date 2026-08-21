@@ -13,6 +13,8 @@ import {
   setMealPhotoPath,
   uploadMealPhoto,
 } from '@/lib/repositories/meals';
+import { trackUsageEvent } from '@/lib/usage/client';
+import { UsageEvent } from '@/lib/usage/events';
 
 export interface LogMealInput {
   entry: MealEntry;
@@ -99,6 +101,9 @@ export function useLogMeal(uid: string | undefined) {
         });
         invalidateAnalyticsQueries(queryClient, uid);
       }
+    },
+    onSuccess: () => {
+      void trackUsageEvent(UsageEvent.MealSaved);
     },
   });
 }

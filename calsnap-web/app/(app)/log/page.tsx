@@ -33,6 +33,8 @@ import { useTodaysMeals } from '@/lib/queries/use-todays-meals';
 import { createMeal } from '@/lib/repositories/meals';
 import { MealDateOutOfRangeError } from '@/lib/repositories/meal-errors';
 import { logFavorite } from '@/lib/repositories/favorites';
+import { trackUsageEvent } from '@/lib/usage/client';
+import { UsageEvent } from '@/lib/usage/events';
 import { cn } from '@/lib/utils/cn';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -188,6 +190,7 @@ function LogPageContent() {
         );
         try {
           await createMeal(entry);
+          void trackUsageEvent(UsageEvent.MealSaved);
         } catch (error) {
           setSheetError(
             error instanceof MealDateOutOfRangeError

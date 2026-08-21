@@ -10,6 +10,7 @@ import { scrollMainToTop } from '@/lib/app/scroll-main';
 import { isTabRootPathname } from '@/lib/app/tab-navigation';
 import { useAuth, useRequireAuth } from '@/lib/auth/auth-context';
 import { NavVisibilityProvider, useNavVisibility } from '@/lib/app/nav-visibility-context';
+import { useAppUsage } from '@/lib/usage/use-app-usage';
 import { layout } from '@/lib/design/layout';
 import { UnsavedWorkProvider } from '@/lib/scanner/unsaved-work-context';
 import { cn } from '@/lib/utils/cn';
@@ -19,6 +20,7 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
   const { user, ready, profileError, retryProfile } = useRequireAuth();
   const { signOut } = useAuth();
   const pathname = usePathname();
+  useAppUsage(pathname, user?.uid, ready);
   const mainScrollRef = useRef<HTMLElement>(null);
   const prevPathnameRef = useRef<string | null>(null);
 

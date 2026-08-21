@@ -11,6 +11,7 @@ import { privacyCopy } from './privacy';
 import { pwaCopy } from './pwa';
 import { scannerCopy } from './scanner';
 import { settingsCopy } from './settings';
+import { usageCopy } from './usage';
 
 export const COPY_REGISTRY = {
   ...designSystemCopy,
@@ -26,6 +27,7 @@ export const COPY_REGISTRY = {
   ...settingsCopy,
   ...privacyCopy,
   ...pwaCopy,
+  ...usageCopy,
 } as const;
 
 export type CopyKey = keyof typeof COPY_REGISTRY;

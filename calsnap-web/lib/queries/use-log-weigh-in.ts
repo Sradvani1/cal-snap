@@ -6,6 +6,8 @@ import type { ProfileExtras } from '@/lib/models/profile-doc';
 import type { UserProfile } from '@/lib/models/user-profile';
 import { invalidateWeighInQueries } from '@/lib/queries/invalidate-weigh-ins';
 import { saveWeighIn, type SaveWeighInResult } from '@/lib/services/weigh-in-service';
+import { trackUsageEvent } from '@/lib/usage/client';
+import { UsageEvent } from '@/lib/usage/events';
 
 export interface LogWeighInInput {
   profile: UserProfile;
@@ -35,6 +37,7 @@ export function useLogWeighIn(uid: string | undefined) {
         return;
       }
       invalidateWeighInQueries(queryClient, uid);
+      void trackUsageEvent(UsageEvent.WeighInSaved);
     },
   });
 }

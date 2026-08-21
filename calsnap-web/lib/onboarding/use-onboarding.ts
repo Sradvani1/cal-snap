@@ -28,6 +28,8 @@ import {
 import { computeGoalTargetDate } from '@/lib/nutrition/goal-pathway';
 import { queryKeys } from '@/lib/queries/query-keys';
 import { saveProfileFromDraft } from '@/lib/repositories/profile';
+import { trackUsageEvent } from '@/lib/usage/client';
+import { UsageEvent } from '@/lib/usage/events';
 
 export interface OnboardingTargets {
   tdee: number;
@@ -173,6 +175,7 @@ export function useOnboarding(uid: string) {
       };
       const saved = await saveProfileFromDraft(uid, draftForSave);
       queryClient.setQueryData(queryKeys.profile(uid), saved);
+      void trackUsageEvent(UsageEvent.OnboardingCompleted);
     } finally {
       setSaving(false);
     }

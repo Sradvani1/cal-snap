@@ -49,6 +49,7 @@ uses the Firebase emulators; Vercel preview and production use cloud Firebase wi
 `NEXT_PUBLIC_USE_FIREBASE_EMULATOR=false`.
 
 The detailed historical rollout checklist remains in [`build/ROLLOUT.md`](build/ROLLOUT.md).
+Internal telemetry setup and retention are documented in [usage analytics](usage-analytics.md).
 
 ## Deferred Decisions
 

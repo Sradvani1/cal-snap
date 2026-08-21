@@ -3,6 +3,7 @@ import { getAdminAuth } from '@/lib/firebase/admin';
 
 export interface VerifiedBearerToken {
   uid: string;
+  internalAnalytics?: true;
 }
 
 export async function verifyBearerToken(
@@ -23,8 +24,18 @@ export async function verifyBearerToken(
     if (!decoded.uid) {
       return null;
     }
-    return { uid: decoded.uid };
+    return {
+      uid: decoded.uid,
+      ...(decoded.internalAnalytics === true ? { internalAnalytics: true as const } : {}),
+    };
   } catch {
     return null;
   }
+}
+
+export async function verifyInternalAnalyticsToken(
+  request: NextRequest,
+): Promise<VerifiedBearerToken | null> {
+  const session = await verifyBearerToken(request);
+  return session?.internalAnalytics ? session : null;
 }

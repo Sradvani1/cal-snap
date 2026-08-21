@@ -9,7 +9,7 @@ vi.mock('@/lib/firebase/admin', () => ({
   }),
 }));
 
-import { verifyBearerToken } from '@/lib/auth/verify-bearer-token';
+import { verifyBearerToken, verifyInternalAnalyticsToken } from '@/lib/auth/verify-bearer-token';
 
 function makeRequest(authHeader?: string): NextRequest {
   const headers = new Headers();
@@ -46,5 +46,16 @@ describe('verifyBearerToken', () => {
   it('returns null when verifyIdToken throws', async () => {
     mockVerifyIdToken.mockRejectedValue(new Error('invalid'));
     expect(await verifyBearerToken(makeRequest('Bearer bad-token'))).toBeNull();
+  });
+
+  it('requires the internal analytics custom claim', async () => {
+    mockVerifyIdToken.mockResolvedValue({ uid: 'operator', internalAnalytics: true });
+    await expect(verifyInternalAnalyticsToken(makeRequest('Bearer valid-token'))).resolves.toEqual({
+      uid: 'operator',
+      internalAnalytics: true,
+    });
+
+    mockVerifyIdToken.mockResolvedValue({ uid: 'user-1' });
+    await expect(verifyInternalAnalyticsToken(makeRequest('Bearer valid-token'))).resolves.toBeNull();
   });
 });
