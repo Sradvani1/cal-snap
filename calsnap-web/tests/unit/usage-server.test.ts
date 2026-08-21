@@ -3,6 +3,7 @@ import {
   buildUsageSummary,
   canRecordUsageEvent,
   MAX_EVENTS_PER_USER_PER_DAY,
+  pacificDateKey,
 } from '@/lib/usage/server';
 
 describe('usage aggregation', () => {
@@ -47,5 +48,10 @@ describe('usage aggregation', () => {
   it('caps a pseudonymous account at the configured daily event limit', () => {
     expect(canRecordUsageEvent(MAX_EVENTS_PER_USER_PER_DAY - 1)).toBe(true);
     expect(canRecordUsageEvent(MAX_EVENTS_PER_USER_PER_DAY)).toBe(false);
+  });
+
+  it('uses the Pacific calendar day around the UTC midnight boundary', () => {
+    expect(pacificDateKey(new Date('2026-08-21T06:59:59Z'))).toBe('2026-08-20');
+    expect(pacificDateKey(new Date('2026-08-21T07:00:00Z'))).toBe('2026-08-21');
   });
 });

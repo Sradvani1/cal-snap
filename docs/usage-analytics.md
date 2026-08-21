@@ -8,7 +8,9 @@ advertising identifiers, or raw user IDs.
 
 1. Set a random, server-only `USAGE_ANALYTICS_HASH_SECRET` in Vercel. It must be at least 32 random
    characters and must not use a `NEXT_PUBLIC_` prefix.
-2. Enable Firestore TTL for the `expiresAt` field on the `internalUsageDedupe` collection group. The
+2. Set `USAGE_ANALYTICS_START_DATE` to the Pacific calendar date on which collection starts, using
+   `YYYY-MM-DD`. Usage days use the `America/Los_Angeles` timezone (PST/PDT).
+3. Enable Firestore TTL for the `expiresAt` field on the `internalUsageDedupe` collection group. The
    TTL removes the daily HMAC-based active-user dedupe records after 35 days (Firestore TTL deletion
    can take up to 24 additional hours). The records also keep a capped total event count to protect
    aggregate metrics from abuse. The daily aggregate documents are retained.
@@ -20,7 +22,7 @@ gcloud firestore fields ttls update expiresAt \
   --database='(default)'
 ```
 
-3. Grant the operator account the Firebase custom claim `internalAnalytics: true` with Firebase Admin:
+4. Grant the operator account the Firebase custom claim `internalAnalytics: true` with Firebase Admin:
 
 ```ts
 await getAuth().setCustomUserClaims('<operator-uid>', { internalAnalytics: true });

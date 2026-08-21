@@ -6,6 +6,13 @@ import { type UsageEventName, UsageEvent } from '@/lib/usage/events';
 const DAILY_COLLECTION = 'internalUsageDaily';
 const DEDUPE_COLLECTION = 'internalUsageDedupe';
 const DEDUPE_RETENTION_DAYS = 35;
+const USAGE_TIME_ZONE = 'America/Los_Angeles';
+const usageDateFormatter = new Intl.DateTimeFormat('en-US', {
+  timeZone: USAGE_TIME_ZONE,
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});
 export const USAGE_SHARD_COUNT = 10;
 export const MAX_EVENTS_PER_USER_PER_DAY = 100;
 
@@ -31,8 +38,21 @@ function usageHashSecret(): string {
   return secret;
 }
 
-function utcDateKey(date = new Date()): string {
-  return date.toISOString().slice(0, 10);
+function usageStartDate(): string {
+  const configured = process.env.USAGE_ANALYTICS_START_DATE?.trim();
+  return configured && /^\d{4}-\d{2}-\d{2}$/.test(configured)
+    ? configured
+    : '1970-01-01';
+}
+
+export function pacificDateKey(date = new Date()): string {
+  const parts = usageDateFormatter.formatToParts(date);
+  const values = Object.fromEntries(
+    parts
+      .filter((part) => part.type !== 'literal')
+      .map((part) => [part.type, part.value]),
+  );
+  return `${values.year}-${values.month}-${values.day}`;
 }
 
 function dailyUserHash(uid: string, date: string): string {
@@ -46,11 +66,15 @@ function shardId(userHash: string): number {
 }
 
 function dateKeys(days: number, referenceDate = new Date()): string[] {
+  const today = new Date(`${pacificDateKey(referenceDate)}T12:00:00.000Z`);
   const keys: string[] = [];
   for (let offset = days - 1; offset >= 0; offset--) {
-    const date = new Date(referenceDate);
+    const date = new Date(today);
     date.setUTCDate(date.getUTCDate() - offset);
-    keys.push(utcDateKey(date));
+    const key = date.toISOString().slice(0, 10);
+    if (key >= usageStartDate()) {
+      keys.push(key);
+    }
   }
   return keys;
 }
@@ -60,7 +84,10 @@ export function canRecordUsageEvent(acceptedEventCount: unknown): boolean {
 }
 
 export async function recordUsageEvent(uid: string, event: UsageEventName): Promise<boolean> {
-  const date = utcDateKey();
+  const date = pacificDateKey();
+  if (date < usageStartDate()) {
+    return false;
+  }
   const db = getAdminFirestore();
   const userHash = dailyUserHash(uid, date);
   const dailyRef = db.collection(DAILY_COLLECTION).doc(`${date}_${shardId(userHash)}`);
@@ -172,6 +199,9 @@ export function buildUsageSummary(
 
 export async function getUsageSummary(days = 35): Promise<UsageSummary> {
   const keys = dateKeys(days);
+  if (keys.length === 0) {
+    return buildUsageSummary([], days);
+  }
   const snapshot = await getAdminFirestore()
     .collection(DAILY_COLLECTION)
     .where('date', '>=', keys[0])
