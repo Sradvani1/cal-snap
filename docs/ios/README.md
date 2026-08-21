@@ -1,15 +1,16 @@
 # CalSnap iOS Rebuild — Documentation Index
 
-> **Status:** Proposed. The active product remains `calsnap-web/`. This directory holds the plan
-> and (future) implementation records for rebuilding the native iOS app to V1 feature parity.
+> **Status:** Cancelled (August 2026). CalSnap remains a web-only PWA (`calsnap-web/`) for
+> personal and family use; no native iOS rebuild or App Store release is planned. This directory
+> preserves the plan for reference only.
 
 ## Records
 
 - [MASTER-PLAN.md](MASTER-PLAN.md) — phased master plan (Phase 0–10), architecture, decisions,
   and open items.
 
-Phase-by-phase planning + implementation records will be added here as each phase is planned and
-executed, mirroring the web's [`docs/build/`](../build/) convention.
+No phase records were created and none will be added; this directory is reference-only going
+forward.
 
 ## Source material
 

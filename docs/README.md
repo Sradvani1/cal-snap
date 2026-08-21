@@ -74,17 +74,18 @@ cal-snap/
 ├── calsnap-web/          # Active Next.js PWA
 ├── docs/                 # Current guidance and historical build records
 │   ├── build/            # Completed web plans, implementation records, and baselines
-│   └── ios/              # iOS rebuild plan and (future) implementation records
+│   └── ios/              # Cancelled iOS rebuild plan (reference only)
 ├── archive/ios/          # Archived iOS app and documentation
 ├── .github/workflows/    # Web CI
 └── README.md
 ```
 
-## iOS Rebuild
+## iOS
 
-The native iOS app is being rebuilt from scratch for V1 feature parity with the web app, sharing
-the same Firebase backend. See the [iOS rebuild master plan](ios/MASTER-PLAN.md) and
-[documentation index](ios/README.md). The archived iOS app remains reference-only.
+The native iOS app is not being rebuilt. An App Store release was considered and cancelled in
+August 2026; CalSnap remains a web-only PWA for personal and family use. The archived app under
+[`archive/ios/`](archive/ios/) and the [cancelled rebuild plan](ios/README.md) are kept for
+reference only.
 
 ## Archived iOS Documentation
 

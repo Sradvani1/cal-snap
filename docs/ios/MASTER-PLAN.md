@@ -1,6 +1,7 @@
 # CalSnap iOS Rebuild — Master Plan
 
-> **Status:** Proposed — awaiting approval before Phase 0 planning begins.
+> **Status:** Cancelled (August 2026) before Phase 0 began — decision was to keep CalSnap
+> web-only for personal and family use. Retained for reference only; do not execute.
 > **Source of truth for parity:** the active Next.js PWA in `calsnap-web/` (V1 complete).
 > **Reference only (do not port as-is):** `archive/ios/` — local-only SwiftData app, 7-step
 > onboarding, per-user API keys, native Gemini SDK, iOS 26 target.
