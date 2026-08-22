@@ -30,7 +30,9 @@ export const progressCopy = {
   'progress.history.empty': 'No weigh-ins yet',
   'progress.history.emptyAction': 'Log weigh-in',
   'progress.history.bmiTdee': 'BMI {{bmi}} · TDEE {{tdee}} kcal',
-  'progress.history.showMore': 'Show more ({{count}} remaining)',
+  'progress.history.previousPage': 'Previous',
+  'progress.history.nextPage': 'Next',
+  'progress.history.pageIndicator': 'Page {{page}} of {{total}}',
   'progress.weighIn.title': 'Log weigh-in',
   'progress.weighIn.targetAdjust':
     'Your target adjusts from {{prev}} to {{next}} kcal/day (TDEE {{prevTdee}} → {{nextTdee}})',

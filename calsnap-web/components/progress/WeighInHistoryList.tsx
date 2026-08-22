@@ -34,7 +34,7 @@ export function WeighInHistoryList({
   useLbs,
   onLogWeighIn,
 }: WeighInHistoryListProps) {
-  const [displayCount, setDisplayCount] = useState(PAGE_SIZE);
+  const [pageIndex, setPageIndex] = useState(0);
 
   if (weighIns.length === 0) {
     return (
@@ -48,7 +48,12 @@ export function WeighInHistoryList({
     );
   }
 
-  const visibleWeighIns = weighIns.slice(0, displayCount);
+  const pageCount = Math.ceil(weighIns.length / PAGE_SIZE);
+  const currentPageIndex = Math.min(pageIndex, pageCount - 1);
+  const visibleWeighIns = weighIns.slice(
+    currentPageIndex * PAGE_SIZE,
+    (currentPageIndex + 1) * PAGE_SIZE,
+  );
 
   return (
     <>
@@ -77,17 +82,29 @@ export function WeighInHistoryList({
           );
         })}
       </ul>
-      {displayCount < weighIns.length && (
-        <div className="flex justify-center pt-2">
+      {pageCount > 1 && (
+        <div className="flex items-center justify-center gap-2 pt-2">
           <Button
             type="button"
-            variant="ghost"
-            onClick={() => setDisplayCount(displayCount + PAGE_SIZE)}
-            className="min-h-11"
+            variant="outline"
+            disabled={currentPageIndex === 0}
+            onClick={() => setPageIndex(currentPageIndex - 1)}
           >
-            {copy('progress.history.showMore', {
-              count: weighIns.length - displayCount,
+            {copy('progress.history.previousPage')}
+          </Button>
+          <span className={typography.csCaption} aria-live="polite">
+            {copy('progress.history.pageIndicator', {
+              page: currentPageIndex + 1,
+              total: pageCount,
             })}
+          </span>
+          <Button
+            type="button"
+            variant="outline"
+            disabled={currentPageIndex === pageCount - 1}
+            onClick={() => setPageIndex(currentPageIndex + 1)}
+          >
+            {copy('progress.history.nextPage')}
           </Button>
         </div>
       )}
