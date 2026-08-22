@@ -175,6 +175,22 @@ describe('NutritionCalculator', () => {
     expect(weeklyLossRateKg(weighIns)).toBeCloseTo(1, 5);
   });
 
+  it('weeklyLossRateKg spans the full history, not just recent entries', () => {
+    const userId = 'user-1';
+    const weighIns: WeighIn[] = [
+      { id: '1', userId, date: new Date('2026-05-30'), weightKg: 84 },
+      { id: '2', userId, date: new Date('2026-06-06'), weightKg: 83 },
+      { id: '3', userId, date: new Date('2026-06-13'), weightKg: 82.4 },
+      { id: '4', userId, date: new Date('2026-06-20'), weightKg: 82.2 },
+      { id: '5', userId, date: new Date('2026-06-27'), weightKg: 80.5 },
+    ];
+
+    const rate = weeklyLossRateKg(weighIns);
+    expect(rate).not.toBeNull();
+    // 3.5 kg over 28 days.
+    expect(rate ?? 0).toBeCloseTo(0.875, 5);
+  });
+
   it('projectedGoalDate returns null at goal or zero deficit', () => {
     const referenceDate = new Date('2026-06-27');
     expect(

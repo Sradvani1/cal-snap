@@ -34,7 +34,7 @@ export function useProgress(uid: string | undefined, referenceDate: Date = new D
   const formatWeightDisplay = (kg: number) => formatWeight(kg, useLbs);
 
   const formatWeeklyRate = (): string => {
-    if (!stats?.weeklyRateKg) {
+    if (stats?.weeklyRateKg == null) {
       return copy('progress.stats.logMore');
     }
     if (useLbs) {

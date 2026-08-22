@@ -155,13 +155,8 @@ export function weeklyLossRateKg(weighIns: WeighIn[]): number | null {
   }
 
   const sorted = [...weighIns].sort((a, b) => a.date.getTime() - b.date.getTime());
-  const recent = sorted.slice(-4);
-  if (recent.length < 2) {
-    return null;
-  }
-
-  const first = recent[0];
-  const last = recent[recent.length - 1];
+  const first = sorted[0];
+  const last = sorted[sorted.length - 1];
   const days = calendarDaysBetween(first.date, last.date);
 
   if (days <= 0) {
