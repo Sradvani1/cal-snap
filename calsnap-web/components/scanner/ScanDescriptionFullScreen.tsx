@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { PrimaryButton } from '@/components/design/PrimaryButton';
 import { copy } from '@/lib/copy';
 import { formFieldInputClassName } from '@/lib/design/form-field';
+import { useKeyboardInset } from '@/lib/hooks/use-keyboard-inset';
 import { typography } from '@/lib/design/typography';
 import { cn } from '@/lib/utils/cn';
 
@@ -20,14 +21,21 @@ export function ScanDescriptionFullScreen({
 }: ScanDescriptionFullScreenProps) {
   const [text, setText] = useState(initialValue);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const keyboardInset = useKeyboardInset();
 
   useEffect(() => {
-    textareaRef.current?.focus();
+    // Focus without scrolling: the field sits above the keyboard, so Safari's
+    // pan has no job to do — and a mount-time pan against unsettled layout
+    // flings this fixed overlay's header off the top of the screen.
+    textareaRef.current?.focus({ preventScroll: true });
   }, []);
 
   return (
     <div className="fixed inset-0 z-50 bg-cs-background">
-      <div className="flex h-full flex-col px-4">
+      <div
+        className="flex h-full flex-col overflow-y-auto px-4"
+        style={keyboardInset > 0 ? { paddingBottom: keyboardInset } : undefined}
+      >
         <div className="flex items-center justify-between py-3">
           <button
             type="button"
