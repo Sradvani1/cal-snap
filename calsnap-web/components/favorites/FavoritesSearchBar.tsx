@@ -3,7 +3,7 @@
 import { Search, X } from 'lucide-react';
 import { copy } from '@/lib/copy';
 import { formFieldInputClassName } from '@/lib/design/form-field';
-import { useKeyboardScrollRestore } from '@/lib/hooks/use-keyboard-inset';
+import { scrollFormFieldIntoView } from '@/lib/hooks/use-keyboard-inset';
 import { cn } from '@/lib/utils/cn';
 
 interface FavoritesSearchBarProps {
@@ -12,9 +12,8 @@ interface FavoritesSearchBarProps {
 }
 
 export function FavoritesSearchBar({ value, onChange }: FavoritesSearchBarProps) {
-  const keyboardScroll = useKeyboardScrollRestore();
   return (
-    <div className="relative" {...keyboardScroll}>
+    <div className="relative">
       <Search
         aria-hidden
         className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-cs-muted"
@@ -27,6 +26,7 @@ export function FavoritesSearchBar({ value, onChange }: FavoritesSearchBarProps)
         type="search"
         value={value}
         onChange={(event) => onChange(event.target.value)}
+        onFocus={scrollFormFieldIntoView}
         onKeyDown={(event) => {
           if (event.key === 'Enter') event.currentTarget.blur();
         }}

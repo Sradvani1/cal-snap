@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useRef, useSyncExternalStore, type FocusEvent } from 'react';
+import { useEffect, useRef, useSyncExternalStore, type FocusEvent } from 'react';
 
 /** Pixels of virtual keyboard overlapping the layout viewport bottom. 0 when closed or unsupported. */
 export function computeKeyboardInset(): number {
@@ -39,85 +39,72 @@ export function useKeyboardInset(): number {
   );
 }
 
-/** Scroll focused form control into view; respects prefers-reduced-motion for behavior. */
+/** Scroll the focused form control into view. Instant: smooth scrolling races the iOS keyboard animation and can wedge the visual viewport. */
 export function scrollFormFieldIntoView(event: FocusEvent<HTMLElement>): void {
-  const reducedMotion =
-    typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const focusedElement = event.target as { scrollIntoView?: (options?: ScrollIntoViewOptions) => void } | null;
   if (!focusedElement || typeof focusedElement.scrollIntoView !== 'function') {
     return;
   }
-  focusedElement.scrollIntoView({
-    block: 'nearest',
-    behavior: reducedMotion ? 'instant' : 'smooth',
+  focusedElement.scrollIntoView({ block: 'nearest', behavior: 'instant' });
+}
+
+/**
+ * True on the visual-viewport transition from keyboard-open to keyboard-closed.
+ * Pure predicate so the close detection is unit-testable.
+ */
+export function didKeyboardClose(prevInset: number, nextInset: number): boolean {
+  return prevInset > 0 && nextInset === 0;
+}
+
+/**
+ * Forces Safari to drop a stuck keyboard pan. iOS sometimes fails to snap the
+ * visual viewport back on keyboard dismissal, leaving the whole shell (tab bar
+ * included) floating above the screen bottom until the user touch-scrolls. A
+ * zero-distance scroll on the live scrollers makes Safari recomposite and
+ * release the pan. No visible effect when nothing is stuck.
+ */
+export function releaseStuckViewportPan(): void {
+  if (typeof window === 'undefined' || typeof document === 'undefined') {
+    return;
+  }
+  const main = document.querySelector('.app-main');
+  requestAnimationFrame(() => {
+    window.scrollTo(window.scrollX, window.scrollY);
+    if (main instanceof HTMLElement) {
+      main.scrollTo({ top: main.scrollTop, left: main.scrollLeft });
+    }
   });
 }
 
 /**
- * Focus-session scroll anchor so keyboard-dismiss drift can be undone. iOS
- * Safari undoes its own keyboard pan but not our programmatic scroll — without
- * a matching restore the page keeps a small scroll offset and the tab bar
- * floats above the bottom until the user pulls down.
+ * Mount once (AppProviders): watches keyboard open/close via the visual
+ * viewport and releases a stuck pan on close. Covers every screen, including
+ * client-side navigations that preserve the stuck state.
  */
-export interface KeyboardScrollSession {
-  anchorY: number | null;
-}
-
-export function createKeyboardScrollSession(): KeyboardScrollSession {
-  return { anchorY: null };
-}
-
-/** Records the page scroll position when a focus session starts (first field only). */
-export function noteKeyboardScrollFocus(session: KeyboardScrollSession, scrollY: number): void {
-  if (session.anchorY === null) {
-    session.anchorY = scrollY;
-  }
-}
-
-/**
- * Returns the scroll position to restore when focus leaves, then clears the
- * session. Null means leave the page alone (no session, or nothing moved).
- */
-export function takeKeyboardScrollRestore(
-  session: KeyboardScrollSession,
-  currentScrollY: number,
-): number | null {
-  const anchor = session.anchorY;
-  session.anchorY = null;
-  if (anchor === null || anchor === currentScrollY) return null;
-  return anchor;
-}
-
-/**
- * Pairs focus scrolling with a matching restore. Spread onto the container
- * holding the inputs: focus entering records the scroll position (and still
- * scrolls the field into view); focus leaving the container restores it.
- * Moving between fields inside the container keeps the session, so tabbing
- * through a form never yanks the page.
- */
-export function useKeyboardScrollRestore(): {
-  onFocusCapture: (event: FocusEvent<HTMLElement>) => void;
-  onBlurCapture: (event: FocusEvent<HTMLElement>) => void;
-} {
-  const sessionRef = useRef<KeyboardScrollSession>(createKeyboardScrollSession());
-
-  const onFocusCapture = useCallback((event: FocusEvent<HTMLElement>) => {
-    if (typeof window !== 'undefined') {
-      noteKeyboardScrollFocus(sessionRef.current, window.scrollY);
+export function useKeyboardViewportReset(): void {
+  const prevInsetRef = useRef<number>(0);
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
     }
-    scrollFormFieldIntoView(event);
+    const vv = window.visualViewport;
+    if (!vv) {
+      return;
+    }
+    const onChange = () => {
+      const next = computeKeyboardInset();
+      const prev = prevInsetRef.current;
+      prevInsetRef.current = next;
+      if (didKeyboardClose(prev, next)) {
+        releaseStuckViewportPan();
+      }
+    };
+    onChange();
+    vv.addEventListener('resize', onChange);
+    vv.addEventListener('scroll', onChange);
+    return () => {
+      vv.removeEventListener('resize', onChange);
+      vv.removeEventListener('scroll', onChange);
+    };
   }, []);
-
-  const onBlurCapture = useCallback((event: FocusEvent<HTMLElement>) => {
-    if (typeof window === 'undefined') return;
-    const next = event.relatedTarget as Node | null;
-    if (event.currentTarget.contains(next)) return;
-    const target = takeKeyboardScrollRestore(sessionRef.current, window.scrollY);
-    if (target === null) return;
-    const y = target;
-    requestAnimationFrame(() => window.scrollTo({ top: y, behavior: 'instant' }));
-  }, []);
-
-  return useMemo(() => ({ onFocusCapture, onBlurCapture }), [onFocusCapture, onBlurCapture]);
 }

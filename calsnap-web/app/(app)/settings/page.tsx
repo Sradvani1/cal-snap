@@ -22,8 +22,8 @@ import { UnitsSection } from '@/components/settings/UnitsSection';
 import { copy } from '@/lib/copy';
 import { layout } from '@/lib/design/layout';
 import {
+  scrollFormFieldIntoView,
   useKeyboardInset,
-  useKeyboardScrollRestore,
 } from '@/lib/hooks/use-keyboard-inset';
 import { typography } from '@/lib/design/typography';
 import { cn } from '@/lib/utils/cn';
@@ -43,7 +43,6 @@ function SettingsContent({ uid, profileData }: SettingsContentProps) {
   const [saveError, setSaveError] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const keyboardInset = useKeyboardInset();
-  const keyboardScroll = useKeyboardScrollRestore();
 
   const handleSave = useCallback(async () => {
     if (!form.canSave) {
@@ -128,7 +127,7 @@ function SettingsContent({ uid, profileData }: SettingsContentProps) {
             ? { paddingBottom: `calc(1.5rem + ${keyboardInset}px)` }
             : undefined
         }
-        {...keyboardScroll}
+        onFocusCapture={scrollFormFieldIntoView}
       >
         <header className="flex items-center justify-between gap-3">
           <h1 className={`${typography.csCardTitle} text-2xl`}>{copy('settings.title')}</h1>

@@ -3,10 +3,8 @@ import type { FocusEvent } from 'react';
 
 import {
   computeKeyboardInset,
-  createKeyboardScrollSession,
-  noteKeyboardScrollFocus,
+  didKeyboardClose,
   scrollFormFieldIntoView,
-  takeKeyboardScrollRestore,
 } from '@/lib/hooks/use-keyboard-inset';
 
 type VisualViewportMock = {
@@ -68,15 +66,9 @@ describe('computeKeyboardInset SSR snapshot', () => {
 });
 
 describe('scrollFormFieldIntoView', () => {
-  afterEach(() => {
-    vi.unstubAllGlobals();
-  });
-
-  it('scrolls the focused field instead of the wrapper by default', () => {
+  it('scrolls the focused field instead of the wrapper, instantly', () => {
     const wrapperScrollIntoView = vi.fn();
     const targetScrollIntoView = vi.fn();
-    const matchMedia = vi.fn().mockReturnValue({ matches: false });
-    vi.stubGlobal('window', { matchMedia });
 
     scrollFormFieldIntoView({
       currentTarget: { scrollIntoView: wrapperScrollIntoView },
@@ -85,30 +77,12 @@ describe('scrollFormFieldIntoView', () => {
 
     expect(targetScrollIntoView).toHaveBeenCalledWith({
       block: 'nearest',
-      behavior: 'smooth',
+      behavior: 'instant',
     });
     expect(wrapperScrollIntoView).not.toHaveBeenCalled();
   });
 
-  it('uses instant scroll when reduced motion is preferred', () => {
-    const targetScrollIntoView = vi.fn();
-    const matchMedia = vi.fn().mockReturnValue({ matches: true });
-    vi.stubGlobal('window', { matchMedia });
-
-    scrollFormFieldIntoView({
-      target: { scrollIntoView: targetScrollIntoView },
-    } as unknown as FocusEvent<HTMLElement>);
-
-    expect(targetScrollIntoView).toHaveBeenCalledWith({
-      block: 'nearest',
-      behavior: 'instant',
-    });
-  });
-
   it('no-ops when the focus target is not an element', () => {
-    const matchMedia = vi.fn().mockReturnValue({ matches: false });
-    vi.stubGlobal('window', { matchMedia });
-
     expect(() =>
       scrollFormFieldIntoView({
         target: null,
@@ -117,30 +91,14 @@ describe('scrollFormFieldIntoView', () => {
   });
 });
 
-describe('keyboard scroll session', () => {
-  it('records the scroll position on first focus only', () => {
-    const session = createKeyboardScrollSession();
-    noteKeyboardScrollFocus(session, 120);
-    noteKeyboardScrollFocus(session, 200);
-
-    expect(session.anchorY).toBe(120);
+describe('didKeyboardClose', () => {
+  it('is true on the open-to-closed transition', () => {
+    expect(didKeyboardClose(300, 0)).toBe(true);
   });
 
-  it('restores the anchor when the page moved, then clears the session', () => {
-    const session = createKeyboardScrollSession();
-    noteKeyboardScrollFocus(session, 120);
-
-    expect(takeKeyboardScrollRestore(session, 148)).toBe(120);
-    expect(session.anchorY).toBeNull();
-  });
-
-  it('leaves the page alone with no session or no movement', () => {
-    const session = createKeyboardScrollSession();
-
-    expect(takeKeyboardScrollRestore(session, 148)).toBeNull();
-
-    noteKeyboardScrollFocus(session, 120);
-    expect(takeKeyboardScrollRestore(session, 120)).toBeNull();
-    expect(session.anchorY).toBeNull();
+  it('is false otherwise', () => {
+    expect(didKeyboardClose(0, 0)).toBe(false);
+    expect(didKeyboardClose(300, 120)).toBe(false);
+    expect(didKeyboardClose(0, 120)).toBe(false);
   });
 });

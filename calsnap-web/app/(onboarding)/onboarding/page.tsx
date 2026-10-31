@@ -15,8 +15,8 @@ import { useOnboarding } from '@/lib/onboarding/use-onboarding';
 import { copy } from '@/lib/copy';
 import { layout } from '@/lib/design/layout';
 import {
+  scrollFormFieldIntoView,
   useKeyboardInset,
-  useKeyboardScrollRestore,
 } from '@/lib/hooks/use-keyboard-inset';
 import { markPwaInstallEligible } from '@/lib/pwa/install-storage';
 import { typography } from '@/lib/design/typography';
@@ -27,7 +27,6 @@ export default function OnboardingPage() {
   const router = useRouter();
   const onboarding = useOnboarding(user?.uid ?? '');
   const keyboardInset = useKeyboardInset();
-  const keyboardScroll = useKeyboardScrollRestore();
 
   const handleDone = useCallback(() => {
     if (user) {
@@ -48,7 +47,7 @@ export default function OnboardingPage() {
     <div
       className={cn(layout.pageShell, 'min-h-full gap-5 overflow-y-auto py-8')}
       style={keyboardInset > 0 ? { paddingBottom: keyboardInset } : undefined}
-      {...keyboardScroll}
+      onFocusCapture={scrollFormFieldIntoView}
     >
       <div className="mb-6">
         <div className={`${typography.csCaption} mb-2 flex items-center justify-between text-xs`}>
