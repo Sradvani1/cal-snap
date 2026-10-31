@@ -36,7 +36,9 @@ export async function fetchFavorites(
     const lastA = a.lastUsedAt?.getTime() ?? 0;
     const lastB = b.lastUsedAt?.getTime() ?? 0;
     if (lastB !== lastA) return lastB - lastA;
-    return b.createdAt.getTime() - a.createdAt.getTime();
+    // Oldest first: new (never-used) favorites land at the very bottom
+    // and only climb once logged.
+    return a.createdAt.getTime() - b.createdAt.getTime();
   });
   return result;
 }

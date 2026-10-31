@@ -81,8 +81,37 @@ describe('favorites repository', () => {
     }
   });
 
-  it('increments favorite usage atomically', async () => {
-    const incrementValue = { __increment: 1 };
+  it('orders new unused favorites last so they only climb once logged', async () => {
+    const ts = (iso: string) => Timestamp.fromDate(new Date(iso));
+    const unused = (id: string, createdIso: string) => ({
+      ...validFavorite(),
+      useCount: 0,
+      lastUsedAt: null,
+      createdAt: ts(createdIso),
+      updatedAt: ts(createdIso),
+    });
+    mocks.getDocs.mockResolvedValue({
+      docs: [
+        { id: 'new-unused', data: () => unused('new-unused', '2026-07-01T10:00:00') },
+        {
+          id: 'used',
+          data: () => ({
+            ...validFavorite(),
+            useCount: 2,
+            lastUsedAt: ts('2026-06-15T10:00:00'),
+            createdAt: ts('2026-05-01T10:00:00'),
+          }),
+        },
+        { id: 'old-unused', data: () => unused('old-unused', '2026-06-01T10:00:00') },
+      ],
+    });
+
+    const favorites = await fetchFavorites('user-1', {} as never);
+
+    expect(favorites.map((f) => f.id)).toEqual(['used', 'old-unused', 'new-unused']);
+  });
+
+  it('increments favorite usage atomically', async () => {    const incrementValue = { __increment: 1 };
     mocks.doc.mockReturnValue('favorite-ref');
     mocks.increment.mockReturnValue(incrementValue);
     mocks.updateDoc.mockResolvedValue(undefined);
