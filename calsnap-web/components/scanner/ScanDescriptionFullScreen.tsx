@@ -24,10 +24,13 @@ export function ScanDescriptionFullScreen({
   const keyboardInset = useKeyboardInset();
 
   useEffect(() => {
-    // Focus without scrolling: the field sits above the keyboard, so Safari's
-    // pan has no job to do — and a mount-time pan against unsettled layout
-    // flings this fixed overlay's header off the top of the screen.
-    textareaRef.current?.focus({ preventScroll: true });
+    // Defer focus past mount so Safari's keyboard pan computes against settled
+    // layout. Focusing during mount flings this fixed overlay's header off the
+    // top of the screen; preventScroll alone can't stop a keyboard pan.
+    const timer = window.setTimeout(() => {
+      textareaRef.current?.focus({ preventScroll: true });
+    }, 300);
+    return () => window.clearTimeout(timer);
   }, []);
 
   return (
