@@ -1,11 +1,12 @@
 'use client';
 
-import { Suspense, useCallback, useState } from 'react';
+import { Suspense, useCallback, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ConfirmAlertDialog } from '@/components/design/ConfirmAlertDialog';
 import { EmptyStateView } from '@/components/design/EmptyStateView';
 import { SectionCard, SectionCardSkeleton } from '@/components/design/SectionCard';
 import { FavoritesGrid } from '@/components/favorites/FavoritesGrid';
+import { FavoritesSearchBar } from '@/components/favorites/FavoritesSearchBar';
 import { FavoriteMealPickerSheet } from '@/components/favorites/FavoriteMealPickerSheet';
 import { AddMealSheet } from '@/components/meal-log/AddMealSheet';
 import { DailySummaryBar } from '@/components/meal-log/DailySummaryBar';
@@ -23,6 +24,7 @@ import type { FoodItem } from '@/lib/models/food-item';
 import type { MealType } from '@/lib/models/meal-type';
 import type { MealEntry } from '@/lib/models/meal-entry';
 import type { FavoriteMeal } from '@/lib/models/favorite-meal';
+import { filterFavoriteMeals } from '@/lib/favorites/filter-favorites';
 import { useDeleteFavorite } from '@/lib/queries/use-delete-favorite';
 import { useDeleteMeal } from '@/lib/queries/use-delete-meal';
 import { useFavorites } from '@/lib/queries/use-favorites';
@@ -311,7 +313,13 @@ function LogPageContent() {
     }
   }, [deleteFavTarget, user, deleteFavoriteMutation]);
 
-  const favorites = favoritesQuery.data ?? [];
+  const favorites = useMemo(() => favoritesQuery.data ?? [], [favoritesQuery.data]);
+  const [favoriteSearch, setFavoriteSearch] = useState('');
+  const visibleFavorites = useMemo(
+    () => filterFavoriteMeals(favorites, favoriteSearch),
+    [favorites, favoriteSearch],
+  );
+  const favoriteSearchActive = favoriteSearch.trim().length > 0;
 
   return (
     <div className={cn(layout.pageShell, 'py-6', layout.content.bottomPadding)}>
@@ -328,12 +336,26 @@ function LogPageContent() {
       {/* Favorites tab */}
       {activeTab === 'favorites' && (
         <SectionCard title={copy('mealLog.favorites.title')}>
-          <FavoritesGrid
-            favorites={favorites}
-            isLoading={favoritesQuery.isLoading}
-            isError={favoritesQuery.isError}
-            onUse={(fav) => openSheetForFavorite(fav, 'favorites')}
-          />
+          {favorites.length > 0 && (
+            <div className="mb-3">
+              <FavoritesSearchBar value={favoriteSearch} onChange={setFavoriteSearch} />
+            </div>
+          )}
+          {favoriteSearchActive && visibleFavorites.length === 0 ? (
+            <EmptyStateView
+              icon="🔍"
+              titleKey="mealLog.favorites.noResultsTitle"
+              messageKey="mealLog.favorites.noResults"
+              messageParams={{ query: favoriteSearch.trim() }}
+            />
+          ) : (
+            <FavoritesGrid
+              favorites={visibleFavorites}
+              isLoading={favoritesQuery.isLoading}
+              isError={favoritesQuery.isError}
+              onUse={(fav) => openSheetForFavorite(fav, 'favorites')}
+            />
+          )}
         </SectionCard>
       )}
 

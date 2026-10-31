@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 
 import { PrimaryButton } from '@/components/design/PrimaryButton';
-import { copy, type CopyKey } from '@/lib/copy';
+import { copy, type CopyKey, type CopyParams } from '@/lib/copy';
 import { cn } from '@/lib/utils/cn';
 import { typography } from '@/lib/design/typography';
 
@@ -10,6 +10,7 @@ interface EmptyStateViewProps {
   icon: ReactNode;
   titleKey: CopyKey;
   messageKey: CopyKey;
+  messageParams?: CopyParams;
   actionTitleKey?: CopyKey;
   actionHref?: string;
   onAction?: () => void;
@@ -20,6 +21,7 @@ export function EmptyStateView({
   icon,
   titleKey,
   messageKey,
+  messageParams,
   actionTitleKey,
   actionHref,
   onAction,
@@ -53,7 +55,7 @@ export function EmptyStateView({
         {icon}
       </div>
       <h3 className={typography.csCardTitle}>{copy(titleKey)}</h3>
-      <p className={cn(typography.csCaption, 'max-w-sm')}>{copy(messageKey)}</p>
+      <p className={cn(typography.csCaption, 'max-w-sm')}>{copy(messageKey, messageParams)}</p>
       {actionButton}
     </div>
   );

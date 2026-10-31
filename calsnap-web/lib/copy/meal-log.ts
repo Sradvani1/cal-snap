@@ -43,6 +43,11 @@ export const mealLogCopy = {
   'mealLog.sheet.error.invalidLogDate': 'Choose a date within the next three days to log this meal.',
   'mealLog.sheet.logToDate': 'Log to {{date}}',
   'mealLog.favorites.errorSave': 'Failed to save favorite. Try again.',
+  'mealLog.favorites.searchLabel': 'Search favorites',
+  'mealLog.favorites.searchPlaceholder': 'Search by name or food',
+  'mealLog.favorites.clearSearch': 'Clear search',
+  'mealLog.favorites.noResultsTitle': 'No matches',
+  'mealLog.favorites.noResults': 'No favorites match "{{query}}".',
 } as const;
 
 export type MealLogCopyKey = keyof typeof mealLogCopy;
