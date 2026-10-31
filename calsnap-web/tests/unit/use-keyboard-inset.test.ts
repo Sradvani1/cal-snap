@@ -3,7 +3,10 @@ import type { FocusEvent } from 'react';
 
 import {
   computeKeyboardInset,
+  createKeyboardScrollSession,
+  noteKeyboardScrollFocus,
   scrollFormFieldIntoView,
+  takeKeyboardScrollRestore,
 } from '@/lib/hooks/use-keyboard-inset';
 
 type VisualViewportMock = {
@@ -111,5 +114,33 @@ describe('scrollFormFieldIntoView', () => {
         target: null,
       } as unknown as FocusEvent<HTMLElement>),
     ).not.toThrow();
+  });
+});
+
+describe('keyboard scroll session', () => {
+  it('records the scroll position on first focus only', () => {
+    const session = createKeyboardScrollSession();
+    noteKeyboardScrollFocus(session, 120);
+    noteKeyboardScrollFocus(session, 200);
+
+    expect(session.anchorY).toBe(120);
+  });
+
+  it('restores the anchor when the page moved, then clears the session', () => {
+    const session = createKeyboardScrollSession();
+    noteKeyboardScrollFocus(session, 120);
+
+    expect(takeKeyboardScrollRestore(session, 148)).toBe(120);
+    expect(session.anchorY).toBeNull();
+  });
+
+  it('leaves the page alone with no session or no movement', () => {
+    const session = createKeyboardScrollSession();
+
+    expect(takeKeyboardScrollRestore(session, 148)).toBeNull();
+
+    noteKeyboardScrollFocus(session, 120);
+    expect(takeKeyboardScrollRestore(session, 120)).toBeNull();
+    expect(session.anchorY).toBeNull();
   });
 });

@@ -15,8 +15,8 @@ import { displayWeight } from '@/lib/utilities/unit-formatters';
 import { typography } from '@/lib/design/typography';
 import { formFieldInputClassName } from '@/lib/design/form-field';
 import {
-  scrollFormFieldIntoView,
   useKeyboardInset,
+  useKeyboardScrollRestore,
 } from '@/lib/hooks/use-keyboard-inset';
 import { cn } from '@/lib/utils/cn';
 
@@ -47,6 +47,7 @@ function WeighInSheetForm({
   const logMutation = useLogWeighIn(uid);
   const [saveError, setSaveError] = useState<string | null>(null);
   const keyboardInset = useKeyboardInset();
+  const keyboardScroll = useKeyboardScrollRestore();
 
   const form = useWeighInForm(
     profile,
@@ -85,7 +86,7 @@ function WeighInSheetForm({
     <div
       className="overflow-y-auto"
       style={{ paddingBottom: keyboardInset }}
-      onFocusCapture={scrollFormFieldIntoView}
+      {...keyboardScroll}
     >
       <div className="flex rounded-lg border border-cs-border p-1" role="group" aria-label={copy('common.label.weight')}>
         <button
