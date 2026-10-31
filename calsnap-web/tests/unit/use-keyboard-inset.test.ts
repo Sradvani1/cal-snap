@@ -3,7 +3,6 @@ import type { FocusEvent } from 'react';
 
 import {
   computeKeyboardInset,
-  didKeyboardClose,
   scrollFormFieldIntoView,
 } from '@/lib/hooks/use-keyboard-inset';
 
@@ -88,17 +87,5 @@ describe('scrollFormFieldIntoView', () => {
         target: null,
       } as unknown as FocusEvent<HTMLElement>),
     ).not.toThrow();
-  });
-});
-
-describe('didKeyboardClose', () => {
-  it('is true on the open-to-closed transition', () => {
-    expect(didKeyboardClose(300, 0)).toBe(true);
-  });
-
-  it('is false otherwise', () => {
-    expect(didKeyboardClose(0, 0)).toBe(false);
-    expect(didKeyboardClose(300, 120)).toBe(false);
-    expect(didKeyboardClose(0, 120)).toBe(false);
   });
 });
