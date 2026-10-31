@@ -23,6 +23,7 @@ export const mealLogCopy = {
   'mealLog.actions.savedFavorite': 'Saved!',
   'mealLog.actions.noItems': 'All items removed — save is disabled. Cancel to restore or delete the meal.',
   'mealLog.favorites.title': 'Favorites',
+  'mealLog.tabs.history': 'History',
   'mealLog.favorites.choose': 'Choose a favorite',
   'mealLog.favorites.empty': 'No favorites yet',
   'mealLog.favorites.emptySubtitle': 'Save a meal from your log to quickly log it again.',

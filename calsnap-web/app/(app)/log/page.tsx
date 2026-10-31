@@ -326,10 +326,10 @@ function LogPageContent() {
       {/* Tab switcher */}
       <div className="mb-4 flex gap-0 rounded-lg bg-cs-muted/10 p-0.5">
         <TabButton active={activeTab === 'favorites'} onClick={() => setActiveTab('favorites')}>
-          Favorites
+          {copy('mealLog.favorites.title')}
         </TabButton>
         <TabButton active={activeTab === 'history'} onClick={() => setActiveTab('history')}>
-          {copy('common.nav.log')}
+          {copy('mealLog.tabs.history')}
         </TabButton>
       </div>
 
