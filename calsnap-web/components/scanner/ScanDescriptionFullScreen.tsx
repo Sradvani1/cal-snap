@@ -21,23 +21,15 @@ export function ScanDescriptionFullScreen({
 }: ScanDescriptionFullScreenProps) {
   const [text, setText] = useState(initialValue);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
   const keyboardInset = useKeyboardInset();
 
   useEffect(() => {
-    // Defer focus past mount so Safari's keyboard pan computes against settled
-    // layout. Focusing during mount flings this fixed overlay's header off the
-    // top of the screen; preventScroll alone can't stop a keyboard pan.
-    const timer = window.setTimeout(() => {
-      textareaRef.current?.focus({ preventScroll: true });
-    }, 300);
-    return () => window.clearTimeout(timer);
+    textareaRef.current?.focus({ preventScroll: true });
   }, []);
 
   return (
-    <div className="fixed inset-0 z-50 bg-cs-background">
+    <div className="fixed inset-0 z-50 bg-cs-background pt-safe pb-safe">
       <div
-        ref={containerRef}
         className="flex h-full flex-col overflow-y-auto px-4"
         style={keyboardInset > 0 ? { paddingBottom: keyboardInset } : undefined}
       >
@@ -61,14 +53,9 @@ export function ScanDescriptionFullScreen({
 
         <textarea
           ref={textareaRef}
+          autoFocus
           value={text}
           onChange={(e) => setText(e.target.value)}
-          onBlur={() => {
-            // Safari shoves this scroll container up to reveal the caret and
-            // never puts it back — reset it so the header isn't stranded
-            // off-screen after the keyboard dismisses.
-            containerRef.current?.scrollTo({ top: 0, behavior: 'instant' });
-          }}
           placeholder={copy('scanner.capture.descriptionPlaceholder')}
           className={cn(formFieldInputClassName, 'min-h-32 resize-none')}
         />
