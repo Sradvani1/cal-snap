@@ -11,7 +11,7 @@ import {
   initializeTestEnvironment,
   type RulesTestEnvironment,
 } from '@firebase/rules-unit-testing';
-import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
+import { doc, getDoc, setDoc, Timestamp, type Firestore } from 'firebase/firestore';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { ProfileDoc } from '@/lib/models/profile-doc';
 import { PROFILE_DOC_ID } from '@/lib/models/profile-doc';
@@ -98,7 +98,7 @@ describe('weigh-in Firestore batch save', () => {
 
   it('batch write updates profile currentWeightKg and creates weigh-in doc', async () => {
     const uid = 'weigh-in-save-user';
-    const db = testEnv.authenticatedContext(uid).firestore();
+    const db = testEnv.authenticatedContext(uid).firestore() as unknown as Firestore;
     const profile = makeProfile(uid);
     const extras = makeExtras();
 

@@ -6,7 +6,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { initializeTestEnvironment, type RulesTestEnvironment } from '@firebase/rules-unit-testing';
-import { doc, setDoc, Timestamp } from 'firebase/firestore';
+import { doc, setDoc, Timestamp, type Firestore } from 'firebase/firestore';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { startOfLocalDay } from '@/lib/dashboard/date-window';
 import type { MealEntryDoc } from '@/lib/models/meal-entry-doc';
@@ -20,6 +20,10 @@ import {
 import { selectPlateauWeighIns } from '@/lib/progress/progress-stats';
 
 let testEnv: RulesTestEnvironment;
+
+function dbFor(uid: string): Firestore {
+  return testEnv.authenticatedContext(uid).firestore() as unknown as Firestore;
+}
 
 describe('dashboard Firestore reads', () => {
   beforeAll(async () => {
@@ -37,8 +41,7 @@ describe('dashboard Firestore reads', () => {
 
   it('fetchMealsForCalendarDay returns sorted meals for today', async () => {
     const uid = 'dashboard-meals-user';
-    const alice = testEnv.authenticatedContext(uid);
-    const db = alice.firestore();
+    const db = dbFor(uid);
     const today = startOfLocalDay(new Date());
     const later = new Date(today);
     later.setHours(12, 0, 0, 0);
@@ -77,7 +80,7 @@ describe('dashboard Firestore reads', () => {
 
   it('skips malformed meals and warns without rejecting the day read', async () => {
     const uid = 'dashboard-malformed-meal-user';
-    const db = testEnv.authenticatedContext(uid).firestore();
+    const db = dbFor(uid);
     const today = startOfLocalDay(new Date());
     const baseDoc = (timestamp: Date, calories: number): MealEntryDoc => ({
       userId: uid,
@@ -118,8 +121,7 @@ describe('dashboard Firestore reads', () => {
 
   it('fetchWeeklyPlateauWeighIns returns weekly-spaced entries', async () => {
     const uid = 'dashboard-weighins-user';
-    const alice = testEnv.authenticatedContext(uid);
-    const db = alice.firestore();
+    const db = dbFor(uid);
     const today = startOfLocalDay(new Date());
 
     const makeWeighIn = (daysAgo: number, weightKg: number): WeighInDoc => ({
@@ -142,8 +144,7 @@ describe('dashboard Firestore reads', () => {
 
   it('fetchLatestWeighIn returns the most recent weigh-in', async () => {
     const uid = 'dashboard-latest-weighin-user';
-    const alice = testEnv.authenticatedContext(uid);
-    const db = alice.firestore();
+    const db = dbFor(uid);
     const today = startOfLocalDay(new Date());
 
     const makeWeighIn = (daysAgo: number, weightKg: number): WeighInDoc => ({
@@ -164,15 +165,14 @@ describe('dashboard Firestore reads', () => {
 
   it('fetchLatestWeighIn returns undefined when there are no weigh-ins', async () => {
     const uid = 'dashboard-empty-weighin-user';
-    const alice = testEnv.authenticatedContext(uid);
-    const db = alice.firestore();
+    const db = dbFor(uid);
 
     expect(await fetchLatestWeighIn(uid, db)).toBeUndefined();
   });
 
   it('skips a malformed latest weigh-in', async () => {
     const uid = 'dashboard-malformed-latest-user';
-    const db = testEnv.authenticatedContext(uid).firestore();
+    const db = dbFor(uid);
     const today = startOfLocalDay(new Date());
 
     await setDoc(doc(db, 'users', uid, 'weighIns', 'malformed'), {
@@ -186,7 +186,7 @@ describe('dashboard Firestore reads', () => {
 
   it('skips malformed weigh-ins in list reads', async () => {
     const uid = 'dashboard-malformed-weighin-user';
-    const db = testEnv.authenticatedContext(uid).firestore();
+    const db = dbFor(uid);
     const today = startOfLocalDay(new Date());
 
     await setDoc(doc(db, 'users', uid, 'weighIns', 'valid'), {
@@ -217,8 +217,7 @@ describe('dashboard Firestore reads', () => {
 
   it('selectPlateauWeighIns over fetchAllWeighIns matches fetchWeeklyPlateauWeighIns', async () => {
     const uid = 'dashboard-plateau-equivalence-user';
-    const alice = testEnv.authenticatedContext(uid);
-    const db = alice.firestore();
+    const db = dbFor(uid);
     const today = startOfLocalDay(new Date());
 
     const makeWeighIn = (daysAgo: number, weightKg: number): WeighInDoc => ({

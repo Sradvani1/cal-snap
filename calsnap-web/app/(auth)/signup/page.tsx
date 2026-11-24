@@ -7,6 +7,7 @@ import { ProfileLoadError } from '@/components/auth/ProfileLoadError';
 import { PrimaryButton, SecondaryButton } from '@/components/design/PrimaryButton';
 import { useAuth } from '@/lib/auth/auth-context';
 import { resolveProfileRoute } from '@/lib/auth/resolve-profile-route';
+import { authPathWithNext, nextPathFromLocation, useNextPath } from '@/lib/auth/safe-next-path';
 import { copy } from '@/lib/copy';
 import { typography } from '@/lib/design/typography';
 import { formFieldInputClassName } from '@/lib/design/form-field';
@@ -16,6 +17,7 @@ import { cn } from '@/lib/utils/cn';
 export default function SignupPage() {
   const { user, loading, authError, signUpWithEmail, signInWithGoogle, signOut } = useAuth();
   const profile = useProfile(user?.uid);
+  const nextPath = useNextPath();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -29,8 +31,10 @@ export default function SignupPage() {
   });
 
   useEffect(() => {
-    if (profileRoute === '/dashboard' || profileRoute === '/onboarding') {
-      window.location.replace(profileRoute);
+    if (profileRoute === '/dashboard') {
+      window.location.replace(nextPathFromLocation() ?? '/dashboard');
+    } else if (profileRoute === '/onboarding') {
+      window.location.replace('/onboarding');
     }
   }, [profileRoute]);
 
@@ -117,7 +121,7 @@ export default function SignupPage() {
 
       <p className={`${typography.csCaption} text-center`}>
         {copy('auth.signup.hasAccount')}{' '}
-        <Link href="/login" className="font-medium text-cs-foreground underline">
+        <Link href={authPathWithNext('/login', nextPath)} className="font-medium text-cs-foreground underline">
           {copy('auth.signup.signInLink')}
         </Link>
       </p>

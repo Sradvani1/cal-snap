@@ -13,14 +13,14 @@ type VisualViewportMock = {
   removeEventListener: ReturnType<typeof vi.fn>;
 };
 
-function createVisualViewport(overrides: Partial<VisualViewportMock> = {}): VisualViewportMock {
+function createVisualViewport(overrides: Partial<VisualViewportMock> = {}): VisualViewport {
   return {
     height: 800,
     offsetTop: 0,
     addEventListener: vi.fn(),
     removeEventListener: vi.fn(),
     ...overrides,
-  };
+  } as unknown as VisualViewport;
 }
 
 describe('computeKeyboardInset', () => {

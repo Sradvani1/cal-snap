@@ -13,7 +13,7 @@ import {
   initializeTestEnvironment,
   type RulesTestEnvironment,
 } from '@firebase/rules-unit-testing';
-import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
+import { doc, getDoc, setDoc, Timestamp, type Firestore } from 'firebase/firestore';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { ProfileDoc } from '@/lib/models/profile-doc';
 import { PROFILE_DOC_ID } from '@/lib/models/profile-doc';
@@ -93,7 +93,7 @@ describe('profile Firestore rules', () => {
 
   it('accepts null goalTargetDate and rejects malformed profile data', async () => {
     const uid = 'profile-validation-user';
-    const db = testEnv.authenticatedContext(uid).firestore();
+    const db = testEnv.authenticatedContext(uid).firestore() as unknown as Firestore;
     await setDoc(
       doc(db, 'users', uid, 'profile', PROFILE_DOC_ID),
       { ...sampleProfileDoc(), goalTargetDate: null },

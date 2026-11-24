@@ -7,10 +7,12 @@ import { ConfirmAlertDialog } from '@/components/design/ConfirmAlertDialog';
 import { MealDetailActions } from '@/components/meal-log/MealDetailActions';
 import { MealDetailView } from '@/components/meal-log/MealDetailView';
 import { MealDetailSkeleton } from '@/components/meal-log/MealDetailSkeleton';
+import { PrimaryButton } from '@/components/design/PrimaryButton';
 import { useAuth } from '@/lib/auth/auth-context';
 import { copy } from '@/lib/copy';
 import { layout } from '@/lib/design/layout';
 import { typography } from '@/lib/design/typography';
+import { useCreateSharedMeal } from '@/lib/queries/use-create-shared-meal';
 import { useDeleteFavorite } from '@/lib/queries/use-delete-favorite';
 import { useDeleteMeal } from '@/lib/queries/use-delete-meal';
 import { useFavorites } from '@/lib/queries/use-favorites';
@@ -45,9 +47,12 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
   const deleteMealMutation = useDeleteMeal(user?.uid);
   const saveFavoriteMutation = useSaveFavorite(user?.uid);
   const deleteFavoriteMutation = useDeleteFavorite(user?.uid);
+  const createSharedMealMutation = useCreateSharedMeal(user?.uid);
   const favoritesQuery = useFavorites(user?.uid);
   const { setHasUnsavedWork, registerNavigationHandler } = useUnsavedWork();
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+  const [shareStatus, setShareStatus] = useState<'idle' | 'copied' | 'failed'>('idle');
+  const [pendingShareUrl, setPendingShareUrl] = useState<string | null>(null);
   const [editableItems, setEditableItems] = useState<EditableFoodItem[] | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [discardDialogOpen, setDiscardDialogOpen] = useState(false);
@@ -201,6 +206,44 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
     }
   };
 
+  const copyShareLink = async (url: string) => {
+    setPendingShareUrl(null);
+    try {
+      await navigator.clipboard.writeText(url);
+      setShareStatus('copied');
+    } catch {
+      setShareStatus('failed');
+    }
+  };
+
+  const sendShareLink = async (url: string) => {
+    try {
+      await navigator.share({ title: copy('mealLog.share.title'), url });
+      setPendingShareUrl(null);
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') return;
+      await copyShareLink(url);
+    }
+  };
+
+  const handleShare = async () => {
+    if (!meal || createSharedMealMutation.isPending) return;
+    setShareStatus('idle');
+    setPendingShareUrl(null);
+    let url: string;
+    try {
+      const shareId = await createSharedMealMutation.mutateAsync(meal);
+      url = `${window.location.origin}/share/${shareId}`;
+    } catch {
+      return;
+    }
+    if (typeof navigator.share === 'function') {
+      setPendingShareUrl(url);
+    } else {
+      await copyShareLink(url);
+    }
+  };
+
   const handleConfirmDiscard = () => {
     setDiscardDialogOpen(false);
     setHasUnsavedWork(false);
@@ -230,20 +273,55 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
     );
   }
 
+  const itemCount = editableItems?.length ?? meal.items.length;
+
   return (
     <div className={cn(layout.pageShell, 'py-6', layout.content.bottomPadding)}>
       <header className="mb-6 flex items-center justify-between">
         <h1 className={`${typography.csCardTitle} text-2xl`}>{copy('mealLog.detail.title')}</h1>
-        <button
-          type="button"
-          onClick={handleToggleFavorite}
-          disabled={favoritePending}
-          className="flex min-h-11 min-w-11 items-center justify-center rounded-lg text-lg text-cs-muted hover:text-cs-warning disabled:opacity-50"
-          aria-label={isFavorited ? copy('mealLog.actions.savedFavorite') : copy('mealLog.actions.saveFavorite')}
-        >
-          {favoritePending ? '⋯' : isFavorited ? '★' : '☆'}
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={() => void handleShare()}
+            disabled={createSharedMealMutation.isPending || hasChanges || itemCount === 0}
+            className="flex min-h-11 items-center justify-center rounded-lg px-3 text-sm font-medium text-cs-muted hover:text-cs-foreground disabled:opacity-50"
+          >
+            {createSharedMealMutation.isPending ? copy('mealLog.actions.sharing') : copy('mealLog.actions.share')}
+          </button>
+          <button
+            type="button"
+            onClick={handleToggleFavorite}
+            disabled={favoritePending}
+            className="flex min-h-11 min-w-11 items-center justify-center rounded-lg text-lg text-cs-muted hover:text-cs-warning disabled:opacity-50"
+            aria-label={isFavorited ? copy('mealLog.actions.savedFavorite') : copy('mealLog.actions.saveFavorite')}
+          >
+            {favoritePending ? '⋯' : isFavorited ? '★' : '☆'}
+          </button>
+        </div>
       </header>
+
+      {hasChanges ? (
+        <p className="mb-4 text-sm text-cs-muted">{copy('mealLog.share.saveFirst')}</p>
+      ) : (
+        <>
+          {pendingShareUrl && (
+            <PrimaryButton
+              type="button"
+              fullWidth
+              className="mb-4 min-h-11"
+              onClick={() => void sendShareLink(pendingShareUrl)}
+            >
+              {copy('mealLog.share.send')}
+            </PrimaryButton>
+          )}
+          {shareStatus === 'copied' && (
+            <p className="mb-4 text-sm text-cs-muted">{copy('mealLog.share.linkCopied')}</p>
+          )}
+          {(createSharedMealMutation.isError || shareStatus === 'failed') && (
+            <p className="mb-4 text-sm text-cs-danger">{copy('mealLog.share.error')}</p>
+          )}
+        </>
+      )}
 
       <MealDetailView
         meal={meal}
@@ -257,7 +335,7 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
       <div className="mt-6">
         <MealDetailActions
           hasChanges={hasChanges}
-          itemCount={editableItems?.length ?? 0}
+          itemCount={itemCount}
           isSaving={updateMealMutation.isPending}
           isDeleting={deleteMealMutation.isPending}
           onSave={() => void handleSave()}

@@ -7,6 +7,7 @@ import { ProfileLoadError } from '@/components/auth/ProfileLoadError';
 import { PrimaryButton, SecondaryButton } from '@/components/design/PrimaryButton';
 import { useAuth } from '@/lib/auth/auth-context';
 import { resolveProfileRoute } from '@/lib/auth/resolve-profile-route';
+import { authPathWithNext, nextPathFromLocation, useNextPath } from '@/lib/auth/safe-next-path';
 import { copy } from '@/lib/copy';
 import { typography } from '@/lib/design/typography';
 import { formFieldInputClassName } from '@/lib/design/form-field';
@@ -28,9 +29,13 @@ export default function LoginPage() {
     onboardingCompleted: profile.data?.extras.onboardingCompleted,
   });
 
+  const nextPath = useNextPath();
+
   useEffect(() => {
-    if (profileRoute === '/dashboard' || profileRoute === '/onboarding') {
-      window.location.replace(profileRoute);
+    if (profileRoute === '/dashboard') {
+      window.location.replace(nextPathFromLocation() ?? '/dashboard');
+    } else if (profileRoute === '/onboarding') {
+      window.location.replace('/onboarding');
     }
   }, [profileRoute]);
 
@@ -116,7 +121,10 @@ export default function LoginPage() {
 
       <p className={`${typography.csCaption} text-center`}>
         {copy('auth.login.noAccount')}{' '}
-        <Link href="/signup" className="font-medium text-cs-foreground underline">
+        <Link
+          href={authPathWithNext('/signup', nextPath)}
+          className="font-medium text-cs-foreground underline"
+        >
           {copy('auth.login.signUpLink')}
         </Link>
       </p>

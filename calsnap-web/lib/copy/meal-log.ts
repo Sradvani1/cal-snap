@@ -49,6 +49,20 @@ export const mealLogCopy = {
   'mealLog.favorites.clearSearch': 'Clear search',
   'mealLog.favorites.noResultsTitle': 'No matches',
   'mealLog.favorites.noResults': 'No favorites match "{{query}}".',
+  'mealLog.actions.share': 'Share',
+  'mealLog.actions.sharing': 'Sharing…',
+  'mealLog.share.title': 'Shared meal',
+  'mealLog.share.linkCopied': 'Link copied. Send it to anyone you want to add this meal.',
+  'mealLog.share.error': 'Could not create a share link. Try again.',
+  'mealLog.share.saveFirst': 'Save your changes before sharing.',
+  'mealLog.share.send': 'Send link',
+  'mealLog.share.addToLog': 'Add to my log',
+  'mealLog.share.adding': 'Adding…',
+  'mealLog.share.viewInLog': 'View in my log',
+  'mealLog.share.alreadyAdded': 'This meal is already in your log.',
+  'mealLog.share.addError': 'Could not add this meal. Try again.',
+  'mealLog.share.unavailable': 'This shared meal has expired or does not exist.',
+  'mealLog.share.loadFailed': 'Could not load this shared meal.',
 } as const;
 
 export type MealLogCopyKey = keyof typeof mealLogCopy;

@@ -5,6 +5,8 @@ const mocks = vi.hoisted(() => ({
   deleteDoc: vi.fn(),
   doc: vi.fn(),
   getDocs: vi.fn(),
+  query: vi.fn(),
+  where: vi.fn(),
   writeBatch: vi.fn(),
   deleteObject: vi.fn(),
   listAll: vi.fn(),
@@ -21,6 +23,8 @@ vi.mock('firebase/firestore', async () => {
     deleteDoc: mocks.deleteDoc,
     doc: mocks.doc,
     getDocs: mocks.getDocs,
+    query: mocks.query,
+    where: mocks.where,
     writeBatch: mocks.writeBatch,
   };
 });
@@ -41,6 +45,8 @@ describe('deleteAllUserData', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     mocks.collection.mockReturnValue({});
+    mocks.query.mockReturnValue({});
+    mocks.where.mockReturnValue({});
     mocks.doc.mockReturnValue({});
     mocks.listAll.mockResolvedValue({ items: [], prefixes: [] });
     mocks.ref.mockReturnValue({});
@@ -111,6 +117,54 @@ describe('deleteAllUserData', () => {
       expect(mocks.deleteDoc).toHaveBeenCalled();
       expect(warn).toHaveBeenCalledWith(
         expect.stringContaining('Storage cleanup remains incomplete'),
+      );
+    } finally {
+      warn.mockRestore();
+    }
+  });
+
+  it('deletes the user shared meal links and their Storage folder', async () => {
+    const shareRef = {};
+    const batch = {
+      commit: vi.fn().mockResolvedValue(undefined),
+      delete: vi.fn(),
+    };
+    mocks.writeBatch.mockReturnValue(batch);
+    mocks.getDocs
+      .mockResolvedValueOnce({ docs: [] })
+      .mockResolvedValueOnce({ docs: [] })
+      .mockResolvedValueOnce({ docs: [] })
+      .mockResolvedValueOnce({ docs: [{ id: 'share-1', data: () => ({}), ref: shareRef }] });
+
+    await deleteAllUserData('user-1', {
+      db: {} as never,
+      storage: {} as never,
+    });
+
+    expect(mocks.where).toHaveBeenCalledWith('ownerUid', '==', 'user-1');
+    expect(batch.delete).toHaveBeenCalledWith(shareRef);
+    expect(mocks.ref).toHaveBeenCalledWith(expect.anything(), 'sharedMeals/user-1');
+  });
+
+  it('still deletes the profile when shared meal cleanup fails', async () => {
+    mocks.getDocs
+      .mockResolvedValueOnce({ docs: [] })
+      .mockResolvedValueOnce({ docs: [] })
+      .mockResolvedValueOnce({ docs: [] })
+      .mockRejectedValueOnce(new Error('permission denied'));
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    try {
+      await expect(
+        deleteAllUserData('user-1', {
+          db: {} as never,
+          storage: {} as never,
+        }),
+      ).resolves.toBeUndefined();
+      expect(mocks.deleteDoc).toHaveBeenCalled();
+      expect(warn).toHaveBeenCalledWith(
+        expect.stringContaining('Shared meal links for user-1 could not be deleted'),
+        expect.any(Error),
       );
     } finally {
       warn.mockRestore();

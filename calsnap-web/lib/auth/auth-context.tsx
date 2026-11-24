@@ -9,7 +9,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   createUserWithEmailAndPassword,
   getRedirectResult,
@@ -173,6 +173,7 @@ export function useRequireAuth() {
   const { user, loading: authLoading } = useAuth();
   const profile = useProfile(user?.uid);
   const router = useRouter();
+  const pathname = usePathname();
 
   const profileBootstrapping = Boolean(user) && profile.isPending;
   const loading = authLoading || profileBootstrapping;
@@ -186,13 +187,13 @@ export function useRequireAuth() {
 
   useEffect(() => {
     if (route === '/login') {
-      router.replace('/login');
+      router.replace(`/login?next=${encodeURIComponent(pathname)}`);
       return;
     }
     if (route === '/onboarding') {
       router.replace('/onboarding');
     }
-  }, [route, router]);
+  }, [route, router, pathname]);
 
   const ready = route === '/dashboard';
 

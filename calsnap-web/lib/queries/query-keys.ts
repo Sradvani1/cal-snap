@@ -8,4 +8,5 @@ export const queryKeys = {
   analyticsMeals: (uid: string, rangeKey: string) =>
     ['analyticsMeals', uid, rangeKey] as const,
   favorites: (uid: string) => ['favorites', uid] as const,
+  sharedMeal: (uid: string, shareId: string) => ['sharedMeal', uid, shareId] as const,
 };

@@ -3,8 +3,12 @@ import {
   deleteDoc,
   doc,
   getDocs,
+  query,
+  where,
   writeBatch,
+  type CollectionReference,
   type Firestore,
+  type Query,
 } from 'firebase/firestore';
 import { deleteObject, listAll, ref } from 'firebase/storage';
 import {
@@ -27,13 +31,13 @@ export interface DeleteAllUserDataDeps {
   storage?: ReturnType<typeof getFirebaseStorage>;
 }
 
-async function deleteSubcollectionInBatches(
+async function deleteDocsInBatches(
   db: Firestore,
-  uid: string,
-  subcollection: string,
+  source: CollectionReference | Query,
+  label: string,
   onEachDoc?: (docId: string, data: Record<string, unknown>) => Promise<void>,
 ): Promise<void> {
-  const snapshot = await getDocs(collection(db, 'users', uid, subcollection));
+  const snapshot = await getDocs(source);
   const docs = snapshot.docs;
 
   for (let i = 0; i < docs.length; i += BATCH_SIZE) {
@@ -44,16 +48,22 @@ async function deleteSubcollectionInBatches(
         try {
           await onEachDoc(docSnap.id, docSnap.data() as Record<string, unknown>);
         } catch (error) {
-          console.warn(
-            `Skipping cleanup for malformed ${subcollection} doc ${docSnap.id}:`,
-            error,
-          );
+          console.warn(`Skipping cleanup for malformed ${label} doc ${docSnap.id}:`, error);
         }
       }
       batch.delete(docSnap.ref);
     }
     await batch.commit();
   }
+}
+
+async function deleteSubcollectionInBatches(
+  db: Firestore,
+  uid: string,
+  subcollection: string,
+  onEachDoc?: (docId: string, data: Record<string, unknown>) => Promise<void>,
+): Promise<void> {
+  await deleteDocsInBatches(db, collection(db, 'users', uid, subcollection), subcollection, onEachDoc);
 }
 
 async function deleteMealPhoto(path: string, storage: ReturnType<typeof getFirebaseStorage>): Promise<void> {
@@ -116,9 +126,23 @@ export async function deleteAllUserData(
 
   await deleteSubcollectionInBatches(db, uid, 'favorites');
 
+  try {
+    await deleteDocsInBatches(
+      db,
+      query(collection(db, 'sharedMeals'), where('ownerUid', '==', uid)),
+      'sharedMeals',
+    );
+  } catch (error) {
+    console.warn(`Shared meal links for ${uid} could not be deleted; they expire within 3 days.`, error);
+  }
+
   await deleteDoc(doc(db, 'users', uid, 'profile', PROFILE_DOC_ID));
 
-  const storageCleanupSucceeded = await deleteStoragePrefix(storage, `users/${uid}/meals`);
+  const storageCleanupResults = await Promise.all([
+    deleteStoragePrefix(storage, `users/${uid}/meals`),
+    deleteStoragePrefix(storage, `sharedMeals/${uid}`),
+  ]);
+  const storageCleanupSucceeded = storageCleanupResults.every(Boolean);
 
   clearUserLocalStorage(uid);
 

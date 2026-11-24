@@ -11,7 +11,7 @@ import {
   initializeTestEnvironment,
   type RulesTestEnvironment,
 } from '@firebase/rules-unit-testing';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, type Firestore } from 'firebase/firestore';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { MealEntry } from '@/lib/models/meal-entry';
 import { mealEntryToDoc } from '@/lib/models/meal-entry-doc';
@@ -24,6 +24,10 @@ import {
 import { MealNotFoundError } from '@/lib/repositories/meal-errors';
 
 let testEnv: RulesTestEnvironment;
+
+function dbFor(uid: string): Firestore {
+  return testEnv.authenticatedContext(uid).firestore() as unknown as Firestore;
+}
 
 function makeEntry(overrides: Partial<MealEntry> = {}): MealEntry {
   const now = new Date('2026-06-27T12:00:00');
@@ -62,7 +66,7 @@ describe('meal CRUD Firestore', () => {
 
   it('create → fetch → update → delete round-trip', async () => {
     const uid = 'meal-crud-user';
-    const db = testEnv.authenticatedContext(uid).firestore();
+    const db = dbFor(uid);
     const entry = makeEntry({ userId: uid });
 
     await createMeal(entry, db);
@@ -88,13 +92,13 @@ describe('meal CRUD Firestore', () => {
 
   it('delete throws MealNotFoundError when missing', async () => {
     const uid = 'meal-crud-missing';
-    const db = testEnv.authenticatedContext(uid).firestore();
+    const db = dbFor(uid);
     await expect(deleteMeal(uid, 'missing-meal', db)).rejects.toThrow(MealNotFoundError);
   });
 
   it('preserves optional fields when an edit omits them', async () => {
     const uid = 'meal-crud-preserve-optionals';
-    const db = testEnv.authenticatedContext(uid).firestore();
+    const db = dbFor(uid);
     const entry = makeEntry({
       userId: uid,
       photoStoragePath: `users/${uid}/meals/preserve/photo.jpg`,
