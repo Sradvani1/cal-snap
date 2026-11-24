@@ -17,7 +17,15 @@ import { getFirebaseStorage, getFirestoreDb } from '@/lib/firebase/client';
 import type { MealEntry } from '@/lib/models/meal-entry';
 import { mealDocToEntry, mealEntryToDoc } from '@/lib/models/meal-entry-doc';
 import { parseFirestoreDoc } from '@/lib/models/validate-doc';
-import { createMeal, uploadMealPhoto } from '@/lib/repositories/meals';
+import {
+  createMeal,
+  deleteMealPhoto,
+  setMealPhotoPath,
+  uploadMealPhoto,
+} from '@/lib/repositories/meals';
+import { sharedMealPhotoStoragePath } from '@/lib/shares/shared-meal-summary';
+
+export { sharedMealPhotoStoragePath };
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 export const SHARED_MEAL_TTL_MS = 3 * DAY_MS;
@@ -40,10 +48,6 @@ const ownedShareSchema = z.object({
 export interface SharedMealView {
   entry: MealEntry;
   addedMealId: string | null;
-}
-
-export function sharedMealPhotoStoragePath(ownerUid: string, shareId: string): string {
-  return `sharedMeals/${ownerUid}/${shareId}/photo.jpg`;
 }
 
 export function sharedMealLogId(shareId: string): string {
@@ -202,30 +206,50 @@ export async function fetchSharedMeal(
   };
 }
 
+export interface AddedSharedMeal {
+  mealId: string;
+  created: boolean;
+}
+
+/** Saves the shared meal to the recipient's log without its photo. */
 export async function addSharedMealToLog(
   uid: string,
   shareId: string,
   entry: MealEntry,
   db: Firestore = getFirestoreDb(),
-): Promise<string> {
+): Promise<AddedSharedMeal> {
   const mealId = sharedMealLogId(shareId);
   const existing = await getDoc(doc(db, 'users', uid, 'meals', mealId));
   if (existing.exists()) {
-    return mealId;
+    return { mealId, created: false };
   }
 
-  let photoStoragePath: string | undefined;
-  if (entry.photoStoragePath) {
-    try {
-      const blob = await getBlob(ref(getFirebaseStorage(), entry.photoStoragePath));
-      photoStoragePath = await uploadMealPhoto(uid, mealId, blob);
-    } catch (error) {
-      if (errorCode(error) !== 'storage/object-not-found') {
-        throw error;
-      }
+  await createMeal({ ...entry, id: mealId, userId: uid, photoStoragePath: undefined }, db);
+  return { mealId, created: true };
+}
+
+/** Copies the shared photo into the recipient's storage and attaches it to her meal. */
+export async function attachSharedMealPhoto(
+  uid: string,
+  mealId: string,
+  sourcePath: string,
+): Promise<void> {
+  let blob: Blob;
+  try {
+    blob = await getBlob(ref(getFirebaseStorage(), sourcePath));
+  } catch (error) {
+    // The share expired or was deleted after the meal was saved; the meal stays without a photo.
+    if (errorCode(error) === 'storage/object-not-found' || errorCode(error) === 'storage/unauthorized') {
+      return;
     }
+    throw error;
   }
 
-  await createMeal({ ...entry, id: mealId, userId: uid, photoStoragePath }, db);
-  return mealId;
+  const path = await uploadMealPhoto(uid, mealId, blob);
+  try {
+    await setMealPhotoPath(uid, mealId, path);
+  } catch (error) {
+    await deleteMealPhoto(path);
+    throw error;
+  }
 }

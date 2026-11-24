@@ -91,11 +91,12 @@ describe('shared meal repository', () => {
     expect(view.entry.userId).toBe('');
     expect(view.addedMealId).toBeNull();
 
-    const mealId = await addSharedMealToLog('bob-add', shareId, view.entry, bob);
+    const { mealId, created } = await addSharedMealToLog('bob-add', shareId, view.entry, bob);
     expect(mealId).toBe(`shared-${shareId}`);
+    expect(created).toBe(true);
 
     await updateDoc(doc(bob, 'users', 'bob-add', 'meals', mealId), { totalCalories: 42 });
-    expect(await addSharedMealToLog('bob-add', shareId, view.entry, bob)).toBe(mealId);
+    expect((await addSharedMealToLog('bob-add', shareId, view.entry, bob)).created).toBe(false);
     const kept = await getDoc(doc(bob, 'users', 'bob-add', 'meals', mealId));
     expect(kept.data()?.totalCalories).toBe(42);
 
@@ -107,7 +108,7 @@ describe('shared meal repository', () => {
     const alice = dbFor('alice-expired');
     const bob = dbFor('bob-expired');
     const shareId = await createSharedMeal('alice-expired', makeEntry({ userId: 'alice-expired' }), alice);
-    const mealId = await addSharedMealToLog(
+    const { mealId } = await addSharedMealToLog(
       'bob-expired',
       shareId,
       (await fetchSharedMeal('bob-expired', shareId, bob)).entry,

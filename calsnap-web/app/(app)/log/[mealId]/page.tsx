@@ -29,6 +29,7 @@ import {
   type EditableFoodItem,
 } from '@/lib/scanner/editable-food-item';
 import { sumEditableItems } from '@/lib/scanner/meal-totals';
+import { sharedMealSummary } from '@/lib/shares/shared-meal-summary';
 import { useUnsavedWork } from '@/lib/scanner/unsaved-work-context';
 import { cn } from '@/lib/utils/cn';
 
@@ -217,8 +218,10 @@ export default function MealDetailPage({ params }: MealDetailPageProps) {
   };
 
   const sendShareLink = async (url: string) => {
+    if (!meal) return;
+    const { title, description } = sharedMealSummary(meal);
     try {
-      await navigator.share({ title: copy('mealLog.share.title'), url });
+      await navigator.share({ title, text: description, url });
       setPendingShareUrl(null);
     } catch (error) {
       if (error instanceof DOMException && error.name === 'AbortError') return;

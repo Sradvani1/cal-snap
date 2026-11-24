@@ -50,7 +50,7 @@ export default function SharedMealPage({ params }: SharedMealPageProps) {
   const handleAdd = async () => {
     if (!shared) return;
     try {
-      const mealId = await addMutation.mutateAsync({ shareId, entry: shared.entry });
+      const { mealId } = await addMutation.mutateAsync({ shareId, entry: shared.entry });
       router.replace(`/log/${mealId}`);
     } catch {
       // error shown via addMutation.error
